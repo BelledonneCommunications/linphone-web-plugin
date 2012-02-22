@@ -40,6 +40,16 @@ public:
     {
         linphone::StaticDeinitialize();
     }
+
+    void getLoggingMethods(FB::Log::LogMethodList& outMethods)
+    {
+        // The next line will enable logging to the console (think: printf).
+        outMethods.push_back(std::make_pair(FB::Log::LogMethod_Console, std::string()));
+    }
+
+    FB::Log::LogLevel getLogLevel(){
+    	return FB::Log::LogLevel_Debug; // Now Debug and above is logged.
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
