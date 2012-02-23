@@ -1,0 +1,179 @@
+<!--
+    Auto-generated test-site
+-->
+<html>
+<head>
+<title>test page for object fbcontrol</title>
+<link type="text/css" href="css/ui-lightness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />
+<link type="text/css" href="css/linphone.css" rel="stylesheet" />
+<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/linphone.js"></script>
+</head>
+<script type="text/javascript">
+	function plugin0() {
+		return document.getElementById('plugin0');
+	}
+	plugin = plugin0;
+	function addEvent(obj, name, func) {
+		if (window.addEventListener) {
+			obj.addEventListener(name, func, false);
+		} else {
+			obj.attachEvent("on" + name, func);
+		}
+	}
+
+	function load() {
+
+	}
+
+	var Person = Class.create({
+		initialize : function(name) {
+			this.name = name;
+		},
+		say : function(message) {
+			return this.name + ': ' + message;
+		}
+	});
+
+	function addLog(message) {
+		jQuery('#log').val(jQuery('#log').val() + message + '\n');
+	}
+
+	function pluginLoaded() {
+		jQuery('#version_number').text(plugin().version);
+		addEvent(plugin(), 'global_state_changed', global_state_changed);
+		addEvent(plugin(), 'call_state_changed', call_state_changed);
+		addEvent(plugin(), 'display_status', display_status);
+		addEvent(plugin(), 'display_message', display_message);
+		addEvent(plugin(), 'display_warning', display_warning);
+		addEvent(plugin(), 'display_url', display_url);
+		if (plugin().init() != 0) {
+			alert("Plugin error!");
+		}
+	}
+
+	function global_state_changed(state, message) {
+		addLog('State(' + state + '): ' + message);
+		jQuery('.linphone .window .status .text').text(
+				LinphoneGlobalStateText[state])
+	}
+
+	function call_state_changed(call, state, message) {
+		addLog('Call(' + state + '): ' + message);
+		jQuery('.linphone .window .status .text').text(
+				LinphoneCallStateText[state])
+	}
+
+	//registration_state_changed(LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message);
+	//call_state_changed(LinphoneCall *call, LinphoneCallState cstate, const char *message);
+	//notify_presence_recv(LinphoneFriend * lf);
+	//new_subscription_request(LinphoneFriend *lf, const char *url);
+	//auth_info_requested(const char *realm, const char *username);
+	//call_log_updated(LinphoneCallLog *newcl);
+	//text_received(LinphoneChatRoom *room, const LinphoneAddress *from, const char *message);
+	//dtmf_received(LinphoneCall *call, int dtmf);
+	//refer_received(const char *refer_to);
+	//buddy_info_updated(LinphoneFriend *lf);
+	//notify_recv(LinphoneCall *call, const char *from, const char *event);
+	function display_status(message) {
+		addLog('Status: ' + message);
+	}
+
+	function display_message(message) {
+		addLog('Message: ' + message);
+	}
+
+	function display_warning(message) {
+		addLog('Warning: ' + message);
+	}
+
+	function display_url(message, url) {
+		addLog('Url: ' + message + ' - ' + url);
+	}
+
+	jQuery(function() {
+		var call_number = 1;
+		// Tabs
+		jQuery('.linphone .window .tabs').tabs()
+		jQuery('.linphone .window .composer .dial_button').click(
+				function(event) {
+					obj = plugin().invite(
+							jQuery(event.target).parent().find('.dest').val())
+					console.log(obj)
+					if (obj) {
+						console.log("Add tab")
+						var data = jQuery(
+								'<div id="call_'+call_number+'" class="tab"></div>')
+								.append("<b>Test</b>");
+						jQuery('#linphone .window .tabs').append(data).tabs(
+								'add', '#call_' + call_number,
+								"Call " + call_number);
+						call_number++
+					}
+				})
+
+	})
+	//show(LinphoneCore *lc);
+	//call_encryption_changed(LinphoneCall *call, bool_t on, const char *authentication_token);
+</script>
+<style type="text/css">
+body {
+	font: 62.5% "Trebuchet MS", sans-serif;
+}
+
+/*End of scrollable tabs css*/
+#version {
+	font-size: 9px;
+}
+
+#version_number {
+	font-weight: bold;
+}
+</style>
+<body onload="load()">
+	<object id="plugin0" type="application/x-linphone" width="0" height="0">
+		<param name="onload" value="pluginLoaded" />
+	</object>
+	<br />
+
+	<div class="linphone ui-widget" id="linphone">
+		<div class="window ui-corner-all">
+			<div class="header ui-corner-top">
+				<div class="text">Linphone</div>
+			</div>
+			
+			<div class="composer">
+				<div style="display: inline-block;">
+					<input type="text" class="dest" />
+				</div>
+				<div class="dial_button"></div>
+			</div>
+			
+			<div class="tabs">
+				<ul>
+					<li><a href="#tabs-1">First</a></li>
+				</ul>
+				<div id="tabs-1" class="tab">Example</div>
+			</div>
+			
+			<div class="status ui-corner-bottom">
+				<div class="text"></div>
+			</div>
+		</div>
+	</div>
+
+	<br />
+	<br />
+
+	<div>
+		<textarea id="log" rows="10" cols="100"></textarea>
+		<div class="ui-widget">
+			<div id="version" class="ui-state-highlight ui-corner-all">
+				Linphone version: <span id="version_number"></span>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

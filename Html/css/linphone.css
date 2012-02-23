@@ -1,0 +1,69 @@
+
+.linphone .window {
+	border: 1px solid black;
+	width: 200px;
+	height: 200px;
+	position: relative;
+	overflow: hidden;
+}
+
+.linphone .window .header {
+	border-bottom: 1px solid #DDBBBB;
+	background-color: #FFDDDD;
+	height: 30px;
+	line-height: 30px;
+	width: 100%;
+}
+
+.linphone .window .header .text {
+	text-align: center;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.linphone .window .composer {
+	width: 100%;
+	display: inline-block;
+}
+
+.linphone .window .composer input {
+	vertical-align: middle;
+}
+
+.linphone .window .composer .dial_button {
+	display: inline-block;
+	vertical-align: middle;
+	background-image: url('images/ok.png');
+	background-size: 16px 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.linphone .window .status {
+	border-top: 1px solid #BBBBDD;
+	position: absolute;
+	bottom: 0px;
+	background-color: #DDDDFF;
+	height: 20px;
+	line-height: 20px;
+	width: 100%;
+}
+
+.linphone .window .tabs {
+	
+}
+
+.linphone .window .tabs .tab {
+	height: 100%;
+}
+
+.linphone .window .status .text {
+	font-size: 10px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.linphone .window .content {
+	background-color: #FFFFFF;
+	width: 100%;
+}

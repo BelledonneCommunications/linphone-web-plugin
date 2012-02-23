@@ -9,7 +9,21 @@
 #include "global/config.h"
 #include <sstream>
 #include "linphoneAPI.h"
+#include "LinphoneCallAPI.h"
 #define DEBUG_LOG
+
+void linphone_thread(linphoneAPI *linphone_api) {
+	FBLOG_DEBUG("linphone_thread", "start");
+	boost::this_thread::disable_interruption di;
+
+	while (!boost::this_thread::interruption_requested()) {
+		linphone_api->iterateWithMutex();
+		usleep(200000);
+		FBLOG_DEBUG("linphone_thread", "it");
+	}
+
+	FBLOG_DEBUG("linphone_thread", "end");
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @fn linphoneAPI::linphoneAPI(const linphonePtr& plugin, const FB::BrowserHostPtr host)
@@ -21,16 +35,16 @@
 /// @see FB::JSAPIAuto::registerProperty
 /// @see FB::JSAPIAuto::registerEvent
 ///////////////////////////////////////////////////////////////////////////////
-linphoneAPI::linphoneAPI(const linphonePtr& plugin,
-		const FB::BrowserHostPtr& host) :
-		m_plugin(plugin), m_host(host), m_lin_core(NULL) {
+linphoneAPI::linphoneAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
+		m_plugin(plugin), m_host(host), m_lin_core(NULL), m_core_thread(NULL) {
 	FBLOG_DEBUG("linphoneAPI::linphoneAPI()", "");
 
 	// Read-only property
 	registerProperty("version", make_property(this, &linphoneAPI::getVersion));
 
 	// Methods
-	registerMethod("init",  make_method(this, &linphoneAPI::init));
+	registerMethod("init", make_method(this, &linphoneAPI::init));
+	registerMethod("invite", make_method(this, &linphoneAPI::invite));
 }
 
 int linphoneAPI::init() {
@@ -63,6 +77,7 @@ int linphoneAPI::init() {
 		return 1;
 	}
 
+	m_core_thread = new boost::thread(linphone_thread, this);
 	return 0;
 }
 
@@ -79,6 +94,14 @@ void linphoneAPI::shutdown() {
 ///////////////////////////////////////////////////////////////////////////////
 linphoneAPI::~linphoneAPI() {
 	FBLOG_DEBUG("linphoneAPI::~linphoneAPI()", "");
+	if (m_core_thread != NULL) {
+		m_core_thread->interrupt();
+		m_core_thread->join();
+		delete m_core_thread;
+	}
+	if (m_lin_core != NULL) {
+		linphone_core_destroy(m_lin_core);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -97,11 +120,20 @@ linphonePtr linphoneAPI::getPlugin() {
 	return plugin;
 }
 
+boost::shared_ptr<LinphoneCallAPI> linphoneAPI::invite(const std::string &dest) {
+	//boost::mutex::scoped_lock scopedLock(m_core_mutex);
+
+	FBLOG_DEBUG("linphoneAPI::invite", dest);
+	LinphoneCall *call = linphone_core_invite(m_lin_core, dest.c_str());
+	boost::shared_ptr<LinphoneCallAPI> shared_call =  LinphoneCallAPI::get(call);
+	FBLOG_DEBUG("linphoneAPI::invite", "done");
+	return shared_call;
+}
+
 // Read-only property version
 std::string linphoneAPI::getVersion() {
 	return linphone_core_get_version();
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Wrappers
@@ -141,6 +173,7 @@ void linphoneAPI::wrapper_call_state_changed(LinphoneCore *lc, LinphoneCall *cal
 	ss << "message = " << message;
 	FBLOG_DEBUG("wrapper_call_state_changed", ss.str());
 #endif //DEBUG_LOG
+	GLC(fire_call_state_changed(LinphoneCallAPI::get(call), cstate, message));
 }
 void linphoneAPI::wrapper_notify_presence_recv(LinphoneCore *lc, LinphoneFriend * lf) {
 #ifdef DEBUG_LOG
