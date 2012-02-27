@@ -1,6 +1,3 @@
-<!--
-    Auto-generated test-site
--->
 <html>
 <head>
 <title>test page for object fbcontrol</title>
@@ -8,7 +5,8 @@
 <link type="text/css" href="css/linphone.css" rel="stylesheet" />
 <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
-<script type="text/javascript" src="js/prototype.js"></script>
+<!--<script type="text/javascript" src="js/ui.tabs.closable.min.js"></script>  -->
+<script type="text/javascript" src="js/jquery.scrollabletab.js"></script>
 <script type="text/javascript" src="js/linphone.js"></script>
 </head>
 <script type="text/javascript">
@@ -27,15 +25,6 @@
 	function load() {
 
 	}
-
-	var Person = Class.create({
-		initialize : function(name) {
-			this.name = name;
-		},
-		say : function(message) {
-			return this.name + ': ' + message;
-		}
-	});
 
 	function addLog(message) {
 		jQuery('#log').val(jQuery('#log').val() + message + '\n');
@@ -62,8 +51,12 @@
 
 	function call_state_changed(call, state, message) {
 		addLog('Call(' + state + '): ' + message);
-		jQuery('.linphone .window .status .text').text(
-				LinphoneCallStateText[state])
+		var element = findCallTab(call);
+		if(element) {
+			element.text(LinphoneCallStateText[state])	
+		} else {
+			addLog('Can\'t find call tab' + call);
+		}
 	}
 
 	//registration_state_changed(LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message);
@@ -93,23 +86,35 @@
 		addLog('Url: ' + message + ' - ' + url);
 	}
 
+	function findCallTab(obj) {
+		var ret = null
+		jQuery('#linphone .window .tabs .tab').each(function (index) {
+			var element = jQuery(this)
+			if(element.data('call') == obj) {
+				ret = element;
+			}
+		})
+		return ret;
+	}
+	
 	jQuery(function() {
 		var call_number = 1;
 		// Tabs
-		jQuery('.linphone .window .tabs').tabs()
+		jQuery('.linphone .window .tabs').tabs({closable: true, scrollable: true})
 		jQuery('.linphone .window .composer .dial_button').click(
 				function(event) {
-					obj = plugin().invite(
-							jQuery(event.target).parent().find('.dest').val())
+					obj = plugin().invite(jQuery(event.target).parent().find('.dest').val())
 					console.log(obj)
 					if (obj) {
-						console.log("Add tab")
+						console.log('Add tab call-' + call_number)
 						var data = jQuery(
-								'<div id="call_'+call_number+'" class="tab"></div>')
+								'<div id="call-'+call_number+'" class="tab"></div>')
 								.append("<b>Test</b>");
 						jQuery('#linphone .window .tabs').append(data).tabs(
-								'add', '#call_' + call_number,
-								"Call " + call_number);
+								'add', '#call-' + call_number,
+								'Call ' + call_number);
+						jQuery('#linphone .window .tabs').tabs('select', '#call-' + call_number)
+						jQuery('#linphone .window .tabs #call-'+call_number).data('call', obj)
 						call_number++
 					}
 				})
@@ -121,6 +126,82 @@
 <style type="text/css">
 body {
 	font: 62.5% "Trebuchet MS", sans-serif;
+}
+.tabs {
+    font-size: .8em !important;
+	width:auto;
+	margin:5px;
+	padding:0;
+	border:0 !important;
+	overflow:hidden;
+}
+
+/*scrollable tabs css*/
+.ui-scrollable-tabs { overflow:hidden; position:relative; }
+
+.ui-scrollable-tabs .ui-tabs-nav {
+	width:1000000px;
+	padding:1px 0 0 1px;
+	border-left:none;
+	border-right:none;
+	padding-top:1px;
+	position:relative;
+}
+
+.ui-scrollable-tabs .ui-tabs .ui-tabs-closable li a {
+	padding-right:5px;
+}
+
+.ui-scrollable-tabs .ui-tabs-nav-arrows {
+	left: 0;
+	margin: 0;
+	margin:0 5px;
+	padding: 0;
+	position: absolute;
+	right: 0;
+	top: 5px;
+	height: 25px;
+}
+
+/*IE7 fix*/
+*:first-child+html .ui-scrollable-tabs .ui-tabs-nav-arrows {
+	z-index:1;
+}
+
+.ui-scrollable-tabs .ui-tabs .ui-tabs-nav li {
+	margin:0 1px 0;
+}
+
+.ui-tabs-nav li .ui-tabs-close {
+	float:left;
+	margin-top:3px;
+	margin-right:4px;
+	border:none;
+	cursor:pointer;
+}
+
+.ui-scrollable-tabs .ui-tabs-nav-arrows .ui-tabs-arrow-next { float:right; }
+
+.ui-scrollable-tabs .ui-tabs-nav-arrows .ui-tabs-arrow-previous { float:left; }
+
+.ui-scrollable-tabs .ui-tabs-nav-arrows li {
+    list-style:none;
+    position:relative;
+    cursor:pointer;
+    margin:0;
+    padding:0;
+	display:none;
+	z-index:1;
+	height: 23px;
+}
+
+.ui-scrollable-tabs .ui-tabs-nav-arrows li a {
+    display: block;
+	margin-top: 3px;
+}
+
+.ui-scrollable-tabs .ui-tabs-nav-arrows li a:focus {
+	outline: 0px;
 }
 
 /*End of scrollable tabs css*/

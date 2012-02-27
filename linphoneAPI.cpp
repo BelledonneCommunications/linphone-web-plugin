@@ -19,7 +19,7 @@ void linphone_thread(linphoneAPI *linphone_api) {
 	while (!boost::this_thread::interruption_requested()) {
 		linphone_api->iterateWithMutex();
 		usleep(200000);
-		FBLOG_DEBUG("linphone_thread", "it");
+		//FBLOG_DEBUG("linphone_thread", "it");
 	}
 
 	FBLOG_DEBUG("linphone_thread", "end");
@@ -48,6 +48,8 @@ linphoneAPI::linphoneAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& ho
 }
 
 int linphoneAPI::init() {
+	srand(time(NULL));
+
 	FBLOG_DEBUG("linphoneAPI::init()", "");
 
 	// Initialize callback table
@@ -76,6 +78,10 @@ int linphoneAPI::init() {
 		FBLOG_ERROR("linphoneAPI::init()", "Too old version of linphone core!");
 		return 1;
 	}
+
+	int port = 5000 + rand() % 5000;
+	FBLOG_DEBUG("linphoneAPI::init()", "SIP port: " + port);
+	linphone_core_set_sip_port(m_lin_core, port);
 
 	m_core_thread = new boost::thread(linphone_thread, this);
 	return 0;
