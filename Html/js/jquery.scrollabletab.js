@@ -210,9 +210,12 @@
 				
 				function _allLiWidth($li)
 				{
-					var width = $li ? $li[0].offsetLeft + $li.outerWidth(true) : $nav.find('li:last')[0].offsetLeft + $nav.find('li:last').outerWidth(true);
-					//d(width);
-					return width;
+					if($nav.find('li:last')[0]) {
+						var width = $li ? $li[0].offsetLeft + $li.outerWidth(true) : $nav.find('li:last')[0].offsetLeft + $nav.find('li:last').outerWidth(true);
+						//d(width);
+						return width;
+					}
+					return 0;
 				}
 				
 				function _showNavsIfNeeded()
@@ -250,7 +253,7 @@
 										.attr('title','Close this tab')
 										.click(function(e){
 											//Remove tab using UI method
-											$tabs.tabs('remove',$thisLi.prevAll('li').length); //Here $thisLi.index( $lis.index($thisLi) ) will not work as when we remove a tab, the index will change / Better way?
+											//$tabs.tabs('remove',$thisLi.prevAll('li').length); //Here $thisLi.index( $lis.index($thisLi) ) will not work as when we remove a tab, the index will change / Better way?
 											//If you want to add more stuff here, better add to the tabsremove event binded in _init() method above
 										})
 									)

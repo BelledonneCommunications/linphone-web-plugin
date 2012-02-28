@@ -1,12 +1,13 @@
 <html>
 <head>
 <title>test page for object fbcontrol</title>
-<link type="text/css" href="css/ui-lightness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />
+<link type="text/css"
+	href="css/ui-lightness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />
 <link type="text/css" href="css/linphone.css" rel="stylesheet" />
 <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
-<!--<script type="text/javascript" src="js/ui.tabs.closable.min.js"></script>  -->
 <script type="text/javascript" src="js/jquery.scrollabletab.js"></script>
+<script type="text/javascript" src="js/jsrender.js"></script>
 <script type="text/javascript" src="js/linphone.js"></script>
 </head>
 <script type="text/javascript">
@@ -52,10 +53,11 @@
 	function call_state_changed(call, state, message) {
 		addLog('Call(' + state + '): ' + message);
 		var element = findCallTab(call);
-		if(element) {
-			element.text(LinphoneCallStateText[state])	
+		if (element) {
+			element.html($('#LinphoneCall-' + LinphoneCallStateText[state])
+					.render(element.data('data')))
 		} else {
-			addLog('Can\'t find call tab' + call);
+			addLog('Can\'t find call tab: ' + call);
 		}
 	}
 
@@ -88,74 +90,174 @@
 
 	function findCallTab(obj) {
 		var ret = null
-		jQuery('#linphone .window .tabs .tab').each(function (index) {
+		jQuery('#linphone .window .tabs .tab').each(function(index) {
 			var element = jQuery(this)
-			if(element.data('call') == obj) {
+			if (element.data('data') && element.data('data').obj == obj) {
 				ret = element;
 			}
 		})
 		return ret;
 	}
-	
+
+	function call_invite(dest) {
+		var obj = plugin().invite(dest)
+		if (obj) {
+			var call_number = jQuery.linphone.call_number
+			console.log('Add tab call-' + call_number)
+			var div = jQuery('<div id="call-'+call_number+'" class="tab"></div>')
+			jQuery('#linphone .window .tabs').append(div).tabs('add', '#call-' + call_number, 'Call ' + call_number);
+			jQuery('#linphone .window .tabs').tabs('select', '#call-' + call_number)
+			jQuery('#linphone .window .tabs #call-' + call_number).data('data',
+					{
+						obj : obj,
+						dest : dest
+					})
+			jQuery.linphone.call_number++
+		}
+	}
+
+
 	jQuery(function() {
-		var call_number = 1;
+		jQuery.linphone = {
+				call_number: 1
+		}
 		// Tabs
-		jQuery('.linphone .window .tabs').tabs({closable: true, scrollable: true})
-		jQuery('.linphone .window .composer .dial_button').click(
-				function(event) {
-					obj = plugin().invite(jQuery(event.target).parent().find('.dest').val())
-					console.log(obj)
-					if (obj) {
-						console.log('Add tab call-' + call_number)
-						var data = jQuery(
-								'<div id="call-'+call_number+'" class="tab"></div>')
-								.append("<b>Test</b>");
-						jQuery('#linphone .window .tabs').append(data).tabs(
-								'add', '#call-' + call_number,
-								'Call ' + call_number);
-						jQuery('#linphone .window .tabs').tabs('select', '#call-' + call_number)
-						jQuery('#linphone .window .tabs #call-'+call_number).data('call', obj)
-						call_number++
-					}
-				})
+		jQuery('.linphone .window .tabs').tabs({
+			closable : true,
+			scrollable : true
+		})
+		
+		$(document).on('click', '.linphone .window .dial_button',  function (event) {
+			call_invite(jQuery(event.target).parent().find('.dest').val())
+		})
+		
+		$(document).on('click', '.linphone .window .teminate_button', function (event) {
+			element = jQuery(event.target).parents('.tab')
+			if(element && element.data('data')) {
+				plugin().terminate_call(element.data('data').obj)
+			} else {
+				addLog('Can\'t find call: ' + element);
+			}
+		})
+		
+		$(document).on('click','.linphone .window .ui-tabs-close .ui-icon', function (event) {
+			var tab = jQuery(event.target).parents('li')
+			var tabId = tab.find('a').attr('href')
+			var element = jQuery('#linphone .window .tabs ' + tabId)
+			if(element && element.data('data')) {
+				plugin().terminate_call(element.data('data').obj)
+			} else {
+				addLog('Can\'t find call: ' + element);
+			}
+			jQuery('#linphone .window .tabs ').tabs('remove',tab.prevAll('li').length);
+		})
 
 	})
 	//show(LinphoneCore *lc);
 	//call_encryption_changed(LinphoneCall *call, bool_t on, const char *authentication_token);
 </script>
+<script id="LinphoneCall-Idle" type="text/x-jquery-tmpl">
+Idle <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-IncomingReceived" type="text/x-jquery-tmpl">
+IncomingReceived <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-OutgoingInit" type="text/x-jquery-tmpl">
+OutgoingInit <b>{{=dest}}</b>
+<div class="teminate_button"></div>
+</script>
+<script id="LinphoneCall-OutgoingProgress" type="text/x-jquery-tmpl">
+OutgoingProgress <b>{{=dest}}</b>
+<div class="teminate_button"></div>
+</script>
+<script id="LinphoneCall-OutgoingRinging" type="text/x-jquery-tmpl">
+OutgoingRinging <b>{{=dest}}</b>
+<div class="teminate_button"></div>
+</script>
+<script id="LinphoneCall-OutgoingEarlyMedia" type="text/x-jquery-tmpl">
+OutgoingEarlyMedia <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-Connected" type="text/x-jquery-tmpl">
+Connected <b>{{=dest}}</b>
+<div class="teminate_button"></div>
+</script>
+<script id="LinphoneCall-StreamsRunning" type="text/x-jquery-tmpl">
+StreamsRunning <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-Pausing" type="text/x-jquery-tmpl">
+Pausing <b>{{=dest}}</b>
+<div class="teminate_button"></div>
+</script>
+<script id="LinphoneCall-Paused" type="text/x-jquery-tmpl">
+Paused <b>{{=dest}}</b>
+<div class="teminate_button"></div>
+</script>
+<script id="LinphoneCall-Resuming" type="text/x-jquery-tmpl">
+Resuming <b>{{=dest}}</b>
+<div class="teminate_button"></div>
+</script>
+<script id="LinphoneCall-Refered" type="text/x-jquery-tmpl">
+Refered <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-Error" type="text/x-jquery-tmpl">
+Error <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-End" type="text/x-jquery-tmpl">
+End <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-PausedByRemote" type="text/x-jquery-tmpl">
+PausedByRemote <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-UpdatedByRemote" type="text/x-jquery-tmpl">
+UpdatedByRemote <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-IncomingEarlyMedia" type="text/x-jquery-tmpl">
+IncomingEarlyMedia <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-Updated" type="text/x-jquery-tmpl">
+Updated <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-Released" type="text/x-jquery-tmpl">
+Call end: <b>{{=dest}}</b>
+</script>
+
 <style type="text/css">
 body {
 	font: 62.5% "Trebuchet MS", sans-serif;
 }
+
 .tabs {
-    font-size: .8em !important;
-	width:auto;
-	margin:5px;
-	padding:0;
-	border:0 !important;
-	overflow:hidden;
+	font-size: .8em !important;
+	width: auto;
+	margin: 5px;
+	padding: 0;
+	border: 0 !important;
+	overflow: hidden;
 }
 
 /*scrollable tabs css*/
-.ui-scrollable-tabs { overflow:hidden; position:relative; }
+.ui-scrollable-tabs {
+	overflow: hidden;
+	position: relative;
+}
 
 .ui-scrollable-tabs .ui-tabs-nav {
-	width:1000000px;
-	padding:1px 0 0 1px;
-	border-left:none;
-	border-right:none;
-	padding-top:1px;
-	position:relative;
+	width: 1000000px;
+	padding: 1px 0 0 1px;
+	border-left: none;
+	border-right: none;
+	padding-top: 1px;
+	position: relative;
 }
 
 .ui-scrollable-tabs .ui-tabs .ui-tabs-closable li a {
-	padding-right:5px;
+	padding-right: 5px;
 }
 
 .ui-scrollable-tabs .ui-tabs-nav-arrows {
 	left: 0;
 	margin: 0;
-	margin:0 5px;
+	margin: 0 5px;
 	padding: 0;
 	position: absolute;
 	right: 0;
@@ -165,38 +267,42 @@ body {
 
 /*IE7 fix*/
 *:first-child+html .ui-scrollable-tabs .ui-tabs-nav-arrows {
-	z-index:1;
+	z-index: 1;
 }
 
 .ui-scrollable-tabs .ui-tabs .ui-tabs-nav li {
-	margin:0 1px 0;
+	margin: 0 1px 0;
 }
 
 .ui-tabs-nav li .ui-tabs-close {
-	float:left;
-	margin-top:3px;
-	margin-right:4px;
-	border:none;
-	cursor:pointer;
+	float: left;
+	margin-top: 3px;
+	margin-right: 4px;
+	border: none;
+	cursor: pointer;
 }
 
-.ui-scrollable-tabs .ui-tabs-nav-arrows .ui-tabs-arrow-next { float:right; }
+.ui-scrollable-tabs .ui-tabs-nav-arrows .ui-tabs-arrow-next {
+	float: right;
+}
 
-.ui-scrollable-tabs .ui-tabs-nav-arrows .ui-tabs-arrow-previous { float:left; }
+.ui-scrollable-tabs .ui-tabs-nav-arrows .ui-tabs-arrow-previous {
+	float: left;
+}
 
 .ui-scrollable-tabs .ui-tabs-nav-arrows li {
-    list-style:none;
-    position:relative;
-    cursor:pointer;
-    margin:0;
-    padding:0;
-	display:none;
-	z-index:1;
+	list-style: none;
+	position: relative;
+	cursor: pointer;
+	margin: 0;
+	padding: 0;
+	display: none;
+	z-index: 1;
 	height: 23px;
 }
 
 .ui-scrollable-tabs .ui-tabs-nav-arrows li a {
-    display: block;
+	display: block;
 	margin-top: 3px;
 }
 
@@ -224,21 +330,21 @@ body {
 			<div class="header ui-corner-top">
 				<div class="text">Linphone</div>
 			</div>
-			
+
 			<div class="composer">
 				<div style="display: inline-block;">
 					<input type="text" class="dest" />
 				</div>
 				<div class="dial_button"></div>
 			</div>
-			
+
 			<div class="tabs">
 				<ul>
 					<li><a href="#tabs-1">First</a></li>
 				</ul>
 				<div id="tabs-1" class="tab">Example</div>
 			</div>
-			
+
 			<div class="status ui-corner-bottom">
 				<div class="text"></div>
 			</div>

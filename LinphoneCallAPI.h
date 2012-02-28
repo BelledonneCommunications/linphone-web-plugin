@@ -18,6 +18,7 @@ public:
 	~LinphoneCallAPI();
 
 	int get_state();
+	LinphoneCall *getRef();
 	static boost::shared_ptr<LinphoneCallAPI> get(LinphoneCall *call);
 };
 

@@ -45,6 +45,7 @@ linphoneAPI::linphoneAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& ho
 	// Methods
 	registerMethod("init", make_method(this, &linphoneAPI::init));
 	registerMethod("invite", make_method(this, &linphoneAPI::invite));
+	registerMethod("terminate_call", make_method(this, &linphoneAPI::terminate_call));
 }
 
 int linphoneAPI::init() {
@@ -132,8 +133,13 @@ boost::shared_ptr<LinphoneCallAPI> linphoneAPI::invite(const std::string &dest) 
 	FBLOG_DEBUG("linphoneAPI::invite", dest);
 	LinphoneCall *call = linphone_core_invite(m_lin_core, dest.c_str());
 	boost::shared_ptr<LinphoneCallAPI> shared_call =  LinphoneCallAPI::get(call);
-	FBLOG_DEBUG("linphoneAPI::invite", "done");
 	return shared_call;
+}
+
+void linphoneAPI::terminate_call(boost::shared_ptr<LinphoneCallAPI> call) {
+	//boost::mutex::scoped_lock scopedLock(m_core_mutex);
+	FBLOG_DEBUG("linphoneAPI::terminate_call", call);
+	linphone_core_terminate_call(m_lin_core, call->getRef());
 }
 
 // Read-only property version

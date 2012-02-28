@@ -8,8 +8,8 @@
 }
 
 .linphone .window .header {
-	border-bottom: 1px solid #DDBBBB;
-	background-color: #FFDDDD;
+	border-bottom: 1px solid #6666DD;
+	background: url("ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png") repeat-x scroll 50% 50% #F6A828;
 	height: 30px;
 	line-height: 30px;
 	width: 100%;
@@ -19,6 +19,8 @@
 	text-align: center;
 	margin-left: 5px;
 	margin-right: 5px;
+	font-size: 140%;
+	font-weight: bold;
 }
 
 .linphone .window .composer {
@@ -28,6 +30,17 @@
 
 .linphone .window .composer input {
 	vertical-align: middle;
+}
+
+.linphone .window .teminate_button  {
+	display: block;
+	background-image: url('images/stopcall-red.png');
+	background-size: 32px 32px;
+	width: 32px;
+	height: 32px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
 }
 
 .linphone .window .composer .dial_button {
@@ -51,6 +64,10 @@
 
 .linphone .window .tabs {
 	
+}
+
+.linphone .window .tabs a:focus {
+	outline: 0px;
 }
 
 .linphone .window .tabs .tab {

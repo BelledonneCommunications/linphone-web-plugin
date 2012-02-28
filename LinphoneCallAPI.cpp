@@ -25,6 +25,10 @@ int LinphoneCallAPI::get_state() {
 	return linphone_call_get_state(mCall);
 }
 
+LinphoneCall *LinphoneCallAPI::getRef() {
+	return mCall;
+}
+
 boost::shared_ptr<LinphoneCallAPI> LinphoneCallAPI::get(LinphoneCall *call) {
 	void *ptr = linphone_call_get_user_pointer(call);
 	if(ptr == NULL)  {
