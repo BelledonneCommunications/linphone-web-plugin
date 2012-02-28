@@ -42,6 +42,12 @@
 		if (plugin().init() != 0) {
 			alert("Plugin error!");
 		}
+		
+		// Init volumes
+		jQuery('.linphone .window .tools .mic-slider').slider('value', 100)
+		plugin().set_rec_level(100)
+		jQuery('.linphone .window .tools .hp-slider').slider('value', 100)
+		plugin().set_play_level(100)
 	}
 
 	function global_state_changed(state, message) {
@@ -127,11 +133,19 @@
 			scrollable : true
 		})
 		
-		$(document).on('click', '.linphone .window .dial_button',  function (event) {
+		jQuery( ".linphone .window .tools .hp-slider" ).slider({ orientation: 'vertical', change: function(event, ui) {
+			plugin().set_play_level(ui.value)
+		}
+		});
+		jQuery( ".linphone .window .tools .mic-slider" ).slider({ orientation: 'vertical', change: function(event, ui) {
+			plugin().set_rec_level(ui.value)
+		}});
+		
+		jQuery(document).on('click', '.linphone .window .dial-button',  function (event) {
 			call_invite(jQuery(event.target).parent().find('.dest').val())
 		})
 		
-		$(document).on('click', '.linphone .window .teminate_button', function (event) {
+		jQuery(document).on('click', '.linphone .window .teminate-button', function (event) {
 			element = jQuery(event.target).parents('.tab')
 			if(element && element.data('data')) {
 				plugin().terminate_call(element.data('data').obj)
@@ -140,7 +154,7 @@
 			}
 		})
 		
-		$(document).on('click','.linphone .window .ui-tabs-close .ui-icon', function (event) {
+		jQuery(document).on('click','.linphone .window .ui-tabs-close .ui-icon', function (event) {
 			var tab = jQuery(event.target).parents('li')
 			var tabId = tab.find('a').attr('href')
 			var element = jQuery('#linphone .window .tabs ' + tabId)
@@ -152,6 +166,25 @@
 			jQuery('#linphone .window .tabs ').tabs('remove',tab.prevAll('li').length);
 		})
 
+		jQuery('.linphone .window .tools .hp-icon').click(function (event) {
+			var element = $('.linphone .window .tools .hp-slider')
+			element.fadeIn('fast');
+		})
+		
+		jQuery('.linphone .window .tools .mic-icon').click(function (event) {
+			var element = $('.linphone .window .tools .mic-slider')
+			element.fadeIn('fast');
+		})
+		
+		jQuery('html').click(function(event) {
+			 var target = jQuery(event.target);
+			 if(target.length) {
+			 	if(jQuery('.linphone .window .tools .hp-icon').length && target[0] != jQuery('.linphone .window .tools .hp-icon')[0])
+				 	jQuery('.linphone .window .tools .hp-slider').fadeOut('fast');
+			 	if(jQuery('.linphone .window .tools .mic-icon').length && target[0] != jQuery('.linphone .window .tools .mic-icon')[0])
+				 	jQuery('.linphone .window .tools .mic-slider').fadeOut('fast');
+			 }
+		});
 	})
 	//show(LinphoneCore *lc);
 	//call_encryption_changed(LinphoneCall *call, bool_t on, const char *authentication_token);
@@ -164,37 +197,38 @@ IncomingReceived <b>{{=dest}}</b>
 </script>
 <script id="LinphoneCall-OutgoingInit" type="text/x-jquery-tmpl">
 OutgoingInit <b>{{=dest}}</b>
-<div class="teminate_button"></div>
+<div class="teminate-button"></div>
 </script>
 <script id="LinphoneCall-OutgoingProgress" type="text/x-jquery-tmpl">
 OutgoingProgress <b>{{=dest}}</b>
-<div class="teminate_button"></div>
+<div class="teminate-button"></div>
 </script>
 <script id="LinphoneCall-OutgoingRinging" type="text/x-jquery-tmpl">
 OutgoingRinging <b>{{=dest}}</b>
-<div class="teminate_button"></div>
+<div class="teminate-button"></div>
 </script>
 <script id="LinphoneCall-OutgoingEarlyMedia" type="text/x-jquery-tmpl">
 OutgoingEarlyMedia <b>{{=dest}}</b>
 </script>
 <script id="LinphoneCall-Connected" type="text/x-jquery-tmpl">
 Connected <b>{{=dest}}</b>
-<div class="teminate_button"></div>
+<div class="teminate-button"></div>
 </script>
 <script id="LinphoneCall-StreamsRunning" type="text/x-jquery-tmpl">
 StreamsRunning <b>{{=dest}}</b>
+<div class="teminate-button"></div>
 </script>
 <script id="LinphoneCall-Pausing" type="text/x-jquery-tmpl">
 Pausing <b>{{=dest}}</b>
-<div class="teminate_button"></div>
+<div class="teminate-button"></div>
 </script>
 <script id="LinphoneCall-Paused" type="text/x-jquery-tmpl">
 Paused <b>{{=dest}}</b>
-<div class="teminate_button"></div>
+<div class="teminate-button"></div>
 </script>
 <script id="LinphoneCall-Resuming" type="text/x-jquery-tmpl">
 Resuming <b>{{=dest}}</b>
-<div class="teminate_button"></div>
+<div class="teminate-button"></div>
 </script>
 <script id="LinphoneCall-Refered" type="text/x-jquery-tmpl">
 Refered <b>{{=dest}}</b>
@@ -335,7 +369,7 @@ body {
 				<div style="display: inline-block;">
 					<input type="text" class="dest" />
 				</div>
-				<div class="dial_button"></div>
+				<div class="dial-button"></div>
 			</div>
 
 			<div class="tabs">
@@ -347,6 +381,10 @@ body {
 
 			<div class="status ui-corner-bottom">
 				<div class="text"></div>
+				<div class="tools">			
+					<div class="mic-icon"><div class="mic-slider"></div></div>
+					<div class="hp-icon"><div class="hp-slider"></div></div>
+				</div>
 			</div>
 		</div>
 	</div>

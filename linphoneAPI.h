@@ -30,6 +30,8 @@ public:
 
 	boost::shared_ptr<LinphoneCallAPI> invite(const std::string &dest);
 	void terminate_call(boost::shared_ptr<LinphoneCallAPI> call);
+	void set_play_level(int level);
+	void set_rec_level(int level);
 
 	// Event helpers
 	FB_JSAPI_EVENT(global_state_changed, 2, (const int&, const std::string&))

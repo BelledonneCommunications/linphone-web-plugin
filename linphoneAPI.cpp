@@ -46,6 +46,8 @@ linphoneAPI::linphoneAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& ho
 	registerMethod("init", make_method(this, &linphoneAPI::init));
 	registerMethod("invite", make_method(this, &linphoneAPI::invite));
 	registerMethod("terminate_call", make_method(this, &linphoneAPI::terminate_call));
+	registerMethod("set_play_level", make_method(this, &linphoneAPI::set_play_level));
+	registerMethod("set_rec_level", make_method(this, &linphoneAPI::set_rec_level));
 }
 
 int linphoneAPI::init() {
@@ -140,6 +142,16 @@ void linphoneAPI::terminate_call(boost::shared_ptr<LinphoneCallAPI> call) {
 	//boost::mutex::scoped_lock scopedLock(m_core_mutex);
 	FBLOG_DEBUG("linphoneAPI::terminate_call", call);
 	linphone_core_terminate_call(m_lin_core, call->getRef());
+}
+
+void linphoneAPI::set_play_level(int level) {
+	FBLOG_DEBUG("linphoneAPI::set_play_level", level);
+	linphone_core_set_play_level(m_lin_core, level);
+}
+
+void linphoneAPI::set_rec_level(int level) {
+	FBLOG_DEBUG("linphoneAPI::set_rec_level", level);
+	linphone_core_set_rec_level(m_lin_core, level);
 }
 
 // Read-only property version

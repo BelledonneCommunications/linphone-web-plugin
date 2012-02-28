@@ -32,7 +32,7 @@
 	vertical-align: middle;
 }
 
-.linphone .window .teminate_button  {
+.linphone .window .teminate-button  {
 	display: block;
 	background-image: url('images/stopcall-red.png');
 	background-size: 32px 32px;
@@ -43,13 +43,45 @@
     margin-top: 10px;
 }
 
-.linphone .window .composer .dial_button {
+.linphone .window .composer .dial-button {
 	display: inline-block;
 	vertical-align: middle;
 	background-image: url('images/ok.png');
 	background-size: 16px 16px;
 	width: 16px;
 	height: 16px;
+}
+
+.linphone .window .mic-icon {
+	display: inline-block;
+	background-image: url('images/microphone.png');
+	background-size: 16px 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.linphone .window .mic-slider {
+	display: none;
+	position: relative;
+	height:100px;
+	top:-102px;
+	left:3px;
+}
+
+.linphone .window .hp-icon {
+	display: inline-block;
+	background-image: url('images/headphone.png');
+	background-size: 16px 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.linphone .window .hp-slider {
+	display: none;
+	position: relative;
+	height:100px;
+	top:-102px;
+	left:3px;
 }
 
 .linphone .window .status {
@@ -62,6 +94,19 @@
 	width: 100%;
 }
 
+.linphone .window .status .text {
+	font-size: 10px;
+	margin-left: 5px;
+	margin-right: 5px;
+	display: inline-block;
+}
+
+.linphone .window .status .tools {
+	float: right;
+	margin-top: 2px;
+	margin-right: 5px;
+}
+
 .linphone .window .tabs {
 	
 }
@@ -72,12 +117,6 @@
 
 .linphone .window .tabs .tab {
 	height: 100%;
-}
-
-.linphone .window .status .text {
-	font-size: 10px;
-	margin-left: 5px;
-	margin-right: 5px;
 }
 
 .linphone .window .content {
