@@ -6,36 +6,83 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <map>
 #include <boost/weak_ptr.hpp>
+#include <boost/preprocessor/debug/assert.hpp>
+#include <boost/mpl/aux_/preprocessor/token_equal.hpp>
 #include "JSAPIAuto.h"
 #include "BrowserHost.h"
 #include "linphone.h"
 #include "LinphoneCallAPI.h"
+#include "variant_list.h"
 #include <linphonecore.h>
 #ifndef H_linphoneAPI
 #define H_linphoneAPI
+
+#define __DECLARE_SYNC_N_ASYNC_PARAMMACRO(z, n, args) BOOST_PP_ARRAY_ELEM(n, args) p##n
+#define __DECLARE_SYNC_N_ASYNC_USEMACRO(z, n, args) p##n
+
+#define REGISTER_SYNC_N_ASYNC(name, funct_name)  \
+	registerMethod(name, make_method(this, &linphoneAPI::funct_name)); \
+	registerMethod(name "_async", make_method(this, &linphoneAPI::BOOST_PP_CAT(funct_name, _async)));
+
+#define DECLARE_SYNC_N_ASYNC_SYNC_FCT(name, argCount, argList, ret)  		\
+	ret name (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)));
+
+#define BOOST_MPL_PP_TOKEN_EQUAL_void(x) x
+
+#define DECLARE_SYNC_N_ASYNC_THREAD_FCT(name, argCount, argList, ret)  																								\
+	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),																														\
+			void BOOST_PP_CAT(name, _async_thread) (FB::JSObjectPtr callback) {,																					\
+			void BOOST_PP_CAT(name, _async_thread) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {) 	\
+	BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),																													\
+		name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList))); 																		\
+		callback->InvokeAsync("", FB::variant_list_of(shared_from_this()));, 																						\
+		ret value = name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList))); 															\
+		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(value));) 																				\
+		m_threads_mutex.lock(); m_threads.erase(boost::this_thread::get_id()); m_threads_mutex.unlock(); 															\
+	}
+
+#define COMMA ,
+#define DECLARE_SYNC_N_ASYNC_ASYNC_FCT(name, argCount, argList) 																							\
+	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),																												\
+			void BOOST_PP_CAT(name, _async) (FB::JSObjectPtr callback) {,																					\
+			void BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {) 	\
+		boost::thread *thread = new boost::thread(boost::bind(&linphoneAPI::BOOST_PP_CAT(name, _async_thread), this, 										\
+		BOOST_PP_IF(BOOST_PP_NOT_EQUAL(argCount, 0), BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList)), BOOST_PP_EMPTY())		\
+		BOOST_PP_IF(BOOST_PP_NOT_EQUAL(argCount, 0), BOOST_PP_COMMA, BOOST_PP_EMPTY)()																		\
+													callback)); 																							\
+		m_threads_mutex.lock(); m_threads.insert(std::pair<boost::thread::id, boost::thread*>(thread->get_id(), thread)); m_threads_mutex.unlock(); 		\
+	}
+
+#define DECLARE_SYNC_N_ASYNC(name, argCount, argList, ret)			\
+	DECLARE_SYNC_N_ASYNC_SYNC_FCT(name, argCount, argList, ret)		\
+	DECLARE_SYNC_N_ASYNC_THREAD_FCT(name, argCount, argList, ret)  	\
+	DECLARE_SYNC_N_ASYNC_ASYNC_FCT(name, argCount, argList)
 
 
 class linphoneAPI: public FB::JSAPIAuto {
 public:
 	linphoneAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host);
-	int init();
-	void shutdown();
 	~linphoneAPI();
 
 	linphonePtr getPlugin();
 
-	// Read-only property ${PROPERTY.ident}
+	// Read-only property
 	std::string getVersion();
 
-	boost::shared_ptr<LinphoneCallAPI> invite(const std::string &dest);
-	void terminate_call(boost::shared_ptr<LinphoneCallAPI> call);
+	// Methods
+	int init();
+	//
+	DECLARE_SYNC_N_ASYNC(invite, 1, (const std::string &), boost::shared_ptr<LinphoneCallAPI>)
+	//
+	DECLARE_SYNC_N_ASYNC(terminate_call, 1, (boost::shared_ptr<LinphoneCallAPI>), void)
+	//
 	void set_play_level(int level);
 	void set_rec_level(int level);
 
 	// Event helpers
-	FB_JSAPI_EVENT(global_state_changed, 2, (const int&, const std::string&))
-	FB_JSAPI_EVENT(call_state_changed, 3, (boost::shared_ptr<LinphoneCallAPI>, const int&, const std::string&))
+	FB_JSAPI_EVENT(global_state_changed, 2, (const int&, const std::string&))FB_JSAPI_EVENT(call_state_changed, 3, (boost::shared_ptr<LinphoneCallAPI>, const int&, const std::string&))
 
 	FB_JSAPI_EVENT(auth_info_requested, 2, (const std::string&, const std::string&))
 
@@ -53,15 +100,19 @@ private:
 
 	LinphoneCore *m_lin_core; // Linphone core object
 	LinphoneCoreVTable m_lin_vtable; // Linphone callback methods table
+
 	boost::mutex m_core_mutex;
 	boost::thread *m_core_thread;
+
+	boost::mutex m_threads_mutex;
+	std::map<boost::thread::id, boost::thread *> m_threads;
 
 	void iterate() {
 		if (m_lin_core != NULL)
 			linphone_core_iterate(m_lin_core);
 	}
 
-	friend void linphone_thread (linphoneAPI *linphone_api);
+	friend void linphone_thread(linphoneAPI *linphone_api);
 	void iterateWithMutex() {
 		//m_core_mutex.lock();
 		iterate();

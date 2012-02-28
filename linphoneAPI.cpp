@@ -3,11 +3,12 @@
 
  \**********************************************************/
 
-#include "JSObject.h"
-#include "variant_list.h"
-#include "DOM/Document.h"
-#include "global/config.h"
+#include <JSObject.h>
+#include <variant_list.h>
+#include <DOM/Document.h>
+#include <global/config.h>
 #include <sstream>
+#include <boost/foreach.hpp>
 #include "linphoneAPI.h"
 #include "LinphoneCallAPI.h"
 #define DEBUG_LOG
@@ -44,8 +45,8 @@ linphoneAPI::linphoneAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& ho
 
 	// Methods
 	registerMethod("init", make_method(this, &linphoneAPI::init));
-	registerMethod("invite", make_method(this, &linphoneAPI::invite));
-	registerMethod("terminate_call", make_method(this, &linphoneAPI::terminate_call));
+	REGISTER_SYNC_N_ASYNC("invite", invite);
+	REGISTER_SYNC_N_ASYNC("terminate_call", terminate_call);
 	registerMethod("set_play_level", make_method(this, &linphoneAPI::set_play_level));
 	registerMethod("set_rec_level", make_method(this, &linphoneAPI::set_rec_level));
 }
@@ -90,9 +91,6 @@ int linphoneAPI::init() {
 	return 0;
 }
 
-void linphoneAPI::shutdown() {
-	FBLOG_DEBUG("linphoneAPI::shutdown()", "");
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @fn linphoneAPI::~linphoneAPI()
@@ -103,11 +101,24 @@ void linphoneAPI::shutdown() {
 ///////////////////////////////////////////////////////////////////////////////
 linphoneAPI::~linphoneAPI() {
 	FBLOG_DEBUG("linphoneAPI::~linphoneAPI()", "");
-	if (m_core_thread != NULL) {
+
+	if(m_core_thread != NULL) {
 		m_core_thread->interrupt();
 		m_core_thread->join();
 		delete m_core_thread;
 	}
+
+	m_threads_mutex.lock();
+	typedef std::map<boost::thread::id, boost::thread *> map_t;
+	BOOST_FOREACH(map_t::value_type &pair, m_threads) {
+		boost::thread *thread = pair.second;
+		thread->interrupt();
+		thread->join();
+		delete thread;
+	}
+	m_threads.clear();
+	m_threads_mutex.unlock();
+
 	if (m_lin_core != NULL) {
 		linphone_core_destroy(m_lin_core);
 	}
