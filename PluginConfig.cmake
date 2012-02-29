@@ -58,4 +58,9 @@ set(FBMAC_USE_INVALIDATINGCOREANIMATION 0)
 # If you want to register per-machine on Windows, uncomment this line
 #set (FB_ATLREG_MACHINEWIDE 1)
 
-add_firebreath_library(log4cplus)
+# GCC option
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+
+#if(ENABLE_DEBUG)
+	add_firebreath_library(log4cplus)
+#endif()

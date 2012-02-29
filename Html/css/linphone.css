@@ -30,6 +30,7 @@
 
 .linphone .window .composer input {
 	vertical-align: middle;
+	width: 176px;
 }
 
 .linphone .window .teminate-button  {
