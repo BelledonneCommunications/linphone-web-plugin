@@ -1,7 +1,5 @@
-/**********************************************************
- Auto-generated linphoneAPI.h
-
- \**********************************************************/
+#ifndef H_linphoneAPI
+#define H_linphoneAPI
 
 #include <string>
 #include <sstream>
@@ -14,12 +12,9 @@
 #include <BrowserHost.h>
 #include <variant_list.h>
 #include <linphonecore.h>
-#include "LinphoneCallAPI.h"
+#include "linphoneCallAPI.h"
 #include "linphone.h"
 #include "utils.h"
-
-#ifndef H_linphoneAPI
-#define H_linphoneAPI
 
 #define __DECLARE_SYNC_N_ASYNC_PARAMMACRO(z, n, args) BOOST_PP_ARRAY_ELEM(n, args) p##n
 #define __DECLARE_SYNC_N_ASYNC_USEMACRO(z, n, args) p##n

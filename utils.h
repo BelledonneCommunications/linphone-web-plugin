@@ -1,5 +1,5 @@
-#ifndef H_utils
-#define H_utils
+#ifndef H_UTILS
+#define H_UTILS
 
 #include <map>
 #include <boost/thread.hpp>
@@ -69,4 +69,4 @@ private:
 	mutable boost::shared_mutex m;
 };
 
-#endif // H_utils
+#endif // H_UTILS

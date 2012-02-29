@@ -1,9 +1,4 @@
-/*
- * LinphoneCallAPI.cpp
- *
- */
-
-#include "LinphoneCallAPI.h"
+#include "linphoneCallAPI.h"
 
 LinphoneCallAPI::LinphoneCallAPI(LinphoneCall *call) :
 		mCall(call) {

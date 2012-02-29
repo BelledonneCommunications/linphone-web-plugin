@@ -1,8 +1,3 @@
-/**********************************************************
- Auto-generated linphoneAPI.cpp
-
- \**********************************************************/
-
 #include <JSObject.h>
 #include <variant_list.h>
 #include <DOM/Document.h>
@@ -10,8 +5,6 @@
 #include <sstream>
 #include <boost/foreach.hpp>
 #include "linphoneAPI.h"
-#include "LinphoneCallAPI.h"
-#define DEBUG_LOG
 
 void linphone_iterate_thread(linphoneAPI *linphone_api) {
 	FBLOG_DEBUG("linphone_thread", "start");
@@ -196,7 +189,7 @@ int linphoneAPI::getSipPort() {
 
 void linphoneAPI::wrapper_global_state_changed(LinphoneCore *lc, LinphoneGlobalState gstate, const char *message) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "gstate = " << gstate << ", ";
 		ss << "message = " << message;
@@ -207,7 +200,7 @@ void linphoneAPI::wrapper_global_state_changed(LinphoneCore *lc, LinphoneGlobalS
 }
 void linphoneAPI::wrapper_registration_state_changed(LinphoneCore *lc, LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "cfg = " << cfg << ", ";
 		ss << "cstate = " << cstate << ", ";
@@ -218,7 +211,7 @@ void linphoneAPI::wrapper_registration_state_changed(LinphoneCore *lc, LinphoneP
 }
 void linphoneAPI::wrapper_call_state_changed(LinphoneCore *lc, LinphoneCall *call, LinphoneCallState cstate, const char *message) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "call = " << call << ", ";
 		ss << "cstate = " << cstate << ", ";
@@ -230,7 +223,7 @@ void linphoneAPI::wrapper_call_state_changed(LinphoneCore *lc, LinphoneCall *cal
 }
 void linphoneAPI::wrapper_notify_presence_recv(LinphoneCore *lc, LinphoneFriend * lf) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "lf = " << lf;
 		FBLOG_DEBUG("wrapper_notify_presence_recv", ss.str());
@@ -239,7 +232,7 @@ void linphoneAPI::wrapper_notify_presence_recv(LinphoneCore *lc, LinphoneFriend 
 }
 void linphoneAPI::wrapper_new_subscription_request(LinphoneCore *lc, LinphoneFriend *lf, const char *url) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "lf = " << lf << ", ";
 		ss << "url = " << url;
@@ -249,7 +242,7 @@ void linphoneAPI::wrapper_new_subscription_request(LinphoneCore *lc, LinphoneFri
 }
 void linphoneAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "realm = " << realm << ", ";
 		ss << "username = " << username;
@@ -259,7 +252,7 @@ void linphoneAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *real
 }
 void linphoneAPI::wrapper_call_log_updated(LinphoneCore *lc, LinphoneCallLog *newcl) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "newcl = " << newcl;
 		FBLOG_DEBUG("wrapper_call_log_updated", ss.str());
@@ -268,7 +261,7 @@ void linphoneAPI::wrapper_call_log_updated(LinphoneCore *lc, LinphoneCallLog *ne
 }
 void linphoneAPI::wrapper_text_received(LinphoneCore *lc, LinphoneChatRoom *room, const LinphoneAddress *from, const char *message) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "room = " << room << ", ";
 		ss << "from = " << from << ", ";
@@ -279,7 +272,7 @@ void linphoneAPI::wrapper_text_received(LinphoneCore *lc, LinphoneChatRoom *room
 }
 void linphoneAPI::wrapper_dtmf_received(LinphoneCore *lc, LinphoneCall *call, int dtmf) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "call = " << call << ", ";
 		ss << "dtmf = " << dtmf;
@@ -289,7 +282,7 @@ void linphoneAPI::wrapper_dtmf_received(LinphoneCore *lc, LinphoneCall *call, in
 }
 void linphoneAPI::wrapper_refer_received(LinphoneCore *lc, const char *refer_to) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "refer_to = " << refer_to;
 		FBLOG_DEBUG("wrapper_refer_received", ss.str());
@@ -298,7 +291,7 @@ void linphoneAPI::wrapper_refer_received(LinphoneCore *lc, const char *refer_to)
 }
 void linphoneAPI::wrapper_buddy_info_updated(LinphoneCore *lc, LinphoneFriend *lf) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "lf = " << lf;
 		FBLOG_DEBUG("wrapper_buddy_info_updated", ss.str());
@@ -307,7 +300,7 @@ void linphoneAPI::wrapper_buddy_info_updated(LinphoneCore *lc, LinphoneFriend *l
 }
 void linphoneAPI::wrapper_notify_recv(LinphoneCore *lc, LinphoneCall *call, const char *from, const char *event) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "call = " << call << ", ";
 		ss << "from = " << from << ", ";
@@ -318,7 +311,7 @@ void linphoneAPI::wrapper_notify_recv(LinphoneCore *lc, LinphoneCall *call, cons
 }
 void linphoneAPI::wrapper_display_status(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "message = " << message;
 		FBLOG_DEBUG("wrapper_display_status", ss.str());
@@ -328,7 +321,7 @@ void linphoneAPI::wrapper_display_status(LinphoneCore *lc, const char *message) 
 }
 void linphoneAPI::wrapper_display_message(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "message = " << message;
 		FBLOG_DEBUG("wrapper_display_message", ss.str());
@@ -338,7 +331,7 @@ void linphoneAPI::wrapper_display_message(LinphoneCore *lc, const char *message)
 }
 void linphoneAPI::wrapper_display_warning(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "message = " << message;
 		FBLOG_DEBUG("wrapper_display_warning", ss.str());
@@ -348,7 +341,7 @@ void linphoneAPI::wrapper_display_warning(LinphoneCore *lc, const char *message)
 }
 void linphoneAPI::wrapper_display_url(LinphoneCore *lc, const char *message, const char *url) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "message = " << message << ", ";
 		ss << "url = " << url;
@@ -359,7 +352,7 @@ void linphoneAPI::wrapper_display_url(LinphoneCore *lc, const char *message, con
 }
 void linphoneAPI::wrapper_show(LinphoneCore *lc) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		FBLOG_DEBUG("wrapper_show", ss.str());
 #endif //DEBUG_LOG
@@ -368,7 +361,7 @@ void linphoneAPI::wrapper_show(LinphoneCore *lc) {
 }
 void linphoneAPI::wrapper_call_encryption_changed(LinphoneCore *lc, LinphoneCall *call, bool_t on, const char *authentication_token) {
 	if (GLC_DEFINED()) {
-#ifdef DEBUG_LOG
+#if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		ss << "call = " << call << ", ";
 		ss << "on = " << on << ", ";

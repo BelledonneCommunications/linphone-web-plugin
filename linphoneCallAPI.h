@@ -1,12 +1,7 @@
-/*
- * LinphoneCallAPI.h
- *
- */
+#ifndef H_LINPHONECALLAPI
+#define H_LINPHONECALLAPI
 
-#ifndef LINPHONECALLAPI_H_
-#define LINPHONECALLAPI_H_
-
-#include "JSAPIAuto.h"
+#include <JSAPIAuto.h>
 #include <linphonecore.h>
 
 class LinphoneCallAPI : public FB::JSAPIAuto {
@@ -21,4 +16,4 @@ public:
 	static boost::shared_ptr<LinphoneCallAPI> get(LinphoneCall *call);
 };
 
-#endif /* LINPHONECALLAPI_H_ */
+#endif //H_LINPHONECALLAPI

@@ -1,13 +1,5 @@
-/**********************************************************\
-
-  Auto-generated linphone.h
-
-  This file contains the auto-generated main plugin object
-  implementation for the linphone project
-
-\**********************************************************/
-#ifndef H_linphonePLUGIN
-#define H_linphonePLUGIN
+#ifndef H_LINPHONEPLUGIN
+#define H_LINPHONEPLUGIN
 
 #include "PluginWindow.h"
 #include "PluginEvents/MouseEvents.h"
@@ -56,5 +48,5 @@ public:
 };
 
 
-#endif
+#endif //H_LINPHONEPLUGIN
 
