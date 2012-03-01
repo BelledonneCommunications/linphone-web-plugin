@@ -30,7 +30,7 @@
 
 .linphone .window .composer input {
 	vertical-align: middle;
-	width: 176px;
+	width: 170px;
 }
 
 .linphone .window .teminate-button  {
@@ -53,15 +53,17 @@
 	height: 16px;
 }
 
-.linphone .window .mic-icon {
+.linphone .window .tools .mic-icon {
 	display: inline-block;
 	background-image: url('images/microphone.png');
 	background-size: 16px 16px;
 	width: 16px;
 	height: 16px;
+	margin-left:1px;
+	margin-right:1px;
 }
 
-.linphone .window .mic-slider {
+.linphone .window .tools .mic-slider {
 	display: none;
 	position: relative;
 	height:100px;
@@ -69,20 +71,32 @@
 	left:3px;
 }
 
-.linphone .window .hp-icon {
+.linphone .window .tools .hp-icon {
 	display: inline-block;
 	background-image: url('images/headphone.png');
 	background-size: 16px 16px;
 	width: 16px;
 	height: 16px;
+	margin-left:1px;
+	margin-right:1px;
 }
 
-.linphone .window .hp-slider {
+.linphone .window .tools .hp-slider {
 	display: none;
 	position: relative;
 	height:100px;
 	top:-102px;
 	left:3px;
+}
+
+.linphone .window .tools .settings-icon {
+	display: inline-block;
+	background-image: url('images/settings.png');
+	background-size: 16px 16px;
+	width: 16px;
+	height: 16px;
+	margin-left:1px;
+	margin-right:1px;
 }
 
 .linphone .window .status {

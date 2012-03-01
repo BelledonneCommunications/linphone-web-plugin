@@ -1,6 +1,9 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<title>test page for object fbcontrol</title>
+<title>Linphone-JS</title>
+<link rel="icon" type="image/png" href="css/images/linphone.png"/>
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
 <link type="text/css" href="css/ui-lightness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />
 <link type="text/css" href="css/linphone.css" rel="stylesheet" />
 <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
@@ -8,266 +11,6 @@
 <script type="text/javascript" src="js/jquery.scrollabletab.js"></script>
 <script type="text/javascript" src="js/jsrender.js"></script>
 <script type="text/javascript" src="js/linphone.js"></script>
-</head>
-<script type="text/javascript">
-	function plugin0() {
-		return document.getElementById('plugin0');
-	}
-	plugin = plugin0;
-	function addEvent(obj, name, func) {
-		if (window.addEventListener) {
-			obj.addEventListener(name, func, false);
-		} else {
-			obj.attachEvent("on" + name, func);
-		}
-	}
-
-	function load() {
-
-	}
-
-	function addLog(message) {
-		jQuery('#log').val(jQuery('#log').val() + message + '\n');
-	}
-
-	function pluginLoaded() {
-		jQuery('#version_number').text(plugin().version);
-		addEvent(plugin(), 'global_state_changed', global_state_changed);
-		addEvent(plugin(), 'call_state_changed', call_state_changed);
-		addEvent(plugin(), 'display_status', display_status);
-		addEvent(plugin(), 'display_message', display_message);
-		addEvent(plugin(), 'display_warning', display_warning);
-		addEvent(plugin(), 'display_url', display_url);
-		if (plugin().init() != 0) {
-			alert("Plugin error!");
-		} else {
-			// Init volumes
-			jQuery('.linphone .window .tools .mic-slider').slider('value', 100)
-			plugin().set_rec_level(100)
-			jQuery('.linphone .window .tools .hp-slider').slider('value', 100)
-			plugin().set_play_level(100)
-			addLog('Sip port: ' + plugin().sip_port)
-		}
-	}
-
-	function global_state_changed(state, message) {
-		addLog('State(' + state + '): ' + message)
-		jQuery('.linphone .window .status .text').text(LinphoneGlobalStateText[state])
-	}
-
-	function call_state_changed(call, state, message) {
-		addLog('Call(' + state + '): ' + message);
-		var element = findCallTab(call);
-		if (element) {
-			element.html(jQuery('#LinphoneCall-' + LinphoneCallStateText[state]).render(element.data('data')))
-		} else {
-			addLog('Can\'t find call tab: ' + call);
-		}
-	}
-
-	//registration_state_changed(LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message);
-	//call_state_changed(LinphoneCall *call, LinphoneCallState cstate, const char *message);
-	//notify_presence_recv(LinphoneFriend * lf);
-	//new_subscription_request(LinphoneFriend *lf, const char *url);
-	//auth_info_requested(const char *realm, const char *username);
-	//call_log_updated(LinphoneCallLog *newcl);
-	//text_received(LinphoneChatRoom *room, const LinphoneAddress *from, const char *message);
-	//dtmf_received(LinphoneCall *call, int dtmf);
-	//refer_received(const char *refer_to);
-	//buddy_info_updated(LinphoneFriend *lf);
-	//notify_recv(LinphoneCall *call, const char *from, const char *event);
-	function display_status(message) {
-		addLog('Status: ' + message);
-	}
-
-	function display_message(message) {
-		addLog('Message: ' + message);
-	}
-
-	function display_warning(message) {
-		addLog('Warning: ' + message);
-	}
-
-	function display_url(message, url) {
-		addLog('Url: ' + message + ' - ' + url);
-	}
-
-	function findCallTab(obj) {
-		var ret = null
-		jQuery('#linphone .window .tabs .tab').each(function(index) {
-			var element = jQuery(this)
-			if (element.data('data') && element.data('data').obj == obj) {
-				ret = element;
-			}
-		})
-		return ret;
-	}
-
-	function call_invite(dest) {
-		plugin().invite_async(dest, function() {
-			return function(plugin, obj) {
-				call_invite_callback(dest, obj)
-			}
-		}())
-	}
-
-	function call_invite_callback(dest, obj) {
-		console.log("call_invite_callback")
-		console.log(dest)
-		console.log(obj)
-		if (obj) {
-			var call_number = jQuery.linphone.call_number
-			console.log('Add tab call-' + call_number)
-			var div = jQuery('<div id="call-'+call_number+'" class="tab"></div>')
-			jQuery('#linphone .window .tabs').append(div).tabs('add', '#call-' + call_number, 'Call ' + call_number);
-			jQuery('#linphone .window .tabs').tabs('select', '#call-' + call_number)
-			var element = jQuery('#linphone .window .tabs #call-' + call_number)
-			element.data('data', {obj : obj, dest : dest})
-			element.html(jQuery('#LinphoneCall-OutgoingInit').render(element.data('data'))) //Async invite force OutgoingInit 
-			jQuery.linphone.call_number++
-		}
-	}
-
-	jQuery(function() {
-		jQuery.linphone = {
-			call_number : 1
-		}
-		// Tabs
-		jQuery('.linphone .window .tabs').tabs({
-			closable : true,
-			scrollable : true
-		})
-
-		jQuery(".linphone .window .tools .hp-slider").slider({
-			orientation : 'vertical',
-			change : function(event, ui) {
-				plugin().set_play_level(ui.value)
-			}
-		});
-		jQuery(".linphone .window .tools .mic-slider").slider({
-			orientation : 'vertical',
-			change : function(event, ui) {
-				plugin().set_rec_level(ui.value)
-			}
-		});
-
-		jQuery(document).on('click', '.linphone .window .dial-button', function(event) {
-			call_invite(jQuery(event.target).parent().find('.dest').val())
-		})
-
-		jQuery(document).on('click', '.linphone .window .teminate-button', function(event) {
-			element = jQuery(event.target).parents('.tab')
-			if (element && element.data('data')) {
-				plugin().terminate_call(element.data('data').obj)
-			} else {
-				addLog('Can\'t find call: ' + element);
-			}
-		})
-
-		jQuery(document).on('click', '.linphone .window .ui-tabs-close .ui-icon', function(event) {
-			var tab = jQuery(event.target).parents('li')
-			var tabId = tab.find('a').attr('href')
-			var element = jQuery('#linphone .window .tabs ' + tabId)
-			if (element && element.data('data')) {
-				plugin().terminate_call(element.data('data').obj)
-			} else {
-				addLog('Can\'t find call: ' + element);
-			}
-			jQuery('#linphone .window .tabs ').tabs('remove', tab.prevAll('li').length);
-		})
-
-		jQuery('.linphone .window .tools .hp-icon').click(function(event) {
-			var element = $('.linphone .window .tools .hp-slider')
-			element.fadeIn('fast');
-		})
-
-		jQuery('.linphone .window .tools .mic-icon').click(function(event) {
-			var element = $('.linphone .window .tools .mic-slider')
-			element.fadeIn('fast');
-		})
-
-		jQuery('html').click(
-				function(event) {
-					var target = jQuery(event.target);
-					if (target.length) {
-						if (jQuery('.linphone .window .tools .hp-icon').length
-								&& target[0] != jQuery('.linphone .window .tools .hp-icon')[0])
-							jQuery('.linphone .window .tools .hp-slider').fadeOut('fast');
-						if (jQuery('.linphone .window .tools .mic-icon').length
-								&& target[0] != jQuery('.linphone .window .tools .mic-icon')[0])
-							jQuery('.linphone .window .tools .mic-slider').fadeOut('fast');
-					}
-				});
-	})
-	//show(LinphoneCore *lc);
-	//call_encryption_changed(LinphoneCall *call, bool_t on, const char *authentication_token);
-</script>
-<script id="LinphoneCall-Idle" type="text/x-jquery-tmpl">
-Idle <b>{{=dest}}</b>
-</script>
-<script id="LinphoneCall-IncomingReceived" type="text/x-jquery-tmpl">
-IncomingReceived <b>{{=dest}}</b>
-</script>
-<script id="LinphoneCall-OutgoingInit" type="text/x-jquery-tmpl">
-OutgoingInit <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-<script id="LinphoneCall-OutgoingProgress" type="text/x-jquery-tmpl">
-OutgoingProgress <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-<script id="LinphoneCall-OutgoingRinging" type="text/x-jquery-tmpl">
-OutgoingRinging <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-<script id="LinphoneCall-OutgoingEarlyMedia" type="text/x-jquery-tmpl">
-OutgoingEarlyMedia <b>{{=dest}}</b>
-</script>
-<script id="LinphoneCall-Connected" type="text/x-jquery-tmpl">
-Connected <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-<script id="LinphoneCall-StreamsRunning" type="text/x-jquery-tmpl">
-StreamsRunning <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-<script id="LinphoneCall-Pausing" type="text/x-jquery-tmpl">
-Pausing <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-<script id="LinphoneCall-Paused" type="text/x-jquery-tmpl">
-Paused <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-<script id="LinphoneCall-Resuming" type="text/x-jquery-tmpl">
-Resuming <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-<script id="LinphoneCall-Refered" type="text/x-jquery-tmpl">
-Refered <b>{{=dest}}</b>
-</script>
-<script id="LinphoneCall-Error" type="text/x-jquery-tmpl">
-Error <b>{{=dest}}</b>
-</script>
-<script id="LinphoneCall-End" type="text/x-jquery-tmpl">
-End <b>{{=dest}}</b>
-</script>
-<script id="LinphoneCall-PausedByRemote" type="text/x-jquery-tmpl">
-PausedByRemote <b>{{=dest}}</b>
-</script>
-<script id="LinphoneCall-UpdatedByRemote" type="text/x-jquery-tmpl">
-UpdatedByRemote <b>{{=dest}}</b>
-</script>
-<script id="LinphoneCall-IncomingEarlyMedia" type="text/x-jquery-tmpl">
-IncomingEarlyMedia <b>{{=dest}}</b>
-</script>
-<script id="LinphoneCall-Updated" type="text/x-jquery-tmpl">
-Updated <b>{{=dest}}</b>
-</script>
-<script id="LinphoneCall-Released" type="text/x-jquery-tmpl">
-Call end: <b>{{=dest}}</b>
-</script>
-
 <style type="text/css">
 body {
 	font: 62.5% "Trebuchet MS", sans-serif;
@@ -366,46 +109,312 @@ body {
 	font-weight: bold;
 }
 </style>
+</head>
 <body onload="load()">
-	<object id="plugin0" type="application/x-linphone" width="0" height="0">
-		<param name="onload" value="pluginLoaded" />
-	</object>
-	<br />
+	<script type="text/javascript">
+		function plugin0() {
+			return document.getElementById('plugin0');
+		}
+		plugin = plugin0;
+		function addEvent(obj, name, func) {
+			if (window.addEventListener) {
+				obj.addEventListener(name, func, false);
+			} else {
+				obj.attachEvent("on" + name, func);
+			}
+		}
 
-	<div class="linphone ui-widget" id="linphone">
-		<div class="window ui-corner-all">
-			<div class="header ui-corner-top">
-				<div class="text">Linphone</div>
-			</div>
+		function load() {
 
-			<div class="composer">
-				<input type="text" class="dest" />
-				<div class="dial-button"></div>
-			</div>
+		}
 
-			<div class="tabs">
-				<ul>
-					<li><a href="#tabs-1">First</a></li>
-				</ul>
-				<div id="tabs-1" class="tab">Example</div>
-			</div>
+		function addLog(message) {
+			jQuery('#log').val(jQuery('#log').val() + message + '\n');
+		}
 
-			<div class="status ui-corner-bottom">
-				<div class="text"></div>
-				<div class="tools">
-					<div class="mic-icon">
-						<div class="mic-slider"></div>
-					</div>
-					<div class="hp-icon">
-						<div class="hp-slider"></div>
+		function pluginLoaded() {
+			jQuery('#version_number').text(plugin().version);
+			addEvent(plugin(), 'global_state_changed', global_state_changed);
+			addEvent(plugin(), 'call_state_changed', call_state_changed);
+			addEvent(plugin(), 'display_status', display_status);
+			addEvent(plugin(), 'display_message', display_message);
+			addEvent(plugin(), 'display_warning', display_warning);
+			addEvent(plugin(), 'display_url', display_url);
+			if (plugin().init() != 0) {
+				alert("Plugin error!");
+			} else {
+				// Init volumes
+				jQuery('.linphone .window .tools .mic-slider').slider('value', 100)
+				plugin().set_rec_level(100)
+				jQuery('.linphone .window .tools .hp-slider').slider('value', 100)
+				plugin().set_play_level(100)
+				addLog('Sip port: ' + plugin().sip_port)
+			}
+		}
+
+		function global_state_changed(state, message) {
+			addLog('State(' + state + '): ' + message)
+			jQuery('.linphone .window .status .text').text(LinphoneGlobalStateText[state])
+		}
+
+		function call_state_changed(call, state, message) {
+			addLog('Call(' + state + '): ' + message);
+			var element = findCallTab(call);
+			if (element) {
+				element.html(jQuery('#LinphoneCall-' + LinphoneCallStateText[state]).render(element.data('data')))
+			} else {
+				addLog('Can\'t find call tab: ' + call);
+			}
+		}
+
+		//registration_state_changed(LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message);
+		//call_state_changed(LinphoneCall *call, LinphoneCallState cstate, const char *message);
+		//notify_presence_recv(LinphoneFriend * lf);
+		//new_subscription_request(LinphoneFriend *lf, const char *url);
+		//auth_info_requested(const char *realm, const char *username);
+		//call_log_updated(LinphoneCallLog *newcl);
+		//text_received(LinphoneChatRoom *room, const LinphoneAddress *from, const char *message);
+		//dtmf_received(LinphoneCall *call, int dtmf);
+		//refer_received(const char *refer_to);
+		//buddy_info_updated(LinphoneFriend *lf);
+		//notify_recv(LinphoneCall *call, const char *from, const char *event);
+		function display_status(message) {
+			addLog('Status: ' + message);
+		}
+
+		function display_message(message) {
+			addLog('Message: ' + message);
+		}
+
+		function display_warning(message) {
+			addLog('Warning: ' + message);
+		}
+
+		function display_url(message, url) {
+			addLog('Url: ' + message + ' - ' + url);
+		}
+
+		function findCallTab(obj) {
+			var ret = null
+			jQuery('#linphone .window .tabs .tab').each(function(index) {
+				var element = jQuery(this)
+				if (element.data('data') && element.data('data').obj == obj) {
+					ret = element;
+				}
+			})
+			return ret;
+		}
+
+		function call_invite(dest) {
+			plugin().invite_async(dest, function() {
+				return function(plugin, obj) {
+					call_invite_callback(dest, obj)
+				}
+			}())
+		}
+
+		function call_invite_callback(dest, obj) {
+			console.log("call_invite_callback")
+			console.log(dest)
+			console.log(obj)
+			if (obj) {
+				var call_number = jQuery.linphone.call_number
+				console.log('Add tab call-' + call_number)
+				var div = jQuery('<div id="call-'+call_number+'" class="tab"></div>')
+				jQuery('#linphone .window .tabs').append(div)
+						.tabs('add', '#call-' + call_number, 'Call ' + call_number);
+				jQuery('#linphone .window .tabs').tabs('select', '#call-' + call_number)
+				var element = jQuery('#linphone .window .tabs #call-' + call_number)
+				element.data('data', {
+					obj : obj,
+					dest : dest
+				})
+				element.html(jQuery('#LinphoneCall-OutgoingInit').render(element.data('data'))) //Async invite force OutgoingInit 
+				jQuery.linphone.call_number++
+			}
+		}
+
+		jQuery(function() {
+			jQuery.linphone = {
+				call_number : 1
+			}
+			// Tabs
+			jQuery('.linphone .window .tabs').tabs({
+				closable : true,
+				scrollable : true
+			})
+
+			jQuery(".linphone .window .tools .hp-slider").slider({
+				orientation : 'vertical',
+				change : function(event, ui) {
+					plugin().set_play_level(ui.value)
+				}
+			});
+			jQuery(".linphone .window .tools .mic-slider").slider({
+				orientation : 'vertical',
+				change : function(event, ui) {
+					plugin().set_rec_level(ui.value)
+				}
+			});
+
+			jQuery(document).on('click', '.linphone .window .dial-button', function(event) {
+				call_invite(jQuery(event.target).parent().find('.dest').val())
+			})
+
+			jQuery(document).on('click', '.linphone .window .teminate-button', function(event) {
+				element = jQuery(event.target).parents('.tab')
+				if (element && element.data('data')) {
+					plugin().terminate_call(element.data('data').obj)
+				} else {
+					addLog('Can\'t find call: ' + element);
+				}
+			})
+
+			jQuery(document).on('click', '.linphone .window .ui-tabs-close .ui-icon', function(event) {
+				var tab = jQuery(event.target).parents('li')
+				var tabId = tab.find('a').attr('href')
+				var element = jQuery('#linphone .window .tabs ' + tabId)
+				if (element && element.data('data')) {
+					plugin().terminate_call(element.data('data').obj)
+				} else {
+					addLog('Can\'t find call: ' + element);
+				}
+				jQuery('#linphone .window .tabs ').tabs('remove', tab.prevAll('li').length);
+			})
+
+			jQuery('.linphone .window .tools .hp-icon').click(function(event) {
+				var element = $('.linphone .window .tools .hp-slider')
+				element.fadeIn('fast');
+			})
+
+			jQuery('.linphone .window .tools .mic-icon').click(function(event) {
+				var element = $('.linphone .window .tools .mic-slider')
+				element.fadeIn('fast');
+			})
+
+			jQuery('html').click(
+					function(event) {
+						var target = jQuery(event.target);
+						if (target.length) {
+							if (jQuery('.linphone .window .tools .hp-icon').length
+									&& target[0] != jQuery('.linphone .window .tools .hp-icon')[0])
+								jQuery('.linphone .window .tools .hp-slider').fadeOut('fast');
+							if (jQuery('.linphone .window .tools .mic-icon').length
+									&& target[0] != jQuery('.linphone .window .tools .mic-icon')[0])
+								jQuery('.linphone .window .tools .mic-slider').fadeOut('fast');
+						}
+					});
+		})
+		//show(LinphoneCore *lc);
+		//call_encryption_changed(LinphoneCall *call, bool_t on, const char *authentication_token);
+	</script>
+	<script id="LinphoneCall-Idle" type="text/x-jquery-tmpl">
+Idle <b>{{=dest}}</b>
+</script>
+	<script id="LinphoneCall-IncomingReceived" type="text/x-jquery-tmpl">
+IncomingReceived <b>{{=dest}}</b>
+</script>
+	<script id="LinphoneCall-OutgoingInit" type="text/x-jquery-tmpl">
+OutgoingInit <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+	<script id="LinphoneCall-OutgoingProgress" type="text/x-jquery-tmpl">
+OutgoingProgress <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+	<script id="LinphoneCall-OutgoingRinging" type="text/x-jquery-tmpl">
+OutgoingRinging <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+	<script id="LinphoneCall-OutgoingEarlyMedia" type="text/x-jquery-tmpl">
+OutgoingEarlyMedia <b>{{=dest}}</b>
+</script>
+	<script id="LinphoneCall-Connected" type="text/x-jquery-tmpl">
+Connected <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+	<script id="LinphoneCall-StreamsRunning" type="text/x-jquery-tmpl">
+StreamsRunning <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+	<script id="LinphoneCall-Pausing" type="text/x-jquery-tmpl">
+Pausing <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+	<script id="LinphoneCall-Paused" type="text/x-jquery-tmpl">
+Paused <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+	<script id="LinphoneCall-Resuming" type="text/x-jquery-tmpl">
+Resuming <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+	<script id="LinphoneCall-Refered" type="text/x-jquery-tmpl">
+Refered <b>{{=dest}}</b>
+</script>
+	<script id="LinphoneCall-Error" type="text/x-jquery-tmpl">
+Error <b>{{=dest}}</b>
+</script>
+	<script id="LinphoneCall-End" type="text/x-jquery-tmpl">
+End <b>{{=dest}}</b>
+</script>
+	<script id="LinphoneCall-PausedByRemote" type="text/x-jquery-tmpl">
+PausedByRemote <b>{{=dest}}</b>
+</script>
+	<script id="LinphoneCall-UpdatedByRemote" type="text/x-jquery-tmpl">
+UpdatedByRemote <b>{{=dest}}</b>
+</script>
+	<script id="LinphoneCall-IncomingEarlyMedia" type="text/x-jquery-tmpl">
+IncomingEarlyMedia <b>{{=dest}}</b>
+</script>
+	<script id="LinphoneCall-Updated" type="text/x-jquery-tmpl">
+Updated <b>{{=dest}}</b>
+</script>
+	<script id="LinphoneCall-Released" type="text/x-jquery-tmpl">
+Call end: <b>{{=dest}}</b>
+</script>
+
+	<div>
+		<object id="plugin0" type="application/x-linphone" width="0" height="0">
+			<param name="onload" value="pluginLoaded" />*
+			linphone-js
+		</object>
+		<br />
+
+		<div class="linphone ui-widget" id="linphone">
+			<div class="window ui-corner-all">
+				<div class="header ui-corner-top">
+					<div class="text">Linphone</div>
+				</div>
+
+				<div class="composer">
+					<input type="text" class="dest" title="destination" />
+					<div class="dial-button"></div>
+				</div>
+
+				<div class="tabs">
+					<ul>
+						<li><a href="#tabs-1">First</a></li>
+					</ul>
+					<div id="tabs-1" class="tab">Example</div>
+				</div>
+
+				<div class="status ui-corner-bottom">
+					<div class="text"></div>
+					<div class="tools">
+						<div class="mic-icon">
+							<div class="mic-slider"></div>
+						</div>
+						<div class="hp-icon">
+							<div class="hp-slider"></div>
+						</div>
+						<div class="settings-icon">
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-
-	<br />
-	<br />
 
 	<div>
 		<textarea id="log" rows="10" cols="100"></textarea>
