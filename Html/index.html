@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <title>Linphone-JS</title>
-<link rel="icon" type="image/png" href="css/images/linphone.png"/>
+<link rel="icon" type="image/png" href="css/images/linphone.png" />
 <meta http-equiv="Content-Script-Type" content="text/javascript" />
 <link type="text/css" href="css/ui-lightness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />
 <link type="text/css" href="css/linphone.css" rel="stylesheet" />
@@ -154,7 +154,7 @@ body {
 
 		function global_state_changed(state, message) {
 			addLog('State(' + state + '): ' + message)
-			jQuery('.linphone .window .status .text').text(LinphoneGlobalStateText[state])
+			jQuery('.linphone .window .status').text(LinphoneGlobalStateText[state])
 		}
 
 		function call_state_changed(call, state, message) {
@@ -235,6 +235,22 @@ body {
 		}
 
 		jQuery(function() {
+			
+			$.fn.disableSelection = function() {
+			    return this.each(function() {           
+			        $(this).attr('unselectable', 'on')
+			               .css({
+			                   '-moz-user-select':'none',
+			                   '-webkit-user-select':'none',
+			                   'user-select':'none',
+			                   '-ms-user-select':'none'
+			               })
+			               .each(function() {
+			                   this.onselectstart = function() { return false; };
+			               });
+			    });
+			};
+			
 			jQuery.linphone = {
 				call_number : 1
 			}
@@ -283,13 +299,33 @@ body {
 			})
 
 			jQuery('.linphone .window .tools .hp-icon').click(function(event) {
-				var element = $('.linphone .window .tools .hp-slider')
+				var element = jQuery('.linphone .window .tools .hp-slider')
 				element.fadeIn('fast');
 			})
 
 			jQuery('.linphone .window .tools .mic-icon').click(function(event) {
-				var element = $('.linphone .window .tools .mic-slider')
+				var element = jQuery('.linphone .window .tools .mic-slider')
 				element.fadeIn('fast');
+			})
+
+			jQuery(".linphone .window .tools .settings-menu").menu();
+
+			jQuery('.linphone .window .tools .settings-icon').click(function(event) {
+				var element = jQuery('.linphone .window .tools .settings-menu')
+				element.fadeIn('fast');
+			})
+
+			jQuery('.linphone .window .tools').disableSelection()
+			
+			jQuery('.linphone .window .options .close').click(function(event) {
+				var element = jQuery('.linphone .window .options')
+				element.fadeOut('fast');
+			})
+
+			jQuery('.linphone .window .options .close').hover(function() {
+				jQuery(this).addClass("ui-state-hover");
+			}, function() {
+				jQuery(this).removeClass("ui-state-hover");
 			})
 
 			jQuery('html').click(
@@ -299,9 +335,14 @@ body {
 							if (jQuery('.linphone .window .tools .hp-icon').length
 									&& target[0] != jQuery('.linphone .window .tools .hp-icon')[0])
 								jQuery('.linphone .window .tools .hp-slider').fadeOut('fast');
+
 							if (jQuery('.linphone .window .tools .mic-icon').length
 									&& target[0] != jQuery('.linphone .window .tools .mic-icon')[0])
 								jQuery('.linphone .window .tools .mic-slider').fadeOut('fast');
+
+							if (jQuery('.linphone .window .tools .settings-icon').length
+									&& target[0] != jQuery('.linphone .window .tools .settings-icon')[0])
+								jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 						}
 					});
 		})
@@ -376,8 +417,8 @@ Call end: <b>{{=dest}}</b>
 
 	<div>
 		<object id="plugin0" type="application/x-linphone" width="0" height="0">
-			<param name="onload" value="pluginLoaded" />*
-			linphone-js
+			<param name="onload" value="pluginLoaded" />
+			* linphone-js
 		</object>
 		<br />
 
@@ -389,40 +430,50 @@ Call end: <b>{{=dest}}</b>
 
 				<div class="composer">
 					<input type="text" class="dest" title="destination" />
-					<div class="dial-button"></div>
+					<div class="ui-icon dial-button"></div>
 				</div>
 
-				<div class="tabs">
-					<ul>
-						<li><a href="#tabs-1">First</a></li>
-					</ul>
-					<div id="tabs-1" class="tab">Example</div>
+				<div class="content">
+					<div class="tabs">
+						<ul>
+							<li><a href="#tabs-1">First</a></li>
+						</ul>
+						<div id="tabs-1" class="tab">Example</div>
+					</div>
 				</div>
 
-				<div class="status ui-corner-bottom">
-					<div class="text"></div>
+				<div class="footer ui-corner-bottom">
+					<div class="status"></div>
 					<div class="tools">
-						<div class="mic-icon">
+						<div class="ui-icon mic-icon">
 							<div class="mic-slider"></div>
 						</div>
-						<div class="hp-icon">
+						<div class="ui-icon hp-icon">
 							<div class="hp-slider"></div>
 						</div>
-						<div class="settings-icon">
+						<div class="ui-icon settings-icon">
+							<ul class="settings-menu">
+								<li><a class="ui-icon account-icon">Accounts</a></li>
+								<li><a class="ui-icon language-icon">Language</a></li>
+							</ul>
 						</div>
+					</div>
+
+					<div class="options">
+						<a class="close ui-widget-header ui-corner-all"> <span class="ui-icon ui-icon-closethick"></span>
+						</a>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div>
-		<textarea id="log" rows="10" cols="100"></textarea>
-		<div class="ui-widget">
-			<div id="version" class="ui-state-highlight ui-corner-all">
-				Linphone version: <span id="version_number"></span>
+		<div>
+			<textarea id="log" rows="10" cols="100"></textarea>
+			<div class="ui-widget">
+				<div id="version" class="ui-state-highlight ui-corner-all">
+					Linphone version: <span id="version_number"></span>
+				</div>
 			</div>
 		</div>
-	</div>
 </body>
 </html>

@@ -1,4 +1,3 @@
-
 .linphone .window {
 	border: 1px solid black;
 	width: 200px;
@@ -7,9 +6,16 @@
 	overflow: hidden;
 }
 
+.linphone .window .tools .ui-icon {
+	overflow: visible;
+	text-indent: 0px;
+}
+
 .linphone .window .header {
 	border-bottom: 1px solid #6666DD;
-	background: url("ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png") repeat-x scroll 50% 50% #F6A828;
+	background:
+		url("ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png")
+		repeat-x scroll 50% 50% #F6A828;
 	height: 30px;
 	line-height: 30px;
 	width: 100%;
@@ -33,73 +39,95 @@
 	width: 170px;
 }
 
-.linphone .window .teminate-button  {
+.linphone .window .teminate-button {
 	display: block;
 	background-image: url('images/stopcall-red.png');
 	background-size: 32px 32px;
 	width: 32px;
 	height: 32px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
 }
 
 .linphone .window .composer .dial-button {
 	display: inline-block;
 	vertical-align: middle;
 	background-image: url('images/ok.png');
-	background-size: 16px 16px;
-	width: 16px;
-	height: 16px;
 }
 
 .linphone .window .tools .mic-icon {
 	display: inline-block;
 	background-image: url('images/microphone.png');
-	background-size: 16px 16px;
-	width: 16px;
-	height: 16px;
-	margin-left:1px;
-	margin-right:1px;
+	margin-left: 1px;
+	margin-right: 1px;
+	position: relative;
 }
 
 .linphone .window .tools .mic-slider {
 	display: none;
-	position: relative;
-	height:100px;
-	top:-102px;
-	left:3px;
+	position: absolute;
+	height: 100px;
+	bottom: 0px;
+	margin-bottom: 100%;
+	margin-left: 50%;
+	left: -6px;
+	width: 10px;
 }
 
 .linphone .window .tools .hp-icon {
 	display: inline-block;
 	background-image: url('images/headphone.png');
-	background-size: 16px 16px;
-	width: 16px;
-	height: 16px;
-	margin-left:1px;
-	margin-right:1px;
+	margin-left: 1px;
+	margin-right: 1px;
+	position: relative;
 }
 
 .linphone .window .tools .hp-slider {
 	display: none;
-	position: relative;
-	height:100px;
-	top:-102px;
-	left:3px;
+	position: absolute;
+	height: 100px;
+	bottom: 0px; margin-bottom: 100%;
+	margin-left: 50%;
+	left: -6px;
+	width: 10px;
 }
 
 .linphone .window .tools .settings-icon {
 	display: inline-block;
 	background-image: url('images/settings.png');
-	background-size: 16px 16px;
-	width: 16px;
-	height: 16px;
-	margin-left:1px;
-	margin-right:1px;
+	margin-left: 1px;
+	margin-right: 1px;
+	position: relative;
 }
 
-.linphone .window .status {
+.linphone .window .tools .settings-menu {
+	display: none;
+	bottom: 0px;
+	right: 0px;
+	position: absolute;
+	margin-bottom: 100%;
+}
+
+.linphone .window .tools .settings-menu .account-icon {
+	background-image: url('images/account.png');
+	background-repeat: no-repeat;
+	background-position: left center;
+	padding-left: 20px;
+	padding-top: 2px;
+	display: inline;
+}
+
+.linphone .window .tools .settings-menu .language-icon {
+	background-image: url('images/language.png');
+	background-repeat: no-repeat;
+	background-position: left center;
+	padding-left: 20px;
+	padding-top: 2px;
+	display: inline;
+}
+
+.linphone .window .footer {
 	border-top: 1px solid #BBBBDD;
 	position: absolute;
 	bottom: 0px;
@@ -109,14 +137,14 @@
 	width: 100%;
 }
 
-.linphone .window .status .text {
+.linphone .window .status {
 	font-size: 10px;
 	margin-left: 5px;
 	margin-right: 5px;
 	display: inline-block;
 }
 
-.linphone .window .status .tools {
+.linphone .window .tools {
 	float: right;
 	margin-top: 2px;
 	margin-right: 5px;
@@ -137,4 +165,28 @@
 .linphone .window .content {
 	background-color: #FFFFFF;
 	width: 100%;
+	height: 100%;
+}
+
+.linphone .window .content .ui-scrollable-tabs {
+	height: 100%;
+}
+
+.linphone .window .options {
+	top: 0px;
+	display: none;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background-color: #FFFFFF;
+	filter: alpha(opacity =         80);
+	-moz-opacity: 0.8;
+	opacity: 0.8;
+}
+
+.linphone .window .options .close {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	padding: 1px;
 }
