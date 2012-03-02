@@ -1,3 +1,5 @@
+jQuery.linphone = {}
+
 var LinphoneGlobalState = {
 	Off : 0,
 	Startup : 1,

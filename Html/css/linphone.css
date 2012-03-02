@@ -1,7 +1,6 @@
 .linphone .window {
 	border: 1px solid black;
 	width: 200px;
-	height: 200px;
 	position: relative;
 	overflow: hidden;
 }
@@ -13,9 +12,7 @@
 
 .linphone .window .header {
 	border-bottom: 1px solid #6666DD;
-	background:
-		url("ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png")
-		repeat-x scroll 50% 50% #F6A828;
+	background: url("ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png") repeat-x scroll 50% 50% #F6A828;
 	height: 30px;
 	line-height: 30px;
 	width: 100%;
@@ -39,6 +36,12 @@
 	width: 170px;
 }
 
+.linphone .window .composer .dial-button {
+	display: inline-block;
+	vertical-align: middle;
+	background-image: url('images/ok.png');
+}
+
 .linphone .window .teminate-button {
 	display: block;
 	background-image: url('images/stopcall-red.png');
@@ -48,12 +51,6 @@
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 10px;
-}
-
-.linphone .window .composer .dial-button {
-	display: inline-block;
-	vertical-align: middle;
-	background-image: url('images/ok.png');
 }
 
 .linphone .window .tools .mic-icon {
@@ -87,7 +84,8 @@
 	display: none;
 	position: absolute;
 	height: 100px;
-	bottom: 0px; margin-bottom: 100%;
+	bottom: 0px;
+	margin-bottom: 100%;
 	margin-left: 50%;
 	left: -6px;
 	width: 10px;
@@ -109,8 +107,21 @@
 	margin-bottom: 100%;
 }
 
-.linphone .window .tools .settings-menu .account-icon {
-	background-image: url('images/account.png');
+.linphone .window .tools .locales-menu {
+	display: none;
+	bottom: 0px;
+	right: 0px;
+	position: absolute;
+	margin-right: 100%;
+}
+
+.linphone .window .tools .settings-menu .ui-icon {
+	width: 100%;
+	vertical-align: middle;
+}
+
+
+.linphone .window .tools .ui-menu-item .ui-icon {
 	background-repeat: no-repeat;
 	background-position: left center;
 	padding-left: 20px;
@@ -118,13 +129,16 @@
 	display: inline;
 }
 
-.linphone .window .tools .settings-menu .language-icon {
+.linphone .window .tools .settings-menu .accounts-icon {
+	background-image: url('images/account.png');
+}
+
+.linphone .window .tools .settings-menu .locales-icon {
 	background-image: url('images/language.png');
-	background-repeat: no-repeat;
-	background-position: left center;
-	padding-left: 20px;
-	padding-top: 2px;
-	display: inline;
+}
+
+.linphone .window .tools .settings-menu .codecs-icon {
+	background-image: url('images/codecs.png');
 }
 
 .linphone .window .footer {
@@ -165,7 +179,8 @@
 .linphone .window .content {
 	background-color: #FFFFFF;
 	width: 100%;
-	height: 100%;
+	height: 150px;
+	margin-bottom: 20px;
 }
 
 .linphone .window .content .ui-scrollable-tabs {
@@ -179,7 +194,7 @@
 	height: 100%;
 	width: 100%;
 	background-color: #FFFFFF;
-	filter: alpha(opacity =         80);
+	filter: alpha(opacity =           80);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -189,4 +204,7 @@
 	top: 2px;
 	right: 2px;
 	padding: 1px;
+}
+.ui-menu .ui-menu-item a {
+	cursor: pointer;
 }

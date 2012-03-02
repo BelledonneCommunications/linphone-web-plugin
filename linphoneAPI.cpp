@@ -14,7 +14,7 @@ void linphone_iterate_thread(linphoneAPI *linphone_api) {
 
 	while (!boost::this_thread::interruption_requested()) {
 		linphone_api->iterateWithMutex();
-		usleep(200000);
+		usleep(20000);
 		//FBLOG_DEBUG("linphone_thread", "it");
 	}
 
