@@ -13,6 +13,7 @@
 <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
 <script type="text/javascript" src="js/jquery.scrollabletab.js"></script>
+<script type="text/javascript" src="js/i18n.js"></script>
 <script type="text/javascript" src="js/jsrender.js"></script>
 <script type="text/javascript" src="js/linphone.js"></script>
 <script type="text/javascript" src="js/linphone.i18n.js"></script>
@@ -115,74 +116,40 @@ body {
 }
 </style>
 </head>
-<body onload="load()">
+<body>
 	<script type="text/javascript">
 		function plugin0() {
 			return document.getElementById('plugin0');
 		}
 		plugin = plugin0;
-
-		jQuery.i18n = {}
-
-		jQuery.i18n.locale = (navigator.language) ? navigator.language : navigator.userLanguage
-		jQuery.i18n.locale = jQuery.i18n.locale.replace('-', '_')
-		console.log('Locale: ' + jQuery.i18n.locale)
-		jQuery.i18n.data = jQuery.linphone.i18n
-
-		jQuery.i18n.change = function(locale) {
-			if (locale != jQuery.i18n.locale) {
-				jQuery.i18n.locale = locale
-				console.log('Change locale: ' + jQuery.i18n.locale)
-				jQuery('div .lang').each(function() {
-					var element = $(this)
-					element.html(jQuery.i18n.translate(element.attr('title')))
-				})
+		
+		function loadLinphoneI18n() {
+			jQuery.i18n.data = jQuery.linphone.i18n
+			var locale = (navigator.language) ? navigator.language : navigator.userLanguage
+			locale = locale.replace('-', '_')
+			console.log('Browser language: ' + locale)
+			
+			// Excat Match
+			for(a in jQuery.linphone.locales) {
+				if(jQuery.linphone.locales[a].locale == locale) {
+					jQuery.i18n.change(jQuery.linphone.locales[a].locale)
+					return;
+				}
 			}
+			
+			// Start Match
+			for(a in jQuery.linphone.locales) {
+				if(jQuery.linphone.locales[a].locale.search(locale) == 0) {
+					jQuery.i18n.change(jQuery.linphone.locales[a].locale)
+					return;
+				}
+			}			
+			
+			// Take default (first)
+			jQuery.i18n.change(jQuery.linphone.locales[0].locale)
 		}
-
-		jQuery.i18n.translate = function(text) {
-			var parts = text.split('.')
-			var data = jQuery.i18n.data
-			var translated_text = '$' + text + '$'
-			while (parts.length && data) {
-				var part = parts.shift()
-				data = data[part]
-			}
-
-			if (data)
-				data = data[jQuery.i18n.locale]
-
-			if (data) {
-				translated_text = data
-			}
-
-			translated_text = jQuery('<div/>').text(translated_text).html();
-
-			return translated_text
-		}
-
-		jQuery.i18n.get = function(text) {
-			var translated_text = jQuery.i18n.translate(text)
-			return '<div class="lang" title="' + text + '">' + translated_text + '</div>'
-		}
-
-		var locales = [ {
-			name : 'English(US)',
-			locale : 'en_US',
-			icon : 'css/images/flags/us.png'
-		}, {
-			name : 'Français',
-			locale : 'fr_FR',
-			icon : 'css/images/flags/fr.png'
-		}, {
-			name : 'Deutsche',
-			locale : 'de_DE',
-			icon : 'css/images/flags/de.png'
-		}, {
-			name : 'Italiano',
-			locale : 'it_IT',
-			icon : 'css/images/flags/it.png'
-		} ]
+		
+		loadLinphoneI18n();
 
 		function addEvent(obj, name, func) {
 			if (window.addEventListener) {
@@ -190,10 +157,6 @@ body {
 			} else {
 				obj.attachEvent("on" + name, func);
 			}
-		}
-
-		function load() {
-
 		}
 
 		function addLog(message) {
@@ -309,8 +272,8 @@ body {
 			// Locales
 			var menu = jQuery('.linphone .window .tools .locales-menu')
 			menu.empty()
-			for (a in locales) {
-				var item = locales[a]
+			for (a in jQuery.linphone.locales) {
+				var item = jQuery.linphone.locales[a]
 				var li_item = $(document.createElement('li'))
 				var a_item = $(document.createElement('a'))
 				var div_item = $(document.createElement('div'))
@@ -475,7 +438,6 @@ body {
 				if (target.is('.linphone .window .tools .media-icon')) {
 					//	jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					//	jQuery('.linphone .window .media-options').fadeIn('fast');
-
 				}
 			});
 		})

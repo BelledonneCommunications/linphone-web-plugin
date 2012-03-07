@@ -12,7 +12,9 @@
 
 .linphone .window .header {
 	border-bottom: 1px solid #6666DD;
-	background: url("ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png") repeat-x scroll 50% 50% #F6A828;
+	background:
+		url("ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png")
+		repeat-x scroll 50% 50% #F6A828;
 	height: 30px;
 	line-height: 30px;
 	width: 100%;
@@ -110,7 +112,6 @@
 	width: 10px;
 }
 
-
 .linphone .window .tools .settings-icon {
 	display: inline-block;
 	background-image: url('images/settings.png');
@@ -140,9 +141,9 @@
 	vertical-align: middle;
 }
 
-.linphone .window .tools .ui-menu-item .ui-state-selected { 
-	color: #1c94c4; 
-	text-decoration: none; 
+.linphone .window .tools .ui-menu-item .ui-state-selected {
+	color: #1c94c4;
+	text-decoration: none;
 }
 
 .linphone .window .tools .ui-menu-item .ui-icon {
@@ -187,9 +188,12 @@
 }
 
 .linphone .window .tools {
-	float: right;
 	margin-top: 2px;
 	margin-right: 5px;
+	display: inline-block;
+	position: absolute;
+	right: 0px;
+	top: 0px;
 }
 
 .linphone .window .tabs {
@@ -222,7 +226,7 @@
 	height: 100%;
 	width: 100%;
 	background-color: #FFFFFF;
-	filter: alpha(opacity =           80);
+	filter: alpha(opacity =             80);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -233,6 +237,7 @@
 	right: 2px;
 	padding: 1px;
 }
+
 .ui-menu .ui-menu-item a {
 	cursor: pointer;
 }

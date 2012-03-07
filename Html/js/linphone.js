@@ -1,5 +1,23 @@
 jQuery.linphone = {}
 
+jQuery.linphone.locales = [ {
+	name : 'English(US)',
+	locale : 'en_US',
+	icon : 'css/images/flags/us.png'
+}, {
+	name : 'Français',
+	locale : 'fr_FR',
+	icon : 'css/images/flags/fr.png'
+}, {
+	name : 'Deutsche',
+	locale : 'de_DE',
+	icon : 'css/images/flags/de.png'
+}, {
+	name : 'Italiano',
+	locale : 'it_IT',
+	icon : 'css/images/flags/it.png'
+} ]
+
 var LinphoneGlobalState = {
 	Off : 0,
 	Startup : 1,
