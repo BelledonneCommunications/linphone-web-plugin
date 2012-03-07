@@ -65,6 +65,7 @@ linphoneAPI::linphoneAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& ho
 	REGISTER_SYNC_N_ASYNC("terminate_call", terminate_call);
 	registerMethod("set_play_level", make_method(this, &linphoneAPI::set_play_level));
 	registerMethod("set_rec_level", make_method(this, &linphoneAPI::set_rec_level));
+	registerMethod("set_ring_level", make_method(this, &linphoneAPI::set_ring_level));
 }
 
 int linphoneAPI::init() {
@@ -169,6 +170,13 @@ void linphoneAPI::set_rec_level(int level) {
 
 	FBLOG_DEBUG("linphoneAPI::set_rec_level", level);
 	linphone_core_set_rec_level(m_lin_core, level);
+}
+
+void linphoneAPI::set_ring_level(int level) {
+	//boost::mutex::scoped_lock scopedLock(m_core_mutex);
+
+	FBLOG_DEBUG("linphoneAPI::set_ring_level", level);
+	linphone_core_set_ring_level(m_lin_core, level);
 }
 
 std::string linphoneAPI::getVersion() {

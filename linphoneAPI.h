@@ -77,6 +77,7 @@ public:
 	//
 	void set_play_level(int level);
 	void set_rec_level(int level);
+	void set_ring_level(int level);
 
 	// Event helpers
 	FB_JSAPI_EVENT(global_state_changed, 2, (const int&, const std::string&))FB_JSAPI_EVENT(call_state_changed, 3, (boost::shared_ptr<LinphoneCallAPI>, const int&, const std::string&))

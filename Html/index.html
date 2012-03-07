@@ -216,6 +216,8 @@ body {
 				plugin().set_rec_level(100)
 				jQuery('.linphone .window .tools .hp-slider').slider('value', 100)
 				plugin().set_play_level(100)
+				jQuery('.linphone .window .tools .bell-slider').slider('value', 100)
+				plugin().set_ring_level(100)
 				addLog('Sip port: ' + plugin().sip_port)
 			}
 		}
@@ -363,6 +365,12 @@ body {
 					plugin().set_rec_level(ui.value)
 				}
 			});
+			jQuery(".linphone .window .tools .bell-slider").slider({
+				orientation : 'vertical',
+				change : function(event, ui) {
+					plugin().set_ring_level(ui.value)
+				}
+			});
 
 			jQuery(document).on('click', '.linphone .window .dial-button', function(event) {
 				call_invite(jQuery(event.target).parent().find('.dest').val())
@@ -398,7 +406,6 @@ body {
 			jQuery('.linphone .window .options .close').click(function(event) {
 				var element = jQuery('.linphone .window .options')
 				element.fadeOut('fast');
-				ettings
 			})
 
 			jQuery('.linphone .window .options .close').hover(function() {
@@ -419,6 +426,11 @@ body {
 				else
 					jQuery('.linphone .window .tools .mic-slider').fadeToggle('fast');
 
+				if (!target.is('.linphone .window .tools .bell-icon'))
+					jQuery('.linphone .window .tools .bell-slider').fadeOut('fast');
+				else
+					jQuery('.linphone .window .tools .bell-slider').fadeToggle('fast');
+
 				if (target.is('.linphone .window .tools .settings-icon'))
 					jQuery('.linphone .window .tools .settings-menu').fadeToggle('fast');
 				else if (target.parents(".linphone .window .tools .settings-icon").length == 0)
@@ -426,22 +438,47 @@ body {
 				else
 					jQuery('.linphone .window .tools .settings-menu').fadeIn('fast');
 
-				if (target.is('.linphone .window .tools .locales-icon'))
+				if (target.is('.linphone .window .tools .locales-icon')) {
+					// Update selected element 
+					jQuery('.linphone .window .tools .locales-menu .flag').each(function(index) {
+						var element = $(this)
+						if (element.data('data').locale == jQuery.i18n.locale) {
+							element.addClass('ui-state-selected')
+						} else {
+							element.removeClass('ui-state-selected')
+						}
+					})
 					jQuery('.linphone .window .tools .locales-menu').fadeToggle('fast');
-				else if (target.parents(".linphone .window .tools .locales-icon").length == 0)
+				} else if (target.parents(".linphone .window .tools .locales-icon").length == 0)
 					jQuery('.linphone .window .tools .locales-menu').fadeOut('fast');
-				else
+				else {
 					jQuery('.linphone .window .tools .locales-menu').fadeIn('fast');
+				}
 
 				if (target.is('.linphone .window .tools .locales-menu .flag')) {
 					jQuery('.linphone .window .tools .locales-menu').fadeOut('fast');
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery.i18n.change(target.data('data').locale)
 				}
+
+				if (target.is('.linphone .window .tools .accounts-icon')) {
+					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
+					jQuery('.linphone .window .accounts-options').fadeIn('fast');
+				}
+
+				if (target.is('.linphone .window .tools .codecs-icon')) {
+					//jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
+					//jQuery('.linphone .window .codecs-options').fadeIn('fast');
+
+				}
+
+				if (target.is('.linphone .window .tools .media-icon')) {
+					//	jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
+					//	jQuery('.linphone .window .media-options').fadeIn('fast');
+
+				}
 			});
 		})
-		//show(LinphoneCore *lc);
-		//call_encryption_changed(LinphoneCall *call, bool_t on, const char *authentication_token);
 	</script>
 	<script id="LinphoneCall-Idle" type="text/x-jquery-tmpl">
 Idle <b>{{=dest}}</b>
@@ -539,6 +576,9 @@ Call end: <b>{{=dest}}</b>
 				<div class="footer ui-corner-bottom">
 					<div class="status"></div>
 					<div class="tools">
+						<div class="ui-icon bell-icon">
+							<div class="bell-slider"></div>
+						</div>
 						<div class="ui-icon mic-icon">
 							<div class="mic-slider"></div>
 						</div>
@@ -548,6 +588,7 @@ Call end: <b>{{=dest}}</b>
 						<div class="ui-icon settings-icon">
 							<ul class="settings-menu">
 								<li><a><div class="ui-icon accounts-icon">Accounts</div></a></li>
+								<li><a><div class="ui-icon media-icon">Media</div></a></li>
 								<li><a><div class="ui-icon codecs-icon">Codecs</div></a></li>
 								<li><a><div class="ui-icon locales-icon">Language</div></a>
 									<ul class="locales-menu">
@@ -556,11 +597,20 @@ Call end: <b>{{=dest}}</b>
 							</ul>
 						</div>
 					</div>
+				</div>
+				<div class="codecs-options options">
+					<a class="close ui-widget-header ui-corner-all"> <span class="ui-icon ui-icon-closethick"></span>
+					</a>
+				</div>
 
-					<div class="options">
-						<a class="close ui-widget-header ui-corner-all"> <span class="ui-icon ui-icon-closethick"></span>
-						</a>
-					</div>
+				<div class="media-options options">
+					<a class="close ui-widget-header ui-corner-all"> <span class="ui-icon ui-icon-closethick"></span>
+					</a>
+				</div>
+
+				<div class="accounts-options options">
+					<a class="close ui-widget-header ui-corner-all"> <span class="ui-icon ui-icon-closethick"></span>
+					</a>
 				</div>
 			</div>
 		</div>

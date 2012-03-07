@@ -91,6 +91,26 @@
 	width: 10px;
 }
 
+.linphone .window .tools .bell-icon {
+	display: inline-block;
+	background-image: url('images/bell.png');
+	margin-left: 1px;
+	margin-right: 1px;
+	position: relative;
+}
+
+.linphone .window .tools .bell-slider {
+	display: none;
+	position: absolute;
+	height: 100px;
+	bottom: 0px;
+	margin-bottom: 100%;
+	margin-left: 50%;
+	left: -6px;
+	width: 10px;
+}
+
+
 .linphone .window .tools .settings-icon {
 	display: inline-block;
 	background-image: url('images/settings.png');
@@ -120,6 +140,10 @@
 	vertical-align: middle;
 }
 
+.linphone .window .tools .ui-menu-item .ui-state-selected { 
+	color: #1c94c4; 
+	text-decoration: none; 
+}
 
 .linphone .window .tools .ui-menu-item .ui-icon {
 	background-repeat: no-repeat;
@@ -135,6 +159,10 @@
 
 .linphone .window .tools .settings-menu .locales-icon {
 	background-image: url('images/language.png');
+}
+
+.linphone .window .tools .settings-menu .media-icon {
+	background-image: url('images/media.png');
 }
 
 .linphone .window .tools .settings-menu .codecs-icon {
