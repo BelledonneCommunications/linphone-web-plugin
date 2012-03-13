@@ -129,24 +129,28 @@ body {
 			locale = locale.replace('-', '_')
 			console.log('Browser language: ' + locale)
 
-			// Excat Match
-			for (a in jQuery.linphone.locales) {
-				if (jQuery.linphone.locales[a].locale == locale) {
-					jQuery.i18n.change(jQuery.linphone.locales[a].locale)
-					return;
+			if (localStorage != null && localStorage['locale'] != null) {
+				jQuery.i18n.change(localStorage['locale'])
+			} else {
+				// Excat Match
+				for (a in jQuery.linphone.locales) {
+					if (jQuery.linphone.locales[a].locale == locale) {
+						jQuery.i18n.change(jQuery.linphone.locales[a].locale)
+						return;
+					}
 				}
-			}
 
-			// Start Match
-			for (a in jQuery.linphone.locales) {
-				if (jQuery.linphone.locales[a].locale.search(locale) == 0) {
-					jQuery.i18n.change(jQuery.linphone.locales[a].locale)
-					return;
+				// Start Match
+				for (a in jQuery.linphone.locales) {
+					if (jQuery.linphone.locales[a].locale.search(locale) == 0) {
+						jQuery.i18n.change(jQuery.linphone.locales[a].locale)
+						return;
+					}
 				}
-			}
 
-			// Take default (first)
-			jQuery.i18n.change(jQuery.linphone.locales[0].locale)
+				// Take default (first)
+				jQuery.i18n.change(jQuery.linphone.locales[0].locale)
+			}
 		}
 
 		loadLinphoneI18n();
@@ -444,6 +448,8 @@ body {
 					jQuery('.linphone .window .tools .locales-menu').fadeOut('fast');
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery.i18n.change(target.data('data').locale)
+					if(localStorage != null)
+						localStorage['locale'] = target.data('data').locale
 				}
 
 				if (target.is('.linphone .window .tools .accounts-icon')) {
@@ -539,7 +545,9 @@ Call end: <b>{{=dest}}</b>
 
 		<div class="linphone ui-widget" id="linphone">
 			<div class="window ui-corner-all">
-				<div class="error ui-corner-all"><b>Error !</b></div>
+				<div class="error ui-corner-all">
+					<b>Error !</b>
+				</div>
 				<div class="load ui-corner-all">
 					<img src="css/images/loading.gif"
 						style="width: 50px; height: 50px; position: absolute; top: 50%; left: 50%; margin-left: -25px; margin-top: -25px;"></img>

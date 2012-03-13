@@ -263,3 +263,7 @@
 .ui-menu .ui-menu-item a {
 	cursor: pointer;
 }
+
+.ui-menu .ui-menu-item a:focus {
+	outline: 0px;
+}
