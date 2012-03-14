@@ -296,14 +296,12 @@ body {
 				var item = jQuery.linphone.locales[a]
 				var li_item = $(document.createElement('li'))
 				var a_item = $(document.createElement('a'))
-				var div_item = $(document.createElement('div'))
-				div_item.addClass('ui-icon')
-				div_item.addClass('flag')
-				div_item.css('background-image', 'url(\'' + item.icon + '\')')
-				div_item.text(item.name)
-				div_item.data('data', item)
+				a_item.addClass('ui-icon')
+				a_item.addClass('flag')
+				a_item.css('background-image', 'url(\'' + item.icon + '\')')
+				a_item.text(item.name)
+				a_item.data('data', item)
 
-				a_item.append(div_item)
 				li_item.append(a_item)
 				menu.append(li_item)
 			}
@@ -405,6 +403,7 @@ body {
 
 			jQuery('html').click(function(event) {
 				var target = jQuery(event.target);
+				
 				if (!target.is('.linphone .window .tools .hp-icon'))
 					jQuery('.linphone .window .tools .hp-slider').fadeOut('fast');
 				else
@@ -427,7 +426,7 @@ body {
 				else
 					jQuery('.linphone .window .tools .settings-menu').fadeIn('fast');
 
-				if (target.is('.linphone .window .tools .locales-icon')) {
+				if (target.is('.linphone .window .tools .locales > a')) {
 					// Update selected element 
 					jQuery('.linphone .window .tools .locales-menu .flag').each(function(index) {
 						var element = $(this)
@@ -438,32 +437,32 @@ body {
 						}
 					})
 					jQuery('.linphone .window .tools .locales-menu').fadeToggle('fast');
-				} else if (target.parents(".linphone .window .tools .locales-icon").length == 0)
+				} else if (target.parents(".linphone .window .tools .locales").length == 0)
 					jQuery('.linphone .window .tools .locales-menu').fadeOut('fast');
 				else {
 					jQuery('.linphone .window .tools .locales-menu').fadeIn('fast');
 				}
-
-				if (target.is('.linphone .window .tools .locales-menu .flag')) {
+				
+				if (target.is('.linphone .window .tools .locales-menu a')) {
 					jQuery('.linphone .window .tools .locales-menu').fadeOut('fast');
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery.i18n.change(target.data('data').locale)
 					if(localStorage != null)
 						localStorage['locale'] = target.data('data').locale
 				}
-
-				if (target.is('.linphone .window .tools .accounts-icon')) {
+				
+				if (target.is('.linphone .window .tools .accounts > a')) {
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery('.linphone .window .accounts-options').fadeIn('fast');
 				}
 
-				if (target.is('.linphone .window .tools .codecs-icon')) {
+				if (target.is('.linphone .window .tools .codecs > a')) {
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery('.linphone .window .codecs-options').fadeIn('fast');
 
 				}
 
-				if (target.is('.linphone .window .tools .media-icon')) {
+				if (target.is('.linphone .window .tools .media > a')) {
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery('.linphone .window .media-options').fadeIn('fast');
 				}
@@ -584,10 +583,10 @@ Call end: <b>{{=dest}}</b>
 						</div>
 						<div class="ui-icon settings-icon">
 							<ul class="settings-menu">
-								<li><a><div class="ui-icon accounts-icon">Accounts</div></a></li>
-								<li><a><div class="ui-icon media-icon">Media</div></a></li>
-								<li><a><div class="ui-icon codecs-icon">Codecs</div></a></li>
-								<li><a><div class="ui-icon locales-icon">Language</div></a>
+								<li class="accounts"><a class="ui-icon">Accounts</a></li>
+								<li class="media"><a class="ui-icon">Media</a></li>
+								<li class="codecs"><a class="ui-icon">Codecs</a></li>
+								<li class="locales"><a class="ui-icon">Language</a>
 									<ul class="locales-menu">
 										<li></li>
 									</ul></li>
