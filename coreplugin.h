@@ -1,11 +1,10 @@
-#ifndef H_LINPHONEPLUGIN
-#define H_LINPHONEPLUGIN
+#ifndef H_COREPLUGIN
+#define H_COREPLUGIN
 
-#include "PluginWindow.h"
-#include "PluginEvents/MouseEvents.h"
-#include "PluginEvents/AttachedEvent.h"
-
-#include "PluginCore.h"
+#include <PluginWindow.h>
+#include <PluginEvents/MouseEvents.h>
+#include <PluginEvents/AttachedEvent.h>
+#include <PluginCore.h>
 
 
 FB_FORWARD_PTR(linphone)
@@ -27,7 +26,7 @@ public:
     // If you want your plugin to be optionally windowless based on the
     // value of the "windowless" param tag, remove this method or return
     // FB::PluginCore::isWindowless()
-    virtual bool isWindowless() { return false; }
+    virtual bool isWindowless() { return true; }
 
     BEGIN_PLUGIN_EVENT_MAP()
         EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindow)
@@ -48,5 +47,5 @@ public:
 };
 
 
-#endif //H_LINPHONEPLUGIN
+#endif //H_COREPLUGIN
 

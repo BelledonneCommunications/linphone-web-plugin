@@ -123,6 +123,11 @@ body {
 		}
 		plugin = plugin0;
 
+		function plugin1() {
+			return document.getElementById('plugin1');
+		}
+		plugin1 = plugin1;
+
 		function loadLinphoneI18n() {
 			jQuery.i18n.data = jQuery.linphone.i18n
 			var locale = (navigator.language) ? navigator.language : navigator.userLanguage
@@ -166,7 +171,12 @@ body {
 		function addLog(message) {
 			jQuery('#log').val(jQuery('#log').val() + message + '\n');
 		}
-
+		function videoError() {
+			addLog("Video error")
+		}
+		function videoLoaded() {	
+			addLog("Video init " + plugin1().init())
+		}
 		function pluginError() {
 			jQuery('.linphone .window .load').hide()
 			jQuery('.linphone .window .error').show()
@@ -403,7 +413,7 @@ body {
 
 			jQuery('html').click(function(event) {
 				var target = jQuery(event.target);
-				
+
 				if (!target.is('.linphone .window .tools .hp-icon'))
 					jQuery('.linphone .window .tools .hp-slider').fadeOut('fast');
 				else
@@ -442,15 +452,15 @@ body {
 				else {
 					jQuery('.linphone .window .tools .locales-menu').fadeIn('fast');
 				}
-				
+
 				if (target.is('.linphone .window .tools .locales-menu a')) {
 					jQuery('.linphone .window .tools .locales-menu').fadeOut('fast');
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery.i18n.change(target.data('data').locale)
-					if(localStorage != null)
+					if (localStorage != null)
 						localStorage['locale'] = target.data('data').locale
 				}
-				
+
 				if (target.is('.linphone .window .tools .accounts > a')) {
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery('.linphone .window .accounts-options').fadeIn('fast');
@@ -539,6 +549,10 @@ Call end: <b>{{=dest}}</b>
 		<object id="plugin0" type="application/x-linphone" width="0" height="0">
 			<param name="onload" value="pluginLoaded" />
 			<param name="onerror" value="pluginError" />
+		</object>
+		<object id="plugin1" type="application/x-linphone-video" width="300" height="300">
+			<param name="onload" value="videoLoaded" />
+			<param name="onerror" value="videoError" />
 		</object>
 		<br />
 
