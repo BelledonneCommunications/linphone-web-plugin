@@ -16,8 +16,8 @@ public:
 	void setWindow(FB::PluginWindow *window);
 	videoPtr getPlugin();
 
-	// Methods
-	int init();
+	// Property
+	int getId();
 
 private:
 	videoWeakPtr m_plugin;

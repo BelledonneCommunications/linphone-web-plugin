@@ -79,6 +79,10 @@ public:
 	void set_play_level(int level);
 	void set_rec_level(int level);
 	void set_ring_level(int level);
+	void enable_video_preview(bool enable);
+	bool video_preview_enabled();
+	void set_native_preview_window_id(unsigned long id);
+	unsigned long get_native_preview_window_id();
 
 	// Event helpers
 	FB_JSAPI_EVENT(global_state_changed, 2, (const int&, const std::string&))FB_JSAPI_EVENT(call_state_changed, 3, (boost::shared_ptr<CallAPI>, const int&, const std::string&))

@@ -63,6 +63,12 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	registerMethod("init", make_method(this, &CoreAPI::init));
 	REGISTER_SYNC_N_ASYNC("invite", invite);
 	REGISTER_SYNC_N_ASYNC("terminate_call", terminate_call);
+
+	registerMethod("enable_video_preview", make_method(this, &CoreAPI::enable_video_preview));
+	registerMethod("video_preview_enabled", make_method(this, &CoreAPI::video_preview_enabled));
+	registerMethod("get_native_preview_window_id", make_method(this, &CoreAPI::get_native_preview_window_id));
+	registerMethod("set_native_preview_window_id", make_method(this, &CoreAPI::set_native_preview_window_id));
+
 	registerMethod("set_play_level", make_method(this, &CoreAPI::set_play_level));
 	registerMethod("set_rec_level", make_method(this, &CoreAPI::set_rec_level));
 	registerMethod("set_ring_level", make_method(this, &CoreAPI::set_ring_level));
@@ -179,11 +185,33 @@ void CoreAPI::set_ring_level(int level) {
 	linphone_core_set_ring_level(m_lin_core, level);
 }
 
+void CoreAPI::enable_video_preview(bool enable) {
+	FBLOG_DEBUG("CoreAPI::enable_video_preview()", this);
+	linphone_core_enable_video_preview(m_lin_core, enable ? TRUE : FALSE);
+}
+
+bool CoreAPI::video_preview_enabled() {
+	FBLOG_DEBUG("CoreAPI::video_preview_enabled()", this);
+	return linphone_core_video_preview_enabled(m_lin_core) == TRUE ? true : false;
+}
+
+void CoreAPI::set_native_preview_window_id(unsigned long id) {
+	FBLOG_DEBUG("CoreAPI::set_native_preview_window_id()", this);
+	linphone_core_set_native_preview_window_id(m_lin_core, id);
+}
+
+unsigned long CoreAPI::get_native_preview_window_id() {
+	FBLOG_DEBUG("CoreAPI::get_native_preview_window_id()", this);
+	return linphone_core_get_native_preview_window_id(m_lin_core);
+}
+
 std::string CoreAPI::getVersion() {
+	FBLOG_DEBUG("CoreAPI::getVersion()", this);
 	return linphone_core_get_version();
 }
 
 int CoreAPI::getSipPort() {
+	FBLOG_DEBUG("CoreAPI::getSipPort()", this);
 	return linphone_core_get_sip_port(m_lin_core);
 }
 

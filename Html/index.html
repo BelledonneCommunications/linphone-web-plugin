@@ -127,6 +127,7 @@ body {
 			return document.getElementById('plugin1');
 		}
 		plugin1 = plugin1;
+		test = 0
 
 		function loadLinphoneI18n() {
 			jQuery.i18n.data = jQuery.linphone.i18n
@@ -171,11 +172,19 @@ body {
 		function addLog(message) {
 			jQuery('#log').val(jQuery('#log').val() + message + '\n');
 		}
+		function testf() {
+			test = test + 1
+			if (test == 2) {
+				id = plugin1().id
+				plugin().set_native_preview_window_id(id)
+				plugin().enable_video_preview(true)
+			}
+		}
 		function videoError() {
 			addLog("Video error")
 		}
-		function videoLoaded() {	
-			addLog("Video init " + plugin1().init())
+		function videoLoaded() {
+			testf()
 		}
 		function pluginError() {
 			jQuery('.linphone .window .load').hide()
@@ -212,6 +221,8 @@ body {
 				addLog('Sip port: ' + plugin().sip_port)
 
 				jQuery('.linphone .window .load').hide()
+				
+				testf()
 			}
 		}
 

@@ -10,6 +10,7 @@ public:
 	virtual ~VideoWindow() {
 
 	}
+	virtual unsigned long getId() = 0;
 	virtual void setWindow(FB::PluginWindow *window) = 0;
 };
 

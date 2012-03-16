@@ -21,7 +21,7 @@ VideoAPI::VideoAPI(const videoPtr& plugin, const FB::BrowserHostPtr& host) :
 	mWindow = VideoWindow::create();
 
 	// Methods
-	registerMethod("init", make_method(this, &VideoAPI::init));
+	registerProperty("id", make_property(this, &VideoAPI::getId));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -55,6 +55,6 @@ void VideoAPI::setWindow(FB::PluginWindow *window) {
 	mWindow->setWindow(window);
 }
 
-int VideoAPI::init() {
-	return 666;
+int VideoAPI::getId() {
+	return mWindow->getId();
 }
