@@ -64,6 +64,8 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	REGISTER_SYNC_N_ASYNC("invite", invite);
 	REGISTER_SYNC_N_ASYNC("terminate_call", terminate_call);
 
+	registerMethod("enable_video", make_method(this, &CoreAPI::enable_video));
+	registerMethod("video_enabled", make_method(this, &CoreAPI::video_enabled));
 	registerMethod("enable_video_preview", make_method(this, &CoreAPI::enable_video_preview));
 	registerMethod("video_preview_enabled", make_method(this, &CoreAPI::video_preview_enabled));
 	registerMethod("get_native_preview_window_id", make_method(this, &CoreAPI::get_native_preview_window_id));
@@ -183,6 +185,16 @@ void CoreAPI::set_ring_level(int level) {
 
 	FBLOG_DEBUG("CoreAPI::set_ring_level", level);
 	linphone_core_set_ring_level(m_lin_core, level);
+}
+
+void CoreAPI::enable_video(bool enable) {
+	FBLOG_DEBUG("CoreAPI::enable_video()", this);
+	linphone_core_enable_video(m_lin_core, enable ? TRUE : FALSE, enable ? TRUE : FALSE);
+}
+
+bool CoreAPI::video_enabled() {
+	FBLOG_DEBUG("CoreAPI::video_enabled()", this);
+	return linphone_core_video_enabled(m_lin_core) == TRUE ? true : false;
 }
 
 void CoreAPI::enable_video_preview(bool enable) {

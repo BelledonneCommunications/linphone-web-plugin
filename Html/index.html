@@ -141,7 +141,7 @@ body {
 			if (localStorage['locale'] != null) {
 				jQuery.i18n.change(localStorage['locale'])
 			} else {
-				// Excat Match
+				// Excat Match 
 				for (a in jQuery.linphone.locales) {
 					if (jQuery.linphone.locales[a].locale == locale) {
 						jQuery.i18n.change(jQuery.linphone.locales[a].locale)
@@ -149,7 +149,7 @@ body {
 					}
 				}
 
-				// Start Match
+				// Start Match 
 				for (a in jQuery.linphone.locales) {
 					if (jQuery.linphone.locales[a].locale.search(locale) == 0) {
 						jQuery.i18n.change(jQuery.linphone.locales[a].locale)
@@ -157,7 +157,7 @@ body {
 					}
 				}
 
-				// Take default (first)
+				// Take default (first) 
 				jQuery.i18n.change(jQuery.linphone.locales[0].locale)
 			}
 		}
@@ -222,7 +222,7 @@ body {
 				jQuery('.linphone .window .load').hide()
 				jQuery('.linphone .window .error').show()
 			} else {
-				// Init volumes 
+				// Init volumes settings 
 				rec_level = (localStorage['rec_level'] != null) ? localStorage['rec_level'] : 100
 				jQuery('.linphone .window .tools .mic-slider').slider('value', rec_level)
 				core().set_rec_level(rec_level)
@@ -234,7 +234,17 @@ body {
 				ring_level = (localStorage['ring_level'] != null) ? localStorage['ring_level'] : 100
 				jQuery('.linphone .window .tools .bell-slider').slider('value', ring_level)
 				core().set_ring_level(ring_level)
-				
+
+				// Init video settings 
+				if (localStorage['enable_video'] == 1) {
+					core().enable_video(true)
+				} else if (localStorage['enable_video'] == 0) {
+					core().enable_video(false)
+				} else {
+					localStorage['enable_video'] = 1
+					core().enable_video(true)
+				}
+
 				addLog('Sip port: ' + core().sip_port)
 
 				jQuery('.linphone .window .load').hide()
@@ -252,8 +262,7 @@ body {
 				}, function(object) {
 					localStorage['enable_video_self'] = 0
 					updateSelfView()
-				}
-				)
+				})
 			} else {
 				if (jQuery.linphone.self_view != null) {
 					core().enable_video_preview(false)
@@ -507,8 +516,10 @@ body {
 				if (target.is('.linphone .window .tools .video-menu .enable > a')) {
 					if (jQuery('.linphone .window .tools .video-menu .enable > a').hasClass('ui-state-selected')) {
 						localStorage['enable_video'] = 0
+						core().enable_video(false)
 					} else {
 						localStorage['enable_video'] = 1
+						core().enable_video(true)
 					}
 					updateSelfView()
 					jQuery('.linphone .window .tools .video-menu').fadeOut('fast');

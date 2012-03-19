@@ -79,6 +79,8 @@ public:
 	void set_play_level(int level);
 	void set_rec_level(int level);
 	void set_ring_level(int level);
+	void enable_video(bool enable);
+	bool video_enabled();
 	void enable_video_preview(bool enable);
 	bool video_preview_enabled();
 	void set_native_preview_window_id(unsigned long id);
