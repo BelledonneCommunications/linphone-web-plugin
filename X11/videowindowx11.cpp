@@ -16,20 +16,9 @@ VideoWindowX11::~VideoWindowX11() {
 	FBLOG_DEBUG("VideoWindow::~VideoWindow()", this);
 }
 
-void VideoWindowX11::draw_brush(GtkWidget *widget, GdkPixmap *pixmap, gdouble x, gdouble y) {
-	GdkRectangle update_rect;
-
-	update_rect.x = x - 5;
-	update_rect.y = y - 5;
-	update_rect.width = 10;
-	update_rect.height = 10;
-	gdk_draw_rectangle(pixmap, widget->style->black_gc, TRUE, update_rect.x, update_rect.y, update_rect.width, update_rect.height);
-	gtk_widget_draw(widget, &update_rect);
-}
-
 gint VideoWindowX11::expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer *data) {
-	VideoWindowX11 *context = (VideoWindowX11*) data;
-	gdk_draw_pixmap(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE (widget)], context->mPixmap, event->area.x, event->area.y, event->area.x, event->area.y, event->area.width, event->area.height);
+	//VideoWindowX11 *context = (VideoWindowX11*) data;
+	//gdk_draw_pixmap(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE (widget)], context->mPixmap, event->area.x, event->area.y, event->area.x, event->area.y, event->area.width, event->area.height);
 	return FALSE;
 }
 
@@ -40,8 +29,17 @@ gint VideoWindowX11::configure_event(GtkWidget *widget, GdkEventConfigure *event
 
 	context->mPixmap = gdk_pixmap_new(widget->window, widget->allocation.width, widget->allocation.height, -1);
 	gdk_draw_rectangle(context->mPixmap, widget->style->white_gc, TRUE, 0, 0, widget->allocation.width, widget->allocation.height);
-	draw_brush(widget, context->mPixmap, 5, 5);
 	return TRUE;
+}
+
+void VideoWindowX11::setBackgroundColor(int r, int g, int b) {
+	GdkColor  backgroundColor;
+	backgroundColor.red = r;
+	backgroundColor.green = g;
+	backgroundColor.blue = b;
+	backgroundColor.pixel = 0;
+	gtk_widget_modify_bg (mGtkWidget, GTK_STATE_NORMAL, &backgroundColor);
+	gdk_draw_rectangle(mPixmap, mGtkWidget->style->bg_gc[GTK_STATE_NORMAL], TRUE, 0, 0, mGtkWidget->allocation.width, mGtkWidget->allocation.height);
 }
 
 void VideoWindowX11::setWindow(FB::PluginWindow *window) {

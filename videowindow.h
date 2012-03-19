@@ -11,6 +11,7 @@ public:
 
 	}
 	virtual unsigned long getId() = 0;
+	virtual void setBackgroundColor(int r, int g, int b) = 0;
 	virtual void setWindow(FB::PluginWindow *window) = 0;
 };
 

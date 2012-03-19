@@ -3,8 +3,7 @@
 
 #include <PluginWindow.h>
 #include <boost/shared_ptr.hpp>
-#include <gtk/gtkpixmap.h>
-
+#include <gdk/gdk.h>
 #include "../videowindow.h"
 
 class VideoWindowX11: public VideoWindow {
@@ -14,8 +13,8 @@ public:
 
 	void setWindow(FB::PluginWindow *window);
 	unsigned long getId();
+	void setBackgroundColor(int r, int g, int b);
 
-	static void draw_brush(GtkWidget *widget, GdkPixmap *pixmap, gdouble x, gdouble y);
 	static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer *data);
 	static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer *data);
 

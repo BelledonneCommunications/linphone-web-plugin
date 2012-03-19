@@ -39,7 +39,7 @@ void video::StaticDeinitialize() {
 ///         at this point, nor the window.  For best results wait to use
 ///         the JSAPI object until the onPluginReady method is called
 ///////////////////////////////////////////////////////////////////////////////
-video::video() {
+video::video(): mWindow(NULL){
 }
 
 ///////////////////////////////////////////////////////////////////////////////

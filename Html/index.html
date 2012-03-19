@@ -116,18 +116,21 @@ body {
 }
 </style>
 </head>
-<body>
+<body onload="init()">
 	<script type="text/javascript">
-		function plugin0() {
-			return document.getElementById('plugin0');
+		// Utils 
+		function _core() {
+			return document.getElementById('core');
 		}
-		plugin = plugin0;
+		core = _core;
 
-		function plugin1() {
-			return document.getElementById('plugin1');
+		function addEvent(obj, name, func) {
+			if (window.addEventListener) {
+				obj.addEventListener(name, func, false);
+			} else {
+				obj.attachEvent("on" + name, func);
+			}
 		}
-		plugin1 = plugin1;
-		test = 0
 
 		function loadLinphoneI18n() {
 			jQuery.i18n.data = jQuery.linphone.i18n
@@ -135,7 +138,7 @@ body {
 			locale = locale.replace('-', '_')
 			console.log('Browser language: ' + locale)
 
-			if (localStorage != null && localStorage['locale'] != null) {
+			if (localStorage['locale'] != null) {
 				jQuery.i18n.change(localStorage['locale'])
 			} else {
 				// Excat Match
@@ -159,70 +162,105 @@ body {
 			}
 		}
 
-		loadLinphoneI18n();
-
-		function addEvent(obj, name, func) {
-			if (window.addEventListener) {
-				obj.addEventListener(name, func, false);
-			} else {
-				obj.attachEvent("on" + name, func);
-			}
-		}
-
 		function addLog(message) {
 			jQuery('#log').val(jQuery('#log').val() + message + '\n');
 		}
-		function testf() {
-			test = test + 1
-			if (test == 2) {
-				id = plugin1().id
-				plugin().set_native_preview_window_id(id)
-				plugin().enable_video_preview(true)
-			}
+
+		// Init functions 
+		function init2() {
+			loadLinphoneI18n()
+			populate_locales_menu()
+			jQuery(".linphone .window .tools .locales-menu").menu();
 		}
-		function videoError() {
-			addLog("Video error")
+
+		function init() {
+			jQuery('#templates').load('templates.html', init2)
 		}
-		function videoLoaded() {
-			testf()
+
+		function videoUnload(object) {
 		}
+
+		function videoError(object) {
+		}
+
+		function videoLoad(object) {
+		}
+
+		function createVideoView(title, onOpen, onClose) {
+			var element = $(document.createElement('div'))
+			element.attr('title', title)
+			element.addClass('video')
+			jQuery('#main').append(element)
+
+			element.dialog({
+				close : function() {
+					onClose(jQuery(this).find('object').get(0))
+				}
+			})
+			element.dialog("open")
+
+			var object = jQuery(jQuery('#Video').render())
+			element.append(object)
+			onOpen(object.find('object').get(0))
+			return element
+		}
+
 		function pluginError() {
 			jQuery('.linphone .window .load').hide()
 			jQuery('.linphone .window .error').show()
 		}
-		function pluginLoaded() {
-			jQuery('#version_number').text(plugin().version);
-			addEvent(plugin(), 'global_state_changed', global_state_changed);
-			addEvent(plugin(), 'call_state_changed', call_state_changed);
-			addEvent(plugin(), 'display_status', display_status);
-			addEvent(plugin(), 'display_message', display_message);
-			addEvent(plugin(), 'display_warning', display_warning);
-			addEvent(plugin(), 'display_url', display_url);
-			if (plugin().init() != 0) {
+
+		function pluginLoad() {
+			jQuery('#version_number').text(core().version);
+			addEvent(core(), 'global_state_changed', global_state_changed);
+			addEvent(core(), 'call_state_changed', call_state_changed);
+			addEvent(core(), 'display_status', display_status);
+			addEvent(core(), 'display_message', display_message);
+			addEvent(core(), 'display_warning', display_warning);
+			addEvent(core(), 'display_url', display_url);
+			if (core().init() != 0) {
 				jQuery('.linphone .window .load').hide()
 				jQuery('.linphone .window .error').show()
 			} else {
 				// Init volumes 
-				rec_level = (localStorage != null && localStorage['rec_level'] != null) ? localStorage['rec_level']
-						: 100
+				rec_level = (localStorage['rec_level'] != null) ? localStorage['rec_level'] : 100
 				jQuery('.linphone .window .tools .mic-slider').slider('value', rec_level)
-				plugin().set_rec_level(rec_level)
+				core().set_rec_level(rec_level)
 
-				play_level = (localStorage != null && localStorage['play_level'] != null) ? localStorage['play_level']
-						: 100
+				play_level = (localStorage['play_level'] != null) ? localStorage['play_level'] : 100
 				jQuery('.linphone .window .tools .hp-slider').slider('value', play_level)
-				plugin().set_play_level(play_level)
+				core().set_play_level(play_level)
 
-				ring_level = (localStorage != null && localStorage['ring_level'] != null) ? localStorage['ring_level']
-						: 100
+				ring_level = (localStorage['ring_level'] != null) ? localStorage['ring_level'] : 100
 				jQuery('.linphone .window .tools .bell-slider').slider('value', ring_level)
-				plugin().set_ring_level(ring_level)
-
-				addLog('Sip port: ' + plugin().sip_port)
+				core().set_ring_level(ring_level)
+				
+				addLog('Sip port: ' + core().sip_port)
 
 				jQuery('.linphone .window .load').hide()
-				
-				testf()
+
+				updateSelfView()
+			}
+		}
+
+		function updateSelfView() {
+			if (localStorage['enable_video'] == 1 && localStorage['enable_video_self'] == 1) {
+				jQuery.linphone.self_view = createVideoView("locale", function(object) {
+					object.setBackgroundColor(0, 0, 0)
+					core().set_native_preview_window_id(object.id)
+					core().enable_video_preview(true)
+				}, function(object) {
+					localStorage['enable_video_self'] = 0
+					updateSelfView()
+				}
+				)
+			} else {
+				if (jQuery.linphone.self_view != null) {
+					core().enable_video_preview(false)
+					core().set_native_preview_window_id(0)
+					jQuery.linphone.self_view.dialog('destroy')
+					jQuery.linphone.self_view = null
+				}
 			}
 		}
 
@@ -242,17 +280,6 @@ body {
 			}
 		}
 
-		//registration_state_changed(LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message);
-		//call_state_changed(LinphoneCall *call, LinphoneCallState cstate, const char *message);
-		//notify_presence_recv(LinphoneFriend * lf);
-		//new_subscription_request(LinphoneFriend *lf, const char *url);
-		//auth_info_requested(const char *realm, const char *username);
-		//call_log_updated(LinphoneCallLog *newcl);
-		//text_received(LinphoneChatRoom *room, const LinphoneAddress *from, const char *message);
-		//dtmf_received(LinphoneCall *call, int dtmf);
-		//refer_received(const char *refer_to);
-		//buddy_info_updated(LinphoneFriend *lf);
-		//notify_recv(LinphoneCall *call, const char *from, const char *event);
 		function display_status(message) {
 			addLog('Status: ' + message);
 		}
@@ -281,7 +308,7 @@ body {
 		}
 
 		function call_invite(dest) {
-			plugin().invite_async(dest, function() {
+			core().invite_async(dest, function() {
 				return function(plugin, obj) {
 					call_invite_callback(dest, obj)
 				}
@@ -289,9 +316,6 @@ body {
 		}
 
 		function call_invite_callback(dest, obj) {
-			console.log("call_invite_callback")
-			console.log(dest)
-			console.log(obj)
 			if (obj) {
 				var call_number = jQuery.linphone.call_number
 				console.log('Add tab call-' + call_number)
@@ -315,16 +339,9 @@ body {
 			menu.empty()
 			for (a in jQuery.linphone.locales) {
 				var item = jQuery.linphone.locales[a]
-				var li_item = $(document.createElement('li'))
-				var a_item = $(document.createElement('a'))
-				a_item.addClass('ui-icon')
-				a_item.addClass('flag')
-				a_item.css('background-image', 'url(\'' + item.icon + '\')')
-				a_item.text(item.name)
-				a_item.data('data', item)
-
-				li_item.append(a_item)
-				menu.append(li_item)
+				var element = jQuery(jQuery('#LocaleItem').render(item))
+				element.find('a').data('data', item)
+				menu.append(element)
 			}
 		}
 
@@ -346,8 +363,7 @@ body {
 			};
 
 			jQuery.linphone.call_number = 1
-
-			populate_locales_menu();
+			jQuery.linphone.self_view = null
 
 			// Tabs
 			jQuery('.linphone .window .tabs').tabs({
@@ -360,7 +376,7 @@ body {
 				change : function(event, ui) {
 					if (localStorage)
 						localStorage['play_level'] = ui.value
-					plugin().set_play_level(ui.value)
+					core().set_play_level(ui.value)
 				}
 			});
 			jQuery(".linphone .window .tools .mic-slider").slider({
@@ -368,7 +384,7 @@ body {
 				change : function(event, ui) {
 					if (localStorage)
 						localStorage['rec_level'] = ui.value
-					plugin().set_rec_level(ui.value)
+					core().set_rec_level(ui.value)
 				}
 			});
 			jQuery(".linphone .window .tools .bell-slider").slider({
@@ -376,7 +392,7 @@ body {
 				change : function(event, ui) {
 					if (localStorage)
 						localStorage['ring_level'] = ui.value
-					plugin().set_ring_level(ui.value)
+					core().set_ring_level(ui.value)
 				}
 			});
 
@@ -387,7 +403,7 @@ body {
 			jQuery(document).on('click', '.linphone .window .teminate-button', function(event) {
 				element = jQuery(event.target).parents('.tab')
 				if (element && element.data('data')) {
-					plugin().terminate_call(element.data('data').obj)
+					core().terminate_call(element.data('data').obj)
 				} else {
 					addLog('Can\'t find call: ' + element);
 				}
@@ -398,7 +414,7 @@ body {
 				var tabId = tab.find('a').attr('href')
 				var element = jQuery('#linphone .window .tabs ' + tabId)
 				if (element && element.data('data')) {
-					plugin().terminate_call(element.data('data').obj)
+					core().terminate_call(element.data('data').obj)
 				} else {
 					addLog('Can\'t find call: ' + element);
 				}
@@ -407,7 +423,7 @@ body {
 
 			jQuery(".linphone .window .tools .settings-menu").menu();
 
-			jQuery(".linphone .window .tools .locales-menu").menu();
+			jQuery(".linphone .window .tools .video-menu").menu();
 
 			jQuery('.linphone .window .tools').disableSelection()
 
@@ -440,6 +456,7 @@ body {
 				else
 					jQuery('.linphone .window .tools .bell-slider').fadeToggle('fast');
 
+				// Click on settings 
 				if (target.is('.linphone .window .tools .settings-icon'))
 					jQuery('.linphone .window .tools .settings-menu').fadeToggle('fast');
 				else if (target.parents(".linphone .window .tools .settings-icon").length == 0)
@@ -447,6 +464,7 @@ body {
 				else
 					jQuery('.linphone .window .tools .settings-menu').fadeIn('fast');
 
+				// Clock on locale item 
 				if (target.is('.linphone .window .tools .locales > a')) {
 					// Update selected element 
 					jQuery('.linphone .window .tools .locales-menu .flag').each(function(index) {
@@ -464,25 +482,73 @@ body {
 					jQuery('.linphone .window .tools .locales-menu').fadeIn('fast');
 				}
 
+				// Clock on video item 
+				if (target.is('.linphone .window .tools .video > a')) {
+					if (localStorage['enable_video'] == 1) {
+						jQuery('.linphone .window .tools .video-menu .enable a').addClass('ui-state-selected')
+						jQuery('.linphone .window .tools .video-menu .self a').removeClass('ui-state-disabled')
+					} else {
+						jQuery('.linphone .window .tools .video-menu .enable a').removeClass('ui-state-selected')
+						jQuery('.linphone .window .tools .video-menu .self a').addClass('ui-state-disabled')
+					}
+					if (localStorage['enable_video_self'] == 1) {
+						jQuery('.linphone .window .tools .video-menu .self a').addClass('ui-state-selected')
+					} else {
+						jQuery('.linphone .window .tools .video-menu .self a').removeClass('ui-state-selected')
+					}
+					jQuery('.linphone .window .tools .video-menu').fadeToggle('fast');
+				} else if (target.parents(".linphone .window .tools .video").length == 0)
+					jQuery('.linphone .window .tools .video-menu').fadeOut('fast');
+				else {
+					jQuery('.linphone .window .tools .video-menu').fadeIn('fast');
+				}
+
+				// Click on enable video item 
+				if (target.is('.linphone .window .tools .video-menu .enable > a')) {
+					if (jQuery('.linphone .window .tools .video-menu .enable > a').hasClass('ui-state-selected')) {
+						localStorage['enable_video'] = 0
+					} else {
+						localStorage['enable_video'] = 1
+					}
+					updateSelfView()
+					jQuery('.linphone .window .tools .video-menu').fadeOut('fast');
+					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
+				}
+
+				// Click on self view video item 
+				if (target.is('.linphone .window .tools .video-menu .self > a')) {
+					if (jQuery('.linphone .window .tools .video-menu .self > a').hasClass('ui-state-selected')) {
+						localStorage['enable_video_self'] = 0
+					} else {
+						localStorage['enable_video_self'] = 1
+					}
+					updateSelfView()
+					jQuery('.linphone .window .tools .video-menu').fadeOut('fast');
+					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
+				}
+
+				// Click on a locale 
 				if (target.is('.linphone .window .tools .locales-menu a')) {
 					jQuery('.linphone .window .tools .locales-menu').fadeOut('fast');
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery.i18n.change(target.data('data').locale)
-					if (localStorage != null)
-						localStorage['locale'] = target.data('data').locale
+					localStorage['locale'] = target.data('data').locale
 				}
 
+				// Click on account item 
 				if (target.is('.linphone .window .tools .accounts > a')) {
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery('.linphone .window .accounts-options').fadeIn('fast');
 				}
 
+				// Click on codecs item 
 				if (target.is('.linphone .window .tools .codecs > a')) {
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery('.linphone .window .codecs-options').fadeIn('fast');
 
 				}
 
+				// Click on media item 
 				if (target.is('.linphone .window .tools .media > a')) {
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery('.linphone .window .media-options').fadeIn('fast');
@@ -490,81 +556,15 @@ body {
 			});
 		})
 	</script>
-	<script id="LinphoneCall-Idle" type="text/x-jquery-tmpl">
-Idle <b>{{=dest}}</b>
-</script>
-	<script id="LinphoneCall-IncomingReceived" type="text/x-jquery-tmpl">
-IncomingReceived <b>{{=dest}}</b>
-</script>
-	<script id="LinphoneCall-OutgoingInit" type="text/x-jquery-tmpl">
-OutgoingInit <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-	<script id="LinphoneCall-OutgoingProgress" type="text/x-jquery-tmpl">
-OutgoingProgress <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-	<script id="LinphoneCall-OutgoingRinging" type="text/x-jquery-tmpl">
-OutgoingRinging <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-	<script id="LinphoneCall-OutgoingEarlyMedia" type="text/x-jquery-tmpl">
-OutgoingEarlyMedia <b>{{=dest}}</b>
-</script>
-	<script id="LinphoneCall-Connected" type="text/x-jquery-tmpl">
-Connected <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-	<script id="LinphoneCall-StreamsRunning" type="text/x-jquery-tmpl">
-StreamsRunning <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-	<script id="LinphoneCall-Pausing" type="text/x-jquery-tmpl">
-Pausing <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-	<script id="LinphoneCall-Paused" type="text/x-jquery-tmpl">
-Paused <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-	<script id="LinphoneCall-Resuming" type="text/x-jquery-tmpl">
-Resuming <b>{{=dest}}</b>
-<div class="teminate-button"></div>
-</script>
-	<script id="LinphoneCall-Refered" type="text/x-jquery-tmpl">
-Refered <b>{{=dest}}</b>
-</script>
-	<script id="LinphoneCall-Error" type="text/x-jquery-tmpl">
-Error <b>{{=dest}}</b>
-</script>
-	<script id="LinphoneCall-End" type="text/x-jquery-tmpl">
-End <b>{{=dest}}</b>
-</script>
-	<script id="LinphoneCall-PausedByRemote" type="text/x-jquery-tmpl">
-PausedByRemote <b>{{=dest}}</b>
-</script>
-	<script id="LinphoneCall-UpdatedByRemote" type="text/x-jquery-tmpl">
-UpdatedByRemote <b>{{=dest}}</b>
-</script>
-	<script id="LinphoneCall-IncomingEarlyMedia" type="text/x-jquery-tmpl">
-IncomingEarlyMedia <b>{{=dest}}</b>
-</script>
-	<script id="LinphoneCall-Updated" type="text/x-jquery-tmpl">
-Updated <b>{{=dest}}</b>
-</script>
-	<script id="LinphoneCall-Released" type="text/x-jquery-tmpl">
-Call end: <b>{{=dest}}</b>
-</script>
 
-	<div>
-		<object id="plugin0" type="application/x-linphone" width="0" height="0">
-			<param name="onload" value="pluginLoaded" />
+	<div id="main">
+
+		<object id="core" type="application/x-linphone" width="0" height="0">
+			<param name="onload" value="pluginLoad" />
 			<param name="onerror" value="pluginError" />
+			<param name="onunload" value="pluginUnload" />
 		</object>
-		<object id="plugin1" type="application/x-linphone-video" width="300" height="300">
-			<param name="onload" value="videoLoaded" />
-			<param name="onerror" value="videoError" />
-		</object>
+
 		<br />
 
 		<div class="linphone ui-widget" id="linphone">
@@ -608,10 +608,15 @@ Call end: <b>{{=dest}}</b>
 						</div>
 						<div class="ui-icon settings-icon">
 							<ul class="settings-menu">
-								<li class="accounts"><a class="ui-icon">Accounts</a></li>
-								<li class="media"><a class="ui-icon">Media</a></li>
-								<li class="codecs"><a class="ui-icon">Codecs</a></li>
-								<li class="locales"><a class="ui-icon">Language</a>
+								<li class="accounts"><a class="lang ui-icon" title="menu.settings.accounts"></a></li>
+								<li class="media"><a class="lang ui-icon" title="menu.settings.media"></a></li>
+								<li class="video"><a class="lang ui-icon" title="menu.settings.video"></a>
+									<ul class="video-menu">
+										<li class="enable"><a class="lang" title="menu.settings.video.enable"></a></li>
+										<li class="self"><a class="lang" title="menu.settings.video.self"></a></li>
+									</ul></li>
+								<li class="codecs"><a class="lang ui-icon" title="menu.settings.codecs"></a></li>
+								<li class="locales"><a class="lang ui-icon" title="menu.settings.locales"></a>
 									<ul class="locales-menu">
 										<li></li>
 									</ul></li>
@@ -635,7 +640,7 @@ Call end: <b>{{=dest}}</b>
 				</div>
 			</div>
 		</div>
-
+		<div id="templates"></div>
 		<div>
 			<textarea id="log" rows="10" cols="100"></textarea>
 			<div class="ui-widget">

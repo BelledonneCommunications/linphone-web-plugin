@@ -19,6 +19,8 @@ public:
 	// Property
 	int getId();
 
+	void setBackgroundColor(int r, int g, int b);
+
 private:
 	videoWeakPtr m_plugin;
 	FB::BrowserHostPtr m_host;

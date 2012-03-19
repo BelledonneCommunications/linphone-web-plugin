@@ -22,6 +22,7 @@ VideoAPI::VideoAPI(const videoPtr& plugin, const FB::BrowserHostPtr& host) :
 
 	// Methods
 	registerProperty("id", make_property(this, &VideoAPI::getId));
+	registerMethod("setBackgroundColor", make_method(this, &VideoAPI::setBackgroundColor));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -57,4 +58,8 @@ void VideoAPI::setWindow(FB::PluginWindow *window) {
 
 int VideoAPI::getId() {
 	return mWindow->getId();
+}
+
+void VideoAPI::setBackgroundColor(int r, int g, int b) {
+	mWindow->setBackgroundColor(r, g, b);
 }
