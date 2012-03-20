@@ -7,12 +7,14 @@
 class CallAPI : public FB::JSAPIAuto {
 private:
 	LinphoneCall *mCall;
+	CallAPI(LinphoneCall *call);
 
 public:
-	CallAPI(LinphoneCall *call);
 	~CallAPI();
-	int get_state();
-	LinphoneCall *getRef();
+	int get_state() const;
+	inline LinphoneCall *getRef() const{
+		return mCall;
+	}
 	static boost::shared_ptr<CallAPI> get(LinphoneCall *call);
 };
 
