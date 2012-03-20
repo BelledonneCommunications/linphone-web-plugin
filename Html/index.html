@@ -15,8 +15,8 @@
 <script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
 <script type="text/javascript" src="js/jquery.scrollabletab.js"></script>
 <script type="text/javascript" src="js/jquery.metadata.js"></script>
-<script type="text/javascript" src="js/i18n.js"></script>
 <script type="text/javascript" src="js/jsrender.js"></script>
+<script type="text/javascript" src="js/i18n.js"></script>
 <script type="text/javascript" src="js/linphone.js"></script>
 <script type="text/javascript" src="js/linphone.i18n.js"></script>
 <style type="text/css">
@@ -192,19 +192,23 @@ body {
 			var element = $(document.createElement('div'))
 			element.attr('title', title)
 			element.addClass('video')
-			jQuery('#main').append(element)
 
 			element.dialog({
 				close : function() {
 					onClose(jQuery(this).find('object').get(0))
 				}
 			})
+			element.parent().appendTo(jQuery('.linphone'))
 			element.dialog("open")
-
-			var object = jQuery(jQuery('#Video').render())
+			var object = jQuery(jQuery('#Linphone-Video').render())
 			element.append(object)
 			onOpen(object.find('object').get(0))
 			return element
+		}
+
+		function destroyVideoView(element) {
+			jQuery.linphone.self_view.dialog('destroy')
+			jQuery.linphone.self_view.destroy()
 		}
 
 		function pluginError() {
@@ -257,7 +261,7 @@ body {
 
 		function updateSelfView() {
 			if (localStorage['enable_video'] == 1 && localStorage['enable_video_self'] == 1) {
-				jQuery.linphone.self_view = createVideoView("locale", function(object) {
+				jQuery.linphone.self_view = createVideoView('locale', function(object) {
 					object.setBackgroundColor(0, 0, 0)
 					core().set_native_preview_window_id(object.id)
 					core().enable_video_preview(true)
@@ -269,7 +273,7 @@ body {
 				if (jQuery.linphone.self_view != null) {
 					core().enable_video_preview(false)
 					core().set_native_preview_window_id(0)
-					jQuery.linphone.self_view.dialog('destroy')
+					destroyVideoView(jQuery.linphone.self_view)
 					jQuery.linphone.self_view = null
 				}
 			}
@@ -285,7 +289,7 @@ body {
 			addLog('Call(' + state + '): ' + message);
 			var element = findCallTab(call);
 			if (element) {
-				element.html(jQuery('#LinphoneCall-' + LinphoneCallStateText[state]).render(element.data('data')))
+				element.html(jQuery('#Linphone-Call-' + LinphoneCallStateText[state]).render(element.data('data')))
 			} else {
 				addLog('Can\'t find call tab: ' + call);
 			}
@@ -339,7 +343,7 @@ body {
 					obj : obj,
 					dest : dest
 				})
-				element.html(jQuery('#LinphoneCall-OutgoingInit').render(element.data('data'))) //Async invite force OutgoingInit 
+				element.html(jQuery('#Linphone-Call-OutgoingInit').render(element.data('data'))) //Async invite force OutgoingInit 
 				jQuery.linphone.call_number++
 			}
 		}
@@ -350,7 +354,7 @@ body {
 			menu.empty()
 			for (a in jQuery.linphone.locales) {
 				var item = jQuery.linphone.locales[a]
-				var element = jQuery(jQuery('#LocaleItem').render(item))
+				var element = jQuery(jQuery('#Linphone-LocaleItem').render(item))
 				element.find('a').data('data', item)
 				menu.append(element)
 			}
@@ -376,11 +380,20 @@ body {
 			jQuery.linphone.call_number = 1
 			jQuery.linphone.self_view = null
 
-			// Tabs
-			jQuery('.linphone .window .tabs').tabs({
+			// Tabs 
+			jQuery('.linphone .window > .content > .tabs').tabs({
 				closable : true,
 				scrollable : true
 			})
+
+			jQuery(".linphone .window .codecs-options .content .tabs > ul li a").each(function(index) {
+				$(this).attr("href", "#codecs" + index.toString());
+			});
+			jQuery(".linphone .window .codecs-options .content .tabs > div").each(function(index) {
+				$(this).attr("id", "codecs" + index.toString());
+			})
+			// Tabs 
+			jQuery('.linphone .window .codecs-options .content .tabs').tabs({})
 
 			jQuery(".linphone .window .tools .hp-slider").slider({
 				orientation : 'vertical',
@@ -437,6 +450,8 @@ body {
 			jQuery('.linphone .window .tools .video-menu').menu()
 
 			jQuery('.linphone .window .tools').disableSelection()
+
+			jQuery('.linphone .window .options .ui-dialog-titlebar').disableSelection()
 
 			jQuery('.linphone .window .options .ui-dialog-titlebar-close').click(function(event) {
 				var element = jQuery('.linphone .window .options')
@@ -557,8 +572,17 @@ body {
 				// Click on codecs item 
 				if (target.is('.linphone .window .tools .codecs > a')) {
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
+					{
+						element = jQuery('.linphone .window .codecs-options .content .audio tbody')
+						data = core().get_audio_codecs()
+						element.html(jQuery('#Linphone-CodecsList').render(data));
+					}
+					{
+						element = jQuery('.linphone .window .codecs-options .content .video tbody')
+						data = core().get_video_codecs()
+						element.html(jQuery('#Linphone-CodecsList').render(data));
+					}
 					jQuery('.linphone .window .codecs-options').fadeIn('fast');
-
 				}
 
 				// Click on media item 
@@ -566,22 +590,25 @@ body {
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery('.linphone .window .media-options').fadeIn('fast');
 				}
+
+				// Click on media item 
+				if (target.is('.linphone .window .codecs-options input')) {
+					data = jQuery.tmplItem(event.target).data
+					console(data)
+					//data.enable = !data
+				}
 			});
 		})
 	</script>
 
-	<div id="main">
-
-		<object id="core" type="application/x-linphone" width="0" height="0">
-			<param name="onload" value="pluginLoad" />
-			<param name="onerror" value="pluginError" />
-			<param name="onunload" value="pluginUnload" />
-			Linphone Core
-		</object>
-
-		<br />
-
+	<div>
 		<div class="linphone ui-widget" id="linphone">
+			<object id="core" type="application/x-linphone" width="0" height="0">
+				<param name="onload" value="pluginLoad" />
+				<param name="onerror" value="pluginError" />
+				<param name="onunload" value="pluginUnload" />
+				Linphone Core
+			</object>
 			<div class="window ui-corner-all">
 				<div class="error ui-corner-all">Error !</div>
 				<div class="load ui-corner-all">
@@ -639,32 +666,68 @@ body {
 				<div class="codecs-options options ui-dialog ui-widget ui-widget-content ui-corner-all">
 					<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
 						style="-webkit-user-select: none;">
-						<span class="ui-dialog-title {translate: 'menu.settings.codecs'}" style="-webkit-user-select: none;"></span><a href="#"
-							class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"><span
+						<span class="ui-dialog-title {translate: 'menu.settings.codecs'}" style="-webkit-user-select: none;"></span><a
+							href="#" class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"><span
 							class="ui-icon ui-icon-closethick" style="-webkit-user-select: none;">close</span></a>
+					</div>
+					<div class="content ui-corner-bottom">
+						<div class="tabs">
+							<ul>
+								<li><a class="{translate: 'options.codecs.audio'}"></a></li>
+								<li><a class="{translate: 'options.codecs.video'}"></a></li>
+							</ul>
+							<div>
+								<table class="audio">
+									<thead>
+										<tr>
+											<th class="name {translate: 'options.codecs.name'}"></th>
+											<th class="frequency {translate: 'options.codecs.frequency'}"></th>
+											<th class="bitrate {translate: 'options.codecs.bitrate'}"></th>
+											<th class="actions {translate: 'options.codecs.actions'}"></th>
+										</tr>
+									</thead>
+									<tbody />
+								</table>
+							</div>
+							<div>
+								<table class="video">
+									<thead>
+										<tr>
+											<th class="name {translate: 'options.codecs.name'}"></th>
+											<th class="frequency {translate: 'options.codecs.frequency'}"></th>
+											<th class="bitrate {translate: 'options.codecs.bitrate'}"></th>
+											<th class="actions {translate: 'options.codecs.actions'}"></th>
+										</tr>
+									</thead>
+									<tbody />
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
 
-				<div class="media-options options ui-dialog ui-widget ui-widget-content ui-corner-all">
+				<div class="media-options options ui-dialog ui-widget ui-widget-content ui-corne	r-all">
 					<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
 						style="-webkit-user-select: none;">
-						<span class="ui-dialog-title {translate: 'menu.settings.media'}" style="-webkit-user-select: none;"></span><a href="#"
-							class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"><span
+						<span class="ui-dialog-title {translate: 'menu.settings.media'}" style="-webkit-user-select: none;"></span><a
+							href="#" class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"><span
 							class="ui-icon ui-icon-closethick" style="-webkit-user-select: none;">close</span></a>
 					</div>
+					<div class="content ui-corner-bottom"></div>
 				</div>
 
 				<div class="accounts-options options ui-dialog ui-widget ui-widget-content ui-corner-all">
 					<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
 						style="-webkit-user-select: none;">
-						<span class="ui-dialog-title {translate: 'menu.settings.accounts'}" style="-webkit-user-select: none;"></span><a href="#"
-							class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"><span
+						<span class="ui-dialog-title {translate: 'menu.settings.accounts'}" style="-webkit-user-select: none;"></span><a
+							href="#" class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"><span
 							class="ui-icon ui-icon-closethick" style="-webkit-user-select: none;">close</span></a>
 					</div>
+					<div class="content ui-corner-bottom"></div>
 				</div>
 			</div>
+			<div id="templates"></div>
 		</div>
-		<div id="templates"></div>
 		<div>
 			<textarea id="log" rows="10" cols="100"></textarea>
 			<div class="ui-widget">

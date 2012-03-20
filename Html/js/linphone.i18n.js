@@ -38,4 +38,32 @@ jQuery.linphone.i18n = {
 			}
 		},
 	},
+	options: {
+		codecs: {
+			audio: {
+				en_US : 'Audio',
+				fr_FR : 'Audio',
+			},
+			video: {
+				en_US : 'Video',
+				fr_FR : 'Vidéo',
+			},
+			name: {
+				en_US : 'Name',
+				fr_FR : 'Nom',
+			},
+			frequency: {
+				en_US : 'Frequency',
+				fr_FR : 'Fréquence',		
+			}, 
+			bitrate: {
+				en_US : 'Bitrate',
+				fr_FR : 'Flux',	
+			},
+			actions: {
+				en_US : '',
+				fr_FR : '',		
+			},
+		},
+	},
 }

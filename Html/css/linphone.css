@@ -34,7 +34,9 @@
 
 .linphone .window .header {
 	border-bottom: 1px solid #6666DD;
-	background: url("ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png") repeat-x scroll 50% 50% #F6A828;
+	background:
+		url("ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png")
+		repeat-x scroll 50% 50% #F6A828;
 	height: 26px;
 	line-height: 30px;
 	width: 100%;
@@ -209,7 +211,7 @@
 	position: relative;
 }
 
-.linphone .window .tools .settings-menu .video .ui-icon{
+.linphone .window .tools .settings-menu .video .ui-icon {
 	background-image: url('images/video.png');
 }
 
@@ -251,18 +253,18 @@
 	outline: 0px;
 }
 
-.linphone .window .tabs .tab {
+.linphone .window>.tabs .tab {
 	height: 100%;
 }
 
-.linphone .window .content {
+.linphone .window>.content {
 	background-color: #FFFFFF;
 	width: 100%;
 	height: 150px;
 	margin-bottom: 20px;
 }
 
-.linphone .window .content .ui-scrollable-tabs {
+.linphone .window>.content>.ui-scrollable-tabs {
 	height: 100%;
 }
 
@@ -278,22 +280,83 @@
 	border: 0px;
 }
 
-.ui-menu .ui-menu-item a {
+.linphone .window .options .content {
+	height: 195px;
+	width: 100%;
+	margin: 0px;
+	overflow: auto;
+}
+
+.linphone .window .options .content table {
+	width: 100%;
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+.linphone .window .options .content table th {
+	text-align: left;
+}
+
+.linphone .window .options .ui-dialog-titlebar {
+	cursor: default;
+	height: 15px;
+}
+
+.linphone .window .codecs-options .content {
+	overflow: inherit;
+	position: relative;
+}
+
+.linphone .window .codecs-options .content .name {
+	width: 50px;
+}
+
+.linphone .window .codecs-options .content .frequency {
+	width: 45px;
+}
+
+.linphone .window .codecs-options .content .bitrate {
+	width: 35px;
+}
+
+.linphone .window .codecs-options .content .tabs {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	right: 0px;
+	left: 0px;
+}
+
+.linphone .window .codecs-options .content table {
+	table-layout: fixed
+}
+
+.linphone .window .codecs-options .content .ui-tabs-panel {
+	overflow: auto;
+	position: absolute;
+	height: 145px;
+	left: 0px;
+	right: 0px;
+}
+
+.linphone .ui-menu .ui-menu-item a {
 	cursor: pointer;
 }
 
-.ui-menu .ui-menu-item a:focus {
+.linphone .ui-menu .ui-menu-item a:focus {
 	outline: 0px;
 }
 
-.ui-dialog-content.video {
+.linphone .ui-dialog-content.video {
 	overflow: hidden !important;
 }
 
-.video div {
+.linphone .video div {
+	
 }
 
-.video div object {
+.linphone .video div object {
 	width: 100%;
 	height: 100%;
 	padding: 0px;

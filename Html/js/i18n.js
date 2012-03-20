@@ -7,7 +7,6 @@ jQuery.i18n.change = function(locale) {
 		console.log('Change locale: ' + jQuery.i18n.locale)
 		jQuery('*').filter(function () { return $(this).metadata().translate != null}).each(function() {
 			var element = $(this)
-			console.log(element)
 			element.html(jQuery.i18n.translate(element.metadata().translate))
 		})
 	}
@@ -21,10 +20,10 @@ jQuery.i18n.translate = function(text) {
 		data = data[part]
 	}
 
-	if (data)
+	if (data != null)
 		data = data[jQuery.i18n.locale]
 
-	if (data) {
+	if (data != null) {
 		translated_text = data
 	}
 

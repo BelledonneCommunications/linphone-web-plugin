@@ -67,6 +67,11 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	REGISTER_SYNC_N_ASYNC("invite", invite);
 	REGISTER_SYNC_N_ASYNC("terminate_call", terminate_call);
 
+
+	registerMethod("set_play_level", make_method(this, &CoreAPI::set_play_level));
+	registerMethod("set_rec_level", make_method(this, &CoreAPI::set_rec_level));
+	registerMethod("set_ring_level", make_method(this, &CoreAPI::set_ring_level));
+
 	registerMethod("enable_video", make_method(this, &CoreAPI::enable_video));
 	registerMethod("video_enabled", make_method(this, &CoreAPI::video_enabled));
 	registerMethod("enable_video_preview", make_method(this, &CoreAPI::enable_video_preview));
@@ -74,9 +79,8 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	registerMethod("get_native_preview_window_id", make_method(this, &CoreAPI::get_native_preview_window_id));
 	registerMethod("set_native_preview_window_id", make_method(this, &CoreAPI::set_native_preview_window_id));
 
-	registerMethod("set_play_level", make_method(this, &CoreAPI::set_play_level));
-	registerMethod("set_rec_level", make_method(this, &CoreAPI::set_rec_level));
-	registerMethod("set_ring_level", make_method(this, &CoreAPI::set_ring_level));
+	registerMethod("get_audio_codecs", make_method(this, &CoreAPI::get_audio_codecs));
+	registerMethod("get_video_codecs", make_method(this, &CoreAPI::get_video_codecs));
 }
 
 int CoreAPI::init() {
@@ -112,6 +116,14 @@ int CoreAPI::init() {
 	if (linphone_core_get_user_data(m_lin_core) != this) {
 		FBLOG_ERROR("CoreAPI::init()", "Too old version of linphone core!");
 		return 1;
+	}
+
+	for(const MSList *node=linphone_core_get_audio_codecs(m_lin_core);node!=NULL;node=ms_list_next(node)){
+		reinterpret_cast<PayloadType*>(node->data)->user_data = NULL;
+	}
+
+	for(const MSList *node=linphone_core_get_video_codecs(m_lin_core);node!=NULL;node=ms_list_next(node)){
+		reinterpret_cast<PayloadType*>(node->data)->user_data = NULL;
 	}
 
 	int port = 5000 + rand() % 5000;
@@ -230,6 +242,28 @@ unsigned long CoreAPI::get_native_preview_window_id() {
 
 	FBLOG_DEBUG("CoreAPI::get_native_preview_window_id()", this);
 	return linphone_core_get_native_preview_window_id(m_lin_core);
+}
+
+FB::VariantList CoreAPI::get_audio_codecs() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::get_audio_codecs()", this);
+	FB::VariantList list;
+	for(const MSList *node=linphone_core_get_audio_codecs(m_lin_core);node!=NULL;node=ms_list_next(node)){
+		list.push_back(PayloadTypeAPI::get(boost::static_pointer_cast<CoreAPI>(shared_from_this()), reinterpret_cast<PayloadType*>(node->data)));
+	}
+	return list;
+}
+
+FB::VariantList CoreAPI::get_video_codecs() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::get_video_codecs()", this);
+	FB::VariantList list;
+	for(const MSList *node=linphone_core_get_video_codecs(m_lin_core);node!=NULL;node=ms_list_next(node)){
+		list.push_back(PayloadTypeAPI::get(boost::static_pointer_cast<CoreAPI>(shared_from_this()), reinterpret_cast<PayloadType*>(node->data)));
+	}
+	return list;
 }
 
 std::string CoreAPI::getVersion() {

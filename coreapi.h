@@ -15,6 +15,8 @@
 #include "coreplugin.h"
 #include "coreapi.h"
 #include "callapi.h"
+#include "payloadtypeapi.h"
+#include "proxyconfigapi.h"
 #include "utils.h"
 
 #define __DECLARE_SYNC_N_ASYNC_PARAMMACRO(z, n, args) BOOST_PP_ARRAY_ELEM(n, args) p##n
@@ -79,12 +81,16 @@ public:
 	void set_play_level(int level);
 	void set_rec_level(int level);
 	void set_ring_level(int level);
+
 	void enable_video(bool enable);
 	bool video_enabled();
 	void enable_video_preview(bool enable);
 	bool video_preview_enabled();
 	void set_native_preview_window_id(unsigned long id);
 	unsigned long get_native_preview_window_id();
+
+	FB::VariantList get_audio_codecs();
+	FB::VariantList get_video_codecs();
 
 	// Event helpers
 	FB_JSAPI_EVENT(global_state_changed, 2, (const int&, const std::string&))FB_JSAPI_EVENT(call_state_changed, 3, (boost::shared_ptr<CallAPI>, const int&, const std::string&))
@@ -94,6 +100,10 @@ public:
 	FB_JSAPI_EVENT(refer_received, 1, (const std::string&))
 
 	FB_JSAPI_EVENT(display_status, 1, (const std::string&))FB_JSAPI_EVENT(display_message, 1, (const std::string&))FB_JSAPI_EVENT(display_warning, 1, (const std::string&))FB_JSAPI_EVENT(display_url, 2, (const std::string&, const std::string&))FB_JSAPI_EVENT(show, 0, ())
+
+	inline LinphoneCore *getRef() const{
+		return m_lin_core;
+	}
 
 private:
 	linphoneWeakPtr m_plugin;
