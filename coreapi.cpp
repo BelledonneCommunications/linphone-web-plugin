@@ -6,6 +6,9 @@
 #include <boost/foreach.hpp>
 #include "coreapi.h"
 
+#define CORE_MUTEX
+//#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(m_core_mutex);
+
 void linphone_iterate_thread(CoreAPI *linphone_api) {
 	FBLOG_DEBUG("linphone_thread", "start");
 	FBLOG_DEBUG("linphone_thread", linphone_api);
@@ -151,7 +154,7 @@ linphonePtr CoreAPI::getPlugin() {
 }
 
 boost::shared_ptr<CallAPI> CoreAPI::invite(const std::string &dest) {
-	//boost::mutex::scoped_lock scopedLock(m_core_mutex);
+	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::invite", dest);
 	LinphoneCall *call = linphone_core_invite(m_lin_core, dest.c_str());
@@ -160,69 +163,85 @@ boost::shared_ptr<CallAPI> CoreAPI::invite(const std::string &dest) {
 }
 
 void CoreAPI::terminate_call(boost::shared_ptr<CallAPI> call) {
-	//boost::mutex::scoped_lock scopedLock(m_core_mutex);
+	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::terminate_call", call);
 	linphone_core_terminate_call(m_lin_core, call->getRef());
 }
 
 void CoreAPI::set_play_level(int level) {
-	//boost::mutex::scoped_lock scopedLock(m_core_mutex);
+	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::set_play_level", level);
 	linphone_core_set_play_level(m_lin_core, level);
 }
 
 void CoreAPI::set_rec_level(int level) {
-	//boost::mutex::scoped_lock scopedLock(m_core_mutex);
+	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::set_rec_level", level);
 	linphone_core_set_rec_level(m_lin_core, level);
 }
 
 void CoreAPI::set_ring_level(int level) {
-	//boost::mutex::scoped_lock scopedLock(m_core_mutex);
+	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::set_ring_level", level);
 	linphone_core_set_ring_level(m_lin_core, level);
 }
 
 void CoreAPI::enable_video(bool enable) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CoreAPI::enable_video()", this);
 	linphone_core_enable_video(m_lin_core, enable ? TRUE : FALSE, enable ? TRUE : FALSE);
 }
 
 bool CoreAPI::video_enabled() {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CoreAPI::video_enabled()", this);
 	return linphone_core_video_enabled(m_lin_core) == TRUE ? true : false;
 }
 
 void CoreAPI::enable_video_preview(bool enable) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CoreAPI::enable_video_preview()", this);
 	linphone_core_enable_video_preview(m_lin_core, enable ? TRUE : FALSE);
 }
 
 bool CoreAPI::video_preview_enabled() {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CoreAPI::video_preview_enabled()", this);
 	return linphone_core_video_preview_enabled(m_lin_core) == TRUE ? true : false;
 }
 
 void CoreAPI::set_native_preview_window_id(unsigned long id) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CoreAPI::set_native_preview_window_id()", this);
 	linphone_core_set_native_preview_window_id(m_lin_core, id);
 }
 
 unsigned long CoreAPI::get_native_preview_window_id() {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CoreAPI::get_native_preview_window_id()", this);
 	return linphone_core_get_native_preview_window_id(m_lin_core);
 }
 
 std::string CoreAPI::getVersion() {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CoreAPI::getVersion()", this);
 	return linphone_core_get_version();
 }
 
 int CoreAPI::getSipPort() {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CoreAPI::getSipPort()", this);
 	return linphone_core_get_sip_port(m_lin_core);
 }
@@ -242,7 +261,7 @@ void CoreAPI::wrapper_global_state_changed(LinphoneCore *lc, LinphoneGlobalState
 		ss << "gstate = " << gstate << ", ";
 		ss << "message = " << message;
 		FBLOG_DEBUG("wrapper_global_state_changed", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 		GLC(fire_global_state_changed(gstate, message));
 	}
 }
@@ -254,7 +273,7 @@ void CoreAPI::wrapper_registration_state_changed(LinphoneCore *lc, LinphoneProxy
 		ss << "cstate = " << cstate << ", ";
 		ss << "message = " << message;
 		FBLOG_DEBUG("wrapper_registration_state_changed", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 	}
 }
 void CoreAPI::wrapper_call_state_changed(LinphoneCore *lc, LinphoneCall *call, LinphoneCallState cstate, const char *message) {
@@ -265,7 +284,7 @@ void CoreAPI::wrapper_call_state_changed(LinphoneCore *lc, LinphoneCall *call, L
 		ss << "cstate = " << cstate << ", ";
 		ss << "message = " << message;
 		FBLOG_DEBUG("wrapper_call_state_changed", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 		GLC(fire_call_state_changed(CallAPI::get(call), cstate, message));
 	}
 }
@@ -275,7 +294,7 @@ void CoreAPI::wrapper_notify_presence_recv(LinphoneCore *lc, LinphoneFriend * lf
 		std::stringstream ss;
 		ss << "lf = " << lf;
 		FBLOG_DEBUG("wrapper_notify_presence_recv", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 	}
 }
 void CoreAPI::wrapper_new_subscription_request(LinphoneCore *lc, LinphoneFriend *lf, const char *url) {
@@ -285,7 +304,7 @@ void CoreAPI::wrapper_new_subscription_request(LinphoneCore *lc, LinphoneFriend 
 		ss << "lf = " << lf << ", ";
 		ss << "url = " << url;
 		FBLOG_DEBUG("wrapper_new_subscription_request", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 	}
 }
 void CoreAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username) {
@@ -295,7 +314,7 @@ void CoreAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, c
 		ss << "realm = " << realm << ", ";
 		ss << "username = " << username;
 		FBLOG_DEBUG("wrapper_auth_info_requested", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 	}
 }
 void CoreAPI::wrapper_call_log_updated(LinphoneCore *lc, LinphoneCallLog *newcl) {
@@ -304,7 +323,7 @@ void CoreAPI::wrapper_call_log_updated(LinphoneCore *lc, LinphoneCallLog *newcl)
 		std::stringstream ss;
 		ss << "newcl = " << newcl;
 		FBLOG_DEBUG("wrapper_call_log_updated", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 	}
 }
 void CoreAPI::wrapper_text_received(LinphoneCore *lc, LinphoneChatRoom *room, const LinphoneAddress *from, const char *message) {
@@ -315,7 +334,7 @@ void CoreAPI::wrapper_text_received(LinphoneCore *lc, LinphoneChatRoom *room, co
 		ss << "from = " << from << ", ";
 		ss << "message = " << message;
 		FBLOG_DEBUG("wrapper_text_received", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 	}
 }
 void CoreAPI::wrapper_dtmf_received(LinphoneCore *lc, LinphoneCall *call, int dtmf) {
@@ -325,7 +344,7 @@ void CoreAPI::wrapper_dtmf_received(LinphoneCore *lc, LinphoneCall *call, int dt
 		ss << "call = " << call << ", ";
 		ss << "dtmf = " << dtmf;
 		FBLOG_DEBUG("wrapper_dtmf_received", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 	}
 }
 void CoreAPI::wrapper_refer_received(LinphoneCore *lc, const char *refer_to) {
@@ -334,7 +353,7 @@ void CoreAPI::wrapper_refer_received(LinphoneCore *lc, const char *refer_to) {
 		std::stringstream ss;
 		ss << "refer_to = " << refer_to;
 		FBLOG_DEBUG("wrapper_refer_received", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 	}
 }
 void CoreAPI::wrapper_buddy_info_updated(LinphoneCore *lc, LinphoneFriend *lf) {
@@ -343,7 +362,7 @@ void CoreAPI::wrapper_buddy_info_updated(LinphoneCore *lc, LinphoneFriend *lf) {
 		std::stringstream ss;
 		ss << "lf = " << lf;
 		FBLOG_DEBUG("wrapper_buddy_info_updated", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 	}
 }
 void CoreAPI::wrapper_notify_recv(LinphoneCore *lc, LinphoneCall *call, const char *from, const char *event) {
@@ -354,7 +373,7 @@ void CoreAPI::wrapper_notify_recv(LinphoneCore *lc, LinphoneCall *call, const ch
 		ss << "from = " << from << ", ";
 		ss << "event = " << event;
 		FBLOG_DEBUG("wrapper_notify_recv", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 	}
 }
 void CoreAPI::wrapper_display_status(LinphoneCore *lc, const char *message) {
@@ -363,7 +382,7 @@ void CoreAPI::wrapper_display_status(LinphoneCore *lc, const char *message) {
 		std::stringstream ss;
 		ss << "message = " << message;
 		FBLOG_DEBUG("wrapper_display_status", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 		GLC(fire_display_status(message));
 	}
 }
@@ -373,7 +392,7 @@ void CoreAPI::wrapper_display_message(LinphoneCore *lc, const char *message) {
 		std::stringstream ss;
 		ss << "message = " << message;
 		FBLOG_DEBUG("wrapper_display_message", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 		GLC(fire_display_message(message));
 	}
 }
@@ -383,7 +402,7 @@ void CoreAPI::wrapper_display_warning(LinphoneCore *lc, const char *message) {
 		std::stringstream ss;
 		ss << "message = " << message;
 		FBLOG_DEBUG("wrapper_display_warning", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 		GLC(fire_display_warning(message));
 	}
 }
@@ -394,7 +413,7 @@ void CoreAPI::wrapper_display_url(LinphoneCore *lc, const char *message, const c
 		ss << "message = " << message << ", ";
 		ss << "url = " << url;
 		FBLOG_DEBUG("wrapper_display_url", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 		GLC(fire_display_url(message, url));
 	}
 }
@@ -403,7 +422,7 @@ void CoreAPI::wrapper_show(LinphoneCore *lc) {
 #if !FB_NO_LOGGING_MACROS
 		std::stringstream ss;
 		FBLOG_DEBUG("wrapper_show", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 		GLC(fire_show());
 	}
 }
@@ -415,6 +434,6 @@ void CoreAPI::wrapper_call_encryption_changed(LinphoneCore *lc, LinphoneCall *ca
 		ss << "on = " << on << ", ";
 		ss << "authentication_token = " << authentication_token;
 		FBLOG_DEBUG("wrapper_call_encryption_changed", ss.str());
-#endif //DEBUG_LOG
+#endif //FB_NO_LOGGING_MACROS
 	}
 }

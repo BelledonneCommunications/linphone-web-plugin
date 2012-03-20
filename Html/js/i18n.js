@@ -5,9 +5,10 @@ jQuery.i18n.change = function(locale) {
 	if (locale != jQuery.i18n.locale) {
 		jQuery.i18n.locale = locale
 		console.log('Change locale: ' + jQuery.i18n.locale)
-		jQuery('div .lang').each(function() {
+		jQuery('*').filter(function () { return $(this).metadata().translate != null}).each(function() {
 			var element = $(this)
-			element.html(jQuery.i18n.translate(element.attr('title')))
+			console.log(element)
+			element.html(jQuery.i18n.translate(element.metadata().translate))
 		})
 	}
 }
@@ -33,5 +34,5 @@ jQuery.i18n.translate = function(text) {
 }
 jQuery.i18n.get = function(text) {
 	var translated_text = jQuery.i18n.translate(text)
-	return '<div class="lang" title="' + text + '">' + translated_text + '</div>'
+	return '<div class="{translate: \'' + text + '\'}">' + translated_text + '</div>'
 }

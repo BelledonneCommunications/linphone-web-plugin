@@ -35,7 +35,7 @@
 .linphone .window .header {
 	border-bottom: 1px solid #6666DD;
 	background: url("ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png") repeat-x scroll 50% 50% #F6A828;
-	height: 30px;
+	height: 26px;
 	line-height: 30px;
 	width: 100%;
 }
@@ -272,17 +272,10 @@
 	position: absolute;
 	height: 100%;
 	width: 100%;
-	background-color: #FFFFFF;
-	filter: alpha(opacity =     80);
-	-moz-opacity: 0.8;
-	opacity: 0.8;
-}
-
-.linphone .window .options .close {
-	position: absolute;
-	top: 2px;
-	right: 2px;
-	padding: 1px;
+	background: #FFFFFF;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
 }
 
 .ui-menu .ui-menu-item a {

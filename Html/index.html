@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <title>Linphone-JS</title>
+<meta http-equiv="Content-Style-Type" content="text/css" />
 <meta http-equiv="Content-Script-Type" content="text/javascript" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
@@ -13,6 +14,7 @@
 <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
 <script type="text/javascript" src="js/jquery.scrollabletab.js"></script>
+<script type="text/javascript" src="js/jquery.metadata.js"></script>
 <script type="text/javascript" src="js/i18n.js"></script>
 <script type="text/javascript" src="js/jsrender.js"></script>
 <script type="text/javascript" src="js/linphone.js"></script>
@@ -427,21 +429,21 @@ body {
 				} else {
 					addLog('Can\'t find call: ' + element);
 				}
-				jQuery('#linphone .window .tabs ').tabs('remove', tab.prevAll('li').length);
+				jQuery('#linphone .window .tabs ').tabs('remove', tab.prevAll('li').length)
 			})
 
-			jQuery(".linphone .window .tools .settings-menu").menu();
+			jQuery('.linphone .window .tools .settings-menu').menu()
 
-			jQuery(".linphone .window .tools .video-menu").menu();
+			jQuery('.linphone .window .tools .video-menu').menu()
 
 			jQuery('.linphone .window .tools').disableSelection()
 
-			jQuery('.linphone .window .options .close').click(function(event) {
+			jQuery('.linphone .window .options .ui-dialog-titlebar-close').click(function(event) {
 				var element = jQuery('.linphone .window .options')
 				element.fadeOut('fast');
 			})
 
-			jQuery('.linphone .window .options .close').hover(function() {
+			jQuery('.linphone .window .options .ui-dialog-titlebar-close').hover(function() {
 				jQuery(this).addClass("ui-state-hover");
 			}, function() {
 				jQuery(this).removeClass("ui-state-hover");
@@ -574,17 +576,16 @@ body {
 			<param name="onload" value="pluginLoad" />
 			<param name="onerror" value="pluginError" />
 			<param name="onunload" value="pluginUnload" />
+			Linphone Core
 		</object>
 
 		<br />
 
 		<div class="linphone ui-widget" id="linphone">
 			<div class="window ui-corner-all">
-				<div class="error ui-corner-all">
-					<b>Error !</b>
-				</div>
+				<div class="error ui-corner-all">Error !</div>
 				<div class="load ui-corner-all">
-					<img src="css/images/loading.gif"
+					<img src="css/images/loading.gif" alt="..."
 						style="width: 50px; height: 50px; position: absolute; top: 50%; left: 50%; margin-left: -25px; margin-top: -25px;"></img>
 				</div>
 				<div class="header ui-corner-top">
@@ -619,15 +620,15 @@ body {
 						</div>
 						<div class="ui-icon settings-icon">
 							<ul class="settings-menu">
-								<li class="accounts"><a class="lang ui-icon" title="menu.settings.accounts"></a></li>
-								<li class="media"><a class="lang ui-icon" title="menu.settings.media"></a></li>
-								<li class="video"><a class="lang ui-icon" title="menu.settings.video"></a>
+								<li class="accounts"><a class="ui-icon {translate: 'menu.settings.accounts'}"></a></li>
+								<li class="media"><a class="ui-icon {translate: 'menu.settings.media'}"></a></li>
+								<li class="video"><a class="ui-icon {translate: 'menu.settings.video'}"></a>
 									<ul class="video-menu">
-										<li class="enable"><a class="lang" title="menu.settings.video.enable"></a></li>
-										<li class="self"><a class="lang" title="menu.settings.video.self"></a></li>
+										<li class="enable"><a class="{translate: 'menu.settings.video.enable'}"></a></li>
+										<li class="self"><a class="{translate: 'menu.settings.video.self'}"></a></li>
 									</ul></li>
-								<li class="codecs"><a class="lang ui-icon" title="menu.settings.codecs"></a></li>
-								<li class="locales"><a class="lang ui-icon" title="menu.settings.locales"></a>
+								<li class="codecs"><a class="ui-icon {translate: 'menu.settings.codecs'}"></a></li>
+								<li class="locales"><a class="ui-icon {translate: 'menu.settings.locales'}"></a>
 									<ul class="locales-menu">
 										<li></li>
 									</ul></li>
@@ -635,19 +636,31 @@ body {
 						</div>
 					</div>
 				</div>
-				<div class="codecs-options options">
-					<a class="close ui-widget-header ui-corner-all"> <span class="ui-icon ui-icon-closethick"></span>
-					</a>
+				<div class="codecs-options options ui-dialog ui-widget ui-widget-content ui-corner-all">
+					<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
+						style="-webkit-user-select: none;">
+						<span class="ui-dialog-title {translate: 'menu.settings.codecs'}" style="-webkit-user-select: none;"></span><a href="#"
+							class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"><span
+							class="ui-icon ui-icon-closethick" style="-webkit-user-select: none;">close</span></a>
+					</div>
 				</div>
 
-				<div class="media-options options">
-					<a class="close ui-widget-header ui-corner-all"> <span class="ui-icon ui-icon-closethick"></span>
-					</a>
+				<div class="media-options options ui-dialog ui-widget ui-widget-content ui-corner-all">
+					<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
+						style="-webkit-user-select: none;">
+						<span class="ui-dialog-title {translate: 'menu.settings.media'}" style="-webkit-user-select: none;"></span><a href="#"
+							class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"><span
+							class="ui-icon ui-icon-closethick" style="-webkit-user-select: none;">close</span></a>
+					</div>
 				</div>
 
-				<div class="accounts-options options">
-					<a class="close ui-widget-header ui-corner-all"> <span class="ui-icon ui-icon-closethick"></span>
-					</a>
+				<div class="accounts-options options ui-dialog ui-widget ui-widget-content ui-corner-all">
+					<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
+						style="-webkit-user-select: none;">
+						<span class="ui-dialog-title {translate: 'menu.settings.accounts'}" style="-webkit-user-select: none;"></span><a href="#"
+							class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"><span
+							class="ui-icon ui-icon-closethick" style="-webkit-user-select: none;">close</span></a>
+					</div>
 				</div>
 			</div>
 		</div>
