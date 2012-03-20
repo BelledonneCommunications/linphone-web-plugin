@@ -1,0 +1,81 @@
+<script id="LinphoneCall-Idle" type="text/x-jquery-tmpl">
+Idle <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-IncomingReceived" type="text/x-jquery-tmpl">
+IncomingReceived <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-OutgoingInit" type="text/x-jquery-tmpl">
+OutgoingInit <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+<script id="LinphoneCall-OutgoingProgress" type="text/x-jquery-tmpl">
+OutgoingProgress <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+<script id="LinphoneCall-OutgoingRinging" type="text/x-jquery-tmpl">
+OutgoingRinging <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+<script id="LinphoneCall-OutgoingEarlyMedia" type="text/x-jquery-tmpl">
+OutgoingEarlyMedia <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-Connected" type="text/x-jquery-tmpl">
+Connected <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+<script id="LinphoneCall-StreamsRunning" type="text/x-jquery-tmpl">
+StreamsRunning <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+<script id="LinphoneCall-Pausing" type="text/x-jquery-tmpl">
+Pausing <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+<script id="LinphoneCall-Paused" type="text/x-jquery-tmpl">
+Paused <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+<script id="LinphoneCall-Resuming" type="text/x-jquery-tmpl">
+Resuming <b>{{=dest}}</b>
+<div class="teminate-button"></div>
+</script>
+<script id="LinphoneCall-Refered" type="text/x-jquery-tmpl">
+Refered <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-Error" type="text/x-jquery-tmpl">
+Error <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-End" type="text/x-jquery-tmpl">
+End <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-PausedByRemote" type="text/x-jquery-tmpl">
+PausedByRemote <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-UpdatedByRemote" type="text/x-jquery-tmpl">
+UpdatedByRemote <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-IncomingEarlyMedia" type="text/x-jquery-tmpl">
+IncomingEarlyMedia <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-Updated" type="text/x-jquery-tmpl">
+Updated <b>{{=dest}}</b>
+</script>
+<script id="LinphoneCall-Released" type="text/x-jquery-tmpl">
+Call end: <b>{{=dest}}</b>
+</script>
+<script id="Video" type="text/x-jquery-tmpl">
+<div>
+	<object class="video" type="application/x-linphone-video">
+		<param name="onload" value="videoLoad" />
+		<param name="onerror" value="videoError" />
+		<param name="onunload" value="videoUnload" />
+	</object>
+</div>
+</script>
+<script id="LocaleItem" type="text/x-jquery-tmpl">
+<li>
+	<a class="ui-icon flag" style="background-image: url('{{=icon}}')">
+		{{=name}}
+	</a>
+</li>
+</script>
