@@ -610,6 +610,7 @@ body {
 						}
 					}
 
+					jQuery(".linphone .window .codecs-options .content tbody tr").disableSelection()
 					jQuery(".linphone .window .codecs-options .content tbody tr").draggable({
 						containment : 'parent',
 						helper : function(event) {
@@ -622,7 +623,6 @@ body {
 							dnd.helper = ui.helper;
 						}
 					});
-
 					jQuery(".linphone .window .codecs-options .content tbody tr").droppable({
 						drop : function(event, ui) {
 							jQuery(dnd.tr).detach().insertBefore(jQuery(this));
