@@ -84,6 +84,12 @@ Call end: <b>{{=dest}}</b>
 	<td>{{=mime_type}}</td>
 	<td>{{=clock_rate}}</td>
 	<td>{{=normal_bitrate}}</td>
-	<td><input class="enable" type="checkbox" checked/></td>
+	<td>
+		{{#if enabled}}
+			<input class="enable" type="checkbox" checked/>
+		{{else}}
+			<input class="enable" type="checkbox" />
+		{{/if}}
+	</td>
 </tr>
 </script>

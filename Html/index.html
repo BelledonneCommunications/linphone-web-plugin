@@ -313,7 +313,7 @@ body {
 
 		function findCallTab(obj) {
 			var ret = null
-			jQuery('#linphone .window .tabs .tab').each(function(index) {
+			jQuery('#linphone .window > .content .tabs .tab').each(function(index) {
 				var element = jQuery(this)
 				if (element.data('data') && element.data('data').obj == obj) {
 					ret = element;
@@ -335,10 +335,10 @@ body {
 				var call_number = jQuery.linphone.call_number
 				console.log('Add tab call-' + call_number)
 				var div = jQuery('<div id="call-'+call_number+'" class="tab"></div>')
-				jQuery('#linphone .window .tabs').append(div)
+				jQuery('#linphone .window > .content .tabs').append(div)
 						.tabs('add', '#call-' + call_number, 'Call ' + call_number);
-				jQuery('#linphone .window .tabs').tabs('select', '#call-' + call_number)
-				var element = jQuery('#linphone .window .tabs #call-' + call_number)
+				jQuery('#linphone .window > .content .tabs').tabs('select', '#call-' + call_number)
+				var element = jQuery('#linphone .window > .content .tabs #call-' + call_number)
 				element.data('data', {
 					obj : obj,
 					dest : dest
@@ -381,7 +381,7 @@ body {
 			jQuery.linphone.self_view = null
 
 			// Tabs 
-			jQuery('.linphone .window > .content > .tabs').tabs({
+			jQuery('.linphone .window > .content .tabs').tabs({
 				closable : true,
 				scrollable : true
 			})
@@ -436,13 +436,13 @@ body {
 			jQuery(document).on('click', '.linphone .window .ui-tabs-close .ui-icon', function(event) {
 				var tab = jQuery(event.target).parents('li')
 				var tabId = tab.find('a').attr('href')
-				var element = jQuery('#linphone .window .tabs ' + tabId)
+				var element = jQuery('#linphone > .window > .content .tabs ' + tabId)
 				if (element && element.data('data')) {
 					core().terminate_call(element.data('data').obj)
 				} else {
 					addLog('Can\'t find call: ' + element);
 				}
-				jQuery('#linphone .window .tabs ').tabs('remove', tab.prevAll('li').length)
+				jQuery('#linphone .window > .content .tabs ').tabs('remove', tab.prevAll('li').length)
 			})
 
 			jQuery('.linphone .window .tools .settings-menu').menu()
@@ -575,6 +575,7 @@ body {
 					{
 						element = jQuery('.linphone .window .codecs-options .content .audio tbody')
 						data = core().get_audio_codecs()
+						console.log(data)
 						element.html(jQuery('#Linphone-CodecsList').render(data));
 					}
 					{
