@@ -81,10 +81,10 @@ Call end: <b>{{=dest}}</b>
 </script>
 <script id="Linphone-CodecsList" type="text/x-jsrender">
 <tr>
-	<td>{{=mime_type}}</td>
-	<td>{{=clock_rate}}</td>
-	<td>{{=normal_bitrate}}</td>
-	<td>
+	<td class="name">{{=mime_type}}</td>
+	<td class="frequency">{{=clock_rate}}</td>
+	<td class="bitrate">{{=normal_bitrate}}</td>
+	<td class="actions">
 		{{#if enabled}}
 			<input class="enable" type="checkbox" checked/>
 		{{else}}

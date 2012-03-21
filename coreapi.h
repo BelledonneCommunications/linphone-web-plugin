@@ -91,6 +91,8 @@ public:
 
 	FB::VariantList get_audio_codecs();
 	FB::VariantList get_video_codecs();
+	void set_audio_codecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list);
+	void set_video_codecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list);
 
 	// Event helpers
 	FB_JSAPI_EVENT(global_state_changed, 2, (const int&, const std::string&))FB_JSAPI_EVENT(call_state_changed, 3, (boost::shared_ptr<CallAPI>, const int&, const std::string&))

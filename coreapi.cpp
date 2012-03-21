@@ -6,7 +6,7 @@
 #include <boost/foreach.hpp>
 #include "coreapi.h"
 
-#define CORE_MUTEX
+#define CORE_MUTEX ;
 //#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(m_core_mutex);
 
 void linphone_iterate_thread(CoreAPI *linphone_api) {
@@ -67,7 +67,6 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	REGISTER_SYNC_N_ASYNC("invite", invite);
 	REGISTER_SYNC_N_ASYNC("terminate_call", terminate_call);
 
-
 	registerMethod("set_play_level", make_method(this, &CoreAPI::set_play_level));
 	registerMethod("set_rec_level", make_method(this, &CoreAPI::set_rec_level));
 	registerMethod("set_ring_level", make_method(this, &CoreAPI::set_ring_level));
@@ -81,6 +80,8 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 
 	registerMethod("get_audio_codecs", make_method(this, &CoreAPI::get_audio_codecs));
 	registerMethod("get_video_codecs", make_method(this, &CoreAPI::get_video_codecs));
+	registerMethod("set_audio_codecs", make_method(this, &CoreAPI::set_audio_codecs));
+	registerMethod("set_video_codecs", make_method(this, &CoreAPI::set_video_codecs));
 }
 
 int CoreAPI::init() {
@@ -118,11 +119,11 @@ int CoreAPI::init() {
 		return 1;
 	}
 
-	for(const MSList *node=linphone_core_get_audio_codecs(m_lin_core);node!=NULL;node=ms_list_next(node)){
+	for (const MSList *node = linphone_core_get_audio_codecs(m_lin_core); node != NULL; node = ms_list_next(node)) {
 		reinterpret_cast<PayloadType*>(node->data)->user_data = NULL;
 	}
 
-	for(const MSList *node=linphone_core_get_video_codecs(m_lin_core);node!=NULL;node=ms_list_next(node)){
+	for (const MSList *node = linphone_core_get_video_codecs(m_lin_core); node != NULL; node = ms_list_next(node)) {
 		reinterpret_cast<PayloadType*>(node->data)->user_data = NULL;
 	}
 
@@ -168,7 +169,7 @@ linphonePtr CoreAPI::getPlugin() {
 boost::shared_ptr<CallAPI> CoreAPI::invite(const std::string &dest) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::invite", dest);
+	FBLOG_DEBUG("CoreAPI::invite", "dest=" << dest);
 	LinphoneCall *call = linphone_core_invite(m_lin_core, dest.c_str());
 	boost::shared_ptr<CallAPI> shared_call = CallAPI::get(call);
 	return shared_call;
@@ -177,79 +178,79 @@ boost::shared_ptr<CallAPI> CoreAPI::invite(const std::string &dest) {
 void CoreAPI::terminate_call(boost::shared_ptr<CallAPI> call) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::terminate_call", call);
+	FBLOG_DEBUG("CoreAPI::terminate_call", "call=" << call);
 	linphone_core_terminate_call(m_lin_core, call->getRef());
 }
 
 void CoreAPI::set_play_level(int level) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::set_play_level", level);
+	FBLOG_DEBUG("CoreAPI::set_play_level", "level=" << level);
 	linphone_core_set_play_level(m_lin_core, level);
 }
 
 void CoreAPI::set_rec_level(int level) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::set_rec_level", level);
+	FBLOG_DEBUG("CoreAPI::set_rec_level", "level=" << level);
 	linphone_core_set_rec_level(m_lin_core, level);
 }
 
 void CoreAPI::set_ring_level(int level) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::set_ring_level", level);
+	FBLOG_DEBUG("CoreAPI::set_ring_level", "level=" << level);
 	linphone_core_set_ring_level(m_lin_core, level);
 }
 
 void CoreAPI::enable_video(bool enable) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::enable_video()", this);
+	FBLOG_DEBUG("CoreAPI::enable_video()", "enable=" << enable);
 	linphone_core_enable_video(m_lin_core, enable ? TRUE : FALSE, enable ? TRUE : FALSE);
 }
 
 bool CoreAPI::video_enabled() {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::video_enabled()", this);
+	FBLOG_DEBUG("CoreAPI::video_enabled()", "");
 	return linphone_core_video_enabled(m_lin_core) == TRUE ? true : false;
 }
 
 void CoreAPI::enable_video_preview(bool enable) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::enable_video_preview()", this);
+	FBLOG_DEBUG("CoreAPI::enable_video_preview()", "enable=" << enable);
 	linphone_core_enable_video_preview(m_lin_core, enable ? TRUE : FALSE);
 }
 
 bool CoreAPI::video_preview_enabled() {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::video_preview_enabled()", this);
+	FBLOG_DEBUG("CoreAPI::video_preview_enabled()", "");
 	return linphone_core_video_preview_enabled(m_lin_core) == TRUE ? true : false;
 }
 
 void CoreAPI::set_native_preview_window_id(unsigned long id) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::set_native_preview_window_id()", this);
+	FBLOG_DEBUG("CoreAPI::set_native_preview_window_id()", "id=" << id);
 	linphone_core_set_native_preview_window_id(m_lin_core, id);
 }
 
 unsigned long CoreAPI::get_native_preview_window_id() {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::get_native_preview_window_id()", this);
+	FBLOG_DEBUG("CoreAPI::get_native_preview_window_id()", "");
 	return linphone_core_get_native_preview_window_id(m_lin_core);
 }
 
 FB::VariantList CoreAPI::get_audio_codecs() {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::get_audio_codecs()", this);
+	FBLOG_DEBUG("CoreAPI::get_audio_codecs()", "");
 	FB::VariantList list;
-	for(const MSList *node=linphone_core_get_audio_codecs(m_lin_core);node!=NULL;node=ms_list_next(node)){
+	for (const MSList *node = linphone_core_get_audio_codecs(m_lin_core); node != NULL; node = ms_list_next(node)) {
 		list.push_back(PayloadTypeAPI::get(boost::static_pointer_cast<CoreAPI>(shared_from_this()), reinterpret_cast<PayloadType*>(node->data)));
 	}
 	return list;
@@ -258,12 +259,46 @@ FB::VariantList CoreAPI::get_audio_codecs() {
 FB::VariantList CoreAPI::get_video_codecs() {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::get_video_codecs()", this);
+	FBLOG_DEBUG("CoreAPI::get_video_codecs()", "");
 	FB::VariantList list;
-	for(const MSList *node=linphone_core_get_video_codecs(m_lin_core);node!=NULL;node=ms_list_next(node)){
+	for (const MSList *node = linphone_core_get_video_codecs(m_lin_core); node != NULL; node = ms_list_next(node)) {
 		list.push_back(PayloadTypeAPI::get(boost::static_pointer_cast<CoreAPI>(shared_from_this()), reinterpret_cast<PayloadType*>(node->data)));
 	}
 	return list;
+}
+
+void CoreAPI::set_audio_codecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::set_video_codecs()", "list.size()=" << list.size());
+	MSList *mslist = NULL;
+	for (auto it = list.begin(); it != list.end(); ++it) {
+		boost::shared_ptr<PayloadTypeAPI> payloadType = boost::dynamic_pointer_cast<PayloadTypeAPI>(*it);
+		if (payloadType != NULL) {
+			mslist = ms_list_append(mslist, payloadType->getRef());
+		} else {
+			FBLOG_DEBUG("CoreAPI::set_video_codecs()", "Not PayloadTypeAPI");
+		}
+	}
+
+	linphone_core_set_audio_codecs(m_lin_core, mslist);
+}
+
+void CoreAPI::set_video_codecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::set_video_codecs()", "list.size()=" << list.size());
+	MSList *mslist = NULL;
+	for (auto it = list.begin(); it != list.end(); ++it) {
+		boost::shared_ptr<PayloadTypeAPI> payloadType = boost::dynamic_pointer_cast<PayloadTypeAPI>(*it);
+		if (payloadType != NULL) {
+			mslist = ms_list_append(mslist, payloadType->getRef());
+		} else {
+			FBLOG_DEBUG("CoreAPI::set_video_codecs()", "Not PayloadTypeAPI");
+		}
+	}
+
+	linphone_core_set_video_codecs(m_lin_core, mslist);
 }
 
 std::string CoreAPI::getVersion() {

@@ -464,6 +464,21 @@ body {
 				jQuery(this).removeClass("ui-state-hover");
 			})
 
+			var dnd = {}
+			
+			function updateCodecsList(table) {
+				data = new Array()
+				table.find('tbody tr').each(function () {
+					data.push(jQuery(this).data('data'))
+				})
+				console.log(data)
+				if(table.is('.linphone .window .codecs-options .content .video')) {
+					core().set_video_codecs(data)
+				} else if(table.is('.linphone .window .codecs-options .content .audio')) {
+					core().set_audio_codecs(data)
+				}
+			}
+
 			jQuery('html').click(function(event) {
 				var target = jQuery(event.target);
 
@@ -594,6 +609,27 @@ body {
 							table.append(element)
 						}
 					}
+
+					jQuery(".linphone .window .codecs-options .content tbody tr").draggable({
+						containment : 'parent',
+						helper : function(event) {
+							original_tr = jQuery(event.target).parent()
+							original_table = original_tr.parents('table')
+							return jQuery('<table></table>').append(original_tr.clone()).css({"width": original_table.width( ), "position": "absolute" } )
+						},
+						start : function(event, ui) {
+							dnd.tr = this;
+							dnd.helper = ui.helper;
+						}
+					});
+
+					jQuery(".linphone .window .codecs-options .content tbody tr").droppable({
+						drop : function(event, ui) {
+							jQuery(dnd.tr).detach().insertBefore(jQuery(this));
+							jQuery(dnd.helper).remove();
+							updateCodecsList(jQuery(this).parents('table'))
+						}
+					});
 					jQuery('.linphone .window .codecs-options').fadeIn('fast');
 				}
 

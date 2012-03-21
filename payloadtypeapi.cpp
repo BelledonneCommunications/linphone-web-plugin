@@ -30,7 +30,7 @@ bool PayloadTypeAPI::get_enabled() const {
 }
 
 void PayloadTypeAPI::set_enabled(bool enable) {
-	FBLOG_DEBUG("PayloadTypeAPI::set_enabled()", this);
+	FBLOG_DEBUG("PayloadTypeAPI::set_enabled()", "enable=" << enable);
 	boost::shared_ptr<CoreAPI> core(mCore.lock());
 	if (core != NULL) {
 		linphone_core_enable_payload_type(core->getRef(), mPayloadType, enable);
