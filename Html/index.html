@@ -335,8 +335,8 @@ body {
 				var call_number = jQuery.linphone.call_number
 				console.log('Add tab call-' + call_number)
 				var div = jQuery('<div id="call-'+call_number+'" class="tab"></div>')
-				jQuery('#linphone .window > .content .tabs').append(div)
-						.tabs('add', '#call-' + call_number, 'Call ' + call_number);
+				jQuery('#linphone .window > .content .tabs').append(div).tabs('add', '#call-' + call_number,
+						'Call ' + call_number);
 				jQuery('#linphone .window > .content .tabs').tabs('select', '#call-' + call_number)
 				var element = jQuery('#linphone .window > .content .tabs #call-' + call_number)
 				element.data('data', {
@@ -490,7 +490,7 @@ body {
 				else
 					jQuery('.linphone .window .tools .settings-menu').fadeIn('fast');
 
-				// Clock on locale item 
+				// Click on locale item 
 				if (target.is('.linphone .window .tools .locales > a')) {
 					// Update selected element 
 					jQuery('.linphone .window .tools .locales-menu .flag').each(function(index) {
@@ -573,15 +573,26 @@ body {
 				if (target.is('.linphone .window .tools .codecs > a')) {
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					{
-						element = jQuery('.linphone .window .codecs-options .content .audio tbody')
+						table = jQuery('.linphone .window .codecs-options .content .audio tbody')
 						data = core().get_audio_codecs()
-						console.log(data)
-						element.html(jQuery('#Linphone-CodecsList').render(data));
+						table.empty()
+						for (a in data) {
+							var item = data[a]
+							var element = jQuery(jQuery('#Linphone-CodecsList').render(item))
+							element.data('data', item)
+							table.append(element)
+						}
 					}
 					{
-						element = jQuery('.linphone .window .codecs-options .content .video tbody')
+						table = jQuery('.linphone .window .codecs-options .content .video tbody')
 						data = core().get_video_codecs()
-						element.html(jQuery('#Linphone-CodecsList').render(data));
+						table.empty()
+						for (a in data) {
+							var item = data[a]
+							var element = jQuery(jQuery('#Linphone-CodecsList').render(item))
+							element.data('data', item)
+							table.append(element)
+						}
 					}
 					jQuery('.linphone .window .codecs-options').fadeIn('fast');
 				}
@@ -594,9 +605,8 @@ body {
 
 				// Click on media item 
 				if (target.is('.linphone .window .codecs-options input')) {
-					data = jQuery.tmplItem(event.target).data
-					console(data)
-					//data.enable = !data
+					data = target.parents('tr').data('data')
+					data.enabled = !data.enabled
 				}
 			});
 		})
