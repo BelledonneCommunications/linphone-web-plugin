@@ -9,6 +9,8 @@
 #define CORE_MUTEX ;
 //#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(m_core_mutex);
 
+static int sInstanceCount = 0;
+
 void linphone_iterate_thread(CoreAPI *linphone_api) {
 	FBLOG_DEBUG("linphone_thread", "start");
 	FBLOG_DEBUG("linphone_thread", linphone_api);
@@ -41,6 +43,7 @@ void linphone_destroy_thread(LinphoneCore* core, boost::thread *thread, mythread
 		linphone_core_destroy(core);
 	}
 
+	--sInstanceCount;
 	FBLOG_DEBUG("linphone_destroy_thread", "end");
 }
 
@@ -85,54 +88,60 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 }
 
 int CoreAPI::init() {
-	srand(time(NULL));
-
-	// Disable logs
-	linphone_core_disable_logs();
-
 	FBLOG_DEBUG("CoreAPI::init()", this);
 
-	// Initialize callback table
-	memset(&m_lin_vtable, 0, sizeof(LinphoneCoreVTable));
-	m_lin_vtable.global_state_changed = CoreAPI::wrapper_global_state_changed;
-	m_lin_vtable.registration_state_changed = CoreAPI::wrapper_registration_state_changed;
-	m_lin_vtable.call_state_changed = CoreAPI::wrapper_call_state_changed;
-	m_lin_vtable.notify_presence_recv = CoreAPI::wrapper_notify_presence_recv;
-	m_lin_vtable.new_subscription_request = CoreAPI::wrapper_new_subscription_request;
-	m_lin_vtable.auth_info_requested = CoreAPI::wrapper_auth_info_requested;
-	m_lin_vtable.call_log_updated = CoreAPI::wrapper_call_log_updated;
-	m_lin_vtable.text_received = CoreAPI::wrapper_text_received;
-	m_lin_vtable.dtmf_received = CoreAPI::wrapper_dtmf_received;
-	m_lin_vtable.refer_received = CoreAPI::wrapper_refer_received;
-	m_lin_vtable.buddy_info_updated = CoreAPI::wrapper_buddy_info_updated;
-	m_lin_vtable.notify_recv = CoreAPI::wrapper_notify_recv;
-	m_lin_vtable.display_status = CoreAPI::wrapper_display_status;
-	m_lin_vtable.display_message = CoreAPI::wrapper_display_message;
-	m_lin_vtable.display_warning = CoreAPI::wrapper_display_warning;
-	m_lin_vtable.display_url = CoreAPI::wrapper_display_url;
-	m_lin_vtable.show = CoreAPI::wrapper_show;
-	m_lin_vtable.call_encryption_changed = CoreAPI::wrapper_call_encryption_changed;
+	if (sInstanceCount == 0) {
+		srand(time(NULL));
 
-	m_lin_core = linphone_core_new(&m_lin_vtable, NULL, NULL, (void *) this);
-	if (linphone_core_get_user_data(m_lin_core) != this) {
-		FBLOG_ERROR("CoreAPI::init()", "Too old version of linphone core!");
-		return 1;
+		// Disable logs
+		linphone_core_disable_logs();
+
+		// Initialize callback table
+		memset(&m_lin_vtable, 0, sizeof(LinphoneCoreVTable));
+		m_lin_vtable.global_state_changed = CoreAPI::wrapper_global_state_changed;
+		m_lin_vtable.registration_state_changed = CoreAPI::wrapper_registration_state_changed;
+		m_lin_vtable.call_state_changed = CoreAPI::wrapper_call_state_changed;
+		m_lin_vtable.notify_presence_recv = CoreAPI::wrapper_notify_presence_recv;
+		m_lin_vtable.new_subscription_request = CoreAPI::wrapper_new_subscription_request;
+		m_lin_vtable.auth_info_requested = CoreAPI::wrapper_auth_info_requested;
+		m_lin_vtable.call_log_updated = CoreAPI::wrapper_call_log_updated;
+		m_lin_vtable.text_received = CoreAPI::wrapper_text_received;
+		m_lin_vtable.dtmf_received = CoreAPI::wrapper_dtmf_received;
+		m_lin_vtable.refer_received = CoreAPI::wrapper_refer_received;
+		m_lin_vtable.buddy_info_updated = CoreAPI::wrapper_buddy_info_updated;
+		m_lin_vtable.notify_recv = CoreAPI::wrapper_notify_recv;
+		m_lin_vtable.display_status = CoreAPI::wrapper_display_status;
+		m_lin_vtable.display_message = CoreAPI::wrapper_display_message;
+		m_lin_vtable.display_warning = CoreAPI::wrapper_display_warning;
+		m_lin_vtable.display_url = CoreAPI::wrapper_display_url;
+		m_lin_vtable.show = CoreAPI::wrapper_show;
+		m_lin_vtable.call_encryption_changed = CoreAPI::wrapper_call_encryption_changed;
+
+		m_lin_core = linphone_core_new(&m_lin_vtable, NULL, NULL, (void *) this);
+		if (linphone_core_get_user_data(m_lin_core) != this) {
+			FBLOG_ERROR("CoreAPI::init()", "Too old version of linphone core!");
+			return 1;
+		}
+
+		for (const MSList *node = linphone_core_get_audio_codecs(m_lin_core); node != NULL; node = ms_list_next(node)) {
+			reinterpret_cast<PayloadType*>(node->data)->user_data = NULL;
+		}
+
+		for (const MSList *node = linphone_core_get_video_codecs(m_lin_core); node != NULL; node = ms_list_next(node)) {
+			reinterpret_cast<PayloadType*>(node->data)->user_data = NULL;
+		}
+
+		int port = 5000 + rand() % 5000;
+		FBLOG_DEBUG("CoreAPI::init()", port);
+		linphone_core_set_sip_port(m_lin_core, port);
+
+		m_core_thread = new boost::thread(linphone_iterate_thread, this);
+		++sInstanceCount;
+		return 0;
+	} else {
+		FBLOG_ERROR("CoreAPI::init()", "Already stated linphone instance");
+		return 2;
 	}
-
-	for (const MSList *node = linphone_core_get_audio_codecs(m_lin_core); node != NULL; node = ms_list_next(node)) {
-		reinterpret_cast<PayloadType*>(node->data)->user_data = NULL;
-	}
-
-	for (const MSList *node = linphone_core_get_video_codecs(m_lin_core); node != NULL; node = ms_list_next(node)) {
-		reinterpret_cast<PayloadType*>(node->data)->user_data = NULL;
-	}
-
-	int port = 5000 + rand() % 5000;
-	FBLOG_DEBUG("CoreAPI::init()", port);
-	linphone_core_set_sip_port(m_lin_core, port);
-
-	m_core_thread = new boost::thread(linphone_iterate_thread, this);
-	return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -144,10 +153,11 @@ int CoreAPI::init() {
 ///////////////////////////////////////////////////////////////////////////////
 CoreAPI::~CoreAPI() {
 	FBLOG_DEBUG("CoreAPI::~CoreAPI()", this);
+	if (m_lin_core != NULL) {
+		linphone_core_set_user_data(m_lin_core, NULL);
 
-	linphone_core_set_user_data(m_lin_core, NULL);
-
-	boost::thread t(linphone_destroy_thread, m_lin_core, m_core_thread, m_threads);
+		boost::thread t(linphone_destroy_thread, m_lin_core, m_core_thread, m_threads);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

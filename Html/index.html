@@ -9,6 +9,7 @@
 <link rel="icon" type="image/png" href="css/images/linphone.png" />
 
 <link type="text/css" href="css/ui-lightness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />
+<link type="text/css" href="css/scrollabletab.css" rel="stylesheet" />
 <link type="text/css" href="css/linphone.css" rel="stylesheet" />
 
 <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
@@ -19,6 +20,7 @@
 <script type="text/javascript" src="js/i18n.js"></script>
 <script type="text/javascript" src="js/linphone.js"></script>
 <script type="text/javascript" src="js/linphone.i18n.js"></script>
+
 <style type="text/css">
 body {
 	font: 62.5% "Trebuchet MS", sans-serif;
@@ -33,82 +35,6 @@ body {
 	overflow: hidden;
 }
 
-/*scrollable tabs css*/
-.ui-scrollable-tabs {
-	overflow: hidden;
-	position: relative;
-}
-
-.ui-scrollable-tabs .ui-tabs-nav {
-	width: 1000000px;
-	padding: 1px 0 0 1px;
-	border-left: none;
-	border-right: none;
-	padding-top: 1px;
-	position: relative;
-}
-
-.ui-scrollable-tabs .ui-tabs .ui-tabs-closable li a {
-	padding-right: 5px;
-}
-
-.ui-scrollable-tabs .ui-tabs-nav-arrows {
-	left: 0;
-	margin: 0;
-	margin: 0 5px;
-	padding: 0;
-	position: absolute;
-	right: 0;
-	top: 5px;
-	height: 25px;
-}
-
-/*IE7 fix*/
-*:first-child+html .ui-scrollable-tabs .ui-tabs-nav-arrows {
-	z-index: 1;
-}
-
-.ui-scrollable-tabs .ui-tabs .ui-tabs-nav li {
-	margin: 0 1px 0;
-}
-
-.ui-tabs-nav li .ui-tabs-close {
-	float: left;
-	margin-top: 3px;
-	margin-right: 4px;
-	border: none;
-	cursor: pointer;
-}
-
-.ui-scrollable-tabs .ui-tabs-nav-arrows .ui-tabs-arrow-next {
-	float: right;
-}
-
-.ui-scrollable-tabs .ui-tabs-nav-arrows .ui-tabs-arrow-previous {
-	float: left;
-}
-
-.ui-scrollable-tabs .ui-tabs-nav-arrows li {
-	list-style: none;
-	position: relative;
-	cursor: pointer;
-	margin: 0;
-	padding: 0;
-	display: none;
-	z-index: 1;
-	height: 23px;
-}
-
-.ui-scrollable-tabs .ui-tabs-nav-arrows li a {
-	display: block;
-	margin-top: 3px;
-}
-
-.ui-scrollable-tabs .ui-tabs-nav-arrows li a:focus {
-	outline: 0px;
-}
-
-/*End of scrollable tabs css*/
 #version {
 	font-size: 9px;
 }
@@ -118,7 +44,147 @@ body {
 }
 </style>
 </head>
+
 <body onload="init()">
+	<div>
+		<div class="linphone ui-widget" id="linphone">
+			<object id="core" type="application/x-linphone" width="0" height="0">
+				<param name="onload" value="pluginLoad" />
+				<param name="onerror" value="pluginError" />
+				<param name="onunload" value="pluginUnload" />
+				Linphone Core
+			</object>
+			<div class="window ui-corner-all">
+				<div class="error ui-corner-all">Error !</div>
+				<div class="load ui-corner-all">
+					<img src="css/images/loading.gif" alt="..."
+						style="width: 50px; height: 50px; position: absolute; top: 50%; left: 50%; margin-left: -25px; margin-top: -25px;"></img>
+				</div>
+				<div class="header ui-corner-top">
+					<div class="text">Linphone</div>
+				</div>
+
+				<div class="composer">
+					<input type="text" class="dest" title="destination" />
+					<div class="ui-icon dial-button"></div>
+				</div>
+
+				<div class="content">
+					<div class="tabs">
+						<ul>
+							<li><a href="#tabs-1">First</a></li>
+						</ul>
+						<div id="tabs-1" class="tab">Example</div>
+					</div>
+				</div>
+
+				<div class="footer ui-corner-bottom">
+					<div class="status"></div>
+					<div class="tools">
+						<div class="ui-icon bell-icon">
+							<div class="bell-slider"></div>
+						</div>
+						<div class="ui-icon mic-icon">
+							<div class="mic-slider"></div>
+						</div>
+						<div class="ui-icon hp-icon">
+							<div class="hp-slider"></div>
+						</div>
+						<div class="ui-icon settings-icon">
+							<ul class="settings-menu">
+								<li class="accounts"><a class="ui-icon {translate: 'menu.settings.accounts'}"></a></li>
+								<li class="media"><a class="ui-icon {translate: 'menu.settings.media'}"></a></li>
+								<li class="video"><a class="ui-icon {translate: 'menu.settings.video'}"></a>
+									<ul class="video-menu">
+										<li class="enable"><a class="{translate: 'menu.settings.video.enable'}"></a></li>
+										<li class="self"><a class="{translate: 'menu.settings.video.self'}"></a></li>
+									</ul></li>
+								<li class="codecs"><a class="ui-icon {translate: 'menu.settings.codecs'}"></a></li>
+								<li class="locales"><a class="ui-icon {translate: 'menu.settings.locales'}"></a>
+									<ul class="locales-menu">
+										<li></li>
+									</ul></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="codecs-options options ui-dialog ui-widget ui-widget-content ui-corner-all">
+					<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
+						style="-webkit-user-select: none;">
+						<span class="ui-dialog-title {translate: 'menu.settings.codecs'}" style="-webkit-user-select: none;"></span> <a
+							href="#" class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"> <span
+							class="ui-icon ui-icon-closethick" style="-webkit-user-select: none;">close</span>
+						</a>
+					</div>
+					<div class="content ui-corner-bottom">
+						<div class="tabs">
+							<ul>
+								<li><a class="{translate: 'options.codecs.audio'}"></a></li>
+								<li><a class="{translate: 'options.codecs.video'}"></a></li>
+							</ul>
+							<div>
+								<table class="audio">
+									<thead>
+										<tr>
+											<th class="name {translate: 'options.codecs.name'}"></th>
+											<th class="frequency {translate: 'options.codecs.frequency'}"></th>
+											<th class="bitrate {translate: 'options.codecs.bitrate'}"></th>
+											<th class="actions {translate: 'options.codecs.actions'}"></th>
+										</tr>
+									</thead>
+									<tbody />
+								</table>
+							</div>
+							<div>
+								<table class="video">
+									<thead>
+										<tr>
+											<th class="name {translate: 'options.codecs.name'}"></th>
+											<th class="frequency {translate: 'options.codecs.frequency'}"></th>
+											<th class="bitrate {translate: 'options.codecs.bitrate'}"></th>
+											<th class="actions {translate: 'options.codecs.actions'}"></th>
+										</tr>
+									</thead>
+									<tbody />
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="media-options options ui-dialog ui-widget ui-widget-content ui-corner-all">
+					<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
+						style="-webkit-user-select: none;">
+						<span class="ui-dialog-title {translate: 'menu.settings.media'}" style="-webkit-user-select: none;"></span> <a
+							href="#" class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"> <span
+							class="ui-icon ui-icon-closethick" style="-webkit-user-select: none;">close</span>
+						</a>
+					</div>
+					<div class="content ui-corner-bottom"></div>
+				</div>
+
+				<div class="accounts-options options ui-dialog ui-widget ui-widget-content ui-corner-all">
+					<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
+						style="-webkit-user-select: none;">
+						<span class="ui-dialog-title {translate: 'menu.settings.accounts'}" style="-webkit-user-select: none;"></span> <a
+							href="#" class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"> <span
+							class="ui-icon ui-icon-closethick" style="-webkit-user-select: none;">close</span>
+						</a>
+					</div>
+					<div class="content ui-corner-bottom"></div>
+				</div>
+			</div>
+			<div id="templates"></div>
+		</div>
+		<div>
+			<textarea id="log" rows="10" cols="100"></textarea>
+			<div class="ui-widget">
+				<div id="version" class="ui-state-highlight ui-corner-all">
+					Linphone version: <span id="version_number"></span>
+				</div>
+			</div>
+		</div>
+	</div>
 	<script type="text/javascript">
 		// Utils 
 		function _core() {
@@ -214,6 +280,10 @@ body {
 		function pluginError() {
 			jQuery('.linphone .window .load').hide()
 			jQuery('.linphone .window .error').show()
+		}
+
+		function pluginUnload() {
+
 		}
 
 		function pluginLoad() {
@@ -465,16 +535,16 @@ body {
 			})
 
 			var dnd = {}
-			
+
 			function updateCodecsList(table) {
 				data = new Array()
-				table.find('tbody tr').each(function () {
+				table.find('tbody tr').each(function() {
 					data.push(jQuery(this).data('data'))
 				})
 				console.log(data)
-				if(table.is('.linphone .window .codecs-options .content .video')) {
+				if (table.is('.linphone .window .codecs-options .content .video')) {
 					core().set_video_codecs(data)
-				} else if(table.is('.linphone .window .codecs-options .content .audio')) {
+				} else if (table.is('.linphone .window .codecs-options .content .audio')) {
 					core().set_audio_codecs(data)
 				}
 			}
@@ -523,7 +593,7 @@ body {
 					jQuery('.linphone .window .tools .locales-menu').fadeIn('fast');
 				}
 
-				// Clock on video item 
+				// Click on video item 
 				if (target.is('.linphone .window .tools .video > a')) {
 					if (localStorage['enable_video'] == 1) {
 						jQuery('.linphone .window .tools .video-menu .enable a').addClass('ui-state-selected')
@@ -616,7 +686,10 @@ body {
 						helper : function(event) {
 							original_tr = jQuery(event.target).parent()
 							original_table = original_tr.parents('table')
-							return jQuery('<table></table>').append(original_tr.clone()).css({"width": original_table.width( ), "position": "absolute" } )
+							return jQuery('<table></table>').append(original_tr.clone()).css({
+								"width" : original_table.width(),
+								"position" : "absolute"
+							})
 						},
 						start : function(event, ui) {
 							dnd.tr = this;
@@ -647,142 +720,5 @@ body {
 			});
 		})
 	</script>
-
-	<div>
-		<div class="linphone ui-widget" id="linphone">
-			<object id="core" type="application/x-linphone" width="0" height="0">
-				<param name="onload" value="pluginLoad" />
-				<param name="onerror" value="pluginError" />
-				<param name="onunload" value="pluginUnload" />
-				Linphone Core
-			</object>
-			<div class="window ui-corner-all">
-				<div class="error ui-corner-all">Error !</div>
-				<div class="load ui-corner-all">
-					<img src="css/images/loading.gif" alt="..."
-						style="width: 50px; height: 50px; position: absolute; top: 50%; left: 50%; margin-left: -25px; margin-top: -25px;"></img>
-				</div>
-				<div class="header ui-corner-top">
-					<div class="text">Linphone</div>
-				</div>
-
-				<div class="composer">
-					<input type="text" class="dest" title="destination" />
-					<div class="ui-icon dial-button"></div>
-				</div>
-
-				<div class="content">
-					<div class="tabs">
-						<ul>
-							<li><a href="#tabs-1">First</a></li>
-						</ul>
-						<div id="tabs-1" class="tab">Example</div>
-					</div>
-				</div>
-
-				<div class="footer ui-corner-bottom">
-					<div class="status"></div>
-					<div class="tools">
-						<div class="ui-icon bell-icon">
-							<div class="bell-slider"></div>
-						</div>
-						<div class="ui-icon mic-icon">
-							<div class="mic-slider"></div>
-						</div>
-						<div class="ui-icon hp-icon">
-							<div class="hp-slider"></div>
-						</div>
-						<div class="ui-icon settings-icon">
-							<ul class="settings-menu">
-								<li class="accounts"><a class="ui-icon {translate: 'menu.settings.accounts'}"></a></li>
-								<li class="media"><a class="ui-icon {translate: 'menu.settings.media'}"></a></li>
-								<li class="video"><a class="ui-icon {translate: 'menu.settings.video'}"></a>
-									<ul class="video-menu">
-										<li class="enable"><a class="{translate: 'menu.settings.video.enable'}"></a></li>
-										<li class="self"><a class="{translate: 'menu.settings.video.self'}"></a></li>
-									</ul></li>
-								<li class="codecs"><a class="ui-icon {translate: 'menu.settings.codecs'}"></a></li>
-								<li class="locales"><a class="ui-icon {translate: 'menu.settings.locales'}"></a>
-									<ul class="locales-menu">
-										<li></li>
-									</ul></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<div class="codecs-options options ui-dialog ui-widget ui-widget-content ui-corner-all">
-					<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
-						style="-webkit-user-select: none;">
-						<span class="ui-dialog-title {translate: 'menu.settings.codecs'}" style="-webkit-user-select: none;"></span><a
-							href="#" class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"><span
-							class="ui-icon ui-icon-closethick" style="-webkit-user-select: none;">close</span></a>
-					</div>
-					<div class="content ui-corner-bottom">
-						<div class="tabs">
-							<ul>
-								<li><a class="{translate: 'options.codecs.audio'}"></a></li>
-								<li><a class="{translate: 'options.codecs.video'}"></a></li>
-							</ul>
-							<div>
-								<table class="audio">
-									<thead>
-										<tr>
-											<th class="name {translate: 'options.codecs.name'}"></th>
-											<th class="frequency {translate: 'options.codecs.frequency'}"></th>
-											<th class="bitrate {translate: 'options.codecs.bitrate'}"></th>
-											<th class="actions {translate: 'options.codecs.actions'}"></th>
-										</tr>
-									</thead>
-									<tbody />
-								</table>
-							</div>
-							<div>
-								<table class="video">
-									<thead>
-										<tr>
-											<th class="name {translate: 'options.codecs.name'}"></th>
-											<th class="frequency {translate: 'options.codecs.frequency'}"></th>
-											<th class="bitrate {translate: 'options.codecs.bitrate'}"></th>
-											<th class="actions {translate: 'options.codecs.actions'}"></th>
-										</tr>
-									</thead>
-									<tbody />
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="media-options options ui-dialog ui-widget ui-widget-content ui-corne	r-all">
-					<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
-						style="-webkit-user-select: none;">
-						<span class="ui-dialog-title {translate: 'menu.settings.media'}" style="-webkit-user-select: none;"></span><a
-							href="#" class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"><span
-							class="ui-icon ui-icon-closethick" style="-webkit-user-select: none;">close</span></a>
-					</div>
-					<div class="content ui-corner-bottom"></div>
-				</div>
-
-				<div class="accounts-options options ui-dialog ui-widget ui-widget-content ui-corner-all">
-					<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"
-						style="-webkit-user-select: none;">
-						<span class="ui-dialog-title {translate: 'menu.settings.accounts'}" style="-webkit-user-select: none;"></span><a
-							href="#" class="ui-dialog-titlebar-close ui-corner-all" style="-webkit-user-select: none;"><span
-							class="ui-icon ui-icon-closethick" style="-webkit-user-select: none;">close</span></a>
-					</div>
-					<div class="content ui-corner-bottom"></div>
-				</div>
-			</div>
-			<div id="templates"></div>
-		</div>
-		<div>
-			<textarea id="log" rows="10" cols="100"></textarea>
-			<div class="ui-widget">
-				<div id="version" class="ui-state-highlight ui-corner-all">
-					Linphone version: <span id="version_number"></span>
-				</div>
-			</div>
-		</div>
-	</div>
 </body>
 </html>
