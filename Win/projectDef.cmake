@@ -24,6 +24,9 @@ set (SOURCES
     ${SOURCES}
     ${PLATFORM}
     )
+	
+include_directories(Libs/include/linphone)
+include_directories(Libs/include)
 
 add_windows_plugin(${PROJECT_NAME} SOURCES)
 
@@ -45,10 +48,12 @@ add_windows_plugin(${PROJECT_NAME} SOURCES)
 #    "http://timestamp.verisign.com/scripts/timestamp.dll")
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
-target_link_libraries(${PROJECT_NAME}
-    ${PLUGIN_INTERNAL_DEPS}
-    )
+target_link_libraries(${PROJECT_NAME} ${PLUGIN_INTERNAL_DEPS})
 
+#link liblinphone
+set (LIBRARY_PATH ${PROJECT_SOURCE_DIR}/Libs/lib/)
+target_link_libraries(${PROJECT_NAME} "${LIBRARY_PATH}/liblinphone.dll.lib")
+target_link_libraries(${PROJECT_NAME} "${LIBRARY_PATH}/libmediastreamer.dll.lib")
 set(WIX_HEAT_FLAGS
     -gg                 # Generate GUIDs
     -srd                # Suppress Root Dir

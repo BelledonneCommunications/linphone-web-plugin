@@ -9,11 +9,11 @@ boost::shared_ptr<VideoWindow> VideoWindow::create() {
 
 VideoWindowX11::VideoWindowX11() :
 		mPixmap(NULL), mGtkWidget(NULL) {
-	FBLOG_DEBUG("VideoWindow::VideoWindow()", this);
+	FBLOG_DEBUG("VideoWindowX11::VideoWindowX11()", this);
 }
 
 VideoWindowX11::~VideoWindowX11() {
-	FBLOG_DEBUG("VideoWindow::~VideoWindow()", this);
+	FBLOG_DEBUG("VideoWindowX11::~VideoWindowX11()", this);
 }
 
 gint VideoWindowX11::expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer *data) {
@@ -43,7 +43,7 @@ void VideoWindowX11::setBackgroundColor(int r, int g, int b) {
 }
 
 void VideoWindowX11::setWindow(FB::PluginWindow *window) {
-	FBLOG_DEBUG("VideoWindow::setWindow()", this);
+	FBLOG_DEBUG("VideoWindowX11::setWindow()", this);
 	FB::PluginWindowX11* wnd = reinterpret_cast<FB::PluginWindowX11*>(window);
 	if (wnd) {
 		mGtkWidget = wnd->getWidget();
@@ -60,6 +60,6 @@ void VideoWindowX11::setWindow(FB::PluginWindow *window) {
 }
 
 unsigned long VideoWindowX11::getId() {
-	FBLOG_DEBUG("VideoWindow::getId()", this);
+	FBLOG_DEBUG("VideoWindowX11::getId()", this);
 	return (unsigned long) GDK_DRAWABLE_XID(gtk_widget_get_window(mGtkWidget));
 }

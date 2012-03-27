@@ -25,4 +25,4 @@ private:
 	int ConfigureEventId;
 };
 
-#endif // H_VIDEOWINDOW
+#endif // H_VIDEOWINDOWX11
