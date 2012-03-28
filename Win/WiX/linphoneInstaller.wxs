@@ -53,13 +53,29 @@
                                     KeyPath="yes" />
                             </Component>
 
-                            <!-- Put Additional files here: -->
-                            <!-- example:
-                            <Component Id="UniqueComponentId" Guid="*">
-                                <File Id="uniqueFileId" KeyPath="yes" Source="SourceDir\filename.ext" />
+
+                            <Component Id="MainLibraries" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6a">
+                                <File Id="liblinphone" Source="$(var.BinaryPath)\liblinphone-4.dll" />
+								<File Id="libmediastreamer" Source="$(var.BinaryPath)\libmediastreamer-1.dll" />
+								<File Id="libortp" Source="$(var.BinaryPath)\libortp-8.dll" />
+								<File Id="libintl" Source="$(var.BinaryPath)\libintl-8.dll" />
+								<File Id="avcodec" Source="$(var.BinaryPath)\avcodec-53.dll" />
+								<File Id="avutil" Source="$(var.BinaryPath)\avutil-51.dll" />
+								<File Id="libspeex" Source="$(var.BinaryPath)\libspeex-1.dll" />
+								<File Id="libspeexdsp" Source="$(var.BinaryPath)\libspeexdsp-1.dll" />
+								<File Id="swscale" Source="$(var.BinaryPath)\swscale-2.dll" />
+								<File Id="libtheora" Source="$(var.BinaryPath)\libtheora-0.dll" />
+								<File Id="libosip2" Source="$(var.BinaryPath)\libosip2-7.dll" />
+								<File Id="libexosip2" Source="$(var.BinaryPath)\libexosip2-7.dll" />
+								<File Id="libosipparser2" Source="$(var.BinaryPath)\libosipparser2-7.dll" />
+                                <RegistryValue
+                                    Root="HKCU"
+                                    Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"
+                                    Name="Uninstall"
+                                    Type="string"
+                                    Value="${FBSTRING_PLUGIN_VERSION}"
+                                    KeyPath="yes" />
                             </Component>
-                            /example -->
-                            <!--  -->
                         </Directory>
                     </Directory>
                 </Directory>
@@ -70,7 +86,8 @@
             <ComponentRef Id="InstallDirComp"/>
             <ComponentRef Id="PluginNameDirComp"/>
             <ComponentRef Id="CompanyDirComp"/>
-            <ComponentGroupRef Id="PluginDLLGroup"/>
+			<ComponentRef Id="MainLibraries"/>
+            <!--<ComponentGroupRef Id="PluginDLLGroup"/>-->
         </Feature>
     </Product>
 </Wix>

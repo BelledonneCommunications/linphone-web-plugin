@@ -51,9 +51,13 @@ add_windows_plugin(${PROJECT_NAME} SOURCES)
 target_link_libraries(${PROJECT_NAME} ${PLUGIN_INTERNAL_DEPS})
 
 #link liblinphone
-set (LIBRARY_PATH ${PROJECT_SOURCE_DIR}/Libs/lib/)
+set (LIBRARY_PATH ${PROJECT_SOURCE_DIR}/Libs/lib)
+set (BINARY_PATH ${PROJECT_SOURCE_DIR}/Libs/bin)
+set (WIX_LINK_FLAGS ${WIX_LINK_FLAGS} -dBinaryPath=${BINARY_PATH})
 target_link_libraries(${PROJECT_NAME} "${LIBRARY_PATH}/liblinphone.dll.lib")
 target_link_libraries(${PROJECT_NAME} "${LIBRARY_PATH}/libmediastreamer.dll.lib")
+
+
 set(WIX_HEAT_FLAGS
     -gg                 # Generate GUIDs
     -srd                # Suppress Root Dir
