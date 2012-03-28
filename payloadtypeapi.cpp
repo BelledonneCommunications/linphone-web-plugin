@@ -24,7 +24,7 @@ bool PayloadTypeAPI::get_enabled() const {
 	FBLOG_DEBUG("PayloadTypeAPI::get_enabled()", this);
 	boost::shared_ptr<CoreAPI> core(mCore.lock());
 	if (core != NULL) {
-		return linphone_core_payload_type_enabled(core->getRef(), mPayloadType);
+		return linphone_core_payload_type_enabled(core->getRef(), mPayloadType) == TRUE? true: false;
 	}
 	return false;
 }
@@ -33,7 +33,7 @@ void PayloadTypeAPI::set_enabled(bool enable) {
 	FBLOG_DEBUG("PayloadTypeAPI::set_enabled()", "enable=" << enable);
 	boost::shared_ptr<CoreAPI> core(mCore.lock());
 	if (core != NULL) {
-		linphone_core_enable_payload_type(core->getRef(), mPayloadType, enable);
+		linphone_core_enable_payload_type(core->getRef(), mPayloadType, enable? TRUE: FALSE);
 	}
 }
 
