@@ -43,7 +43,7 @@ void VideoWindowX11::setBackgroundColor(int r, int g, int b) {
 }
 
 void VideoWindowX11::setWindow(FB::PluginWindow *window) {
-	FBLOG_DEBUG("VideoWindowX11::setWindow()", this);
+	FBLOG_DEBUG("VideoWindowX11::setWindow()", "window=" << window);
 	FB::PluginWindowX11* wnd = reinterpret_cast<FB::PluginWindowX11*>(window);
 	if (wnd) {
 		mGtkWidget = wnd->getWidget();
