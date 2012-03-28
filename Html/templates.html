@@ -1,3 +1,5 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <script id="Linphone-Call-Idle" type="text/x-jsrender">
 Idle <b>{{=dest}}</b>
 </script>
@@ -66,9 +68,8 @@ Call end: <b>{{=dest}}</b>
 <script id="Linphone-Video" type="text/x-jsrender">
 <div>
 	<object class="video" type="application/x-linphone-video">
-		<param name="onload" value="videoLoad" />
-		<param name="onerror" value="videoError" />
-		<param name="onunload" value="videoUnload" />
+		<param name="onload" value="_videoLoad" />
+		<param name="magic" value="{{=magic}}" />
 	</object>
 </div>
 </script>
@@ -86,10 +87,11 @@ Call end: <b>{{=dest}}</b>
 	<td class="bitrate">{{=normal_bitrate}}</td>
 	<td class="actions">
 		{{#if enabled}}
-			<input class="enable" type="checkbox" checked/>
+			<input class="enable" type="checkbox" checked="checked" />
 		{{else}}
 			<input class="enable" type="checkbox" />
 		{{/if}}
 	</td>
 </tr>
 </script>
+</html>

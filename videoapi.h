@@ -17,11 +17,14 @@ public:
 	videoPtr getPlugin();
 
 	// Property
-	int getId();
+	const std::string &getMagic();
+	void setMagic(const std::string &magic);
+	unsigned long getWindow();
 
 	void setBackgroundColor(int r, int g, int b);
 
 private:
+	std::string m_magic;
 	videoWeakPtr m_plugin;
 	FB::BrowserHostPtr m_host;
 	boost::shared_ptr<VideoWindow> mWindow;

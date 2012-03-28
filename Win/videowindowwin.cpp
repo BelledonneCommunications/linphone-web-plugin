@@ -21,11 +21,15 @@ void VideoWindowWin::setWindow(FB::PluginWindow *window) {
 	FBLOG_DEBUG("VideoWindowWin::setWindow()", "window=" << window);
 	FB::PluginWindowWin* wnd = reinterpret_cast<FB::PluginWindowWin*>(window);
 	if (wnd) {
+		mHwnd = wnd->getHWND();
+		FBLOG_DEBUG("VideoWindowWin::setWindow()", "LOAD HWND=" << mHwnd);
 	} else {
+		mHwnd = NULL;
+		FBLOG_DEBUG("VideoWindowWin::setWindow()", "UNLOAD HWND=" << mHwnd);
 	}
 }
 
 unsigned long VideoWindowWin::getId() {
 	FBLOG_DEBUG("VideoWindowWin::getId()", this);
-	return 0;
+	return (unsigned long)mHwnd;
 }

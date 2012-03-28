@@ -55,19 +55,22 @@
 
 
                             <Component Id="MainLibraries" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6a">
-                                <File Id="liblinphone" Source="$(var.BinaryPath)\liblinphone-4.dll" />
-								<File Id="libmediastreamer" Source="$(var.BinaryPath)\libmediastreamer-1.dll" />
-								<File Id="libortp" Source="$(var.BinaryPath)\libortp-8.dll" />
-								<File Id="libintl" Source="$(var.BinaryPath)\libintl-8.dll" />
-								<File Id="avcodec" Source="$(var.BinaryPath)\avcodec-53.dll" />
-								<File Id="avutil" Source="$(var.BinaryPath)\avutil-51.dll" />
-								<File Id="libspeex" Source="$(var.BinaryPath)\libspeex-1.dll" />
-								<File Id="libspeexdsp" Source="$(var.BinaryPath)\libspeexdsp-1.dll" />
-								<File Id="swscale" Source="$(var.BinaryPath)\swscale-2.dll" />
-								<File Id="libtheora" Source="$(var.BinaryPath)\libtheora-0.dll" />
-								<File Id="libosip2" Source="$(var.BinaryPath)\libosip2-7.dll" />
-								<File Id="libexosip2" Source="$(var.BinaryPath)\libexosip2-7.dll" />
-								<File Id="libosipparser2" Source="$(var.BinaryPath)\libosipparser2-7.dll" />
+								<File Id="avcodec" Source="${BINARY_PATH}\avcodec-53.dll" />
+								<File Id="avutil" Source="${BINARY_PATH}\avutil-51.dll" />
+								<File Id="libexosip2" Source="${BINARY_PATH}\libexosip2-7.dll" />
+								<File Id="libintl" Source="${BINARY_PATH}\libintl-8.dll" />
+                                <File Id="liblinphone" Source="${BINARY_PATH}\liblinphone-4.dll" />
+								<File Id="libmediastreamer" Source="${BINARY_PATH}\libmediastreamer-1.dll" />
+								<File Id="libogg" Source="${BINARY_PATH}\libogg-0.dll" />
+								<File Id="libortp" Source="${BINARY_PATH}\libortp-8.dll" />
+								<File Id="libosip2" Source="${BINARY_PATH}\libosip2-7.dll" />
+								<File Id="libosipparser2" Source="${BINARY_PATH}\libosipparser2-7.dll" />
+								<File Id="libspeex" Source="${BINARY_PATH}\libspeex-1.dll" />
+								<File Id="libspeexdsp" Source="${BINARY_PATH}\libspeexdsp-1.dll" />
+								<File Id="libtheora" Source="${BINARY_PATH}\libtheora-0.dll" />
+								<File Id="libvorbis" Source="${BINARY_PATH}\libvorbis-0.dll" />
+								<File Id="swscale" Source="${BINARY_PATH}\swscale-2.dll" />
+								<File Id="zlib1" Source="${BINARY_PATH}\zlib1.dll" />
                                 <RegistryValue
                                     Root="HKCU"
                                     Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"
@@ -86,8 +89,8 @@
             <ComponentRef Id="InstallDirComp"/>
             <ComponentRef Id="PluginNameDirComp"/>
             <ComponentRef Id="CompanyDirComp"/>
+            <ComponentGroupRef Id="PluginDLLGroup"/>
 			<ComponentRef Id="MainLibraries"/>
-            <!--<ComponentGroupRef Id="PluginDLLGroup"/>-->
         </Feature>
     </Product>
 </Wix>

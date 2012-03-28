@@ -83,11 +83,22 @@ void video::shutdown() {
 FB::JSAPIPtr video::createJSAPI() {
 	FBLOG_DEBUG("video::createJSAPI()", this);
 	// m_host is the BrowserHost
+
 	mVideo = boost::make_shared<VideoAPI>(FB::ptr_cast<video>(shared_from_this()), m_host);
 	if (mWindow) {
 		mVideo->setWindow(mWindow);
 	}
 	return mVideo;
+}
+
+bool video::setReady () {
+	FB::VariantMap::iterator fnd = m_params.find("magic");
+    if (fnd != m_params.end()) {
+		if(fnd->second.is_of_type<std::string>()) {
+			FB::ptr_cast<VideoAPI>(getRootJSAPI())->setMagic(fnd->second.convert_cast<std::string>());
+		}
+	}
+	return PluginCore::setReady();
 }
 
 bool video::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *win) {

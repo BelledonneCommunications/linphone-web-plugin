@@ -4,6 +4,7 @@
 #include <PluginWindow.h>
 #include <boost/shared_ptr.hpp>
 #include "../videowindow.h"
+#include <WinDef.h>
 
 class VideoWindowWin: public VideoWindow {
 public:
@@ -15,6 +16,7 @@ public:
 	void setBackgroundColor(int r, int g, int b);
 
 private:
+	HWND mHwnd;
 };
 
 #endif // H_VIDEOWINDOWWIN

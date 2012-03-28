@@ -43,15 +43,23 @@ body {
 	font-weight: bold;
 }
 </style>
+<script type="text/javascript">
+function _coreLoad(obj) {
+	consoleLog('Load Core')
+	coreLoad()
+}
+function _videoLoad(obj) {
+	consoleLog('Load VideoView ' + obj.magic)
+	jQuery.linphone.video_data[obj.magic](obj)
+}
+</script>
 </head>
 
 <body onload="init()">
 	<div>
 		<div class="linphone ui-widget" id="linphone">
 			<object id="core" type="application/x-linphone" width="0" height="0">
-				<param name="onload" value="pluginLoad" />
-				<param name="onerror" value="pluginError" />
-				<param name="onunload" value="pluginUnload" />
+				<param name="onload" value="_coreLoad" />
 				Linphone Core
 			</object>
 			<div class="window ui-corner-all">
@@ -185,29 +193,47 @@ body {
 			</div>
 		</div>
 	</div>
+
+	<script type="text/javascript">
+		function addEvent(obj, name, func) {
+			obj.attachEvent("on" + name, func);
+		}
+	</script>
+	<![if !IE]>
+	<script type="text/javascript">
+		function addEvent(obj, name, func) {
+			obj.addEventListener(name, func, false);
+		}
+	</script>
+	<![endif]>
 	<script type="text/javascript">
 		// Utils 
+		var _localData = {}
+		function localData() {
+			if(localStorage)
+				return localStorage
+			else
+				return _localData
+		}
+		
+		function consoleLog(a) {
+			if(console) {
+				console.log(a)
+			}
+		}
+		
 		function _core() {
 			return document.getElementById('core');
 		}
 		core = _core;
-
-		function addEvent(obj, name, func) {
-			if (window.addEventListener) {
-				obj.addEventListener(name, func, false);
-			} else {
-				obj.attachEvent("on" + name, func);
-			}
-		}
-
 		function loadLinphoneI18n() {
 			jQuery.i18n.data = jQuery.linphone.i18n
 			var locale = (navigator.language) ? navigator.language : navigator.userLanguage
 			locale = locale.replace('-', '_')
-			console.log('Browser language: ' + locale)
+			consoleLog('Browser language: ' + locale)
 
-			if (localStorage['locale'] != null) {
-				jQuery.i18n.change(localStorage['locale'])
+			if (localData()['locale'] != null) {
+				jQuery.i18n.change(localData()['locale'])
 			} else {
 				// Excat Match 
 				for (a in jQuery.linphone.locales) {
@@ -260,64 +286,63 @@ body {
 			element.addClass('video')
 
 			element.dialog({
+				height: 240,
+				width: 320,
 				close : function() {
 					onClose(jQuery(this).find('object').get(0))
 				}
 			})
 			element.parent().appendTo(jQuery('.linphone'))
 			element.dialog("open")
-			var object = jQuery(jQuery('#Linphone-Video').render())
-			element.append(object)
-			onOpen(object.find('object').get(0))
+			var template = jQuery(jQuery('#Linphone-Video').render({magic: jQuery.linphone.video_number}))
+			var object = template.find('object')
+			consoleLog('Create VideoView ' + jQuery.linphone.video_number)
+			jQuery.linphone.video_data[jQuery.linphone.video_number] = onOpen
+			jQuery.linphone.video_number = jQuery.linphone.video_number + 1
+			element.append(template)
 			return element
 		}
 
 		function destroyVideoView(element) {
-			jQuery.linphone.self_view.dialog('destroy')
-			jQuery.linphone.self_view.destroy()
+			var object = element.find('object').get(0)
+			consoleLog('Destroy VideoView ' + object.magic)
+			jQuery.linphone.video_data.splice(object.magic, 1); 
+			element.dialog('destroy')
+			element.remove()
 		}
 
-		function pluginError() {
-			jQuery('.linphone .window .load').hide()
-			jQuery('.linphone .window .error').show()
-		}
-
-		function pluginUnload() {
-
-		}
-
-		function pluginLoad() {
-			jQuery('#version_number').text(core().version);
-			addEvent(core(), 'global_state_changed', global_state_changed);
-			addEvent(core(), 'call_state_changed', call_state_changed);
-			addEvent(core(), 'display_status', display_status);
-			addEvent(core(), 'display_message', display_message);
-			addEvent(core(), 'display_warning', display_warning);
-			addEvent(core(), 'display_url', display_url);
+		function coreLoad() {
+			jQuery('#version_number').text(core().version)
+			addEvent(core(), 'global_state_changed', global_state_changed)
+			addEvent(core(), 'call_state_changed', call_state_changed)
+			addEvent(core(), 'display_status', display_status)
+			addEvent(core(), 'display_message', display_message)
+			addEvent(core(), 'display_warning', display_warning)
+			addEvent(core(), 'display_url', display_url)
 			if (core().init() != 0) {
 				jQuery('.linphone .window .load').hide()
 				jQuery('.linphone .window .error').show()
 			} else {
 				// Init volumes settings 
-				rec_level = (localStorage['rec_level'] != null) ? localStorage['rec_level'] : 100
+				rec_level = (localData()['rec_level'] != null) ? localData()['rec_level'] : 100
 				jQuery('.linphone .window .tools .mic-slider').slider('value', rec_level)
 				core().set_rec_level(rec_level)
 
-				play_level = (localStorage['play_level'] != null) ? localStorage['play_level'] : 100
+				play_level = (localData()['play_level'] != null) ? localData()['play_level'] : 100
 				jQuery('.linphone .window .tools .hp-slider').slider('value', play_level)
 				core().set_play_level(play_level)
 
-				ring_level = (localStorage['ring_level'] != null) ? localStorage['ring_level'] : 100
+				ring_level = (localData()['ring_level'] != null) ? localData()['ring_level'] : 100
 				jQuery('.linphone .window .tools .bell-slider').slider('value', ring_level)
 				core().set_ring_level(ring_level)
 
 				// Init video settings 
-				if (localStorage['enable_video'] == 1) {
+				if (localData()['enable_video'] == 1) {
 					core().enable_video(true)
-				} else if (localStorage['enable_video'] == 0) {
+				} else if (localData()['enable_video'] == 0) {
 					core().enable_video(false)
 				} else {
-					localStorage['enable_video'] = 1
+					localData()['enable_video'] = 1
 					core().enable_video(true)
 				}
 
@@ -330,13 +355,13 @@ body {
 		}
 
 		function updateSelfView() {
-			if (localStorage['enable_video'] == 1 && localStorage['enable_video_self'] == 1) {
+			if (localData()['enable_video'] == 1 && localData()['enable_video_self'] == 1) {
 				jQuery.linphone.self_view = createVideoView('locale', function(object) {
 					object.setBackgroundColor(0, 0, 0)
-					core().set_native_preview_window_id(object.id)
+					core().set_native_preview_window_id(object.window)
 					core().enable_video_preview(true)
 				}, function(object) {
-					localStorage['enable_video_self'] = 0
+					localData()['enable_video_self'] = 0
 					updateSelfView()
 				})
 			} else {
@@ -403,7 +428,7 @@ body {
 		function call_invite_callback(dest, obj) {
 			if (obj) {
 				var call_number = jQuery.linphone.call_number
-				console.log('Add tab call-' + call_number)
+				consoleLog('Add tab call-' + call_number)
 				var div = jQuery('<div id="call-'+call_number+'" class="tab"></div>')
 				jQuery('#linphone .window > .content .tabs').append(div).tabs('add', '#call-' + call_number,
 						'Call ' + call_number);
@@ -448,6 +473,8 @@ body {
 			};
 
 			jQuery.linphone.call_number = 1
+			jQuery.linphone.video_number = 1
+			jQuery.linphone.video_data = new Array()
 			jQuery.linphone.self_view = null
 
 			// Tabs 
@@ -468,24 +495,24 @@ body {
 			jQuery(".linphone .window .tools .hp-slider").slider({
 				orientation : 'vertical',
 				change : function(event, ui) {
-					if (localStorage)
-						localStorage['play_level'] = ui.value
+					if (localData())
+						localData()['play_level'] = ui.value
 					core().set_play_level(ui.value)
 				}
 			});
 			jQuery(".linphone .window .tools .mic-slider").slider({
 				orientation : 'vertical',
 				change : function(event, ui) {
-					if (localStorage)
-						localStorage['rec_level'] = ui.value
+					if (localData())
+						localData()['rec_level'] = ui.value
 					core().set_rec_level(ui.value)
 				}
 			});
 			jQuery(".linphone .window .tools .bell-slider").slider({
 				orientation : 'vertical',
 				change : function(event, ui) {
-					if (localStorage)
-						localStorage['ring_level'] = ui.value
+					if (localData())
+						localData()['ring_level'] = ui.value
 					core().set_ring_level(ui.value)
 				}
 			});
@@ -541,7 +568,7 @@ body {
 				table.find('tbody tr').each(function() {
 					data.push(jQuery(this).data('data'))
 				})
-				console.log(data)
+				consoleLog(data)
 				if (table.is('.linphone .window .codecs-options .content .video')) {
 					core().set_video_codecs(data)
 				} else if (table.is('.linphone .window .codecs-options .content .audio')) {
@@ -595,14 +622,14 @@ body {
 
 				// Click on video item 
 				if (target.is('.linphone .window .tools .video > a')) {
-					if (localStorage['enable_video'] == 1) {
+					if (localData()['enable_video'] == 1) {
 						jQuery('.linphone .window .tools .video-menu .enable a').addClass('ui-state-selected')
 						jQuery('.linphone .window .tools .video-menu .self a').removeClass('ui-state-disabled')
 					} else {
 						jQuery('.linphone .window .tools .video-menu .enable a').removeClass('ui-state-selected')
 						jQuery('.linphone .window .tools .video-menu .self a').addClass('ui-state-disabled')
 					}
-					if (localStorage['enable_video_self'] == 1) {
+					if (localData()['enable_video_self'] == 1) {
 						jQuery('.linphone .window .tools .video-menu .self a').addClass('ui-state-selected')
 					} else {
 						jQuery('.linphone .window .tools .video-menu .self a').removeClass('ui-state-selected')
@@ -617,10 +644,10 @@ body {
 				// Click on enable video item 
 				if (target.is('.linphone .window .tools .video-menu .enable > a')) {
 					if (jQuery('.linphone .window .tools .video-menu .enable > a').hasClass('ui-state-selected')) {
-						localStorage['enable_video'] = 0
+						localData()['enable_video'] = 0
 						core().enable_video(false)
 					} else {
-						localStorage['enable_video'] = 1
+						localData()['enable_video'] = 1
 						core().enable_video(true)
 					}
 					updateSelfView()
@@ -631,9 +658,9 @@ body {
 				// Click on self view video item 
 				if (target.is('.linphone .window .tools .video-menu .self > a')) {
 					if (jQuery('.linphone .window .tools .video-menu .self > a').hasClass('ui-state-selected')) {
-						localStorage['enable_video_self'] = 0
+						localData()['enable_video_self'] = 0
 					} else {
-						localStorage['enable_video_self'] = 1
+						localData()['enable_video_self'] = 1
 					}
 					updateSelfView()
 					jQuery('.linphone .window .tools .video-menu').fadeOut('fast');
@@ -645,7 +672,7 @@ body {
 					jQuery('.linphone .window .tools .locales-menu').fadeOut('fast');
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					jQuery.i18n.change(target.data('data').locale)
-					localStorage['locale'] = target.data('data').locale
+					localData()['locale'] = target.data('data').locale
 				}
 
 				// Click on account item 

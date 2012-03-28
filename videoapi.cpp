@@ -21,7 +21,8 @@ VideoAPI::VideoAPI(const videoPtr& plugin, const FB::BrowserHostPtr& host) :
 	mWindow = VideoWindow::create();
 
 	// Methods
-	registerProperty("id", make_property(this, &VideoAPI::getId));
+	registerProperty("magic", make_property(this, &VideoAPI::getMagic, &VideoAPI::setMagic));
+	registerProperty("window", make_property(this, &VideoAPI::getWindow));
 	registerMethod("setBackgroundColor", make_method(this, &VideoAPI::setBackgroundColor));
 }
 
@@ -53,13 +54,26 @@ videoPtr VideoAPI::getPlugin() {
 }
 
 void VideoAPI::setWindow(FB::PluginWindow *window) {
+	FBLOG_DEBUG("videoAPI::setWindow()", "window=" << window);
 	mWindow->setWindow(window);
 }
 
-int VideoAPI::getId() {
+const std::string &VideoAPI::getMagic() {
+	FBLOG_DEBUG("VideoAPI::getMagic()", "");
+	return m_magic;
+}
+
+void VideoAPI::setMagic(const std::string &magic) {
+	FBLOG_DEBUG("VideoAPI::setMagic()", "magic=" << magic);
+	m_magic=magic;
+}
+
+unsigned long VideoAPI::getWindow() {
+	FBLOG_DEBUG("VideoAPI::getWindow()", "");
 	return mWindow->getId();
 }
 
 void VideoAPI::setBackgroundColor(int r, int g, int b) {
+	FBLOG_DEBUG("VideoAPI::setBackgroundColor()", "r=" << r << "\tg=" << g << "\tb=" << g);
 	mWindow->setBackgroundColor(r, g, b);
 }

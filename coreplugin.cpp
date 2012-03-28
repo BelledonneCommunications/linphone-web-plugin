@@ -85,6 +85,16 @@ FB::JSAPIPtr linphone::createJSAPI() {
 	return boost::make_shared<CoreAPI>(FB::ptr_cast<linphone>(shared_from_this()), m_host);
 }
 
+bool linphone::setReady () {
+	FB::VariantMap::iterator fnd = m_params.find("magic");
+    if (fnd != m_params.end()) {
+		if(fnd->second.is_of_type<std::string>()) {
+			FB::ptr_cast<CoreAPI>(getRootJSAPI())->setMagic(fnd->second.convert_cast<std::string>());
+		}
+	}
+	return PluginCore::setReady();
+}
+
 bool linphone::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *) {
 	//printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
 	return false;

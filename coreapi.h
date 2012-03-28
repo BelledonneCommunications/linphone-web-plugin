@@ -71,6 +71,10 @@ public:
 	std::string getVersion();
 	int getSipPort();
 
+	// Property
+	const std::string &getMagic();
+	void setMagic(const std::string &magic);
+
 	// Methods
 	int init();
 	//
@@ -108,6 +112,7 @@ public:
 	}
 
 private:
+	std::string m_magic;
 	linphoneWeakPtr m_plugin;
 	FB::BrowserHostPtr m_host;
 

@@ -71,6 +71,9 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	registerProperty("version", make_property(this, &CoreAPI::getVersion));
 	registerProperty("sip_port", make_property(this, &CoreAPI::getSipPort));
 
+	// Propery
+	registerProperty("magic", make_property(this, &CoreAPI::getMagic, &CoreAPI::setMagic));
+
 	// Methods
 	registerMethod("init", make_method(this, &CoreAPI::init));
 	REGISTER_SYNC_N_ASYNC("invite", invite);
@@ -180,6 +183,16 @@ linphonePtr CoreAPI::getPlugin() {
 		throw FB::script_error("The plugin is invalid");
 	}
 	return plugin;
+}
+
+const std::string &CoreAPI::getMagic() {
+	FBLOG_DEBUG("CoreAPI::getMagic()", "");
+	return m_magic;
+}
+
+void CoreAPI::setMagic(const std::string &magic) {
+	FBLOG_DEBUG("CoreAPI::setMagic()", "magic=" << magic);
+	m_magic=magic;
 }
 
 boost::shared_ptr<CallAPI> CoreAPI::invite(const std::string &dest) {
