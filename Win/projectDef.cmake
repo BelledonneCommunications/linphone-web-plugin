@@ -25,6 +25,8 @@ set (SOURCES
     ${PLATFORM}
     )
 	
+set(CMAKE_SHARED_LINKER_FLAGS_RELEASE
+        "/LTCG /SUBSYSTEM:WINDOWS /OPT:NOREF /OPT:ICF")
 include_directories(Libs/include/linphone)
 include_directories(Libs/include)
 
@@ -53,10 +55,6 @@ target_link_libraries(${PROJECT_NAME}
 	"${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/liblinphone.lib"
 	"${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libmediastreamer.lib"
 	)
-
-#link liblinphone
-set (LIBRARY_PATH ${PROJECT_SOURCE_DIR}/Libs/lib)
-set (BINARY_PATH ${PROJECT_SOURCE_DIR}/Libs/bin)
 
 set(WIX_HEAT_FLAGS
     -gg                 # Generate GUIDs

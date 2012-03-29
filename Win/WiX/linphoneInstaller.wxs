@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Product Id="*" Name="${FBSTRING_PluginName}" Language="1033" Version="${FBSTRING_PLUGIN_VERSION}" Manufacturer="${FBSTRING_CompanyName}" UpgradeCode="{d04684cd-332b-540f-beca-53826c14d6cf}">
-        <Package InstallerVersion="200" Compressed="yes" Description="Installer for the ${PLUGIN_NAME} plugin" InstallScope="perUser" />
+        <Package InstallerVersion="200" Compressed="yes" Description="Installer for the ${FBSTRING_PluginName} plugin" InstallScope="perUser" />
         <Upgrade Id="{d04684cd-332b-540f-beca-53826c14d6cf}">
             <UpgradeVersion
                 Property="OLD_VERSION_FOUND"
@@ -16,6 +16,8 @@
             <InstallExecute After="RemoveExistingProducts" />
         </InstallExecuteSequence>
         <Media Id="1" Cabinet="${PLUGIN_NAME}.cab" EmbedCab="yes" />
+		<Icon Id="linphone.ico" SourceFile="${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/linphone.ico"/>
+		<Property Id="ARPPRODUCTICON" Value="linphone.ico" />
 
         <Directory Id="TARGETDIR" Name="SourceDir">
             <Directory Id="${FB_WIX_INSTALL_LOCATION}">
@@ -55,22 +57,22 @@
 
 
                             <Component Id="MainLibraries" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6a">
-								<File Id="avcodec" Source="${BINARY_PATH}\avcodec-53.dll" />
-								<File Id="avutil" Source="${BINARY_PATH}\avutil-51.dll" />
-								<File Id="libexosip2" Source="${BINARY_PATH}\libexosip2-7.dll" />
-								<File Id="libintl" Source="${BINARY_PATH}\libintl-8.dll" />
-                                <File Id="liblinphone" Source="${BINARY_PATH}\liblinphone-4.dll" />
-								<File Id="libmediastreamer" Source="${BINARY_PATH}\libmediastreamer-1.dll" />
-								<File Id="libogg" Source="${BINARY_PATH}\libogg-0.dll" />
-								<File Id="libortp" Source="${BINARY_PATH}\libortp-8.dll" />
-								<File Id="libosip2" Source="${BINARY_PATH}\libosip2-7.dll" />
-								<File Id="libosipparser2" Source="${BINARY_PATH}\libosipparser2-7.dll" />
-								<File Id="libspeex" Source="${BINARY_PATH}\libspeex-1.dll" />
-								<File Id="libspeexdsp" Source="${BINARY_PATH}\libspeexdsp-1.dll" />
-								<File Id="libtheora" Source="${BINARY_PATH}\libtheora-0.dll" />
-								<File Id="libvorbis" Source="${BINARY_PATH}\libvorbis-0.dll" />
-								<File Id="swscale" Source="${BINARY_PATH}\swscale-2.dll" />
-								<File Id="zlib1" Source="${BINARY_PATH}\zlib1.dll" />
+								<File Id="avcodec" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/avcodec-53.dll" />
+								<File Id="avutil" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/avutil-51.dll" />
+								<File Id="libexosip2" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libexosip2-7.dll" />
+								<File Id="libintl" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libintl-8.dll" />
+                                <File Id="liblinphone" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/liblinphone-4.dll" />
+								<File Id="libmediastreamer" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libmediastreamer-1.dll" />
+								<File Id="libogg" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libogg-0.dll" />
+								<File Id="libortp" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libortp-8.dll" />
+								<File Id="libosip2" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libosip2-7.dll" />
+								<File Id="libosipparser2" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libosipparser2-7.dll" />
+								<File Id="libspeex" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libspeex-1.dll" />
+								<File Id="libspeexdsp" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libspeexdsp-1.dll" />
+								<File Id="libtheora" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libtheora-0.dll" />
+								<File Id="libvorbis" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libvorbis-0.dll" />
+								<File Id="swscale" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/swscale-2.dll" />
+								<File Id="zlib1" Source="${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/zlib1.dll" />
                                 <RegistryValue
                                     Root="HKCU"
                                     Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"

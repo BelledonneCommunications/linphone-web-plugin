@@ -100,7 +100,7 @@ int CoreAPI::init() {
 	FBLOG_DEBUG("CoreAPI::init()", this);
 
 	if (sInstanceCount == 0) {
-		srand(time(NULL));
+		srand((unsigned int)time(NULL));
 
 		// Disable logs
 		linphone_core_disable_logs();

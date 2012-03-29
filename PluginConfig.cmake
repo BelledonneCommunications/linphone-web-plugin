@@ -5,9 +5,9 @@
 #
 #\**********************************************************/
 
-set(PLUGIN_NAME "linphone")
-set(PLUGIN_PREFIX "LIN")
-set(COMPANY_NAME "belledonne_communications")
+set(PLUGIN_NAME "linphonejs")
+set(PLUGIN_PREFIX "LINJS")
+set(COMPANY_NAME "belledonne-communications")
 
 # ActiveX constants:
 set(FBTYPELIB_NAME linphoneLib)
@@ -30,13 +30,13 @@ set(IFBComEventSource_GUID 898a611e-b63b-58c7-bc64-0c0fa0c0cded)
 set(MOZILLA_PLUGINID "belledonne-communications.com/linphone")
 
 # strings
-set(FBSTRING_CompanyName "Belledonne communications")
+set(FBSTRING_CompanyName "Belledonne Communications")
 set(FBSTRING_PLUGIN_VERSION "1.0.0.0")
 set(FBSTRING_LegalCopyright "Copyright 2012 Belledonne communications")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
-set(FBSTRING_ProductName "linphone")
+set(FBSTRING_ProductName "Linphone JS")
 set(FBSTRING_FileExtents "")
-set(FBSTRING_PluginName "linphone")
+set(FBSTRING_PluginName "Linphone JS")
 
 set(FBSTRING_MIMEType 
 	"application/x-linphone"
