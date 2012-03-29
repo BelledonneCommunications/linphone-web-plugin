@@ -222,10 +222,10 @@ function _videoLoad(obj) {
 			}
 		}
 		
-		function _core() {
+		function core() {
 			return document.getElementById('core');
 		}
-		core = _core;
+		
 		function loadLinphoneI18n() {
 			jQuery.i18n.data = jQuery.linphone.i18n
 			var locale = (navigator.language) ? navigator.language : navigator.userLanguage
