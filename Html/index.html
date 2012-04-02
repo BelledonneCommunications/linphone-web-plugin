@@ -43,25 +43,11 @@ body {
 	font-weight: bold;
 }
 </style>
-<script type="text/javascript">
-function _coreLoad(obj) {
-	consoleLog('Load Core')
-	coreLoad()
-}
-function _videoLoad(obj) {
-	consoleLog('Load VideoView ' + obj.magic)
-	jQuery.linphone.video_data[obj.magic](obj)
-}
-</script>
 </head>
 
-<body onload="init()">
+<body>
 	<div>
 		<div class="linphone ui-widget" id="linphone">
-			<object id="core" type="application/x-linphone" width="0" height="0">
-				<param name="onload" value="_coreLoad" />
-				Linphone Core
-			</object>
 			<div class="window ui-corner-all">
 				<div class="error ui-corner-all">Error !</div>
 				<div class="load ui-corner-all">
@@ -195,35 +181,46 @@ function _videoLoad(obj) {
 	</div>
 
 	<script type="text/javascript">
-		function addEvent(obj, name, func) {
-			obj.attachEvent("on" + name, func);
-		}
-	</script>
-	<![if !IE]>
-	<script type="text/javascript">
-		function addEvent(obj, name, func) {
-			obj.addEventListener(name, func, false);
-		}
-	</script>
-	<![endif]>
-	<script type="text/javascript">
 		// Utils 
 		var _localData = {}
 		function localData() {
-			if(localStorage)
+			if(window['localStorage'] !== undefined)
 				return localStorage
 			else
 				return _localData
 		}
 		
 		function consoleLog(a) {
-			if(console) {
+			if(window['console'] !== undefined) {
 				console.log(a)
 			}
 		}
 		
 		function core() {
 			return document.getElementById('core');
+		}
+		
+		function _coreLoad(obj) {
+			coreLoad()
+		}
+		
+		function _videoLoad(obj) {
+			jQuery.linphone.video_data[obj.magic](obj)
+		}
+		
+		var _addEvent;
+		if(!jQuery.browser.msie) {
+			_addEvent = function(obj, name, func) {
+				obj.addEventListener(name, func, false);
+			}
+		} else {
+			_addEvent = function(obj, name, func) {
+				obj.attachEvent("on" + name, func);
+			}
+		}
+		
+		function addEvent(obj, name, func) {
+			_addEvent(obj, name, func)
 		}
 		
 		function loadLinphoneI18n() {
@@ -265,6 +262,8 @@ function _videoLoad(obj) {
 			loadLinphoneI18n()
 			populate_locales_menu()
 			jQuery(".linphone .window .tools .locales-menu").menu();
+			var core = jQuery(jQuery('#Linphone-Core').render())
+			core.appendTo(jQuery('.linphone'))
 		}
 
 		function init() {
@@ -312,6 +311,7 @@ function _videoLoad(obj) {
 		}
 
 		function coreLoad() {
+			consoleLog('Load Core')
 			jQuery('#version_number').text(core().version)
 			addEvent(core(), 'global_state_changed', global_state_changed)
 			addEvent(core(), 'call_state_changed', call_state_changed)
@@ -357,6 +357,7 @@ function _videoLoad(obj) {
 		function updateSelfView() {
 			if (localData()['enable_video'] == 1 && localData()['enable_video_self'] == 1) {
 				jQuery.linphone.self_view = createVideoView('locale', function(object) {
+					consoleLog('Load VideoView ' + object.magic)
 					object.setBackgroundColor(0, 0, 0)
 					core().set_native_preview_window_id(object.window)
 					core().enable_video_preview(true)
@@ -713,8 +714,9 @@ function _videoLoad(obj) {
 						helper : function(event) {
 							original_tr = jQuery(event.target).parent()
 							original_table = original_tr.parents('table')
-							return jQuery('<table></table>').append(original_tr.clone()).css({
-								"width" : original_table.width(),
+							return original_tr.clone().css({
+								"height": original_tr.outerHeight(),
+								"width" : original_tr.outerWidth(),
 								"position" : "absolute"
 							})
 						},
@@ -745,6 +747,8 @@ function _videoLoad(obj) {
 					data.enabled = !data.enabled
 				}
 			});
+			
+			init()
 		})
 	</script>
 </body>

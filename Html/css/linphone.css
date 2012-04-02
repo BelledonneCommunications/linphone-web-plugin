@@ -313,15 +313,23 @@
 }
 
 .linphone .window .codecs-options .content .name {
-	width: 45px;
+	width: 40px;
+	padding: 1px;
 }
 
 .linphone .window .codecs-options .content .frequency {
 	width: 45px;
+	padding: 1px;
 }
 
 .linphone .window .codecs-options .content .bitrate {
 	width: 35px;
+	padding: 1px;
+}
+
+.linphone .window .codecs-options .content .actions {
+	width: 20px;
+	padding: 1px;
 }
 
 .linphone .window .codecs-options .content .tabs {
@@ -332,8 +340,12 @@
 	left: 0px;
 }
 
+.linphone .window .codecs-options .content .tabs .ui-tabs-panel{
+	padding: 0px
+}
+
 .linphone .window .codecs-options .content  table {
-	table-layout: auto;
+	table-layout: fixed;
 }
 
 .linphone .window .codecs-options .content table tr {
@@ -342,6 +354,11 @@
 	cursor: move;
 }
 
+.linphone .window .codecs-options .content table tr  input{
+	line-height: 12px;
+	height: 12px;
+	cursor: pointer;
+}
 
 .linphone .window .codecs-options .content .ui-tabs-panel {
 	overflow-y: scroll;

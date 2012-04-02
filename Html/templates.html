@@ -73,6 +73,12 @@ Call end: <b>{{=dest}}</b>
 	</object>
 </div>
 </script>
+<script id="Linphone-Core" type="text/x-jsrender">
+<object id="core" type="application/x-linphone" width="0" height="0">
+	<param name="onload" value="_coreLoad" />
+	Linphone Core
+</object>
+</script>
 <script id="Linphone-LocaleItem" type="text/x-jsrender">
 <li>
 	<a class="ui-icon flag" style="background-image: url('{{=icon}}')">
@@ -92,6 +98,7 @@ Call end: <b>{{=dest}}</b>
 			<input class="enable" type="checkbox" />
 		{{/if}}
 	</td>
+	<td/>
 </tr>
 </script>
 </html>

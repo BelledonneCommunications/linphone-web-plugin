@@ -32,7 +32,7 @@ set(MOZILLA_PLUGINID "belledonne-communications.com/linphone")
 # strings
 set(FBSTRING_CompanyName "Belledonne Communications")
 set(FBSTRING_PLUGIN_VERSION "1.0.0.0")
-set(FBSTRING_LegalCopyright "Copyright 2012 Belledonne communications")
+set(FBSTRING_LegalCopyright "Copyright 2012 Belledonne Communications")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
 set(FBSTRING_ProductName "Linphone JS")
 set(FBSTRING_FileExtents "")
