@@ -44,10 +44,10 @@ add_windows_plugin(${PROJECT_NAME} SOURCES)
 # still work. Your cert should only be on the build machine and shouldn't be in
 # source control!
 # -- uncomment lines below this to enable signing --
-#firebreath_sign_plugin(${PROJECT_NAME}
-#    "${CMAKE_CURRENT_SOURCE_DIR}/sign/certificate.pfx"
-#    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-#    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_plugin(${PROJECT_NAME}
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJECT_NAME} 
@@ -57,13 +57,13 @@ target_link_libraries(${PROJECT_NAME}
 	)
 
 #Copy dll dependencies
-ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
-          POST_BUILD
+ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
+		  PRE_BUILD
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/avcodec-53.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/avutil-51.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libeXosip2-7.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libintl-8.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-          COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/liblinphone-4.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/liblinphone-4.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libmediastreamer-1.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/		  
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libogg-0.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/libortp-8.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
@@ -77,6 +77,88 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/bin/zlib1.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
 )
 
+# Sign dll dependencies
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/avcodec-53.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/avutil-51.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libeXosip2-7.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libintl-8.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/liblinphone-4.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libmediastreamer-1.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libogg-0.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libortp-8.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libosip2-7.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libosipparser2-7.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libspeex-1.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libspeexdsp-1.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libtheora-0.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libvorbis-0.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/swscale-2.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/zlib1.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+	
 set(WIX_HEAT_FLAGS
     -gg                 # Generate GUIDs
     -srd                # Suppress Root Dir
@@ -94,8 +176,8 @@ add_wix_installer( ${PLUGIN_NAME}
 
 # This is an example of how to add a build step to sign the WiX installer
 # -- uncomment lines below this to enable signing --
-#firebreath_sign_file("${PLUGIN_NAME}_WiXInstall"
-#    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${PLUGIN_NAME}.msi"
-#    "${CMAKE_CURRENT_SOURCE_DIR}/sign/certificate.pfx"
-#    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-#    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file("${PLUGIN_NAME}_WiXInstall"
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${PLUGIN_NAME}.msi"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/belledonne-communications.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
