@@ -763,14 +763,12 @@ body {
 		})
 
 		function detect() {
-			if (core() == 'undefined' || core().valid == 'undefined' || !core().valid) {
-				jQuery('.linphone .window .load').hide()
-				jQuery('.linphone .window .install').show()
-				return false
-			} else {
-				jQuery('.linphone .window .install').hide()	
+			if (core() != 'undefined' && core().valid != 'undefined' && core().valid) {
+				jQuery('.linphone .window .install').hide()
+				jQuery('.linphone .window .load').show()
+				return true
 			}
-			return true
+			return false
 		}
 
 		function refresh() {
