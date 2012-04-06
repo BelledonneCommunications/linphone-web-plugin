@@ -49,7 +49,11 @@ body {
 	<div>
 		<div class="linphone ui-widget" id="linphone">
 			<div class="window ui-corner-all">
-				<div class="error ui-corner-all">Error !</div>
+				<div class="error ui-corner-all"></div>
+				<div class="install ui-corner-all">
+					Install !
+					<button type="button" onclick="refresh()">Refresh</button>
+				</div>
 				<div class="load ui-corner-all">
 					<img src="css/images/loading.gif" alt="..."
 						style="width: 50px; height: 50px; position: absolute; top: 50%; left: 50%; margin-left: -25px; margin-top: -25px;"></img>
@@ -182,34 +186,39 @@ body {
 
 	<script type="text/javascript">
 		// Utils 
+		var _objectCodeBase = "http://site.foo/plugin.exe"
+		var _coreTemplate = '<object id="core" type="application/x-linphone" width="0" height="0" codebase="'+_objectCodeBase+'"> \
+							 	<param name="onload" value="_coreLoad" /> \
+							 	Linphone Core \
+							 </object>'
 		var _localData = {}
 		function localData() {
-			if(window['localStorage'] !== undefined)
+			if (window['localStorage'] !== undefined)
 				return localStorage
 			else
 				return _localData
 		}
-		
+
 		function consoleLog(a) {
-			if(window['console'] !== undefined) {
+			if (window['console'] !== undefined) {
 				console.log(a)
 			}
 		}
-		
+
 		function core() {
 			return document.getElementById('core');
 		}
-		
+
 		function _coreLoad(obj) {
 			coreLoad()
 		}
-		
+
 		function _videoLoad(obj) {
 			jQuery.linphone.video_data[obj.magic](obj)
 		}
-		
+
 		var _addEvent;
-		if(!jQuery.browser.msie) {
+		if (!jQuery.browser.msie) {
 			_addEvent = function(obj, name, func) {
 				obj.addEventListener(name, func, false);
 			}
@@ -218,11 +227,11 @@ body {
 				obj.attachEvent("on" + name, func);
 			}
 		}
-		
+
 		function addEvent(obj, name, func) {
 			_addEvent(obj, name, func)
 		}
-		
+
 		function loadLinphoneI18n() {
 			jQuery.i18n.data = jQuery.linphone.i18n
 			var locale = (navigator.language) ? navigator.language : navigator.userLanguage
@@ -262,11 +271,10 @@ body {
 			loadLinphoneI18n()
 			populate_locales_menu()
 			jQuery(".linphone .window .tools .locales-menu").menu();
-			var core = jQuery(jQuery('#Linphone-Core').render())
-			core.appendTo(jQuery('.linphone'))
 		}
 
 		function init() {
+			consoleLog('Init LinphoneJS')
 			jQuery('#templates').load('templates.html', init2)
 		}
 
@@ -285,15 +293,17 @@ body {
 			element.addClass('video')
 
 			element.dialog({
-				height: 240,
-				width: 320,
+				height : 240,
+				width : 320,
 				close : function() {
 					onClose(jQuery(this).find('object').get(0))
 				}
 			})
 			element.parent().appendTo(jQuery('.linphone'))
 			element.dialog("open")
-			var template = jQuery(jQuery('#Linphone-Video').render({magic: jQuery.linphone.video_number}))
+			var template = jQuery(jQuery('#Linphone-Video').render({
+				magic : jQuery.linphone.video_number
+			}))
 			var object = template.find('object')
 			consoleLog('Create VideoView ' + jQuery.linphone.video_number)
 			jQuery.linphone.video_data[jQuery.linphone.video_number] = onOpen
@@ -305,7 +315,7 @@ body {
 		function destroyVideoView(element) {
 			var object = element.find('object').get(0)
 			consoleLog('Destroy VideoView ' + object.magic)
-			jQuery.linphone.video_data.splice(object.magic, 1); 
+			jQuery.linphone.video_data.splice(object.magic, 1);
 			element.dialog('destroy')
 			element.remove()
 		}
@@ -319,9 +329,9 @@ body {
 			addEvent(core(), 'display_message', display_message)
 			addEvent(core(), 'display_warning', display_warning)
 			addEvent(core(), 'display_url', display_url)
-			if (core().init() != 0) {
-				jQuery('.linphone .window .load').hide()
-				jQuery('.linphone .window .error').show()
+			var ret_value = core().init()
+			if (ret_value != 0) {
+				error("Can't initialize")
 			} else {
 				// Init volumes settings 
 				rec_level = (localData()['rec_level'] != null) ? localData()['rec_level'] : 100
@@ -715,7 +725,7 @@ body {
 							original_tr = jQuery(event.target).parent()
 							original_table = original_tr.parents('table')
 							return original_tr.clone().css({
-								"height": original_tr.outerHeight(),
+								"height" : original_tr.outerHeight(),
 								"width" : original_tr.outerWidth(),
 								"position" : "absolute"
 							})
@@ -747,9 +757,35 @@ body {
 					data.enabled = !data.enabled
 				}
 			});
-			
+
 			init()
+			refresh()
 		})
+
+		function detect() {
+			if (core() == 'undefined' || core().valid == 'undefined' || !core().valid) {
+				jQuery('.linphone .window .load').hide()
+				jQuery('.linphone .window .install').show()
+				return false
+			} else {
+				jQuery('.linphone .window .install').hide()	
+			}
+			return true
+		}
+
+		function refresh() {
+			jQuery('#core').remove()
+			navigator.plugins.refresh(false); 
+			var core = jQuery(_coreTemplate)
+			core.appendTo(jQuery('.linphone'))
+			detect()
+		}
+
+		function error(msg) {
+			jQuery('.linphone .window .load').hide()
+			jQuery('.linphone .window .error').html(msg)
+			jQuery('.linphone .window .error').show()
+		}
 	</script>
 </body>
 </html>
