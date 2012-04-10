@@ -95,4 +95,17 @@ Call end: <b>{{=dest}}</b>
 	<td/>
 </tr>
 </script>
+<script id="Linphone-AccountsList" type="text/x-jsrender">
+<tr>
+	<td class="name">{{=get_identity()}}</td>
+	<td class="actions">
+		{{#if register_enabled()}}
+			<input class="enable" type="checkbox" checked="checked" />
+		{{else}}
+			<input class="enable" type="checkbox" />
+		{{/if}}
+	</td>
+	<td/>
+</tr>
+</script>
 </html>

@@ -5,12 +5,26 @@ jQuery.i18n.change = function(locale) {
 	if (locale != jQuery.i18n.locale) {
 		jQuery.i18n.locale = locale
 		console.log('Change locale: ' + jQuery.i18n.locale)
-		jQuery('*').filter(function () { return $(this).metadata().translate != null}).each(function() {
+		jQuery.i18n.update(jQuery('*'))
+	}
+}
+
+jQuery.i18n.update = function(element, recursive) {
+	if (typeof recursive == "undefined") {
+		recursive = false
+	}
+	element.filter(function () { return $(this).metadata().translate != null}).each(function() {
+		var element = $(this)
+		element.html(jQuery.i18n.translate(element.metadata().translate))
+	})
+	if(recursive) {
+		element.find('*').filter(function () { return $(this).metadata().translate != null}).each(function() {
 			var element = $(this)
 			element.html(jQuery.i18n.translate(element.metadata().translate))
 		})
 	}
 }
+
 jQuery.i18n.translate = function(text) {
 	var parts = text.split('.')
 	var data = jQuery.i18n.data
@@ -31,6 +45,7 @@ jQuery.i18n.translate = function(text) {
 
 	return translated_text
 }
+
 jQuery.i18n.get = function(text) {
 	var translated_text = jQuery.i18n.translate(text)
 	return '<div class="{translate: \'' + text + '\'}">' + translated_text + '</div>'

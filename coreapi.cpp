@@ -15,6 +15,7 @@ void usleep(int waitTime) {
 #define CORE_MUTEX ;
 //#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(m_core_mutex);
 
+static boost::mutex sInstanceMutex;
 static int sInstanceCount = 0;
 
 void linphone_iterate_thread(CoreAPI *linphone_api) {
@@ -49,7 +50,9 @@ void linphone_destroy_thread(LinphoneCore* core, boost::thread *thread, mythread
 		linphone_core_destroy(core);
 	}
 
+	sInstanceMutex.lock();
 	--sInstanceCount;
+	sInstanceMutex.unlock();
 	FBLOG_DEBUG("linphone_destroy_thread", "end");
 }
 
@@ -83,10 +86,13 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	registerMethod("set_rec_level", make_method(this, &CoreAPI::set_rec_level));
 	registerMethod("set_ring_level", make_method(this, &CoreAPI::set_ring_level));
 
+	registerMethod("video_supported", make_method(this, &CoreAPI::video_supported));
 	registerMethod("enable_video", make_method(this, &CoreAPI::enable_video));
 	registerMethod("video_enabled", make_method(this, &CoreAPI::video_enabled));
 	registerMethod("enable_video_preview", make_method(this, &CoreAPI::enable_video_preview));
 	registerMethod("video_preview_enabled", make_method(this, &CoreAPI::video_preview_enabled));
+	registerMethod("get_native_video_window_id", make_method(this, &CoreAPI::get_native_video_window_id));
+	registerMethod("set_native_video_window_id", make_method(this, &CoreAPI::set_native_video_window_id));
 	registerMethod("get_native_preview_window_id", make_method(this, &CoreAPI::get_native_preview_window_id));
 	registerMethod("set_native_preview_window_id", make_method(this, &CoreAPI::set_native_preview_window_id));
 
@@ -94,13 +100,23 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	registerMethod("get_video_codecs", make_method(this, &CoreAPI::get_video_codecs));
 	registerMethod("set_audio_codecs", make_method(this, &CoreAPI::set_audio_codecs));
 	registerMethod("set_video_codecs", make_method(this, &CoreAPI::set_video_codecs));
+
+	registerMethod("new_proxy_config", make_method(this, &CoreAPI::new_proxy_config));
+	registerMethod("add_proxy_config", make_method(this, &CoreAPI::add_proxy_config));
+	registerMethod("clear_proxy_config", make_method(this, &CoreAPI::clear_proxy_config));
+	registerMethod("remove_proxy_config", make_method(this, &CoreAPI::remove_proxy_config));
+	registerMethod("get_proxy_config_list", make_method(this, &CoreAPI::get_proxy_config_list));
+	registerMethod("set_default_proxy", make_method(this, &CoreAPI::set_default_proxy));
+	registerMethod("get_default_proxy", make_method(this, &CoreAPI::get_default_proxy));
 }
 
 int CoreAPI::init() {
 	FBLOG_DEBUG("CoreAPI::init()", this);
+	boost::mutex::scoped_lock scoped_instance_count_lock(sInstanceMutex);
 
 	if (sInstanceCount == 0) {
-		srand((unsigned int)time(NULL));
+		++sInstanceCount;
+		srand((unsigned int) time(NULL));
 
 		// Disable logs
 		linphone_core_disable_logs();
@@ -129,6 +145,7 @@ int CoreAPI::init() {
 		m_lin_core = linphone_core_new(&m_lin_vtable, NULL, NULL, (void *) this);
 		if (linphone_core_get_user_data(m_lin_core) != this) {
 			FBLOG_ERROR("CoreAPI::init()", "Too old version of linphone core!");
+			--sInstanceCount;
 			return 1;
 		}
 
@@ -141,14 +158,13 @@ int CoreAPI::init() {
 		}
 
 		int port = 5000 + rand() % 5000;
-		FBLOG_DEBUG("CoreAPI::init()", port);
+		FBLOG_DEBUG("CoreAPI::init()", "port=" << port);
 		linphone_core_set_sip_port(m_lin_core, port);
 
 		m_core_thread = new boost::thread(linphone_iterate_thread, this);
-		++sInstanceCount;
 		return 0;
 	} else {
-		FBLOG_ERROR("CoreAPI::init()", "Already stated linphone instance");
+		FBLOG_ERROR("CoreAPI::init()", "Already started linphone instance");
 		return 2;
 	}
 }
@@ -192,7 +208,7 @@ const std::string &CoreAPI::getMagic() {
 
 void CoreAPI::setMagic(const std::string &magic) {
 	FBLOG_DEBUG("CoreAPI::setMagic()", "magic=" << magic);
-	m_magic=magic;
+	m_magic = magic;
 }
 
 boost::shared_ptr<CallAPI> CoreAPI::invite(const std::string &dest) {
@@ -232,6 +248,12 @@ void CoreAPI::set_ring_level(int level) {
 	linphone_core_set_ring_level(m_lin_core, level);
 }
 
+bool CoreAPI::video_supported() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::video_supported()", "");
+	return linphone_core_video_supported(m_lin_core) == TRUE ? true : false;
+}
 void CoreAPI::enable_video(bool enable) {
 	CORE_MUTEX
 
@@ -259,6 +281,21 @@ bool CoreAPI::video_preview_enabled() {
 	FBLOG_DEBUG("CoreAPI::video_preview_enabled()", "");
 	return linphone_core_video_preview_enabled(m_lin_core) == TRUE ? true : false;
 }
+
+void CoreAPI::set_native_video_window_id(unsigned long id) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::set_native_video_window_id()", "id=" << id);
+	linphone_core_set_native_video_window_id(m_lin_core, id);
+}
+
+unsigned long CoreAPI::get_native_video_window_id() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::set_native_video_window_id()", "");
+	return linphone_core_get_native_video_window_id(m_lin_core);
+}
+
 
 void CoreAPI::set_native_preview_window_id(unsigned long id) {
 	CORE_MUTEX
@@ -328,6 +365,57 @@ void CoreAPI::set_video_codecs(const std::vector<boost::shared_ptr<FB::JSAPI> > 
 	}
 
 	linphone_core_set_video_codecs(m_lin_core, mslist);
+}
+
+boost::shared_ptr<ProxyConfigAPI> CoreAPI::new_proxy_config() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::new_proxy_config()", "");
+	return boost::make_shared<ProxyConfigAPI>();
+}
+int CoreAPI::add_proxy_config(const boost::shared_ptr<ProxyConfigAPI> &config) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::add_proxy_config()", "config=" << config);
+	return linphone_core_add_proxy_config(m_lin_core, config->getRef());
+}
+void CoreAPI::clear_proxy_config() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::clear_proxy_config()", "");
+	linphone_core_clear_proxy_config(m_lin_core);
+}
+void CoreAPI::remove_proxy_config(const boost::shared_ptr<ProxyConfigAPI> &config) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::remove_proxy_config()", "config=" << config);
+	linphone_core_remove_proxy_config(m_lin_core, config->getRef());
+}
+FB::VariantList CoreAPI::get_proxy_config_list() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::get_proxy_config_list()", "");
+	FB::VariantList list;
+	for (const MSList *node = linphone_core_get_proxy_config_list(m_lin_core); node != NULL; node = ms_list_next(node)) {
+		list.push_back(ProxyConfigAPI::get(reinterpret_cast<LinphoneProxyConfig*>(node->data)));
+	}
+	return list;
+}
+void CoreAPI::set_default_proxy(const boost::shared_ptr<ProxyConfigAPI> &config) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::set_default_proxy()", "config=" << config);
+	linphone_core_set_default_proxy(m_lin_core, config->getRef());
+}
+boost::shared_ptr<ProxyConfigAPI> CoreAPI::get_default_proxy() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::get_default_proxy()", "");
+	LinphoneProxyConfig *ptr = NULL;
+	linphone_core_get_default_proxy(m_lin_core, &ptr);
+	if(ptr != NULL)
+		return ProxyConfigAPI::get(ptr);
+	return boost::shared_ptr<ProxyConfigAPI>();
 }
 
 std::string CoreAPI::getVersion() {

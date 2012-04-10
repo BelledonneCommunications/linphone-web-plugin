@@ -1,4 +1,16 @@
 jQuery.linphone.i18n = {
+	errors: {
+		core: {
+			1: {
+				en_US : 'Invalid version of Linphone',
+				fr_FR : 'Version invalide de Linphone',
+			},
+			2: {
+				en_US : 'Another instance of Linphone JS is started. Close it',
+				fr_FR : 'Une autre instance de de Linphone JS est démarré. Veuillez fermer celle-ci.',
+			},
+		},
+	},
 	globalstatetext : {
 		On : {
 			en_US : 'On',
@@ -38,7 +50,59 @@ jQuery.linphone.i18n = {
 			}
 		},
 	},
+	form: {
+		account: {
+			title: {
+				en_US : 'Add a Account',
+				fr_FR : 'Ajouter un compte',		
+			},
+			identity: {
+				en_US : 'SIP identity',
+				fr_FR : 'Identité SIP',		
+			},
+			proxy: {
+				en_US : 'SIP proxy address',
+				fr_FR : 'Adresse du proxy SIP',		
+			},
+			route: {
+				en_US : 'Route(optional)',
+				fr_FR : 'Route(optionnelle)',		
+			},
+			expires: {
+				en_US : 'Registration duration',
+				fr_FR : 'Durée de l\'enregistrement',		
+			},
+			valid: {
+				en_US : 'Valid',
+				fr_FR : 'Valider',				
+			},
+			errors: {
+				title: {
+					en_US : 'Error',
+					fr_FR : 'Erreur',				
+				},
+				message: {
+					en_US : 'The following error(s) occured: ',
+					fr_FR : 'Les erreurs suivantes sont survenues: ',		
+				},
+			},
+		},
+	},
 	options: {
+		accounts: {
+			add: {
+				en_US : 'Add',
+				fr_FR : 'Ajouter',	
+			},
+			name: {
+				en_US : 'Name',
+				fr_FR : 'Nom',	
+			},
+			actions: {
+				en_US : '',
+				fr_FR : '',		
+			},
+		},
 		codecs: {
 			audio: {
 				en_US : 'Audio',
