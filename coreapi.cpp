@@ -5,6 +5,7 @@
 #include <sstream>
 #include <boost/foreach.hpp>
 #include "coreapi.h"
+
 #ifndef WIN32
 #else
 #include <windows.h>
@@ -12,8 +13,8 @@ void usleep(int waitTime) {
 	Sleep(waitTime/1000);
 }
 #endif
-#define CORE_MUTEX ;
-//#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(m_core_mutex);
+
+#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(m_core_mutex);
 
 static boost::mutex sInstanceMutex;
 static int sInstanceCount = 0;

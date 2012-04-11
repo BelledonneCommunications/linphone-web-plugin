@@ -133,7 +133,7 @@ private:
 	LinphoneCore *m_lin_core; // Linphone core object
 	LinphoneCoreVTable m_lin_vtable; // Linphone callback methods table
 
-	//boost::mutex m_core_mutex;
+	boost::mutex m_core_mutex;
 	boost::thread *m_core_thread;
 	mythread_group *m_threads;
 
@@ -144,9 +144,9 @@ private:
 
 	friend void linphone_iterate_thread(CoreAPI *linphone_api);
 	void iterateWithMutex() {
-		//m_core_mutex.lock();
+		m_core_mutex.lock();
 		iterate();
-		//m_core_mutex.unlock();
+		m_core_mutex.unlock();
 	}
 
 	// C Wrappers
