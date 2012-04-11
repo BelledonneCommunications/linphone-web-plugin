@@ -7,6 +7,8 @@ CallAPI::CallAPI(LinphoneCall *call) :
 	linphone_call_set_user_pointer(mCall, this);
 
 	registerMethod("get_state", FB::make_method(this, &CallAPI::get_state));
+	registerMethod("get_remote_address", FB::make_method(this, &CallAPI::get_remote_address));
+	registerMethod("get_dir", FB::make_method(this, &CallAPI::get_dir));
 }
 
 CallAPI::~CallAPI() {
@@ -15,8 +17,17 @@ CallAPI::~CallAPI() {
 	linphone_call_unref(mCall);
 }
 
-int CallAPI::get_state() const{
+int CallAPI::get_state() const {
 	return linphone_call_get_state(mCall);
+}
+
+std::string CallAPI::get_remote_address() const {
+	const char *txt = linphone_call_get_remote_address_as_string(mCall);
+	return txt != NULL ? txt : "";
+}
+
+int CallAPI::get_dir() const {
+	return linphone_call_get_dir(mCall);
 }
 
 boost::shared_ptr<CallAPI> CallAPI::get(LinphoneCall *call) {

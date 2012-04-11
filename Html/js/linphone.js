@@ -18,11 +18,26 @@ jQuery.linphone.locales = [ {
 	icon : 'css/images/flags/it.png'
 } ]
 
+var LinphoneRegistrationState = {
+	None : 0,
+	Progress : 1,
+	Ok : 2,	
+	Cleared : 3,
+	Failed : 4,
+}
+
+var LinphoneRegistrationStateText = new Array();
+LinphoneRegistrationStateText[LinphoneRegistrationState.None] = "None"
+LinphoneRegistrationStateText[LinphoneRegistrationState.Progress] = "Progress"
+LinphoneRegistrationStateText[LinphoneRegistrationState.Ok] = "Ok"
+LinphoneRegistrationStateText[LinphoneRegistrationState.Cleared] = "Cleared"
+LinphoneRegistrationStateText[LinphoneRegistrationState.Failed] = "Failed"
+	
 var LinphoneGlobalState = {
 	Off : 0,
 	Startup : 1,
 	On : 2,
-	Shutdown : 3
+	Shutdown : 3,
 }
 
 var LinphoneGlobalStateText = new Array();

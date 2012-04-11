@@ -177,12 +177,12 @@ body {
 							<thead>
 								<tr>
 									<th class="name {translate: 'options.accounts.name'}"></th>
-									<th class="actions {translate: 'options.accounts.actions'}"></th>
+									<th class="status {translate: 'options.accounts.status'}"></th>
 								</tr>
 							</thead>
 							<tbody />
 						</table>
-						<button type="button" onclick="add_account()" class="add {translate: 'options.accounts.add'}"></button>
+						<button type="button" class="add {translate: 'options.accounts.add'}"></button>
 					</div>
 				</div>
 
@@ -211,7 +211,12 @@ body {
 						<span>
 							<input class="expires ui-widget-content ui-corner-all"></input>
 						</span>
-						<button type="button" onclick="valid_account()" class="valid {translate: 'form.account.valid'}"></button>
+						<label class="{translate: 'form.account.register'}"></label>
+						<span>
+							<input type="checkbox" class="register ui-widget-content ui-corner-all"></input>
+						</span>
+						<button type="button" class="remove {translate: 'form.account.remove'}"></button>
+						<button type="button" class="valid {translate: 'form.account.valid'}"></button>
 					</div>
 				</div>
 			</div>
@@ -449,68 +454,28 @@ body {
 				}
 			}
 		}
-
-		function add_account() {
-			jQuery('.linphone .window .account-form .content input.identity').val("sip:")
-			jQuery('.linphone .window .account-form .content input.proxy').val("sip:")
-			jQuery('.linphone .window .account-form .content input.route').val("")
-			jQuery('.linphone .window .account-form .content input.expires').val("3600")
-			jQuery('.linphone .window .account-form').fadeIn('fast');
-		}
 		
-		function valid_account() {
-			var errors = ""
-			var identity_regex = new RegExp('sip:.+@.+')
-			var identity = jQuery('.linphone .window .account-form .content input.identity').val()
-			var proxy_regex = new RegExp('sip:.+')
-			var proxy = jQuery('.linphone .window .account-form .content input.proxy').val()
-			var route_regex = new RegExp('.*')
-			var route = jQuery('.linphone .window .account-form .content input.route').val()
-			var expires_regex = new RegExp('\\d+')
-			var expires = jQuery('.linphone .window .account-form .content input.expires').val()
+		function refreshAccountList() {
+			table = jQuery('.linphone .window .accounts-options .content tbody')
+			data = core().get_proxy_config_list()
+			table.empty()
+			for (a in data) {
+				var item = data[a]
+				var element = jQuery(jQuery('#Linphone-AccountsList').render(item))
+				element.data('data', item)
+				table.append(element)
+			}
 			
-			if(identity_regex.exec(identity) == null) {
-				errors += '<li class="{translate: \'form.account.errors.identity\'}"></li>'
-			}
-			if(proxy_regex.exec(proxy) == null) {
-				errors += '<li class="{translate: \'form.account.errors.proxy\'}"></li>'
-			}		
-			if(route_regex.exec(route) == null) {
-				errors += '<li class="{translate: \'form.account.errors.route\'}"></li>'
-			}
-			if(expires_regex.exec(expires) == null) {
-				errors += '<li class="{translate: \'form.account.errors.duration\'}"></li>'
-			}
-			if(errors.length > 0) {
-				errors = '<div>' + '<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><div class="{translate: \'form.account.errors.message\'}"></div><ul>' + errors + '</ul></div>'
-				var dialog = jQuery(errors)
-				jQuery.i18n.update(dialog, true)
-				dialog.dialog({
-					title: jQuery.i18n.get('form.account.errors.title'),
-					modal: false,
-					buttons: {
-						Ok: function() {
-							$( this ).dialog( "close" );
-						}
-					}
-				});
-				return;	
-			}
-			consoleLog('New ProxyConfig')
-			var proxyConfig = core().new_proxy_config()
-			proxyConfig.set_identity(identity)
-			proxyConfig.set_server_addr(proxy)
-			proxyConfig.set_route(route)
-			proxyConfig.set_expires(expires)
-			proxyConfig.enable_register(true)
-			var ret = core().add_proxy_config(proxyConfig)
-			consoleLog('Ret: ' + ret)
-			jQuery('.linphone .window .account-form').fadeOut('fast');
+			jQuery('.linphone .window .accounts-options .content tbody tr').hover(function() {
+				jQuery(this).addClass("ui-state-highlight");
+			}, function() {
+				jQuery(this).removeClass("ui-state-highlight");
+			})
 		}
 
 		function global_state_changed(state, message) {
 			addLog('State(' + state + '): ' + message)
-			jQuery('.linphone .window .status').html(
+			jQuery('.linphone .window > .footer > .status').html(
 					jQuery.i18n.get('globalstatetext.' + LinphoneGlobalStateText[state]))
 		}
 
@@ -518,6 +483,8 @@ body {
 			addLog('Call(' + state + '): ' + message);
 			if (state == LinphoneCallState.Connected) {
 
+			} else if (state == LinphoneCallState.IncomingReceived) {
+				create_call(call, '#Linphone-Call-IncomingReceived')
 			}
 
 			var element = findCallTab(call);
@@ -548,7 +515,7 @@ body {
 			var ret = null
 			jQuery('#linphone .window > .content .tabs .tab').each(function(index) {
 				var element = jQuery(this)
-				if (element.data('data') && element.data('data').obj == obj) {
+				if (element.data('data') && element.data('data') == obj) {
 					ret = element;
 				}
 			})
@@ -563,7 +530,7 @@ body {
 			}())
 		}
 
-		function call_invite_callback(dest, obj) {
+		function create_call(obj, template) {
 			if (obj) {
 				var call_number = jQuery.linphone.call_number
 				consoleLog('Add tab call-' + call_number)
@@ -572,13 +539,14 @@ body {
 						'Call ' + call_number);
 				jQuery('#linphone .window > .content .tabs').tabs('select', '#call-' + call_number)
 				var element = jQuery('#linphone .window > .content .tabs #call-' + call_number)
-				element.data('data', {
-					obj : obj,
-					dest : dest
-				})
-				element.html(jQuery('#Linphone-Call-OutgoingInit').render(element.data('data'))) //Async invite force OutgoingInit 
+				element.data('data', obj)
+				element.html(jQuery(template).render(obj)) 
 				jQuery.linphone.call_number++
 			}
+		}
+		
+		function call_invite_callback(dest, obj) {
+			create_call(obj, '#Linphone-Call-OutgoingInit')
 		}
 
 		function populate_locales_menu() {
@@ -592,7 +560,13 @@ body {
 				menu.append(element)
 			}
 		}
-
+		
+		jQuery.views.registerHelpers({
+			getLinphoneRegistrationStateText: function(val) {
+				return LinphoneRegistrationStateText[val];
+			}
+		});
+		
 		jQuery(function() {
 
 			jQuery.fn.disableSelection = function() {
@@ -615,7 +589,8 @@ body {
 			jQuery.linphone.video_data = new Array()
 			jQuery.linphone.self_view = null
 			jQuery.linphone.video_view = null
-
+			jQuery.linphone.current_proxy_config = null
+			
 			// Tabs 
 			jQuery('.linphone .window > .content .tabs').tabs({
 				closable : true,
@@ -623,10 +598,10 @@ body {
 			})
 
 			jQuery(".linphone .window .codecs-options .content .tabs > ul li a").each(function(index) {
-				$(this).attr("href", "#codecs" + index.toString());
+				jQuery(this).attr("href", "#codecs" + index.toString());
 			});
 			jQuery(".linphone .window .codecs-options .content .tabs > div").each(function(index) {
-				$(this).attr("id", "codecs" + index.toString());
+				jQuery(this).attr("id", "codecs" + index.toString());
 			})
 			// Tabs 
 			jQuery('.linphone .window .codecs-options .content .tabs').tabs({})
@@ -659,11 +634,22 @@ body {
 			jQuery(document).on('click', '.linphone .window .dial-button', function(event) {
 				call_invite(jQuery(event.target).parent().find('.dest').val())
 			})
+			
+			jQuery(document).on('click', '.linphone .window .answer-button', function(event) {
+				element = jQuery(event.target).parents('.tab')
+				if (element && element.data('data')) {
+					consoleLog(element.data('data'))
+					core().accept_call(element.data('data'))
+				} else {
+					addLog('Can\'t find call: ' + element);
+				}
+			})
 
 			jQuery(document).on('click', '.linphone .window .teminate-button', function(event) {
 				element = jQuery(event.target).parents('.tab')
 				if (element && element.data('data')) {
-					core().terminate_call(element.data('data').obj)
+					consoleLog(element.data('data'))
+					core().terminate_call(element.data('data'))
 				} else {
 					addLog('Can\'t find call: ' + element);
 				}
@@ -674,13 +660,111 @@ body {
 				var tabId = tab.find('a').attr('href')
 				var element = jQuery('#linphone > .window > .content .tabs ' + tabId)
 				if (element && element.data('data')) {
-					core().terminate_call(element.data('data').obj)
+					core().terminate_call(element.data('data'))
 				} else {
 					addLog('Can\'t find call: ' + element);
 				}
 				jQuery('#linphone .window > .content .tabs ').tabs('remove', tab.prevAll('li').length)
 			})
 
+			jQuery(document).on('click', '.linphone .window .accounts-options .add', function(event) {
+				jQuery.linphone.current_proxy_config = null
+				jQuery('.linphone .window .account-form .content button.remove').hide()
+				jQuery('.linphone .window .account-form .content input.identity').val("sip:")
+				jQuery('.linphone .window .account-form .content input.proxy').val("sip:")
+				jQuery('.linphone .window .account-form .content input.route').val("")
+				jQuery('.linphone .window .account-form .content input.expires').val("3600")
+				jQuery('.linphone .window .account-form .content input.register').attr('checked', true);
+				jQuery('.linphone .window .account-form').fadeIn('fast');
+			})
+			
+			jQuery(document).on('click', '.linphone .window .accounts-options .content tbody tr', function(event) {
+				data = jQuery(this).data('data')
+				jQuery.linphone.current_proxy_config = data
+				jQuery('.linphone .window .account-form .content button.remove').show()
+				jQuery('.linphone .window .account-form .content input.identity').val(data.get_identity())
+				jQuery('.linphone .window .account-form .content input.proxy').val(data.get_server_addr())
+				jQuery('.linphone .window .account-form .content input.route').val(data.get_route())
+				jQuery('.linphone .window .account-form .content input.expires').val(data.get_expires())
+				jQuery('.linphone .window .account-form .content input.register').attr('checked', data.register_enabled())
+				jQuery('.linphone .window .account-form').fadeIn('fast');
+			})
+			
+			jQuery(document).on('click', '.linphone .window .account-form .remove', function(event) {
+				consoleLog('Remove ProxyConfig')
+				var proxyConfig = jQuery.linphone.current_proxy_config
+				core().remove_proxy_config(proxyConfig)
+				
+				refreshAccountList()
+				jQuery('.linphone .window .account-form').fadeOut('fast');
+			})
+			
+			jQuery(document).on('click', '.linphone .window .account-form .valid', function(event) {
+					var errors = ""
+					var identity_regex = new RegExp('sip:.+@.+')
+					var identity = jQuery('.linphone .window .account-form .content input.identity').val()
+					var proxy_regex = new RegExp('sip:.+')
+					var proxy = jQuery('.linphone .window .account-form .content input.proxy').val()
+					var route_regex = new RegExp('.*')
+					var route = jQuery('.linphone .window .account-form .content input.route').val()
+					var expires_regex = new RegExp('\\d+')
+					var expires = jQuery('.linphone .window .account-form .content input.expires').val()
+					var register = jQuery('.linphone .window .account-form .content input.register').is(':checked')
+					
+					if(identity_regex.exec(identity) == null) {
+						errors += '<li class="{translate: \'form.account.errors.identity\'}"></li>'
+					}
+					if(proxy_regex.exec(proxy) == null) {
+						errors += '<li class="{translate: \'form.account.errors.proxy\'}"></li>'
+					}		
+					if(route_regex.exec(route) == null) {
+						errors += '<li class="{translate: \'form.account.errors.route\'}"></li>'
+					}
+					if(expires_regex.exec(expires) == null) {
+						errors += '<li class="{translate: \'form.account.errors.duration\'}"></li>'
+					}
+					if(errors.length > 0) {
+						errors = '<div>' + '<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><div class="{translate: \'form.account.errors.message\'}"></div><ul>' + errors + '</ul></div>'
+						var dialog = jQuery(errors)
+						jQuery.i18n.update(dialog, true)
+						dialog.dialog({
+							title: jQuery.i18n.get('form.account.errors.title'),
+							modal: false,
+							buttons: {
+								Ok: function() {
+									$( this ).dialog( "close" );
+								}
+							}
+						});
+						return;	
+					}
+					
+					var proxyConfig = null
+					if(jQuery.linphone.current_proxy_config == null) {
+						consoleLog('New ProxyConfig')
+						proxyConfig = core().new_proxy_config()
+					} else {
+						consoleLog('Use ProxyConfig')
+						proxyConfig = jQuery.linphone.current_proxy_config
+						jQuery.linphone.current_proxy_config.edit()
+					}
+					
+					// Set values 
+					proxyConfig.set_identity(identity)
+					proxyConfig.set_server_addr(proxy)
+					proxyConfig.set_route(route)
+					proxyConfig.set_expires(expires)
+					proxyConfig.enable_register(register)
+					
+					if(jQuery.linphone.current_proxy_config == null) {
+						core().add_proxy_config(proxyConfig)
+					} else {
+						jQuery.linphone.current_proxy_config.done()
+					}
+					
+					refreshAccountList()
+					jQuery('.linphone .window .account-form').fadeOut('fast');
+			})
 		
 			jQuery( ".linphone .window button" ).button();
 			jQuery('.linphone .window .tools .settings-menu').menu()
@@ -819,15 +903,7 @@ body {
 				if (target.is('.linphone .window .tools .accounts > a')) {
 					jQuery('.linphone .window .tools .settings-menu').fadeOut('fast');
 					
-					table = jQuery('.linphone .window .accounts-options .content tbody')
-					data = core().get_proxy_config_list()
-					table.empty()
-					for (a in data) {
-						var item = data[a]
-						var element = jQuery(jQuery('#Linphone-AccountsList').render(item))
-						element.data('data', item)
-						table.append(element)
-					}	
+					refreshAccountList()
 					
 					jQuery('.linphone .window .accounts-options').fadeIn('fast');
 				}

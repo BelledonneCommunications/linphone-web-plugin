@@ -80,8 +80,10 @@ public:
 	//
 	DECLARE_SYNC_N_ASYNC(invite, 1, (const std::string &), boost::shared_ptr<CallAPI>)
 	//
-	DECLARE_SYNC_N_ASYNC(terminate_call, 1, (boost::shared_ptr<CallAPI>), void)
-	//
+
+	void accept_call(const boost::shared_ptr<CallAPI> &call);
+	void terminate_call(const boost::shared_ptr<CallAPI> &call);
+
 	void set_play_level(int level);
 	void set_rec_level(int level);
 	void set_ring_level(int level);

@@ -1,69 +1,71 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <script id="Linphone-Call-Idle" type="text/x-jsrender">
-Idle <b>{{=dest}}</b>
+Idle <b>{{=get_remote_address()}}</b>
 </script>
 <script id="Linphone-Call-IncomingReceived" type="text/x-jsrender">
-IncomingReceived <b>{{=dest}}</b>
+IncomingReceived <b>{{=get_remote_address()}}</b>
+<div class="answer-button"></div>
+<div class="teminate-button"></div>
 </script>
 <script id="Linphone-Call-OutgoingInit" type="text/x-jsrender">
-OutgoingInit <b>{{=dest}}</b>
+OutgoingInit <b>{{=get_remote_address()}}</b>
 <div class="teminate-button"></div>
 </script>
 <script id="Linphone-Call-OutgoingProgress" type="text/x-jsrender">
-OutgoingProgress <b>{{=dest}}</b>
+OutgoingProgress <b>{{=get_remote_address()}}</b>
 <div class="teminate-button"></div>
 </script>
 <script id="Linphone-Call-OutgoingRinging" type="text/x-jsrender">
-OutgoingRinging <b>{{=dest}}</b>
+OutgoingRinging <b>{{=get_remote_address()}}</b>
 <div class="teminate-button"></div>
 </script>
 <script id="Linphone-Call-OutgoingEarlyMedia" type="text/x-jsrender">
-OutgoingEarlyMedia <b>{{=dest}}</b>
+OutgoingEarlyMedia <b>{{=get_remote_address()}}</b>
 </script>
 <script id="Linphone-Call-Connected" type="text/x-jsrender">
-Connected <b>{{=dest}}</b>
+Connected <b>{{=get_remote_address()}}</b>
 <div class="teminate-button"></div>
 </script>
 <script id="Linphone-Call-StreamsRunning" type="text/x-jsrender">
-StreamsRunning <b>{{=dest}}</b>
+StreamsRunning <b>{{=get_remote_address()}}</b>
 <div class="teminate-button"></div>
 </script>
 <script id="Linphone-Call-Pausing" type="text/x-jsrender">
-Pausing <b>{{=dest}}</b>
+Pausing <b>{{=get_remote_address()}}</b>
 <div class="teminate-button"></div>
 </script>
 <script id="Linphone-Call-Paused" type="text/x-jsrender">
-Paused <b>{{=dest}}</b>
+Paused <b>{{=get_remote_address()}}</b>
 <div class="teminate-button"></div>
 </script>
 <script id="Linphone-Call-Resuming" type="text/x-jsrender">
-Resuming <b>{{=dest}}</b>
+Resuming <b>{{=get_remote_address()}}</b>
 <div class="teminate-button"></div>
 </script>
 <script id="Linphone-Call-Refered" type="text/x-jsrender">
-Refered <b>{{=dest}}</b>
+Refered <b>{{=get_remote_address()}}</b>
 </script>
 <script id="Linphone-Call-Error" type="text/x-jsrender">
-Error <b>{{=dest}}</b>
+Error <b>{{=get_remote_address()}}</b>
 </script>
 <script id="Linphone-Call-End" type="text/x-jsrender">
-End <b>{{=dest}}</b>
+End <b>{{=get_remote_address()}}</b>
 </script>
 <script id="Linphone-Call-PausedByRemote" type="text/x-jsrender">
-PausedByRemote <b>{{=dest}}</b>
+PausedByRemote <b>{{=get_remote_address()}}</b>
 </script>
 <script id="Linphone-Call-UpdatedByRemote" type="text/x-jsrender">
-UpdatedByRemote <b>{{=dest}}</b>
+UpdatedByRemote <b>{{=get_remote_address()}}</b>
 </script>
 <script id="Linphone-Call-IncomingEarlyMedia" type="text/x-jsrender">
-IncomingEarlyMedia <b>{{=dest}}</b>
+IncomingEarlyMedia <b>{{=get_remote_address()}}</b>
 </script>
 <script id="Linphone-Call-Updated" type="text/x-jsrender">
-Updated <b>{{=dest}}</b>
+Updated <b>{{=get_remote_address()}}</b>
 </script>
 <script id="Linphone-Call-Released" type="text/x-jsrender">
-Call end: <b>{{=dest}}</b>
+Call end: <b>{{=get_remote_address()}}</b>
 </script>
 <script id="Linphone-Video" type="text/x-jsrender">
 <div>
@@ -98,13 +100,7 @@ Call end: <b>{{=dest}}</b>
 <script id="Linphone-AccountsList" type="text/x-jsrender">
 <tr>
 	<td class="name">{{=get_identity()}}</td>
-	<td class="actions">
-		{{#if register_enabled()}}
-			<input class="enable" type="checkbox" checked="checked" />
-		{{else}}
-			<input class="enable" type="checkbox" />
-		{{/if}}
-	</td>
+	<td class="status">{{=$ctx.getLinphoneRegistrationStateText(get_state())}}</td>
 	<td/>
 </tr>
 </script>

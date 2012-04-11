@@ -72,6 +72,14 @@ jQuery.linphone.i18n = {
 				en_US : 'Registration duration',
 				fr_FR : 'Durée de l\'enregistrement',		
 			},
+			register: {
+				en_US : 'Register',
+				fr_FR : 'Enregistrement',		
+			},
+			remove: {
+				en_US : 'Remove',
+				fr_FR : 'Supprimer',				
+			},
 			valid: {
 				en_US : 'Valid',
 				fr_FR : 'Valider',				
@@ -98,9 +106,9 @@ jQuery.linphone.i18n = {
 				en_US : 'Name',
 				fr_FR : 'Nom',	
 			},
-			actions: {
-				en_US : '',
-				fr_FR : '',		
+			status: {
+				en_US : 'Status',
+				fr_FR : 'Status',	
 			},
 		},
 		codecs: {

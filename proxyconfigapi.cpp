@@ -29,6 +29,11 @@ void ProxyConfigAPI::init_proxy() {
 
 	registerMethod("enable_register", make_method(this, &ProxyConfigAPI::enable_register));
 	registerMethod("register_enabled", make_method(this, &ProxyConfigAPI::register_enabled));
+
+	registerMethod("get_state", make_method(this, &ProxyConfigAPI::get_state));
+
+	registerMethod("edit", make_method(this, &ProxyConfigAPI::edit));
+	registerMethod("done", make_method(this, &ProxyConfigAPI::done));
 }
 
 ProxyConfigAPI::~ProxyConfigAPI() {
@@ -40,34 +45,37 @@ int ProxyConfigAPI::set_server_addr(const std::string &server_addr) {
 	FBLOG_DEBUG("ProxyConfigAPI::set_server_addr()", "server_addr=" << server_addr);
 	return linphone_proxy_config_set_server_addr(mProxyConfig, server_addr.c_str());
 }
-std::string ProxyConfigAPI::get_server_addr() {
+std::string ProxyConfigAPI::get_server_addr() const{
 	FBLOG_DEBUG("ProxyConfigAPI::get_server_addr()", "");
-	return linphone_proxy_config_get_addr(mProxyConfig);
+	const char *txt = linphone_proxy_config_get_addr(mProxyConfig);
+	return txt != NULL ? txt : "";
 }
 
 int ProxyConfigAPI::set_identity(const std::string &identity) {
 	FBLOG_DEBUG("ProxyConfigAPI::set_identity()", "identity=" << identity);
 	return linphone_proxy_config_set_identity(mProxyConfig, identity.c_str());
 }
-std::string ProxyConfigAPI::get_identity() {
+std::string ProxyConfigAPI::get_identity() const{
 	FBLOG_DEBUG("ProxyConfigAPI::get_identity()", "");
-	return linphone_proxy_config_get_identity(mProxyConfig);
+	const char *txt = linphone_proxy_config_get_identity(mProxyConfig);
+	return txt != NULL ? txt : "";
 }
 
 int ProxyConfigAPI::set_route(const std::string &route) {
 	FBLOG_DEBUG("ProxyConfigAPI::set_route()", "route=" << route);
 	return linphone_proxy_config_set_route(mProxyConfig, route.c_str());
 }
-std::string ProxyConfigAPI::get_route() {
+std::string ProxyConfigAPI::get_route() const{
 	FBLOG_DEBUG("ProxyConfigAPI::get_route()", "");
-	return linphone_proxy_config_get_route(mProxyConfig);
+	const char *txt = linphone_proxy_config_get_route(mProxyConfig);
+	return txt != NULL ? txt : "";
 }
 
 void ProxyConfigAPI::set_expires(int expires) {
 	FBLOG_DEBUG("ProxyConfigAPI::expires()", "expires=" << expires);
 	return linphone_proxy_config_expires(mProxyConfig, expires);
 }
-int ProxyConfigAPI::get_expires() {
+int ProxyConfigAPI::get_expires() const{
 	FBLOG_DEBUG("ProxyConfigAPI::get_expires()", "");
 	return linphone_proxy_config_get_expires(mProxyConfig);
 }
@@ -76,9 +84,14 @@ void ProxyConfigAPI::enable_register(bool val) {
 	FBLOG_DEBUG("ProxyConfigAPI::enable_register()", "val=" << val);
 	return linphone_proxy_config_enable_register(mProxyConfig, val ? TRUE : FALSE);
 }
-bool ProxyConfigAPI::register_enabled() {
+bool ProxyConfigAPI::register_enabled() const{
 	FBLOG_DEBUG("ProxyConfigAPI::register_enabled()", "");
-	return linphone_proxy_config_register_enabled(mProxyConfig) == TRUE? true: false;
+	return linphone_proxy_config_register_enabled(mProxyConfig) == TRUE ? true : false;
+}
+
+int ProxyConfigAPI::get_state() {
+	FBLOG_DEBUG("ProxyConfigAPI::get_state()", "");
+	return linphone_proxy_config_get_state(mProxyConfig);
 }
 
 void ProxyConfigAPI::edit() {
@@ -87,6 +100,7 @@ void ProxyConfigAPI::edit() {
 }
 
 int ProxyConfigAPI::done() {
+	FBLOG_DEBUG("ProxyConfigAPI::done()", "");
 	return linphone_proxy_config_done(mProxyConfig);
 }
 

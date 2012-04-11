@@ -66,13 +66,12 @@
 	text-indent: 0px;
 }
 
-
 /* 
  *
  * Window components
  *
  */
-.linphone .window .footer {
+.linphone .window>.footer {
 	border-top: 1px solid #BBBBDD;
 	position: absolute;
 	bottom: 0px;
@@ -82,14 +81,14 @@
 	width: 100%;
 }
 
-.linphone .window .status {
+.linphone .window>.footer>.status {
 	font-size: 10px;
 	margin-left: 5px;
 	margin-right: 5px;
 	display: inline-block;
 }
 
-.linphone .window .tools {
+.linphone .window>.footer>.tools {
 	margin-top: 2px;
 	margin-right: 5px;
 	display: inline-block;
@@ -105,7 +104,7 @@
 	margin-bottom: 20px;
 }
 
-.linphone .window .header {
+.linphone .window>.header {
 	border-bottom: 1px solid #6666DD;
 	background: url("ui-lightness/images/ui-bg_gloss-wave_35_f6a828_500x100.png") repeat-x scroll 50% 50% #F6A828;
 	height: 26px;
@@ -135,6 +134,17 @@
 	display: inline-block;
 	vertical-align: middle;
 	background-image: url('images/ok.png');
+}
+
+.linphone .window .answer-button {
+	display: block;
+	background-image: url('images/startcall-green.png');
+	background-size: 32px 32px;
+	width: 32px;
+	height: 32px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
 }
 
 .linphone .window .teminate-button {
@@ -379,6 +389,12 @@
 	right: 0px;
 }
 
+.linphone .window .account-form .content .remove {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+}
+
 .linphone .window .account-form .content label {
 	float: left;
 	line-height: 24px;
@@ -408,14 +424,23 @@
 }
 
 .linphone .window .accounts-options .content table {
+	border-collapse: collapse;
 	table-layout: fixed;
 	height: auto;
-	max-height: 160px;
+	max-height: 155px;
 }
 
-.linphone .window .accounts-options .content table tr{
+.linphone .window .accounts-options .content table td {
+	padding: 2px;
+}
+
+.linphone .window .accounts-options .content table th {
+	padding: 2px;
+}
+
+.linphone .window .accounts-options .content table tr {
 	line-height: 12px;
-	height: 12px; 
+	height: 12px;
 }
 
 .linphone .window .accounts-options .content .add {
@@ -425,13 +450,13 @@
 }
 
 .linphone .window .accounts-options .content .name {
-	width: 110px;
-	padding: 1px;
+	width: 120px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
-.linphone .window .accounts-options .content .actions {
-	width: 45px;
-	padding: 1px;
+.linphone .window .accounts-options .content .status {
+	width: 35px;
 }
 
 /* 
@@ -446,22 +471,18 @@
 
 .linphone .window .codecs-options .content .name {
 	width: 40px;
-	padding: 1px;
 }
 
 .linphone .window .codecs-options .content .frequency {
-	width: 45px;
-	padding: 1px;
+	width: 50px;
 }
 
 .linphone .window .codecs-options .content .bitrate {
 	width: 35px;
-	padding: 1px;
 }
 
 .linphone .window .codecs-options .content .actions {
 	width: 20px;
-	padding: 1px;
 }
 
 .linphone .window .codecs-options .content .tabs {
@@ -476,8 +497,17 @@
 	padding: 0px
 }
 
-.linphone .window .codecs-options .content  table {
+.linphone .window .codecs-options .content table {
+	border-collapse: collapse;
 	table-layout: fixed;
+}
+
+.linphone .window .codecs-options .content table td {
+	padding: 2px;
+}
+
+.linphone .window .codecs-options .content table th {
+	padding: 2px;
 }
 
 .linphone .window .codecs-options .content table tr {

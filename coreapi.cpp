@@ -80,7 +80,9 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	// Methods
 	registerMethod("init", make_method(this, &CoreAPI::init));
 	REGISTER_SYNC_N_ASYNC("invite", invite);
-	REGISTER_SYNC_N_ASYNC("terminate_call", terminate_call);
+
+	registerMethod("accept_call", make_method(this, &CoreAPI::accept_call));
+	registerMethod("terminate_call", make_method(this, &CoreAPI::terminate_call));
 
 	registerMethod("set_play_level", make_method(this, &CoreAPI::set_play_level));
 	registerMethod("set_rec_level", make_method(this, &CoreAPI::set_rec_level));
@@ -220,11 +222,18 @@ boost::shared_ptr<CallAPI> CoreAPI::invite(const std::string &dest) {
 	return shared_call;
 }
 
-void CoreAPI::terminate_call(boost::shared_ptr<CallAPI> call) {
+void CoreAPI::terminate_call(const boost::shared_ptr<CallAPI> &call) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::terminate_call", "call=" << call);
 	linphone_core_terminate_call(m_lin_core, call->getRef());
+}
+
+void CoreAPI::accept_call(const boost::shared_ptr<CallAPI> &call) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::accept_call", "call=" << call);
+	linphone_core_accept_call(m_lin_core, call->getRef());
 }
 
 void CoreAPI::set_play_level(int level) {

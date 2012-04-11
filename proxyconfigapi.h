@@ -15,19 +15,21 @@ public:
 	~ProxyConfigAPI();
 
 	int set_server_addr(const std::string &server_addr);
-	std::string get_server_addr();
+	std::string get_server_addr() const;
 
 	int set_identity(const std::string &identity);
-	std::string get_identity();
+	std::string get_identity() const;
 
 	int set_route(const std::string &route);
-	std::string get_route();
+	std::string get_route() const;
 
 	void set_expires(int expires);
-	int get_expires();
+	int get_expires() const;
 
 	void enable_register(bool val);
-	bool register_enabled();
+	bool register_enabled() const;
+
+	int get_state();
 
 	void edit();
 	int done();
