@@ -136,26 +136,31 @@
 	background-image: url('images/ok.png');
 }
 
-.linphone .window .answer-button {
-	display: block;
+.linphone .window > .content .tab .button {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
+	text-align: center;
+}
+
+.linphone .window > .content .tab .answer-button {
+	display: inline-block;
 	background-image: url('images/startcall-green.png');
 	background-size: 32px 32px;
 	width: 32px;
 	height: 32px;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
 }
 
-.linphone .window .teminate-button {
-	display: block;
+.linphone .window > .content .tab .teminate-button {
+	display: inline-block;
 	background-image: url('images/stopcall-red.png');
 	background-size: 32px 32px;
 	width: 32px;
 	height: 32px;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
 }
 
 /* 

@@ -489,7 +489,9 @@ body {
 
 			var element = findCallTab(call);
 			if (element) {
-				element.html(jQuery('#Linphone-Call-' + LinphoneCallStateText[state]).render(element.data('data')))
+				var content = jQuery('#Linphone-Call-' + LinphoneCallStateText[state]).render(element.data('data'))
+				element.html(content)
+				jQuery.i18n.update(element, true)
 			} else {
 				addLog('Can\'t find call tab: ' + call);
 			}
@@ -540,7 +542,10 @@ body {
 				jQuery('#linphone .window > .content .tabs').tabs('select', '#call-' + call_number)
 				var element = jQuery('#linphone .window > .content .tabs #call-' + call_number)
 				element.data('data', obj)
-				element.html(jQuery(template).render(obj)) 
+				
+				var content = jQuery(template).render(obj)
+				element.html(content)
+				jQuery.i18n.update(element, true)
 				jQuery.linphone.call_number++
 			}
 		}
@@ -638,7 +643,6 @@ body {
 			jQuery(document).on('click', '.linphone .window .answer-button', function(event) {
 				element = jQuery(event.target).parents('.tab')
 				if (element && element.data('data')) {
-					consoleLog(element.data('data'))
 					core().accept_call(element.data('data'))
 				} else {
 					addLog('Can\'t find call: ' + element);
@@ -648,7 +652,6 @@ body {
 			jQuery(document).on('click', '.linphone .window .teminate-button', function(event) {
 				element = jQuery(event.target).parents('.tab')
 				if (element && element.data('data')) {
-					consoleLog(element.data('data'))
 					core().terminate_call(element.data('data'))
 				} else {
 					addLog('Can\'t find call: ' + element);
