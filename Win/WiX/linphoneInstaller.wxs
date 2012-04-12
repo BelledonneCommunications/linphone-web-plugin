@@ -61,7 +61,7 @@
                               <File Id="avutil" Source="$(var.BINSRC)\avutil-51.dll" />
                               <File Id="libexosip2" Source="$(var.BINSRC)\libexosip2-7.dll" />
                               <File Id="libintl" Source="$(var.BINSRC)\libintl-8.dll" />
-                              <File Id="liblinphone" Source="$(var.BINSRC)\liblinphone-4.dll" />
+                              <File Id="liblinphone" Source="$(var.BINSRC)\liblinphone-5.dll" />
                               <File Id="libmediastreamer" Source="$(var.BINSRC)\libmediastreamer-1.dll" />
                               <File Id="libogg" Source="$(var.BINSRC)\libogg-0.dll" />
                               <File Id="libortp" Source="$(var.BINSRC)\libortp-8.dll" />
@@ -70,9 +70,8 @@
                               <File Id="libspeex" Source="$(var.BINSRC)\libspeex-1.dll" />
                               <File Id="libspeexdsp" Source="$(var.BINSRC)\libspeexdsp-1.dll" />
                               <File Id="libtheora" Source="$(var.BINSRC)\libtheora-0.dll" />
-                              <File Id="libvorbis" Source="$(var.BINSRC)\libvorbis-0.dll" />
                               <File Id="swscale" Source="$(var.BINSRC)\swscale-2.dll" />
-                              <File Id="zlib1" Source="$(var.BINSRC)\zlib1.dll" />
+                              <File Id="libz" Source="$(var.BINSRC)\libz-1.dll" />
                                 <RegistryValue
                                     Root="HKCU"
                                     Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"
