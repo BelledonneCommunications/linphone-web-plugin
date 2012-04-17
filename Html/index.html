@@ -1,4 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0013)about:internet -->
+<!-- The above comment makes IE treat this as a web page -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <title>Linphone-JS</title>
@@ -241,14 +243,14 @@ body {
 							 </object>'
 		var _localData = {}
 		function localData() {
-			if (window['localStorage'] !== undefined)
+			if (typeof window['localStorage'] !== 'undefined')
 				return localStorage
 			else
 				return _localData
 		}
 
 		function consoleLog(a) {
-			if (window['console'] !== undefined) {
+			if (typeof window['console'] !== 'undefined') {
 				console.log(a)
 			}
 		}
@@ -323,7 +325,12 @@ body {
 
 		function init() {
 			consoleLog('Init LinphoneJS')
-			jQuery('#templates').load('templates.html', init2)
+			try
+			{
+				jQuery('#templates').load('templates.html', init2)
+			}catch(err) {
+				//Ignore console issue in internet explorer
+			}
 		}
 
 		function videoUnload(object) {
@@ -976,13 +983,13 @@ body {
 					data.enabled = !data.enabled
 				}
 			});
-
+			
 			init()
 			refresh()
 		})
 
 		function detect() {
-			if (core() != 'undefined' && core().valid != 'undefined' && core().valid) {
+			if (typeof core() !== 'undefined' && typeof core().valid !== 'undefined' && core().valid) {
 				jQuery('.linphone .window .install').hide()
 				jQuery('.linphone .window .load').show()
 				return true
