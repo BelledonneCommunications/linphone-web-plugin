@@ -5,7 +5,6 @@
     <em:name>Linphone JS</em:name>
     <em:version>1.0.0</em:version>
     <em:id>{29623621-22e0-bf87-16ee-1c3b683582e1}</em:id>
-    <em:type>16</em:type>
     <em:description>Linphone Javascript plugin</em:description>
 
     <em:targetApplication>
@@ -13,14 +12,13 @@
       <Description>
        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
        <em:minVersion>1.5</em:minVersion>
-       <em:maxVersion>4.0.*</em:maxVersion>
+       <em:maxVersion>*</em:maxVersion>
       </Description>
     </em:targetApplication>
 
     <!-- Equipe de développement, contributeurs et traducteurs -->
     <em:creator>Belledonne Communications</em:creator>
     <em:developer>Diorcet Yann</em:developer>
-	
-	<em:unpack>true</em:unpack>
+    <em:unpack>true</em:unpack>
   </Description>
 </RDF>
