@@ -385,7 +385,7 @@
 .linphone .window .account-form .content {
 	position: relative;
 	padding: 5px;
-	height: 185px;
+	height: 180px;
 }
 
 .linphone .window .account-form .content .valid {
@@ -413,7 +413,17 @@
 }
 
 .linphone .window .account-form .content input {
-	width: 100%
+	width: 100%;
+	height: 16px;
+	margin-top:4px;
+	margin-bottom:4px;
+}
+
+.linphone .window .account-form .content input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+	margin-top:4px;
+	margin-bottom:4px;
 }
 
 /* 
@@ -424,7 +434,7 @@
 .linphone .window .accounts-options .content {
 	position: relative;
 	padding: 5px;
-	height: 185px;
+	height: 180px;
 	overflow-y: scroll;
 }
 
