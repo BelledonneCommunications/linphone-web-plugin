@@ -16,8 +16,8 @@ file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 # GCC options
 add_definitions(-std=c++0x)
 
-include_directories(Libs/include/linphone)
-include_directories(Libs/include)
+include_directories(Rootfs/usr/include/linphone)
+include_directories(Rootfs/usr/include)
 
 SOURCE_GROUP(X11 FILES ${PLATFORM})
 
@@ -31,55 +31,56 @@ add_x11_plugin(${PROJECT_NAME} SOURCES)
 # Add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJECT_NAME} 
 	${PLUGIN_INTERNAL_DEPS}
-	"${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/liblinphone.so.5"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libmediastreamer.so.1"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/liblinphone.so.5"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libmediastreamer.so.1"
 )
 
 # Copy dll dependencies
 ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
 		  PRE_BUILD
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libavcodec.so.53 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libavutil.so.51 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libc.so.6 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libeXosip2.so.7 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libjpeg.so.8 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/liblinphone.so.5 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libmediastreamer.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/		  
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libogg.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libortp.so.8 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libosip2.so.7 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libosipparser2.so.7 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libspeex.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libspeexdsp.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libswscale.so.2 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libtheora.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libv4l1.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libv4l2.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libv4lconvert.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Libs/lib/libz.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libavcodec.so.53 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libavutil.so.51 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libc.so.6 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libeXosip2.so.7 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libjpeg.so.8 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/liblinphone.so.5 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libmediastreamer.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/		  
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libogg.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libortp.so.8 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libosip2.so.7 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libosipparser2.so.7 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libspeex.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libspeexdsp.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libswscale.so.2 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libtheora.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libv4l1.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libv4l2.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libv4lconvert.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/usr/lib/libz.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
 )
+
 
 # Change rpath
 ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
-		  PRE_BUILD
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libavcodec.so.53
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libavutil.so.51
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libjpeg.so.8
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libeXosip2.so.7
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/liblinphone.so.5
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libmediastreamer.so.1		  
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libogg.so.0
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libortp.so.8
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libosip2.so.7
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libosipparser2.so.7
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libspeex.so.1
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libspeexdsp.so.1
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libswscale.so.2
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libtheora.so.0
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libv4l1.so.0
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libv4l2.so.0
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libv4lconvert.so.0
-		  COMMAND chrpath -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libz.so.1
+                 PRE_BUILD
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libavcodec.so.53
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libavutil.so.51
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libjpeg.so.8
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libeXosip2.so.7
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/liblinphone.so.5
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libmediastreamer.so.1           
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libogg.so.0
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libortp.so.8
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libosip2.so.7
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libosipparser2.so.7
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libspeex.so.1
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libspeexdsp.so.1
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libswscale.so.2
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libtheora.so.0
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libv4l1.so.0
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libv4l2.so.0
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libv4lconvert.so.0
+                 COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libz.so.1
 )
 
 # Add rpath to generated library
