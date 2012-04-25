@@ -6,22 +6,22 @@ PayloadTypeAPI::PayloadTypeAPI(const boost::shared_ptr<CoreAPI> &core, PayloadTy
 	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", this);
 	mPayloadType->user_data = this;
 
-	registerProperty("type", make_property(this, &PayloadTypeAPI::get_type));
-	registerProperty("clock_rate", make_property(this, &PayloadTypeAPI::get_clock_rate));
-	registerProperty("bits_per_sample", make_property(this, &PayloadTypeAPI::get_bits_per_sample));
-	registerProperty("zero_pattern", make_property(this, &PayloadTypeAPI::get_zero_pattern));
-	registerProperty("pattern_length", make_property(this, &PayloadTypeAPI::get_pattern_length));
-	registerProperty("normal_bitrate", make_property(this, &PayloadTypeAPI::get_normal_bitrate));
-	registerProperty("mime_type", make_property(this, &PayloadTypeAPI::get_mime_type));
-	registerProperty("channels", make_property(this, &PayloadTypeAPI::get_channels));
-	registerProperty("recv_fmtp", make_property(this, &PayloadTypeAPI::get_recv_fmtp));
-	registerProperty("send_fmtp", make_property(this, &PayloadTypeAPI::get_send_fmtp));
-	registerProperty("flags", make_property(this, &PayloadTypeAPI::get_flags));
-	registerProperty("enabled", make_property(this, &PayloadTypeAPI::get_enabled, &PayloadTypeAPI::set_enabled));
+	registerProperty("type", make_property(this, &PayloadTypeAPI::getType));
+	registerProperty("clockRate", make_property(this, &PayloadTypeAPI::getClockRate));
+	registerProperty("bitsPerSample", make_property(this, &PayloadTypeAPI::getBitsPerSample));
+	registerProperty("zeroPattern", make_property(this, &PayloadTypeAPI::getZeroPattern));
+	registerProperty("patternLength", make_property(this, &PayloadTypeAPI::getPatternLength));
+	registerProperty("normalBitrate", make_property(this, &PayloadTypeAPI::getNormalBitrate));
+	registerProperty("mimeType", make_property(this, &PayloadTypeAPI::getMimeType));
+	registerProperty("channels", make_property(this, &PayloadTypeAPI::getChannels));
+	registerProperty("recvFmtp", make_property(this, &PayloadTypeAPI::getRecvFmtp));
+	registerProperty("sendFmtp", make_property(this, &PayloadTypeAPI::getSendFmtp));
+	registerProperty("flags", make_property(this, &PayloadTypeAPI::getFlags));
+	registerProperty("enabled", make_property(this, &PayloadTypeAPI::getEnabled, &PayloadTypeAPI::setEnabled));
 }
 
-bool PayloadTypeAPI::get_enabled() const {
-	FBLOG_DEBUG("PayloadTypeAPI::get_enabled()", this);
+bool PayloadTypeAPI::getEnabled() const {
+	FBLOG_DEBUG("PayloadTypeAPI::getEnabled()", this);
 	boost::shared_ptr<CoreAPI> core(mCore.lock());
 	if (core != NULL) {
 		return linphone_core_payload_type_enabled(core->getRef(), mPayloadType) == TRUE? true: false;
@@ -29,8 +29,8 @@ bool PayloadTypeAPI::get_enabled() const {
 	return false;
 }
 
-void PayloadTypeAPI::set_enabled(bool enable) {
-	FBLOG_DEBUG("PayloadTypeAPI::set_enabled()", "enable=" << enable);
+void PayloadTypeAPI::setEnabled(bool enable) {
+	FBLOG_DEBUG("PayloadTypeAPI::setEnabled()", "enable=" << enable);
 	boost::shared_ptr<CoreAPI> core(mCore.lock());
 	if (core != NULL) {
 		linphone_core_enable_payload_type(core->getRef(), mPayloadType, enable? TRUE: FALSE);

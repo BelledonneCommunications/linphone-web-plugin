@@ -78,50 +78,50 @@ public:
 	// Methods
 	int init();
 	//
-	DECLARE_SYNC_N_ASYNC(invite, 1, (const std::string &), boost::shared_ptr<CallAPI>)
-	//
+	DECLARE_SYNC_N_ASYNC(invite, 1, (const std::string &), boost::shared_ptr<CallAPI>);
 
-	void accept_call(const boost::shared_ptr<CallAPI> &call);
-	void terminate_call(const boost::shared_ptr<CallAPI> &call);
+	void acceptCall(const boost::shared_ptr<CallAPI> &call);
+	void terminateCall(const boost::shared_ptr<CallAPI> &call);
 
-	void set_play_level(int level);
-	void set_rec_level(int level);
-	void set_ring_level(int level);
+	void setPlayLevel(int level);
+	void setRecLevel(int level);
+	void setRingLevel(int level);
 
-	bool video_supported();
-	void enable_video(bool enable);
-	bool video_enabled();
-	void enable_video_preview(bool enable);
-	bool video_preview_enabled();
-	void set_native_video_window_id(unsigned long id);
-	unsigned long get_native_video_window_id();
-	void set_native_preview_window_id(unsigned long id);
-	unsigned long get_native_preview_window_id();
+	bool videoSupported();
+	void enableVideo(bool enable);
+	bool videoEnabled();
+	void enableVideoPreview(bool enable);
+	bool videoPreviewEnabled();
+	void setNativeVideoWindowId(unsigned long id);
+	unsigned long getNativeVideoWindowId();
+	void setNativePreviewWindowId(unsigned long id);
+	unsigned long getNativePreviewWindowId();
 
-	FB::VariantList get_audio_codecs();
-	FB::VariantList get_video_codecs();
-	void set_audio_codecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list);
-	void set_video_codecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list);
+	FB::VariantList getAudioCodecs();
+	FB::VariantList getVideoCodecs();
+	void setAudioCodecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list);
+	void setVideoCodecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list);
 
-	boost::shared_ptr<ProxyConfigAPI> new_proxy_config();
-	int add_proxy_config(const boost::shared_ptr<ProxyConfigAPI> &config);
-	void clear_proxy_config();
-	void remove_proxy_config(const boost::shared_ptr<ProxyConfigAPI> &config);
-	FB::VariantList get_proxy_config_list();
-	void set_default_proxy(const boost::shared_ptr<ProxyConfigAPI> &config);
-	boost::shared_ptr<ProxyConfigAPI> get_default_proxy();
-
+	boost::shared_ptr<ProxyConfigAPI> newProxyConfig();
+	int addProxyConfig(const boost::shared_ptr<ProxyConfigAPI> &config);
+	void clearProxyConfig();
+	void removeProxyConfig(const boost::shared_ptr<ProxyConfigAPI> &config);
+	FB::VariantList getProxyConfigList();
+	void setDefaultProxy(const boost::shared_ptr<ProxyConfigAPI> &config);
+	boost::shared_ptr<ProxyConfigAPI> getDefaultProxy();
 
 	// Event helpers
-	FB_JSAPI_EVENT(global_state_changed, 2, (const int&, const std::string&))FB_JSAPI_EVENT(call_state_changed, 3, (boost::shared_ptr<CallAPI>, const int&, const std::string&))
+	FB_JSAPI_EVENT(globalStateChanged, 2, (const int&, const std::string&));
+	FB_JSAPI_EVENT(callStateChanged, 3, (boost::shared_ptr<CallAPI>, const int&, const std::string&));
+	FB_JSAPI_EVENT(authInfoRequested, 2, (const std::string&, const std::string&));
+	FB_JSAPI_EVENT(referReceived, 1, (const std::string&));
+	FB_JSAPI_EVENT(displayStatus, 1, (const std::string&));
+	FB_JSAPI_EVENT(displayMessage, 1, (const std::string&));
+	FB_JSAPI_EVENT(displayWarning, 1, (const std::string&));
+	FB_JSAPI_EVENT(displayUrl, 2, (const std::string&, const std::string&));
+	FB_JSAPI_EVENT(show, 0, ());
 
-	FB_JSAPI_EVENT(auth_info_requested, 2, (const std::string&, const std::string&))
-
-	FB_JSAPI_EVENT(refer_received, 1, (const std::string&))
-
-	FB_JSAPI_EVENT(display_status, 1, (const std::string&))FB_JSAPI_EVENT(display_message, 1, (const std::string&))FB_JSAPI_EVENT(display_warning, 1, (const std::string&))FB_JSAPI_EVENT(display_url, 2, (const std::string&, const std::string&))FB_JSAPI_EVENT(show, 0, ())
-
-	inline LinphoneCore *getRef() const{
+	inline LinphoneCore *getRef() const {
 		return m_lin_core;
 	}
 
@@ -131,7 +131,7 @@ private:
 	FB::BrowserHostPtr m_host;
 
 	LinphoneCore *m_lin_core; // Linphone core object
-	LinphoneCoreVTable m_lin_vtable; // Linphone callback methods table
+	LinphoneCoreVTable m_lin_vtable;// Linphone callback methods table
 
 	boost::mutex m_core_mutex;
 	boost::thread *m_core_thread;
@@ -139,7 +139,7 @@ private:
 
 	void iterate() {
 		if (m_lin_core != NULL)
-			linphone_core_iterate(m_lin_core);
+		linphone_core_iterate(m_lin_core);
 	}
 
 	friend void linphone_iterate_thread(CoreAPI *linphone_api);

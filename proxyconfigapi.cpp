@@ -15,22 +15,22 @@ ProxyConfigAPI::ProxyConfigAPI() {
 }
 
 void ProxyConfigAPI::init_proxy() {
-	registerMethod("set_server_addr", make_method(this, &ProxyConfigAPI::set_server_addr));
-	registerMethod("get_server_addr", make_method(this, &ProxyConfigAPI::get_server_addr));
+	registerMethod("setServerAddr", make_method(this, &ProxyConfigAPI::setServerAddr));
+	registerMethod("getServerAddr", make_method(this, &ProxyConfigAPI::getServerAddr));
 
-	registerMethod("set_identity", make_method(this, &ProxyConfigAPI::set_identity));
-	registerMethod("get_identity", make_method(this, &ProxyConfigAPI::get_identity));
+	registerMethod("setIdentity", make_method(this, &ProxyConfigAPI::setIdentity));
+	registerMethod("getIdentity", make_method(this, &ProxyConfigAPI::getIdentity));
 
-	registerMethod("set_route", make_method(this, &ProxyConfigAPI::set_route));
-	registerMethod("get_route", make_method(this, &ProxyConfigAPI::get_route));
+	registerMethod("setRoute", make_method(this, &ProxyConfigAPI::setRoute));
+	registerMethod("getRoute", make_method(this, &ProxyConfigAPI::getRoute));
 
-	registerMethod("set_expires", make_method(this, &ProxyConfigAPI::set_expires));
-	registerMethod("get_expires", make_method(this, &ProxyConfigAPI::get_expires));
+	registerMethod("setExpires", make_method(this, &ProxyConfigAPI::setExpires));
+	registerMethod("getExpires", make_method(this, &ProxyConfigAPI::getExpires));
 
-	registerMethod("enable_register", make_method(this, &ProxyConfigAPI::enable_register));
-	registerMethod("register_enabled", make_method(this, &ProxyConfigAPI::register_enabled));
+	registerMethod("enableRegister", make_method(this, &ProxyConfigAPI::enableRegister));
+	registerMethod("registerEnabled", make_method(this, &ProxyConfigAPI::registerEnabled));
 
-	registerMethod("get_state", make_method(this, &ProxyConfigAPI::get_state));
+	registerMethod("getState", make_method(this, &ProxyConfigAPI::getState));
 
 	registerMethod("edit", make_method(this, &ProxyConfigAPI::edit));
 	registerMethod("done", make_method(this, &ProxyConfigAPI::done));
@@ -41,56 +41,56 @@ ProxyConfigAPI::~ProxyConfigAPI() {
 	linphone_proxy_config_set_user_data(mProxyConfig, NULL);
 }
 
-int ProxyConfigAPI::set_server_addr(const std::string &server_addr) {
-	FBLOG_DEBUG("ProxyConfigAPI::set_server_addr()", "server_addr=" << server_addr);
+int ProxyConfigAPI::setServerAddr(const std::string &server_addr) {
+	FBLOG_DEBUG("ProxyConfigAPI::setServerAddr()", "server_addr=" << server_addr);
 	return linphone_proxy_config_set_server_addr(mProxyConfig, server_addr.c_str());
 }
-std::string ProxyConfigAPI::get_server_addr() const{
-	FBLOG_DEBUG("ProxyConfigAPI::get_server_addr()", "");
+std::string ProxyConfigAPI::getServerAddr() const{
+	FBLOG_DEBUG("ProxyConfigAPI::getServerAddr()", "");
 	const char *txt = linphone_proxy_config_get_addr(mProxyConfig);
 	return txt != NULL ? txt : "";
 }
 
-int ProxyConfigAPI::set_identity(const std::string &identity) {
-	FBLOG_DEBUG("ProxyConfigAPI::set_identity()", "identity=" << identity);
+int ProxyConfigAPI::setIdentity(const std::string &identity) {
+	FBLOG_DEBUG("ProxyConfigAPI::setIdentity()", "identity=" << identity);
 	return linphone_proxy_config_set_identity(mProxyConfig, identity.c_str());
 }
-std::string ProxyConfigAPI::get_identity() const{
-	FBLOG_DEBUG("ProxyConfigAPI::get_identity()", "");
+std::string ProxyConfigAPI::getIdentity() const{
+	FBLOG_DEBUG("ProxyConfigAPI::getIdentity()", "");
 	const char *txt = linphone_proxy_config_get_identity(mProxyConfig);
 	return txt != NULL ? txt : "";
 }
 
-int ProxyConfigAPI::set_route(const std::string &route) {
-	FBLOG_DEBUG("ProxyConfigAPI::set_route()", "route=" << route);
+int ProxyConfigAPI::setRoute(const std::string &route) {
+	FBLOG_DEBUG("ProxyConfigAPI::setRoute()", "route=" << route);
 	return linphone_proxy_config_set_route(mProxyConfig, route.c_str());
 }
-std::string ProxyConfigAPI::get_route() const{
-	FBLOG_DEBUG("ProxyConfigAPI::get_route()", "");
+std::string ProxyConfigAPI::getRoute() const{
+	FBLOG_DEBUG("ProxyConfigAPI::getRoute()", "");
 	const char *txt = linphone_proxy_config_get_route(mProxyConfig);
 	return txt != NULL ? txt : "";
 }
 
-void ProxyConfigAPI::set_expires(int expires) {
+void ProxyConfigAPI::setExpires(int expires) {
 	FBLOG_DEBUG("ProxyConfigAPI::expires()", "expires=" << expires);
 	return linphone_proxy_config_expires(mProxyConfig, expires);
 }
-int ProxyConfigAPI::get_expires() const{
-	FBLOG_DEBUG("ProxyConfigAPI::get_expires()", "");
+int ProxyConfigAPI::getExpires() const{
+	FBLOG_DEBUG("ProxyConfigAPI::getExpires()", "");
 	return linphone_proxy_config_get_expires(mProxyConfig);
 }
 
-void ProxyConfigAPI::enable_register(bool val) {
-	FBLOG_DEBUG("ProxyConfigAPI::enable_register()", "val=" << val);
+void ProxyConfigAPI::enableRegister(bool val) {
+	FBLOG_DEBUG("ProxyConfigAPI::enableRegister()", "val=" << val);
 	return linphone_proxy_config_enable_register(mProxyConfig, val ? TRUE : FALSE);
 }
-bool ProxyConfigAPI::register_enabled() const{
-	FBLOG_DEBUG("ProxyConfigAPI::register_enabled()", "");
+bool ProxyConfigAPI::registerEnabled() const{
+	FBLOG_DEBUG("ProxyConfigAPI::registerEnabled()", "");
 	return linphone_proxy_config_register_enabled(mProxyConfig) == TRUE ? true : false;
 }
 
-int ProxyConfigAPI::get_state() {
-	FBLOG_DEBUG("ProxyConfigAPI::get_state()", "");
+int ProxyConfigAPI::getState() {
+	FBLOG_DEBUG("ProxyConfigAPI::getState()", "");
 	return linphone_proxy_config_get_state(mProxyConfig);
 }
 

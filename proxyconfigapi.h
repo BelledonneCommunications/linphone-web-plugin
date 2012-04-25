@@ -14,22 +14,22 @@ public:
 	ProxyConfigAPI();
 	~ProxyConfigAPI();
 
-	int set_server_addr(const std::string &server_addr);
-	std::string get_server_addr() const;
+	int setServerAddr(const std::string &server_addr);
+	std::string getServerAddr() const;
 
-	int set_identity(const std::string &identity);
-	std::string get_identity() const;
+	int setIdentity(const std::string &identity);
+	std::string getIdentity() const;
 
-	int set_route(const std::string &route);
-	std::string get_route() const;
+	int setRoute(const std::string &route);
+	std::string getRoute() const;
 
-	void set_expires(int expires);
-	int get_expires() const;
+	void setExpires(int expires);
+	int getExpires() const;
 
-	void enable_register(bool val);
-	bool register_enabled() const;
+	void enableRegister(bool val);
+	bool registerEnabled() const;
 
-	int get_state();
+	int getState();
 
 	void edit();
 	int done();

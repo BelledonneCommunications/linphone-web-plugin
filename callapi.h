@@ -11,9 +11,9 @@ private:
 
 public:
 	~CallAPI();
-	std::string get_remote_address() const;
-	int get_dir() const;
-	int get_state() const;
+	std::string getRemoteAddress() const;
+	int getDir() const;
+	int getState() const;
 	inline LinphoneCall *getRef() const{
 		return mCall;
 	}

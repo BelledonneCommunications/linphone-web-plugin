@@ -14,43 +14,43 @@ private:
 public:
 	~PayloadTypeAPI();
 
-	inline int get_type() const {
+	inline int getType() const {
 		return mPayloadType->type;
 	}
-	inline int get_clock_rate() const {
+	inline int getClockRate() const {
 		return mPayloadType->clock_rate;
 	}
-	inline int get_bits_per_sample() const {
+	inline int getBitsPerSample() const {
 		return mPayloadType->bits_per_sample;
 	}
-	inline std::string get_zero_pattern() const {
+	inline std::string getZeroPattern() const {
 		return mPayloadType->zero_pattern;
 	}
-	inline int get_pattern_length() const {
+	inline int getPatternLength() const {
 		return mPayloadType->pattern_length;
 	}
-	inline int get_normal_bitrate() const {
+	inline int getNormalBitrate() const {
 		return mPayloadType->normal_bitrate;
 	}
-	inline std::string get_mime_type() const {
+	inline std::string getMimeType() const {
 		return mPayloadType->mime_type;
 	}
-	inline int get_channels() const {
+	inline int getChannels() const {
 		return mPayloadType->channels;
 	}
-	inline std::string get_recv_fmtp() const {
+	inline std::string getRecvFmtp() const {
 		return mPayloadType->recv_fmtp;
 	}
-	inline std::string get_send_fmtp() const {
+	inline std::string getSendFmtp() const {
 		return mPayloadType->send_fmtp;
 	}
-	inline int get_flags() const {
+	inline int getFlags() const {
 		return mPayloadType->flags;
 	}
 
-	bool get_enabled() const;
+	bool getEnabled() const;
 
-	void set_enabled(bool enable);
+	void setEnabled(bool enable);
 
 	inline PayloadType *getRef() const {
 		return mPayloadType;
