@@ -2,10 +2,10 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
-    <em:name>Linphone JS</em:name>
+    <em:name>Linphone Web</em:name>
     <em:version>1.0.0</em:version>
     <em:id>{29623621-22e0-bf87-16ee-1c3b683582e1}</em:id>
-    <em:description>Linphone Javascript plugin</em:description>
+    <em:description>Linphone Web plugin</em:description>
 
     <em:targetApplication>
       <!-- Firefox -->
