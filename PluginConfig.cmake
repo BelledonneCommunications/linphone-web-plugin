@@ -5,8 +5,8 @@
 #
 #\**********************************************************/
 
-set(PLUGIN_NAME "linphonejs")
-set(PLUGIN_PREFIX "LINJS")
+set(PLUGIN_NAME "linphone-web")
+set(PLUGIN_PREFIX "LINWEB")
 set(COMPANY_NAME "belledonne-communications")
 
 # ActiveX constants:
@@ -34,22 +34,22 @@ set(FBSTRING_CompanyName "Belledonne Communications")
 set(FBSTRING_PLUGIN_VERSION "1.0.0.0")
 set(FBSTRING_LegalCopyright "Copyright 2012 Belledonne Communications")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
-set(FBSTRING_ProductName "Linphone JS")
+set(FBSTRING_ProductName "Linphone Web")
 set(FBSTRING_FileExtents "")
-set(FBSTRING_PluginName "Linphone JS")
+set(FBSTRING_PluginName "Linphone Web")
 
 set(FBSTRING_MIMEType 
-	"application/x-linphone"
-	"application/x-linphone-video")
+	"application/x-linphone-web"
+	"application/x-linphone-web-video")
 set(ACTIVEX_PROGID 
-	"belledonne_communications.linphone"
-	"belledonne_communications.linphone.video")
+	"com.belledonne-communications.linphone.web"
+	"com.belledonne-communications.linphone.web.video")
 set(FBControl_GUID 
 	1563fddd-83a0-553a-854b-a6f75ed2d5f6
 	1563fddd-83a0-553a-854b-a6f75ed2d5f7)
 set(FBSTRING_FileDescription 
-	"Linphone Plugin"
-	"Linphone Plugin Video")
+	"Linphone Web Plugin"
+	"Linphone Web Video Plugin")
 
 # Uncomment this next line if you're not planning on your plugin doing
 # any drawing:

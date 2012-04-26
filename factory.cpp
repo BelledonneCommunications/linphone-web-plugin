@@ -22,7 +22,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////////
 	FB::PluginCorePtr createPlugin(const std::string& mimetype) {
 		FBLOG_DEBUG("createPlugin()", mimetype);
-		if (mimetype == "application/x-linphone-video")
+		if (mimetype == "application/x-linphone-web-video")
 			return boost::make_shared<video>();
 		return boost::make_shared<linphone>();
 	}
