@@ -15,7 +15,7 @@
             <RemoveExistingProducts After="InstallInitialize" />
             <InstallExecute After="RemoveExistingProducts" />
         </InstallExecuteSequence>
-        <Media Id="1" Cabinet="${PLUGIN_NAME}.cab" EmbedCab="yes" />
+        <Media Id="1" Cabinet="${PLUGIN_PREFIX}.cab" EmbedCab="yes" />
 		<Icon Id="linphone.ico" SourceFile="${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/linphone.ico"/>
 		<Property Id="ARPPRODUCTICON" Value="linphone.ico" />
 
