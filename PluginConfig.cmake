@@ -27,7 +27,7 @@ set(FBComJavascriptObject_GUID b4228fbd-ed98-5619-a71b-93b3e4fe422d)
 set(IFBComEventSource_GUID 898a611e-b63b-58c7-bc64-0c0fa0c0cded)
 
 # these are the pieces that are relevant to using it from Javascript
-set(MOZILLA_PLUGINID "belledonne-communications.com/linphone")
+set(MOZILLA_PLUGINID "belledonne-communications.com/linphone/web")
 
 # strings
 set(FBSTRING_CompanyName "Belledonne Communications")
