@@ -185,3 +185,52 @@ firebreath_sign_file(${PLUGIN_NAME}_WiXInstall
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
+	
+IF(NOT DEFINED CMAKE_MAKECAB)
+	SET(CMAKE_MAKECAB makecab)
+ENDIF(NOT DEFINED CMAKE_MAKECAB)
+
+function (create_cab PROJNAME DDF FILES_CAB)
+    GET_FILENAME_COMPONENT(_tmp_File ${DDF} NAME)
+    configure_file(${DDF} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
+    message("Configuring ${DDF} -> ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File}")
+    set(DDF ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
+
+    FOREACH(_curFile ${FILES_CAB})
+        GET_FILENAME_COMPONENT(_tmp_File ${_curFile} NAME)
+        configure_file(${_curFile} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
+        message("Configuring ${_curFile} -> ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File}")
+    ENDFOREACH()
+	
+	ADD_CUSTOM_TARGET(${PROJNAME}_exe DEPENDS ${PROJNAME}_WiXInstall)
+	SET(WIX_SETUPBLD ${WIX_ROOT_DIR}/bin/setupbld.exe)
+	ADD_CUSTOM_COMMAND(
+	TARGET ${PROJECT_NAME}_exe
+        COMMAND ${WIX_SETUPBLD} 
+		ARGS -out "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${PLUGIN_NAME}.exe" -mpsu "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${PLUGIN_NAME}.msi" -setup ${WIX_ROOT_DIR}/bin/setup.exe
+	)
+	message("-- Successfully added EXE step")
+	
+	
+	ADD_CUSTOM_TARGET(${PROJNAME}_cab DEPENDS ${PROJNAME}_exe)
+	ADD_CUSTOM_COMMAND(
+		TARGET ${PROJNAME}_cab
+        COMMAND ${CMAKE_MAKECAB} 
+		ARGS /D "BINSRC=${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/" /F "${DDF}"
+	)
+	message("-- Successfully added CAB step")
+endfunction(create_cab)
+
+create_cab(${PLUGIN_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.ddf" "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.inf")
+
+firebreath_sign_file(${PLUGIN_NAME}_exe
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${PLUGIN_NAME}.exe"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+
+firebreath_sign_file(${PLUGIN_NAME}_cab
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${PLUGIN_NAME}.cab"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
