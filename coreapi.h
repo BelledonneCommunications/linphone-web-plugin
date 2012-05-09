@@ -111,21 +111,21 @@ public:
 	boost::shared_ptr<ProxyConfigAPI> getDefaultProxy();
 
 	// Event helpers
-	FB_JSAPI_EVENT(globalStateChanged, 2, (const int&, const std::string&));
-	FB_JSAPI_EVENT(callStateChanged, 3, (boost::shared_ptr<CallAPI>, const int&, const std::string&));
-	FB_JSAPI_EVENT(authInfoRequested, 2, (const std::string&, const std::string&));
-	FB_JSAPI_EVENT(referReceived, 1, (const std::string&));
-	FB_JSAPI_EVENT(displayStatus, 1, (const std::string&));
-	FB_JSAPI_EVENT(displayMessage, 1, (const std::string&));
-	FB_JSAPI_EVENT(displayWarning, 1, (const std::string&));
-	FB_JSAPI_EVENT(displayUrl, 2, (const std::string&, const std::string&));
-	FB_JSAPI_EVENT(show, 0, ());
+	FB_JSAPI_EVENT(globalStateChanged, 3, (FB::JSAPIPtr, const int&, const std::string&));
+	FB_JSAPI_EVENT(callStateChanged, 4, (FB::JSAPIPtr, boost::shared_ptr<CallAPI>, const int&, const std::string&));
+	FB_JSAPI_EVENT(authInfoRequested, 3, (FB::JSAPIPtr, const std::string&, const std::string&));
+	FB_JSAPI_EVENT(referReceived, 2, (FB::JSAPIPtr, const std::string&));
+	FB_JSAPI_EVENT(displayStatus, 2, (FB::JSAPIPtr, const std::string&));
+	FB_JSAPI_EVENT(displayMessage, 2, (FB::JSAPIPtr, const std::string&));
+	FB_JSAPI_EVENT(displayWarning, 2, (FB::JSAPIPtr, const std::string&));
+	FB_JSAPI_EVENT(displayUrl, 3, (FB::JSAPIPtr, const std::string&, const std::string&));
+	FB_JSAPI_EVENT(show, 1, (FB::JSAPIPtr));
 
 	inline LinphoneCore *getRef() const {
 		return m_lin_core;
 	}
 
-private:
+private	:
 	std::string m_magic;
 	linphoneWeakPtr m_plugin;
 	FB::BrowserHostPtr m_host;
