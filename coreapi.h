@@ -144,9 +144,8 @@ private	:
 
 	friend void linphone_iterate_thread(CoreAPI *linphone_api);
 	void iterateWithMutex() {
-		m_core_mutex.lock();
+		boost::mutex::scoped_lock scopedLock(m_core_mutex);
 		iterate();
-		m_core_mutex.unlock();
 	}
 
 	// C Wrappers
