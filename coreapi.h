@@ -139,7 +139,7 @@ private	:
 
 	void iterate() {
 		if (m_lin_core != NULL)
-		linphone_core_iterate(m_lin_core);
+			linphone_core_iterate(m_lin_core);
 	}
 
 	friend void linphone_iterate_thread(CoreAPI *linphone_api);
