@@ -78,17 +78,18 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	// Propery
 	registerProperty("magic", make_property(this, &CoreAPI::getMagic, &CoreAPI::setMagic));
 
-	// Methods
+	// Call bindings
 	registerMethod("init", make_method(this, &CoreAPI::init));
 	REGISTER_SYNC_N_ASYNC("invite", invite);
-
 	registerMethod("acceptCall", make_method(this, &CoreAPI::acceptCall));
 	registerMethod("terminateCall", make_method(this, &CoreAPI::terminateCall));
 
+	// Levels bindings
 	registerMethod("setPlayLevel", make_method(this, &CoreAPI::setPlayLevel));
 	registerMethod("setRecLevel", make_method(this, &CoreAPI::setRecLevel));
 	registerMethod("setRingLevel", make_method(this, &CoreAPI::setRingLevel));
 
+	// Video bindings
 	registerMethod("videoSupported", make_method(this, &CoreAPI::videoSupported));
 	registerMethod("enableVideo", make_method(this, &CoreAPI::enableVideo));
 	registerMethod("videoEnabled", make_method(this, &CoreAPI::videoEnabled));
@@ -99,11 +100,31 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	registerMethod("getNativePreviewWindowId", make_method(this, &CoreAPI::getNativePreviewWindowId));
 	registerMethod("setNativePreviewWindowId", make_method(this, &CoreAPI::setNativePreviewWindowId));
 
+	// Sound device bindings
+	registerMethod("reloadSoundDevices", make_method(this, &CoreAPI::reloadSoundDevices));
+	registerMethod("getSoundDevices", make_method(this, &CoreAPI::getSoundDevices));
+	registerMethod("soundDeviceCanCapture", make_method(this, &CoreAPI::soundDeviceCanCapture));
+	registerMethod("soundDeviceCanPlayback", make_method(this, &CoreAPI::soundDeviceCanPlayback));
+	registerMethod("setRingerDevice", make_method(this, &CoreAPI::setRingerDevice));
+	registerMethod("setPlaybackDevice", make_method(this, &CoreAPI::setPlaybackDevice));
+	registerMethod("setCaptureDevice", make_method(this, &CoreAPI::setCaptureDevice));
+	registerMethod("getRingerDevice", make_method(this, &CoreAPI::getRingerDevice));
+	registerMethod("getPlaybackDevice", make_method(this, &CoreAPI::getPlaybackDevice));
+	registerMethod("getCaptureDevice", make_method(this, &CoreAPI::getCaptureDevice));
+
+	// Video device bindings
+	registerMethod("reloadVideoDevices", make_method(this, &CoreAPI::reloadVideoDevices));
+	registerMethod("getVideoDevices", make_method(this, &CoreAPI::getVideoDevices));
+	registerMethod("setVideoDevice", make_method(this, &CoreAPI::setVideoDevice));
+	registerMethod("getVideoDevice", make_method(this, &CoreAPI::getVideoDevice));
+
+	// Codecs bindings
 	registerMethod("getAudioCodecs", make_method(this, &CoreAPI::getAudioCodecs));
 	registerMethod("getVideoCodecs", make_method(this, &CoreAPI::getVideoCodecs));
 	registerMethod("setAudioCodecs", make_method(this, &CoreAPI::setAudioCodecs));
 	registerMethod("setVideoCodecs", make_method(this, &CoreAPI::setVideoCodecs));
 
+	// Proxy bindings
 	registerMethod("newProxyConfig", make_method(this, &CoreAPI::newProxyConfig));
 	registerMethod("addProxyConfig", make_method(this, &CoreAPI::addProxyConfig));
 	registerMethod("clearProxyConfig", make_method(this, &CoreAPI::clearProxyConfig));
@@ -214,6 +235,12 @@ void CoreAPI::setMagic(const std::string &magic) {
 	m_magic = magic;
 }
 
+/*
+ *
+ * Call functions
+ *
+ */
+
 boost::shared_ptr<CallAPI> CoreAPI::invite(const std::string &dest) {
 	CORE_MUTEX
 
@@ -237,6 +264,12 @@ void CoreAPI::acceptCall(const boost::shared_ptr<CallAPI> &call) {
 	linphone_core_accept_call(m_lin_core, call->getRef());
 }
 
+/*
+ *
+ * Level functions
+ *
+ */
+
 void CoreAPI::setPlayLevel(int level) {
 	CORE_MUTEX
 
@@ -257,6 +290,12 @@ void CoreAPI::setRingLevel(int level) {
 	FBLOG_DEBUG("CoreAPI::setRingLevel", "level=" << level);
 	linphone_core_set_ring_level(m_lin_core, level);
 }
+
+/*
+ *
+ * Video functions
+ *
+ */
 
 bool CoreAPI::videoSupported() {
 	CORE_MUTEX
@@ -306,7 +345,6 @@ unsigned long CoreAPI::getNativeVideoWindowId() {
 	return linphone_core_get_native_video_window_id(m_lin_core);
 }
 
-
 void CoreAPI::setNativePreviewWindowId(unsigned long id) {
 	CORE_MUTEX
 
@@ -320,6 +358,138 @@ unsigned long CoreAPI::getNativePreviewWindowId() {
 	FBLOG_DEBUG("CoreAPI::getNativePreviewWindowId()", "");
 	return linphone_core_get_native_preview_window_id(m_lin_core);
 }
+
+/*
+ *
+ * Sound device functions
+ *
+ */
+
+void CoreAPI::reloadSoundDevices() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::reloadSoundDevices()", "");
+
+	linphone_core_reload_sound_devices(m_lin_core);
+}
+
+FB::VariantList CoreAPI::getSoundDevices() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getSoundDevices()", "");
+	FB::VariantList list;
+	const char **devlist = linphone_core_get_sound_devices(m_lin_core);
+	while (devlist != NULL && *devlist != NULL) {
+		list.push_back(std::string(*devlist++));
+	}
+
+	return list;
+}
+
+bool CoreAPI::soundDeviceCanCapture(const std::string &devid) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::soundDeviceCanCapture()", "devid=" << devid);
+	return linphone_core_sound_device_can_capture(m_lin_core, devid.c_str()) == TRUE ? true : false;
+}
+
+bool CoreAPI::soundDeviceCanPlayback(const std::string &devid) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::soundDeviceCanPlayback()", "devid=" << devid);
+	return linphone_core_sound_device_can_playback(m_lin_core, devid.c_str()) == TRUE ? true : false;
+}
+
+int CoreAPI::setRingerDevice(const std::string &devid) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setRingerDevice()", "devid=" << devid);
+	return linphone_core_set_ringer_device(m_lin_core, devid.c_str());
+}
+
+int CoreAPI::setPlaybackDevice(const std::string &devid) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setPlaybackDevice()", "devid=" << devid);
+	return linphone_core_set_playback_device(m_lin_core, devid.c_str());
+}
+
+int CoreAPI::setCaptureDevice(const std::string &devid) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setCaptureDevice()", "devid=" << devid);
+	return linphone_core_set_capture_device(m_lin_core, devid.c_str());
+}
+
+std::string CoreAPI::getRingerDevice() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getRingerDevice()", "");
+	return linphone_core_get_ringer_device(m_lin_core);
+}
+
+std::string CoreAPI::getPlaybackDevice() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getPlaybackDevice()", "");
+	return linphone_core_get_playback_device(m_lin_core);
+}
+
+std::string CoreAPI::getCaptureDevice() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getPlaybackDevice()", "");
+	return linphone_core_get_capture_device(m_lin_core);
+}
+
+/*
+ *
+ * Video device functions
+ *
+ */
+
+void CoreAPI::reloadVideoDevices() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::reloadVideoDevices()", "");
+
+	linphone_core_reload_video_devices(m_lin_core);
+}
+
+FB::VariantList CoreAPI::getVideoDevices() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getVideoDevices()", "");
+
+	FB::VariantList list;
+	const char **devlist = linphone_core_get_video_devices(m_lin_core);
+	while (devlist != NULL && *devlist != NULL) {
+		list.push_back(std::string(*devlist++));
+	}
+
+	return list;
+}
+
+int CoreAPI::setVideoDevice(const std::string &devid) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setVideoDevice()", "devid=" << devid);
+	return linphone_core_set_video_device(m_lin_core, devid.c_str());
+}
+
+std::string CoreAPI::getVideoDevice() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getVideoDevice()", "");
+
+	return linphone_core_get_video_device(m_lin_core);
+}
+
+/*
+ *
+ * Codecs functions
+ *
+ */
 
 FB::VariantList CoreAPI::getAudioCodecs() {
 	CORE_MUTEX
@@ -377,6 +547,12 @@ void CoreAPI::setVideoCodecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &l
 	linphone_core_set_video_codecs(m_lin_core, mslist);
 }
 
+/*
+ *
+ * Proxy functions
+ *
+ */
+
 boost::shared_ptr<ProxyConfigAPI> CoreAPI::newProxyConfig() {
 	CORE_MUTEX
 
@@ -423,7 +599,7 @@ boost::shared_ptr<ProxyConfigAPI> CoreAPI::getDefaultProxy() {
 	FBLOG_DEBUG("CoreAPI::getDefaultProxy()", "");
 	LinphoneProxyConfig *ptr = NULL;
 	linphone_core_get_default_proxy(m_lin_core, &ptr);
-	if(ptr != NULL)
+	if (ptr != NULL)
 		return ProxyConfigAPI::get(ptr);
 	return boost::shared_ptr<ProxyConfigAPI>();
 }

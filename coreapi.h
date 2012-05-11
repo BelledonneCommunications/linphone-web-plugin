@@ -97,6 +97,22 @@ public:
 	void setNativePreviewWindowId(unsigned long id);
 	unsigned long getNativePreviewWindowId();
 
+	void reloadSoundDevices();
+	FB::VariantList getSoundDevices();
+	bool soundDeviceCanCapture(const std::string &devid);
+	bool soundDeviceCanPlayback(const std::string &devid);
+	int setRingerDevice(const std::string &devid);
+	int setPlaybackDevice(const std::string &devid);
+	int setCaptureDevice(const std::string &devid);
+	std::string getRingerDevice();
+	std::string getPlaybackDevice();
+	std::string getCaptureDevice();
+
+	void reloadVideoDevices();
+	FB::VariantList getVideoDevices();
+	int setVideoDevice(const std::string &devid);
+	std::string getVideoDevice();
+
 	FB::VariantList getAudioCodecs();
 	FB::VariantList getVideoCodecs();
 	void setAudioCodecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list);
