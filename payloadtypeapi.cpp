@@ -19,9 +19,10 @@
 
 #include "payloadtypeapi.h"
 #include "coreapi.h"
+#include "utils.h"
 
 PayloadTypeAPI::PayloadTypeAPI(const CoreAPIPtr &core, PayloadType *payloadType) :
-		mCore(core), mPayloadType(payloadType) {
+		JSAPIAuto(APIDescription(this)), mCore(core), mPayloadType(payloadType) {
 	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", this);
 	//mPayloadType->user_data = this;
 
@@ -43,7 +44,7 @@ bool PayloadTypeAPI::getEnabled() const {
 	FBLOG_DEBUG("PayloadTypeAPI::getEnabled()", this);
 	CoreAPIPtr core(mCore.lock());
 	if (core != NULL) {
-		return linphone_core_payload_type_enabled(core->getRef(), mPayloadType) == TRUE? true: false;
+		return linphone_core_payload_type_enabled(core->getRef(), mPayloadType) == TRUE ? true : false;
 	}
 	return false;
 }
@@ -52,7 +53,7 @@ void PayloadTypeAPI::setEnabled(bool enable) {
 	FBLOG_DEBUG("PayloadTypeAPI::setEnabled()", "enable=" << enable);
 	CoreAPIPtr core(mCore.lock());
 	if (core != NULL) {
-		linphone_core_enable_payload_type(core->getRef(), mPayloadType, enable? TRUE: FALSE);
+		linphone_core_enable_payload_type(core->getRef(), mPayloadType, enable ? TRUE : FALSE);
 	}
 }
 
@@ -65,9 +66,9 @@ PayloadTypeAPIPtr PayloadTypeAPI::get(const CoreAPIPtr &core, PayloadType *paylo
 	//void *ptr = payloadType->user_data;
 	PayloadTypeAPIPtr shared_ptr;
 	/*if (ptr == NULL) {*/
-		shared_ptr = PayloadTypeAPIPtr(new PayloadTypeAPI(core, payloadType));
+	shared_ptr = PayloadTypeAPIPtr(new PayloadTypeAPI(core, payloadType));
 	/*} else {
-		shared_ptr = boost::static_pointer_cast<PayloadTypeAPI>(reinterpret_cast<PayloadTypeAPI *>(ptr)->shared_from_this());
-	}*/
+	 shared_ptr = boost::static_pointer_cast<PayloadTypeAPI>(reinterpret_cast<PayloadTypeAPI *>(ptr)->shared_from_this());
+	 }*/
 	return shared_ptr;
 }

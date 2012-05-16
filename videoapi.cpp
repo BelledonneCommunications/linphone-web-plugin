@@ -22,6 +22,7 @@
 #include <DOM/Document.h>
 #include <global/config.h>
 #include "videoapi.h"
+#include "utils.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @fn videoAPI::videoAPI(const linphonePtr& plugin, const FB::BrowserHostPtr host)
@@ -34,7 +35,7 @@
 /// @see FB::JSAPIAuto::registerEvent
 ///////////////////////////////////////////////////////////////////////////////
 VideoAPI::VideoAPI(const videoPtr& plugin, const FB::BrowserHostPtr& host) :
-		m_plugin(plugin), m_host(host) {
+		JSAPIAuto(APIDescription(this)), m_plugin(plugin), m_host(host) {
 	FBLOG_DEBUG("videoAPI::videoAPI()", this);
 
 	mWindow = VideoWindow::create();
@@ -84,7 +85,7 @@ const std::string &VideoAPI::getMagic() {
 
 void VideoAPI::setMagic(const std::string &magic) {
 	FBLOG_DEBUG("VideoAPI::setMagic()", "magic=" << magic);
-	m_magic=magic;
+	m_magic = magic;
 }
 
 unsigned long VideoAPI::getWindow() {

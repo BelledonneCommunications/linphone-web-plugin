@@ -149,6 +149,7 @@ public:
 	// Event helpers
 	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const std::string&));
 	FB_JSAPI_EVENT(callStateChanged, 4, (CoreAPIPtr, CallAPIPtr, const int&, const std::string&));
+	FB_JSAPI_EVENT(registrationStateChanged, 4, (CoreAPIPtr, ProxyConfigAPIPtr, const int&, const std::string&));
 	FB_JSAPI_EVENT(authInfoRequested, 3, (CoreAPIPtr, const std::string&, const std::string&));
 	FB_JSAPI_EVENT(referReceived, 2, (CoreAPIPtr, const std::string&));
 	FB_JSAPI_EVENT(displayStatus, 2, (CoreAPIPtr, const std::string&));

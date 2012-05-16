@@ -18,9 +18,10 @@
  */
 
 #include "proxyconfigapi.h"
+#include "utils.h"
 
 ProxyConfigAPI::ProxyConfigAPI(LinphoneProxyConfig *proxyConfig) :
-		mProxyConfig(proxyConfig) {
+		JSAPIAuto(APIDescription(this)), mProxyConfig(proxyConfig) {
 	FBLOG_DEBUG("ProxyConfigAPI::ProxyConfigAPI", this);
 	linphone_proxy_config_set_user_data(mProxyConfig, this);
 	init_proxy();
@@ -64,7 +65,7 @@ int ProxyConfigAPI::setServerAddr(const std::string &server_addr) {
 	FBLOG_DEBUG("ProxyConfigAPI::setServerAddr()", "server_addr=" << server_addr);
 	return linphone_proxy_config_set_server_addr(mProxyConfig, server_addr.c_str());
 }
-std::string ProxyConfigAPI::getServerAddr() const{
+std::string ProxyConfigAPI::getServerAddr() const {
 	FBLOG_DEBUG("ProxyConfigAPI::getServerAddr()", "");
 	const char *txt = linphone_proxy_config_get_addr(mProxyConfig);
 	return txt != NULL ? txt : "";
@@ -74,7 +75,7 @@ int ProxyConfigAPI::setIdentity(const std::string &identity) {
 	FBLOG_DEBUG("ProxyConfigAPI::setIdentity()", "identity=" << identity);
 	return linphone_proxy_config_set_identity(mProxyConfig, identity.c_str());
 }
-std::string ProxyConfigAPI::getIdentity() const{
+std::string ProxyConfigAPI::getIdentity() const {
 	FBLOG_DEBUG("ProxyConfigAPI::getIdentity()", "");
 	const char *txt = linphone_proxy_config_get_identity(mProxyConfig);
 	return txt != NULL ? txt : "";
@@ -84,7 +85,7 @@ int ProxyConfigAPI::setRoute(const std::string &route) {
 	FBLOG_DEBUG("ProxyConfigAPI::setRoute()", "route=" << route);
 	return linphone_proxy_config_set_route(mProxyConfig, route.c_str());
 }
-std::string ProxyConfigAPI::getRoute() const{
+std::string ProxyConfigAPI::getRoute() const {
 	FBLOG_DEBUG("ProxyConfigAPI::getRoute()", "");
 	const char *txt = linphone_proxy_config_get_route(mProxyConfig);
 	return txt != NULL ? txt : "";
@@ -94,7 +95,7 @@ void ProxyConfigAPI::setExpires(int expires) {
 	FBLOG_DEBUG("ProxyConfigAPI::expires()", "expires=" << expires);
 	return linphone_proxy_config_expires(mProxyConfig, expires);
 }
-int ProxyConfigAPI::getExpires() const{
+int ProxyConfigAPI::getExpires() const {
 	FBLOG_DEBUG("ProxyConfigAPI::getExpires()", "");
 	return linphone_proxy_config_get_expires(mProxyConfig);
 }
@@ -103,7 +104,7 @@ void ProxyConfigAPI::enableRegister(bool val) {
 	FBLOG_DEBUG("ProxyConfigAPI::enableRegister()", "val=" << val);
 	return linphone_proxy_config_enable_register(mProxyConfig, val ? TRUE : FALSE);
 }
-bool ProxyConfigAPI::registerEnabled() const{
+bool ProxyConfigAPI::registerEnabled() const {
 	FBLOG_DEBUG("ProxyConfigAPI::registerEnabled()", "");
 	return linphone_proxy_config_register_enabled(mProxyConfig) == TRUE ? true : false;
 }

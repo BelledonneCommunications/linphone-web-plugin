@@ -21,6 +21,7 @@
 #define H_UTILS
 
 #include <map>
+#include <sstream>
 #include <boost/thread.hpp>
 
 class mythread_group {
@@ -53,9 +54,7 @@ public:
 
 	void remove_thread(boost::thread::id id) {
 		boost::lock_guard<boost::shared_mutex> guard(m);
-		const auto it = std::find_if(threads.begin(), threads.end(),
-				[id](const std::pair<boost::thread::id, boost::thread*> &p) -> bool { return p.second->get_id() == id; }
-		);
+		const auto it = std::find_if(threads.begin(), threads.end(), [id](const std::pair<boost::thread::id, boost::thread*> &p) -> bool {return p.second->get_id() == id;});
 		if (it != threads.end()) {
 			delete it->second;
 			threads.erase(it);
@@ -87,5 +86,19 @@ private:
 	std::map<boost::thread::id, boost::thread*> threads;
 	mutable boost::shared_mutex m;
 };
+
+template<class T>
+std::string APIDescription(T *ptr) {
+	std::stringstream ss;
+	const char *name = typeid(ptr).name();
+	if (name != NULL)
+		ss << std::string(name);
+	else
+		ss << "<JSAPI-Auto Javascript Object>";
+#ifndef NDEBUG
+	ss << "(" << ptr << ")";
+#endif
+	return ss.str();
+}
 
 #endif // H_UTILS

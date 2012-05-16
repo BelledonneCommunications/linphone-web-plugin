@@ -87,7 +87,7 @@ void linphone_destroy_thread(LinphoneCore* core, boost::thread *thread, mythread
 /// @see FB::JSAPIAuto::registerEvent
 ///////////////////////////////////////////////////////////////////////////////
 CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
-		m_plugin(plugin), m_host(host), m_lin_core(NULL), m_core_thread(NULL), m_threads(new mythread_group()) {
+		JSAPIAuto(APIDescription(this)), m_plugin(plugin), m_host(host), m_lin_core(NULL), m_core_thread(NULL), m_threads(new mythread_group()) {
 	FBLOG_DEBUG("CoreAPI::CoreAPI()", this);
 
 	// Read-only property
@@ -666,6 +666,7 @@ void CoreAPI::wrapper_registration_state_changed(LinphoneCore *lc, LinphoneProxy
 		ss << "message = " << message;
 		FBLOG_DEBUG("wrapper_registration_state_changed", ss.str());
 #endif //FB_NO_LOGGING_MACROS
+		GLC(fire_registrationStateChanged(THIS(), ProxyConfigAPI::get(cfg), cstate, message));
 	}
 }
 void CoreAPI::wrapper_call_state_changed(LinphoneCore *lc, LinphoneCall *call, LinphoneCallState cstate, const char *message) {

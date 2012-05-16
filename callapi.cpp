@@ -18,9 +18,10 @@
  */
 
 #include "callapi.h"
+#include "utils.h"
 
 CallAPI::CallAPI(LinphoneCall *call) :
-		mCall(call) {
+		JSAPIAuto(APIDescription(this)), mCall(call) {
 	FBLOG_DEBUG("CallAPI::CallAPI", this);
 	linphone_call_ref(mCall);
 	linphone_call_set_user_pointer(mCall, this);
