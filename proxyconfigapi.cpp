@@ -123,11 +123,11 @@ int ProxyConfigAPI::done() {
 	return linphone_proxy_config_done(mProxyConfig);
 }
 
-boost::shared_ptr<ProxyConfigAPI> ProxyConfigAPI::get(LinphoneProxyConfig *proxyConfig) {
+ProxyConfigAPIPtr ProxyConfigAPI::get(LinphoneProxyConfig *proxyConfig) {
 	void *ptr = linphone_proxy_config_get_user_data(proxyConfig);
-	boost::shared_ptr<ProxyConfigAPI> shared_ptr;
+	ProxyConfigAPIPtr shared_ptr;
 	if (ptr == NULL) {
-		shared_ptr = boost::shared_ptr<ProxyConfigAPI>(new ProxyConfigAPI(proxyConfig));
+		shared_ptr = ProxyConfigAPIPtr(new ProxyConfigAPI(proxyConfig));
 	} else {
 		shared_ptr = boost::static_pointer_cast<ProxyConfigAPI>(reinterpret_cast<ProxyConfigAPI *>(ptr)->shared_from_this());
 	}

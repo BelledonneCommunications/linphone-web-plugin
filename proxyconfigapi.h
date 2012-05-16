@@ -23,6 +23,7 @@
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
 
+FB_FORWARD_PTR(ProxyConfigAPI)
 class ProxyConfigAPI : public FB::JSAPIAuto {
 private:
 	LinphoneProxyConfig *mProxyConfig;
@@ -56,7 +57,7 @@ public:
 	inline LinphoneProxyConfig *getRef() const{
 		return mProxyConfig;
 	}
-	static boost::shared_ptr<ProxyConfigAPI> get(LinphoneProxyConfig *proxyConfig);
+	static ProxyConfigAPIPtr get(LinphoneProxyConfig *proxyConfig);
 };
 
 #endif //H_PROXYCONFIGAPI

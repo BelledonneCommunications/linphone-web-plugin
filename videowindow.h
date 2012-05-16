@@ -23,9 +23,10 @@
 #include <PluginWindow.h>
 #include <boost/shared_ptr.hpp>
 
+FB_FORWARD_PTR(VideoWindow)
 class VideoWindow {
 public:
-	static boost::shared_ptr<VideoWindow> create();
+	static VideoWindowPtr create();
 	virtual ~VideoWindow() {
 
 	}

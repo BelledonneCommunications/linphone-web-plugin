@@ -22,7 +22,7 @@
 #include "videowindowx11.h"
 #include <gdk/gdkx.h>
 
-boost::shared_ptr<VideoWindow> VideoWindow::create() {
+VideoWindowPtr VideoWindow::create() {
 	return boost::make_shared<VideoWindowX11>();
 }
 

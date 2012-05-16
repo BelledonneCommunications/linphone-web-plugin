@@ -260,23 +260,23 @@ void CoreAPI::setMagic(const std::string &magic) {
  *
  */
 
-boost::shared_ptr<CallAPI> CoreAPI::invite(const std::string &dest) {
+CallAPIPtr CoreAPI::invite(const std::string &dest) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::invite", "dest=" << dest);
 	LinphoneCall *call = linphone_core_invite(m_lin_core, dest.c_str());
-	boost::shared_ptr<CallAPI> shared_call = CallAPI::get(call);
+	CallAPIPtr shared_call = CallAPI::get(call);
 	return shared_call;
 }
 
-void CoreAPI::terminateCall(const boost::shared_ptr<CallAPI> &call) {
+void CoreAPI::terminateCall(const CallAPIPtr &call) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::terminateCall", "call=" << call);
 	linphone_core_terminate_call(m_lin_core, call->getRef());
 }
 
-void CoreAPI::acceptCall(const boost::shared_ptr<CallAPI> &call) {
+void CoreAPI::acceptCall(const CallAPIPtr &call) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::acceptCall", "call=" << call);
@@ -532,13 +532,13 @@ FB::VariantList CoreAPI::getVideoCodecs() {
 	return list;
 }
 
-void CoreAPI::setAudioCodecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list) {
+void CoreAPI::setAudioCodecs(const std::vector<FB::JSAPIPtr> &list) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::set_audio_codecs()", "list.size()=" << list.size());
 	MSList *mslist = NULL;
 	for (auto it = list.begin(); it != list.end(); ++it) {
-		boost::shared_ptr<PayloadTypeAPI> payloadType = boost::dynamic_pointer_cast<PayloadTypeAPI>(*it);
+		PayloadTypeAPIPtr payloadType = boost::dynamic_pointer_cast<PayloadTypeAPI>(*it);
 		if (payloadType != NULL) {
 			mslist = ms_list_append(mslist, payloadType->getRef());
 		} else {
@@ -549,13 +549,13 @@ void CoreAPI::setAudioCodecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &l
 	linphone_core_set_audio_codecs(m_lin_core, mslist);
 }
 
-void CoreAPI::setVideoCodecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list) {
+void CoreAPI::setVideoCodecs(const std::vector<FB::JSAPIPtr> &list) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setVideoCodecs()", "list.size()=" << list.size());
 	MSList *mslist = NULL;
 	for (auto it = list.begin(); it != list.end(); ++it) {
-		boost::shared_ptr<PayloadTypeAPI> payloadType = boost::dynamic_pointer_cast<PayloadTypeAPI>(*it);
+		PayloadTypeAPIPtr payloadType = boost::dynamic_pointer_cast<PayloadTypeAPI>(*it);
 		if (payloadType != NULL) {
 			mslist = ms_list_append(mslist, payloadType->getRef());
 		} else {
@@ -572,13 +572,13 @@ void CoreAPI::setVideoCodecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &l
  *
  */
 
-boost::shared_ptr<ProxyConfigAPI> CoreAPI::newProxyConfig() {
+ProxyConfigAPIPtr CoreAPI::newProxyConfig() {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::newProxyConfig()", "");
 	return boost::make_shared<ProxyConfigAPI>();
 }
-int CoreAPI::addProxyConfig(const boost::shared_ptr<ProxyConfigAPI> &config) {
+int CoreAPI::addProxyConfig(const ProxyConfigAPIPtr &config) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::addProxyConfig()", "config=" << config);
@@ -590,7 +590,7 @@ void CoreAPI::clearProxyConfig() {
 	FBLOG_DEBUG("CoreAPI::clearProxyConfig()", "");
 	linphone_core_clear_proxy_config(m_lin_core);
 }
-void CoreAPI::removeProxyConfig(const boost::shared_ptr<ProxyConfigAPI> &config) {
+void CoreAPI::removeProxyConfig(const ProxyConfigAPIPtr &config) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::removeProxyConfig()", "config=" << config);
@@ -606,13 +606,13 @@ FB::VariantList CoreAPI::getProxyConfigList() {
 	}
 	return list;
 }
-void CoreAPI::setDefaultProxy(const boost::shared_ptr<ProxyConfigAPI> &config) {
+void CoreAPI::setDefaultProxy(const ProxyConfigAPIPtr &config) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setDefaultProxy()", "config=" << config);
 	linphone_core_set_default_proxy(m_lin_core, config->getRef());
 }
-boost::shared_ptr<ProxyConfigAPI> CoreAPI::getDefaultProxy() {
+ProxyConfigAPIPtr CoreAPI::getDefaultProxy() {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getDefaultProxy()", "");
@@ -620,7 +620,7 @@ boost::shared_ptr<ProxyConfigAPI> CoreAPI::getDefaultProxy() {
 	linphone_core_get_default_proxy(m_lin_core, &ptr);
 	if (ptr != NULL)
 		return ProxyConfigAPI::get(ptr);
-	return boost::shared_ptr<ProxyConfigAPI>();
+	return ProxyConfigAPIPtr();
 }
 
 std::string CoreAPI::getVersion() {
@@ -643,7 +643,7 @@ int CoreAPI::getSipPort() {
 
 // Global callbacks which wraps CoreAPI object methods
 #define GLC_DEFINED() (linphone_core_get_user_data(lc) != NULL)
-#define THIS() boost::static_pointer_cast<FB::JSAPI>(((CoreAPI *)linphone_core_get_user_data(lc))->shared_from_this())
+#define THIS() boost::static_pointer_cast<CoreAPI>(((CoreAPI *)linphone_core_get_user_data(lc))->shared_from_this())
 #define GLC(X) ((CoreAPI *)linphone_core_get_user_data(lc))->X
 
 void CoreAPI::wrapper_global_state_changed(LinphoneCore *lc, LinphoneGlobalState gstate, const char *message) {

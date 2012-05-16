@@ -27,6 +27,7 @@
 #include "videoplugin.h"
 #include "videowindow.h"
 
+FB_FORWARD_PTR(VideoAPI)
 class VideoAPI: public FB::JSAPIAuto {
 public:
 	VideoAPI(const videoPtr& plugin, const FB::BrowserHostPtr& host);
@@ -46,7 +47,7 @@ private:
 	std::string m_magic;
 	videoWeakPtr m_plugin;
 	FB::BrowserHostPtr m_host;
-	boost::shared_ptr<VideoWindow> mWindow;
+	VideoWindowPtr mWindow;
 };
 
 #endif // H_VIDEOAPI

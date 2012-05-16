@@ -23,6 +23,7 @@
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
 
+FB_FORWARD_PTR(CallAPI)
 class CallAPI : public FB::JSAPIAuto {
 private:
 	LinphoneCall *mCall;
@@ -36,7 +37,7 @@ public:
 	inline LinphoneCall *getRef() const{
 		return mCall;
 	}
-	static boost::shared_ptr<CallAPI> get(LinphoneCall *call);
+	static CallAPIPtr get(LinphoneCall *call);
 };
 
 #endif //H_CALLAPI

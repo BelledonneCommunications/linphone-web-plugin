@@ -79,6 +79,7 @@
 	DECLARE_SYNC_N_ASYNC_THREAD_FCT(name, argCount, argList, ret)  		\
 	DECLARE_SYNC_N_ASYNC_ASYNC_FCT(name, argCount, argList)
 
+FB_FORWARD_PTR(CoreAPI)
 class CoreAPI: public FB::JSAPIAuto {
 public:
 	CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host);
@@ -97,10 +98,10 @@ public:
 	// Methods
 	int init();
 	//
-	DECLARE_SYNC_N_ASYNC(invite, 1, (const std::string &), boost::shared_ptr<CallAPI>);
+	DECLARE_SYNC_N_ASYNC(invite, 1, (const std::string &), CallAPIPtr);
 
-	void acceptCall(const boost::shared_ptr<CallAPI> &call);
-	void terminateCall(const boost::shared_ptr<CallAPI> &call);
+	void acceptCall(const CallAPIPtr &call);
+	void terminateCall(const CallAPIPtr &call);
 
 	void setPlayLevel(int level);
 	void setRecLevel(int level);
@@ -134,27 +135,27 @@ public:
 
 	FB::VariantList getAudioCodecs();
 	FB::VariantList getVideoCodecs();
-	void setAudioCodecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list);
-	void setVideoCodecs(const std::vector<boost::shared_ptr<FB::JSAPI> > &list);
+	void setAudioCodecs(const std::vector<FB::JSAPIPtr> &list);
+	void setVideoCodecs(const std::vector<FB::JSAPIPtr> &list);
 
-	boost::shared_ptr<ProxyConfigAPI> newProxyConfig();
-	int addProxyConfig(const boost::shared_ptr<ProxyConfigAPI> &config);
+	ProxyConfigAPIPtr newProxyConfig();
+	int addProxyConfig(const ProxyConfigAPIPtr &config);
 	void clearProxyConfig();
-	void removeProxyConfig(const boost::shared_ptr<ProxyConfigAPI> &config);
+	void removeProxyConfig(const ProxyConfigAPIPtr &config);
 	FB::VariantList getProxyConfigList();
-	void setDefaultProxy(const boost::shared_ptr<ProxyConfigAPI> &config);
-	boost::shared_ptr<ProxyConfigAPI> getDefaultProxy();
+	void setDefaultProxy(const ProxyConfigAPIPtr &config);
+	ProxyConfigAPIPtr getDefaultProxy();
 
 	// Event helpers
-	FB_JSAPI_EVENT(globalStateChanged, 3, (FB::JSAPIPtr, const int&, const std::string&));
-	FB_JSAPI_EVENT(callStateChanged, 4, (FB::JSAPIPtr, boost::shared_ptr<CallAPI>, const int&, const std::string&));
-	FB_JSAPI_EVENT(authInfoRequested, 3, (FB::JSAPIPtr, const std::string&, const std::string&));
-	FB_JSAPI_EVENT(referReceived, 2, (FB::JSAPIPtr, const std::string&));
-	FB_JSAPI_EVENT(displayStatus, 2, (FB::JSAPIPtr, const std::string&));
-	FB_JSAPI_EVENT(displayMessage, 2, (FB::JSAPIPtr, const std::string&));
-	FB_JSAPI_EVENT(displayWarning, 2, (FB::JSAPIPtr, const std::string&));
-	FB_JSAPI_EVENT(displayUrl, 3, (FB::JSAPIPtr, const std::string&, const std::string&));
-	FB_JSAPI_EVENT(show, 1, (FB::JSAPIPtr));
+	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const std::string&));
+	FB_JSAPI_EVENT(callStateChanged, 4, (CoreAPIPtr, CallAPIPtr, const int&, const std::string&));
+	FB_JSAPI_EVENT(authInfoRequested, 3, (CoreAPIPtr, const std::string&, const std::string&));
+	FB_JSAPI_EVENT(referReceived, 2, (CoreAPIPtr, const std::string&));
+	FB_JSAPI_EVENT(displayStatus, 2, (CoreAPIPtr, const std::string&));
+	FB_JSAPI_EVENT(displayMessage, 2, (CoreAPIPtr, const std::string&));
+	FB_JSAPI_EVENT(displayWarning, 2, (CoreAPIPtr, const std::string&));
+	FB_JSAPI_EVENT(displayUrl, 3, (CoreAPIPtr, const std::string&, const std::string&));
+	FB_JSAPI_EVENT(show, 1, (CoreAPIPtr));
 
 	inline LinphoneCore *getRef() const {
 		return m_lin_core;

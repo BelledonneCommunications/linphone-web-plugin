@@ -23,13 +23,15 @@
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
 
-class CoreAPI;
+FB_FORWARD_PTR(CoreAPI);
+
+FB_FORWARD_PTR(PayloadTypeAPI)
 class PayloadTypeAPI: public FB::JSAPIAuto {
 private:
-	boost::weak_ptr<CoreAPI> mCore;
+	CoreAPIWeakPtr mCore;
 	PayloadType *mPayloadType;
 
-	PayloadTypeAPI(const boost::shared_ptr<CoreAPI> &core, PayloadType *payloadType);
+	PayloadTypeAPI(const CoreAPIPtr &core, PayloadType *payloadType);
 public:
 	~PayloadTypeAPI();
 
@@ -74,7 +76,7 @@ public:
 	inline PayloadType *getRef() const {
 		return mPayloadType;
 	}
-	static boost::shared_ptr<PayloadTypeAPI> get(const boost::shared_ptr<CoreAPI> &core, PayloadType *payloadType);
+	static PayloadTypeAPIPtr get(const CoreAPIPtr &core, PayloadType *payloadType);
 };
 
 #endif //H_PAYLOADTYPEAPI

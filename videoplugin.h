@@ -27,7 +27,7 @@
 #include <PluginEvents/DrawingEvents.h>
 #include <PluginCore.h>
 
-class VideoAPI;
+FB_FORWARD_PTR(VideoAPI)
 
 FB_FORWARD_PTR(video)
 class video : public FB::PluginCore
@@ -71,7 +71,7 @@ public:
     /** END EVENTDEF -- DON'T CHANGE THIS LINE **/
 
 private:
-    boost::shared_ptr<VideoAPI> mVideo;
+    VideoAPIPtr mVideo;
     FB::PluginWindow* mWindow;
 };
 

@@ -21,7 +21,7 @@
 #include <logging.h>
 #include "videowindowwin.h"
 
-boost::shared_ptr<VideoWindow> VideoWindow::create() {
+VideoWindowPtr VideoWindow::create() {
 	return boost::make_shared<VideoWindowWin>();
 }
 
