@@ -27,7 +27,8 @@ ProxyConfigAPI::ProxyConfigAPI(LinphoneProxyConfig *proxyConfig) :
 	init_proxy();
 }
 
-ProxyConfigAPI::ProxyConfigAPI() {
+ProxyConfigAPI::ProxyConfigAPI() :
+		JSAPIAuto(APIDescription(this)) {
 	FBLOG_DEBUG("ProxyConfigAPI::ProxyConfigAPI", this);
 	mProxyConfig = linphone_proxy_config_new();
 	linphone_proxy_config_set_user_data(mProxyConfig, this);
