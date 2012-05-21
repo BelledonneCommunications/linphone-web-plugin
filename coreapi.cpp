@@ -707,6 +707,7 @@ void CoreAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, c
 		ss << "realm = " << realm << ", ";
 		ss << "username = " << username;
 		FBLOG_DEBUG("wrapper_auth_info_requested", ss.str());
+		GLC(fire_authInfoRequested(THIS(), std::string(realm), std::string(username)));
 #endif //FB_NO_LOGGING_MACROS
 	}
 }
