@@ -104,9 +104,9 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	registerMethod("terminateCall", make_method(this, &CoreAPI::terminateCall));
 
 	// Levels bindings
-	registerMethod("setPlayLevel", make_method(this, &CoreAPI::setPlayLevel));
-	registerMethod("setRecLevel", make_method(this, &CoreAPI::setRecLevel));
-	registerMethod("setRingLevel", make_method(this, &CoreAPI::setRingLevel));
+	registerProperty("playLevel", make_property(this, &CoreAPI::getPlayLevel, &CoreAPI::setPlayLevel));
+	registerProperty("recLevel", make_property(this, &CoreAPI::getRecLevel, &CoreAPI::setRecLevel));
+	registerProperty("ringLevel", make_property(this, &CoreAPI::getRingLevel, &CoreAPI::setRingLevel));
 
 	// Video bindings
 	registerMethod("videoSupported", make_method(this, &CoreAPI::videoSupported));
@@ -296,6 +296,13 @@ void CoreAPI::setPlayLevel(int level) {
 	linphone_core_set_play_level(m_lin_core, level);
 }
 
+int CoreAPI::getPlayLevel() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getPlayLevel", "");
+	return linphone_core_get_play_level(m_lin_core);
+}
+
 void CoreAPI::setRecLevel(int level) {
 	CORE_MUTEX
 
@@ -303,11 +310,25 @@ void CoreAPI::setRecLevel(int level) {
 	linphone_core_set_rec_level(m_lin_core, level);
 }
 
+int CoreAPI::getRecLevel() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getRecLevel", "");
+	return linphone_core_get_rec_level(m_lin_core);
+}
+
 void CoreAPI::setRingLevel(int level) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRingLevel", "level=" << level);
 	linphone_core_set_ring_level(m_lin_core, level);
+}
+
+int CoreAPI::getRingLevel() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getRingLevel", "");
+	return linphone_core_get_ring_level(m_lin_core);
 }
 
 /*

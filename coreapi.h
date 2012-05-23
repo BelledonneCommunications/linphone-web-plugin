@@ -104,8 +104,12 @@ public:
 	void terminateCall(const CallAPIPtr &call);
 
 	void setPlayLevel(int level);
+	int getPlayLevel();
 	void setRecLevel(int level);
+	int getRecLevel();
 	void setRingLevel(int level);
+	int getRingLevel();
+
 
 	bool videoSupported();
 	void enableVideo(bool enable);
