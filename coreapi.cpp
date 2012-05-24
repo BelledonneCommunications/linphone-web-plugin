@@ -110,14 +110,10 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 
 	// Video bindings
 	registerMethod("videoSupported", make_method(this, &CoreAPI::videoSupported));
-	registerMethod("enableVideo", make_method(this, &CoreAPI::enableVideo));
-	registerMethod("videoEnabled", make_method(this, &CoreAPI::videoEnabled));
-	registerMethod("enableVideoPreview", make_method(this, &CoreAPI::enableVideoPreview));
-	registerMethod("videoPreviewEnabled", make_method(this, &CoreAPI::videoPreviewEnabled));
-	registerMethod("getNativeVideoWindowId", make_method(this, &CoreAPI::getNativeVideoWindowId));
-	registerMethod("setNativeVideoWindowId", make_method(this, &CoreAPI::setNativeVideoWindowId));
-	registerMethod("getNativePreviewWindowId", make_method(this, &CoreAPI::getNativePreviewWindowId));
-	registerMethod("setNativePreviewWindowId", make_method(this, &CoreAPI::setNativePreviewWindowId));
+	registerProperty("videoPreviewEnabled", make_property(this, &CoreAPI::videoPreviewEnabled, &CoreAPI::enableVideoPreview));
+	registerProperty("videoEnabled", make_property(this, &CoreAPI::videoEnabled, &CoreAPI::enableVideo));
+	registerProperty("nativePreviewWindowId", make_property(this, &CoreAPI::getNativePreviewWindowId, &CoreAPI::setNativePreviewWindowId));
+	registerProperty("nativeVideoWindowId", make_property(this, &CoreAPI::getNativeVideoWindowId, &CoreAPI::setNativeVideoWindowId));
 
 	// Sound device bindings
 	registerMethod("reloadSoundDevices", make_method(this, &CoreAPI::reloadSoundDevices));
