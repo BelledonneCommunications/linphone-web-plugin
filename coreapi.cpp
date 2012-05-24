@@ -124,18 +124,14 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	registerMethod("getSoundDevices", make_method(this, &CoreAPI::getSoundDevices));
 	registerMethod("soundDeviceCanCapture", make_method(this, &CoreAPI::soundDeviceCanCapture));
 	registerMethod("soundDeviceCanPlayback", make_method(this, &CoreAPI::soundDeviceCanPlayback));
-	registerMethod("setRingerDevice", make_method(this, &CoreAPI::setRingerDevice));
-	registerMethod("setPlaybackDevice", make_method(this, &CoreAPI::setPlaybackDevice));
-	registerMethod("setCaptureDevice", make_method(this, &CoreAPI::setCaptureDevice));
-	registerMethod("getRingerDevice", make_method(this, &CoreAPI::getRingerDevice));
-	registerMethod("getPlaybackDevice", make_method(this, &CoreAPI::getPlaybackDevice));
-	registerMethod("getCaptureDevice", make_method(this, &CoreAPI::getCaptureDevice));
+	registerProperty("ringerDevice", make_property(this, &CoreAPI::getRingerDevice, &CoreAPI::setRingerDevice));
+	registerProperty("captureDevice", make_property(this, &CoreAPI::getCaptureDevice, &CoreAPI::setCaptureDevice));
+	registerProperty("playbackDevice", make_property(this, &CoreAPI::getPlaybackDevice, &CoreAPI::setPlaybackDevice));
 
 	// Video device bindings
 	registerMethod("reloadVideoDevices", make_method(this, &CoreAPI::reloadVideoDevices));
 	registerMethod("getVideoDevices", make_method(this, &CoreAPI::getVideoDevices));
-	registerMethod("setVideoDevice", make_method(this, &CoreAPI::setVideoDevice));
-	registerMethod("getVideoDevice", make_method(this, &CoreAPI::getVideoDevice));
+	registerProperty("videoDevice", make_property(this, &CoreAPI::getVideoDevice, &CoreAPI::setVideoDevice));
 
 	// Codecs bindings
 	registerMethod("getAudioCodecs", make_method(this, &CoreAPI::getAudioCodecs));
@@ -440,25 +436,25 @@ bool CoreAPI::soundDeviceCanPlayback(const std::string &devid) {
 	return linphone_core_sound_device_can_playback(m_lin_core, devid.c_str()) == TRUE ? true : false;
 }
 
-int CoreAPI::setRingerDevice(const std::string &devid) {
+void CoreAPI::setRingerDevice(const std::string &devid) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRingerDevice()", "devid=" << devid);
-	return linphone_core_set_ringer_device(m_lin_core, devid.c_str());
+	linphone_core_set_ringer_device(m_lin_core, devid.c_str());
 }
 
-int CoreAPI::setPlaybackDevice(const std::string &devid) {
+void CoreAPI::setPlaybackDevice(const std::string &devid) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setPlaybackDevice()", "devid=" << devid);
-	return linphone_core_set_playback_device(m_lin_core, devid.c_str());
+	linphone_core_set_playback_device(m_lin_core, devid.c_str());
 }
 
-int CoreAPI::setCaptureDevice(const std::string &devid) {
+void CoreAPI::setCaptureDevice(const std::string &devid) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setCaptureDevice()", "devid=" << devid);
-	return linphone_core_set_capture_device(m_lin_core, devid.c_str());
+	linphone_core_set_capture_device(m_lin_core, devid.c_str());
 }
 
 std::string CoreAPI::getRingerDevice() {
@@ -510,11 +506,11 @@ FB::VariantList CoreAPI::getVideoDevices() {
 	return list;
 }
 
-int CoreAPI::setVideoDevice(const std::string &devid) {
+void CoreAPI::setVideoDevice(const std::string &devid) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setVideoDevice()", "devid=" << devid);
-	return linphone_core_set_video_device(m_lin_core, devid.c_str());
+	linphone_core_set_video_device(m_lin_core, devid.c_str());
 }
 
 std::string CoreAPI::getVideoDevice() {

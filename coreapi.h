@@ -125,16 +125,16 @@ public:
 	FB::VariantList getSoundDevices();
 	bool soundDeviceCanCapture(const std::string &devid);
 	bool soundDeviceCanPlayback(const std::string &devid);
-	int setRingerDevice(const std::string &devid);
-	int setPlaybackDevice(const std::string &devid);
-	int setCaptureDevice(const std::string &devid);
+	void setRingerDevice(const std::string &devid);
+	void setPlaybackDevice(const std::string &devid);
+	void setCaptureDevice(const std::string &devid);
 	std::string getRingerDevice();
 	std::string getPlaybackDevice();
 	std::string getCaptureDevice();
 
 	void reloadVideoDevices();
 	FB::VariantList getVideoDevices();
-	int setVideoDevice(const std::string &devid);
+	void setVideoDevice(const std::string &devid);
 	std::string getVideoDevice();
 
 	FB::VariantList getAudioCodecs();
