@@ -40,6 +40,55 @@ PayloadTypeAPI::PayloadTypeAPI(const CoreAPIPtr &core, PayloadType *payloadType)
 	registerProperty("enabled", make_property(this, &PayloadTypeAPI::getEnabled, &PayloadTypeAPI::setEnabled));
 }
 
+PayloadTypeAPI::~PayloadTypeAPI() {
+	FBLOG_DEBUG("ProxyConfigAPI::~ProxyConfigAPI", this);
+	mPayloadType->user_data = NULL;
+}
+
+int PayloadTypeAPI::getType() const {
+	return mPayloadType->type;
+}
+
+int PayloadTypeAPI::getClockRate() const {
+	return mPayloadType->clock_rate;
+}
+
+int PayloadTypeAPI::getBitsPerSample() const {
+	return mPayloadType->bits_per_sample;
+}
+
+std::string PayloadTypeAPI::getZeroPattern() const {
+	return mPayloadType->zero_pattern;
+}
+
+int PayloadTypeAPI::getPatternLength() const {
+	return mPayloadType->pattern_length;
+}
+
+int PayloadTypeAPI::getNormalBitrate() const {
+	return mPayloadType->normal_bitrate;
+}
+
+std::string PayloadTypeAPI::getMimeType() const {
+	return mPayloadType->mime_type;
+}
+
+int PayloadTypeAPI::getChannels() const {
+	return mPayloadType->channels;
+}
+
+std::string PayloadTypeAPI::getRecvFmtp() const {
+	return mPayloadType->recv_fmtp;
+}
+
+std::string PayloadTypeAPI::getSendFmtp() const {
+	return mPayloadType->send_fmtp;
+}
+
+int PayloadTypeAPI::getFlags() const {
+	return mPayloadType->flags;
+}
+
 bool PayloadTypeAPI::getEnabled() const {
 	FBLOG_DEBUG("PayloadTypeAPI::getEnabled()", this);
 	CoreAPIPtr core(mCore.lock());
@@ -55,11 +104,6 @@ void PayloadTypeAPI::setEnabled(bool enable) {
 	if (core != NULL) {
 		linphone_core_enable_payload_type(core->getRef(), mPayloadType, enable ? TRUE : FALSE);
 	}
-}
-
-PayloadTypeAPI::~PayloadTypeAPI() {
-	FBLOG_DEBUG("ProxyConfigAPI::~ProxyConfigAPI", this);
-	mPayloadType->user_data = NULL;
 }
 
 PayloadTypeAPIPtr PayloadTypeAPI::get(const CoreAPIPtr &core, PayloadType *payloadType) {

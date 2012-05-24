@@ -34,6 +34,7 @@
 #include "coreplugin.h"
 #include "coreapi.h"
 #include "callapi.h"
+#include "authinfoapi.h"
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
 #include "utils.h"
@@ -97,12 +98,13 @@ public:
 
 	// Methods
 	int init();
-	//
-	DECLARE_SYNC_N_ASYNC(invite, 1, (const std::string &), CallAPIPtr);
 
+	// Call functions
+	DECLARE_SYNC_N_ASYNC(invite, 1, (const std::string &), CallAPIPtr);
 	void acceptCall(const CallAPIPtr &call);
 	void terminateCall(const CallAPIPtr &call);
 
+	// Level functions
 	void setPlayLevel(int level);
 	int getPlayLevel();
 	void setRecLevel(int level);
@@ -110,7 +112,7 @@ public:
 	void setRingLevel(int level);
 	int getRingLevel();
 
-
+	// Video functions
 	bool videoSupported();
 	void enableVideo(bool enable);
 	bool videoEnabled();
@@ -121,6 +123,7 @@ public:
 	void setNativePreviewWindowId(unsigned long id);
 	unsigned long getNativePreviewWindowId();
 
+	// Sound device functions
 	void reloadSoundDevices();
 	FB::VariantList getSoundDevices();
 	bool soundDeviceCanCapture(const std::string &devid);
@@ -132,23 +135,33 @@ public:
 	std::string getPlaybackDevice();
 	std::string getCaptureDevice();
 
+	// Video device functions
 	void reloadVideoDevices();
 	FB::VariantList getVideoDevices();
 	void setVideoDevice(const std::string &devid);
 	std::string getVideoDevice();
 
+	// Codecs functions
 	FB::VariantList getAudioCodecs();
 	FB::VariantList getVideoCodecs();
 	void setAudioCodecs(const std::vector<FB::JSAPIPtr> &list);
 	void setVideoCodecs(const std::vector<FB::JSAPIPtr> &list);
 
-	ProxyConfigAPIPtr newProxyConfig();
+	// ProxyConfig functions
 	int addProxyConfig(const ProxyConfigAPIPtr &config);
 	void clearProxyConfig();
 	void removeProxyConfig(const ProxyConfigAPIPtr &config);
 	FB::VariantList getProxyConfigList();
 	void setDefaultProxy(const ProxyConfigAPIPtr &config);
 	ProxyConfigAPIPtr getDefaultProxy();
+
+	// AuthInfo functions
+	void addAuthInfo(const AuthInfoAPIPtr &authInfo);
+
+	// Instantiator functions
+	ProxyConfigAPIPtr newProxyConfig();
+	AuthInfoAPIPtr newAuthInfo(const std::string &username, const std::string &userid,
+			const std::string &passwd, const std::string &ha1, const std::string &realm);
 
 	// Event helpers
 	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const std::string&));

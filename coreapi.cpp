@@ -135,14 +135,20 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	registerMethod("setAudioCodecs", make_method(this, &CoreAPI::setAudioCodecs));
 	registerMethod("setVideoCodecs", make_method(this, &CoreAPI::setVideoCodecs));
 
-	// Proxy bindings
-	registerMethod("newProxyConfig", make_method(this, &CoreAPI::newProxyConfig));
+	// ProxyConfig bindings
 	registerMethod("addProxyConfig", make_method(this, &CoreAPI::addProxyConfig));
 	registerMethod("clearProxyConfig", make_method(this, &CoreAPI::clearProxyConfig));
 	registerMethod("removeProxyConfig", make_method(this, &CoreAPI::removeProxyConfig));
 	registerMethod("getProxyConfigList", make_method(this, &CoreAPI::getProxyConfigList));
 	registerMethod("setDefaultProxy", make_method(this, &CoreAPI::setDefaultProxy));
 	registerMethod("getDefaultProxy", make_method(this, &CoreAPI::getDefaultProxy));
+
+	// AuthInfo bindings
+	registerMethod("addAuthInfo", make_method(this, &CoreAPI::addAuthInfo));
+
+	// Initiator bindings
+	registerMethod("newProxyConfig", make_method(this, &CoreAPI::newProxyConfig));
+	registerMethod("newAuthInfo", make_method(this, &CoreAPI::newAuthInfo));
 }
 
 int CoreAPI::init() {
@@ -585,12 +591,6 @@ void CoreAPI::setVideoCodecs(const std::vector<FB::JSAPIPtr> &list) {
  *
  */
 
-ProxyConfigAPIPtr CoreAPI::newProxyConfig() {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CoreAPI::newProxyConfig()", "");
-	return boost::make_shared<ProxyConfigAPI>();
-}
 int CoreAPI::addProxyConfig(const ProxyConfigAPIPtr &config) {
 	CORE_MUTEX
 
@@ -635,6 +635,49 @@ ProxyConfigAPIPtr CoreAPI::getDefaultProxy() {
 		return ProxyConfigAPI::get(ptr);
 	return ProxyConfigAPIPtr();
 }
+
+
+/*
+ *
+ * AuthInfo functions
+ *
+ */
+
+void CoreAPI::addAuthInfo(const AuthInfoAPIPtr &authInfo) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::addAuthInfo()", "authInfo=" << authInfo);
+	linphone_core_add_auth_info(m_lin_core, authInfo->getRef());
+}
+
+
+/*
+ *
+ * Instantiator functions
+ *
+ */
+
+ProxyConfigAPIPtr CoreAPI::newProxyConfig() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::newProxyConfig()", "");
+	return boost::make_shared<ProxyConfigAPI>();
+}
+
+AuthInfoAPIPtr CoreAPI::newAuthInfo(const std::string &username, const std::string &userid,
+		const std::string &passwd, const std::string &ha1, const std::string &realm) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::newAuthInfo()", "");
+	return boost::make_shared<AuthInfoAPI>(username, userid, passwd, ha1, realm);
+}
+
+
+/*
+ *
+ * Misc functions
+ *
+ */
 
 std::string CoreAPI::getVersion() {
 	CORE_MUTEX

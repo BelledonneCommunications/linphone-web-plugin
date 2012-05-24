@@ -27,6 +27,7 @@ FB_FORWARD_PTR(ProxyConfigAPI)
 class ProxyConfigAPI : public FB::JSAPIAuto {
 private:
 	LinphoneProxyConfig *mProxyConfig;
+	bool mUsed;
 
 	ProxyConfigAPI(LinphoneProxyConfig *proxyConfig);
 	void init_proxy();
@@ -54,7 +55,8 @@ public:
 	void edit();
 	int done();
 
-	inline LinphoneProxyConfig *getRef() const{
+	inline LinphoneProxyConfig *getRef(){
+		mUsed = true;
 		return mProxyConfig;
 	}
 	static ProxyConfigAPIPtr get(LinphoneProxyConfig *proxyConfig);

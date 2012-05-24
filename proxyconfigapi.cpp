@@ -21,14 +21,14 @@
 #include "utils.h"
 
 ProxyConfigAPI::ProxyConfigAPI(LinphoneProxyConfig *proxyConfig) :
-		JSAPIAuto(APIDescription(this)), mProxyConfig(proxyConfig) {
+		JSAPIAuto(APIDescription(this)), mProxyConfig(proxyConfig), mUsed(true) {
 	FBLOG_DEBUG("ProxyConfigAPI::ProxyConfigAPI", this);
 	linphone_proxy_config_set_user_data(mProxyConfig, this);
 	init_proxy();
 }
 
 ProxyConfigAPI::ProxyConfigAPI() :
-		JSAPIAuto(APIDescription(this)) {
+		JSAPIAuto(APIDescription(this)), mUsed(false) {
 	FBLOG_DEBUG("ProxyConfigAPI::ProxyConfigAPI", this);
 	mProxyConfig = linphone_proxy_config_new();
 	linphone_proxy_config_set_user_data(mProxyConfig, this);
@@ -60,6 +60,9 @@ void ProxyConfigAPI::init_proxy() {
 ProxyConfigAPI::~ProxyConfigAPI() {
 	FBLOG_DEBUG("ProxyConfigAPI::~ProxyConfigAPI", this);
 	linphone_proxy_config_set_user_data(mProxyConfig, NULL);
+	if(!mUsed) {
+		linphone_proxy_config_destroy(mProxyConfig);
+	}
 }
 
 int ProxyConfigAPI::setServerAddr(const std::string &server_addr) {

@@ -17,42 +17,40 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef H_PAYLOADTYPEAPI
-#define H_PAYLOADTYPEAPI
+#ifndef H_AUTHINFOAPI
+#define H_AUTHINFOAPI
 
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
 
-FB_FORWARD_PTR(CoreAPI);
 
-FB_FORWARD_PTR(PayloadTypeAPI)
-class PayloadTypeAPI: public FB::JSAPIAuto {
+FB_FORWARD_PTR(AuthInfoAPI)
+class AuthInfoAPI: public FB::JSAPIAuto {
 private:
-	CoreAPIWeakPtr mCore;
-	PayloadType *mPayloadType;
+	LinphoneAuthInfo *mAuthInfo;
+	bool mUsed;
 
-	PayloadTypeAPI(const CoreAPIPtr &core, PayloadType *payloadType);
+	AuthInfoAPI(LinphoneAuthInfo *authInfo);
+	void init_proxy();
 public:
-	~PayloadTypeAPI();
+	AuthInfoAPI(const std::string &username, const std::string &userid,
+			const std::string &passwd, const std::string &ha1, const std::string &realm);
+	~AuthInfoAPI();
 
-	int getType() const;
-	int getClockRate() const;
-	int getBitsPerSample() const;
-	std::string getZeroPattern() const;
-	int getPatternLength() const;
-	int getNormalBitrate() const;
-	std::string getMimeType() const;
-	int getChannels() const;
-	std::string getRecvFmtp() const;
-	std::string getSendFmtp() const;
-	int getFlags() const;
-	bool getEnabled() const;
-	void setEnabled(bool enable);
+	std::string getUserid() const;
+	void setUserid(const std::string &userid);
 
-	inline PayloadType *getRef() const {
-		return mPayloadType;
+	std::string getUsername() const;
+	void setUsername(const std::string &username);
+
+	std::string getPasswd() const;
+	void setPasswd(const std::string &passwd);
+
+	inline LinphoneAuthInfo *getRef() {
+		mUsed = true;
+		return mAuthInfo;
 	}
-	static PayloadTypeAPIPtr get(const CoreAPIPtr &core, PayloadType *payloadType);
+	static AuthInfoAPIPtr get(LinphoneAuthInfo *authInfo);
 };
 
-#endif //H_PAYLOADTYPEAPI
+#endif //H_AUTHINFOAPI
