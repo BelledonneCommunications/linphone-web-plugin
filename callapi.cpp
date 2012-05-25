@@ -51,6 +51,9 @@ int CallAPI::getDir() const {
 }
 
 CallAPIPtr CallAPI::get(LinphoneCall *call) {
+	if(call == NULL)
+		return CallAPIPtr();
+
 	void *ptr = linphone_call_get_user_pointer(call);
 	CallAPIPtr shared_ptr;
 	if (ptr == NULL) {

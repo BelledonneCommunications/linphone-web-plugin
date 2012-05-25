@@ -73,6 +73,9 @@ void AuthInfoAPI::setPasswd(const std::string &passwd) {
 }
 
 AuthInfoAPIPtr AuthInfoAPI::get(LinphoneAuthInfo *authInfo) {
+	if(authInfo == NULL)
+		return AuthInfoAPIPtr();
+
 	AuthInfoAPIPtr shared_ptr;
 	shared_ptr = AuthInfoAPIPtr(new AuthInfoAPI(authInfo));
 	return shared_ptr;

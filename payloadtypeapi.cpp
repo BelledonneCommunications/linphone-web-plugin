@@ -107,6 +107,9 @@ void PayloadTypeAPI::setEnabled(bool enable) {
 }
 
 PayloadTypeAPIPtr PayloadTypeAPI::get(const CoreAPIPtr &core, PayloadType *payloadType) {
+	if(payloadType == NULL)
+		return PayloadTypeAPIPtr();
+
 	//void *ptr = payloadType->user_data;
 	PayloadTypeAPIPtr shared_ptr;
 	/*if (ptr == NULL) {*/

@@ -129,6 +129,9 @@ int ProxyConfigAPI::done() {
 }
 
 ProxyConfigAPIPtr ProxyConfigAPI::get(LinphoneProxyConfig *proxyConfig) {
+	if(proxyConfig == NULL)
+		return ProxyConfigAPIPtr();
+
 	void *ptr = linphone_proxy_config_get_user_data(proxyConfig);
 	ProxyConfigAPIPtr shared_ptr;
 	if (ptr == NULL) {
