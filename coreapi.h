@@ -98,6 +98,7 @@ public:
 
 	// Methods
 	int init();
+	void sendDtmf(const std::string &dtmf);
 
 	// Call functions
 	DECLARE_SYNC_N_ASYNC(invite, 1, (const std::string &), CallAPIPtr);

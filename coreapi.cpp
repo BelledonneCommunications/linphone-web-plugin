@@ -97,8 +97,10 @@ CoreAPI::CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host) :
 	// Propery
 	registerProperty("magic", make_property(this, &CoreAPI::getMagic, &CoreAPI::setMagic));
 
-	// Call bindings
 	registerMethod("init", make_method(this, &CoreAPI::init));
+	registerMethod("sendDtmf", make_method(this, &CoreAPI::sendDtmf));
+
+	// Call bindings
 	REGISTER_SYNC_N_ASYNC("invite", invite);
 	registerMethod("acceptCall", make_method(this, &CoreAPI::acceptCall));
 	registerMethod("terminateCall", make_method(this, &CoreAPI::terminateCall));
@@ -636,7 +638,6 @@ ProxyConfigAPIPtr CoreAPI::getDefaultProxy() {
 	return ProxyConfigAPIPtr();
 }
 
-
 /*
  *
  * AuthInfo functions
@@ -649,7 +650,6 @@ void CoreAPI::addAuthInfo(const AuthInfoAPIPtr &authInfo) {
 	FBLOG_DEBUG("CoreAPI::addAuthInfo()", "authInfo=" << authInfo);
 	linphone_core_add_auth_info(m_lin_core, authInfo->getRef());
 }
-
 
 /*
  *
@@ -664,14 +664,12 @@ ProxyConfigAPIPtr CoreAPI::newProxyConfig() {
 	return boost::make_shared<ProxyConfigAPI>();
 }
 
-AuthInfoAPIPtr CoreAPI::newAuthInfo(const std::string &username, const std::string &userid,
-		const std::string &passwd, const std::string &ha1, const std::string &realm) {
+AuthInfoAPIPtr CoreAPI::newAuthInfo(const std::string &username, const std::string &userid, const std::string &passwd, const std::string &ha1, const std::string &realm) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::newAuthInfo()", "");
 	return boost::make_shared<AuthInfoAPI>(username, userid, passwd, ha1, realm);
 }
-
 
 /*
  *
@@ -682,15 +680,23 @@ AuthInfoAPIPtr CoreAPI::newAuthInfo(const std::string &username, const std::stri
 std::string CoreAPI::getVersion() {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::getVersion()", this);
+	FBLOG_DEBUG("CoreAPI::getVersion()", "");
 	return linphone_core_get_version();
 }
 
 int CoreAPI::getSipPort() {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::getSipPort()", this);
+	FBLOG_DEBUG("CoreAPI::getSipPort()", "");
 	return linphone_core_get_sip_port(m_lin_core);
+}
+
+void CoreAPI::sendDtmf(const std::string &dtmf) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::sendDtmf()", "dtmf="<<dtmf);
+	if (dtmf.size() == 1)
+		linphone_core_send_dtmf(m_lin_core, dtmf[0]);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
