@@ -23,8 +23,13 @@
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
 
+FB_FORWARD_PTR(CallLogAPI);
+FB_FORWARD_PTR(CallParamsAPI);
+FB_FORWARD_PTR(AddressAPI);
+FB_FORWARD_PTR(CoreAPI);
+
 FB_FORWARD_PTR(CallAPI)
-class CallAPI : public FB::JSAPIAuto {
+class CallAPI: public FB::JSAPIAuto {
 private:
 	LinphoneCall *mCall;
 
@@ -33,10 +38,41 @@ private:
 
 public:
 	~CallAPI();
-	std::string getRemoteAddress() const;
+	std::string getAuthenticationToken() const;
+	bool getAuthenticationTokenVerified() const;
+	float getAverageQuality() const;
+	CallLogAPIPtr getCallLog() const;
+	CoreAPIPtr getCore() const;
+	CallParamsAPIPtr getCurrentParams() const;
+	float getCurrentQuality() const;
 	int getDir() const;
+	int getDuration() const;
+	float getPlayVolume() const;
+	int getReason() const;
+	float getRecordVolume() const;
+	std::string getReferTo() const;
+	AddressAPIPtr getRemoteAddress() const;
+	std::string getRemoteAddressAsString() const;
+	CallParamsAPIPtr getRemoteParams() const;
+	std::string getRemoteUserAgent() const;
+	CallAPIPtr getReplacedCall() const;
 	int getState() const;
-	inline LinphoneCall *getRef() const{
+	int getTransferState() const;
+
+	bool cameraEnabled() const;
+	void enableCamera(bool enabled);
+	bool echoCancellationEnabled() const;
+	void enableEchoCancellation(bool enabled);
+	bool echoLimiterEnabled() const;
+	void enableEchoLimiter(bool enabled);
+
+	bool askedToAutoanswer();
+	bool hasTransferPending();
+	void sendVfuRequest();
+	void setAuthenticationTokenVerified(bool verified);
+	void zoomVideo(float zoom, float cx, float cy);
+
+	inline LinphoneCall *getRef() const {
 		return mCall;
 	}
 	static CallAPIPtr get(LinphoneCall *call);

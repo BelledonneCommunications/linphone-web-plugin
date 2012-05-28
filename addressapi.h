@@ -23,14 +23,15 @@
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
 
-
 FB_FORWARD_PTR(AddressAPI)
 class AddressAPI: public FB::JSAPIAuto {
 private:
 	LinphoneAddress *mAddress;
 	bool mUsed;
+	bool mConst;
 
 	AddressAPI(LinphoneAddress *address);
+	AddressAPI(const LinphoneAddress *address);
 	AddressAPI(const std::string &uri);
 
 	void initProxy();
@@ -54,9 +55,11 @@ public:
 	void setUsername(const std::string &username);
 
 	inline LinphoneAddress *getRef() {
+		mUsed = true;
 		return mAddress;
 	}
 	static AddressAPIPtr get(LinphoneAddress *address);
+	static AddressAPIPtr get(const LinphoneAddress *address);
 };
 
 #endif //H_ADDRESSAPI

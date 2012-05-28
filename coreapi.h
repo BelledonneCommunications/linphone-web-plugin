@@ -180,7 +180,8 @@ public:
 		return m_lin_core;
 	}
 
-private	:
+	static CoreAPIPtr get(LinphoneCore *core);
+private :
 	std::string m_magic;
 	linphoneWeakPtr m_plugin;
 	FB::BrowserHostPtr m_host;

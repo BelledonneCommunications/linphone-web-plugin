@@ -17,41 +17,45 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef H_AUTHINFOAPI
-#define H_AUTHINFOAPI
+#ifndef H_CALLPARAMSAPI
+#define H_CALLPARAMSAPI
 
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
 
-
-FB_FORWARD_PTR(AuthInfoAPI)
-class AuthInfoAPI: public FB::JSAPIAuto {
+FB_FORWARD_PTR(CallParamsAPI)
+class CallParamsAPI: public FB::JSAPIAuto {
 private:
-	LinphoneAuthInfo *mAuthInfo;
+	LinphoneCallParams *mCallParams;
 	bool mUsed;
+	bool mConst;
 
-	AuthInfoAPI(LinphoneAuthInfo *authInfo);
+	CallParamsAPI(LinphoneCallParams *callParams);
+	CallParamsAPI(const LinphoneCallParams *callParams);
+
 	void initProxy();
 public:
-	AuthInfoAPI(const std::string &username, const std::string &userid,
-			const std::string &passwd, const std::string &ha1, const std::string &realm);
-	~AuthInfoAPI();
+	~CallParamsAPI();
 
-	std::string getUserid() const;
-	void setUserid(const std::string &userid);
+	void setAudioBandwidthLimit(int bw);
+	bool earlyMediaSendingEnabled();
+	void enableEarlyMediaSending(bool enable);
+	bool localConferenceMode();
+	//getMediaEncryption	mediaEncryption
+	//setMediaEncryption	mediaEncryption
+	//getUsedAudioCodec	usedAudioCodec
+	//getUsedVideoCodec	usedVideoCodec
+	void enableVideo(bool enable);
+	bool videoEnabled();
+	CallParamsAPIPtr copy();
 
-	std::string getUsername() const;
-	void setUsername(const std::string &username);
 
-	std::string getPasswd() const;
-	void setPasswd(const std::string &passwd);
-
-	inline LinphoneAuthInfo *getRef() {
+	inline LinphoneCallParams *getRef() {
 		mUsed = true;
-		return mAuthInfo;
+		return mCallParams;
 	}
-
-	static AuthInfoAPIPtr get(LinphoneAuthInfo *authInfo);
+	static CallParamsAPIPtr get(LinphoneCallParams *callParams);
+	static CallParamsAPIPtr get(const LinphoneCallParams *callParams);
 };
 
-#endif //H_AUTHINFOAPI
+#endif //H_CALLPARAMSAPI

@@ -257,6 +257,18 @@ void CoreAPI::setMagic(const std::string &magic) {
 	m_magic = magic;
 }
 
+CoreAPIPtr CoreAPI::get(LinphoneCore *core) {
+	if (core == NULL)
+		return CoreAPIPtr();
+
+	void *ptr = linphone_core_get_user_data(core);
+	CoreAPIPtr shared_ptr;
+	if (ptr != NULL) {
+		shared_ptr = boost::static_pointer_cast<CoreAPI>(reinterpret_cast<CoreAPI *>(ptr)->shared_from_this());
+	}
+	return shared_ptr;
+}
+
 /*
  *
  * Call functions

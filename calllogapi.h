@@ -17,41 +17,34 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef H_AUTHINFOAPI
-#define H_AUTHINFOAPI
+#ifndef H_CALLLOGAPI
+#define H_CALLLOGAPI
 
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
 
-
-FB_FORWARD_PTR(AuthInfoAPI)
-class AuthInfoAPI: public FB::JSAPIAuto {
+FB_FORWARD_PTR(CallLogAPI)
+class CallLogAPI: public FB::JSAPIAuto {
 private:
-	LinphoneAuthInfo *mAuthInfo;
+	LinphoneCallLog *mCallLog;
 	bool mUsed;
 
-	AuthInfoAPI(LinphoneAuthInfo *authInfo);
+	CallLogAPI(LinphoneCallLog *callLog);
+
 	void initProxy();
 public:
-	AuthInfoAPI(const std::string &username, const std::string &userid,
-			const std::string &passwd, const std::string &ha1, const std::string &realm);
-	~AuthInfoAPI();
+	~CallLogAPI();
 
-	std::string getUserid() const;
-	void setUserid(const std::string &userid);
+	std::string getRefKey();
+	void setRefKey(const std::string &refKey);
 
-	std::string getUsername() const;
-	void setUsername(const std::string &username);
+	std::string toStr();
 
-	std::string getPasswd() const;
-	void setPasswd(const std::string &passwd);
-
-	inline LinphoneAuthInfo *getRef() {
+	inline LinphoneCallLog *getRef() {
 		mUsed = true;
-		return mAuthInfo;
+		return mCallLog;
 	}
-
-	static AuthInfoAPIPtr get(LinphoneAuthInfo *authInfo);
+	static CallLogAPIPtr get(LinphoneCallLog *callLog);
 };
 
-#endif //H_AUTHINFOAPI
+#endif //H_CALLLOGAPI

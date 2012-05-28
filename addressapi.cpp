@@ -21,12 +21,19 @@
 #include "utils.h"
 
 AddressAPI::AddressAPI(LinphoneAddress *address) :
-		JSAPIAuto(APIDescription(this)), mAddress(address), mUsed(true) {
+		JSAPIAuto(APIDescription(this)), mAddress(address), mUsed(true), mConst(false) {
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this << "\t" << "address=" << address);
+	initProxy();
+}
+
+AddressAPI::AddressAPI(const LinphoneAddress *address) :
+		JSAPIAuto(APIDescription(this)), mAddress(const_cast<LinphoneAddress *>(address)), mUsed(true), mConst(true) {
+	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this << "\t" << "address=" << address);
+	initProxy();
 }
 
 AddressAPI::AddressAPI(const std::string &uri) :
-		JSAPIAuto(APIDescription(this)), mUsed(false) {
+		JSAPIAuto(APIDescription(this)), mUsed(false), mConst(false) {
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI", "this=" << this);
 	mAddress = linphone_address_new(uri.c_str());
 	initProxy();
@@ -37,11 +44,20 @@ void AddressAPI::initProxy() {
 	registerMethod("asStringUriOnly", make_method(this, &AddressAPI::asStringUriOnly));
 	registerMethod("clean", make_method(this, &AddressAPI::clean));
 	registerMethod("clone", make_method(this, &AddressAPI::clone));
-	registerProperty("displayName", make_property(this, &AddressAPI::getDisplayName, &AddressAPI::setDisplayName));
-	registerProperty("domain", make_property(this, &AddressAPI::getDomain, &AddressAPI::setDomain));
-	registerProperty("port", make_property(this, &AddressAPI::getPort, &AddressAPI::setPort));
-	registerProperty("portInt", make_property(this, &AddressAPI::getPortInt, &AddressAPI::setPortInt));
-	registerProperty("username", make_property(this, &AddressAPI::getUsername, &AddressAPI::setUsername));
+	if (mConst) {
+		registerProperty("displayName", make_property(this, &AddressAPI::getDisplayName));
+		registerProperty("domain", make_property(this, &AddressAPI::getDomain));
+		registerProperty("port", make_property(this, &AddressAPI::getPort));
+		registerProperty("portInt", make_property(this, &AddressAPI::getPortInt));
+		registerProperty("username", make_property(this, &AddressAPI::getUsername));
+	} else {
+		registerProperty("displayName", make_property(this, &AddressAPI::getDisplayName, &AddressAPI::setDisplayName));
+		registerProperty("domain", make_property(this, &AddressAPI::getDomain, &AddressAPI::setDomain));
+		registerProperty("port", make_property(this, &AddressAPI::getPort, &AddressAPI::setPort));
+		registerProperty("portInt", make_property(this, &AddressAPI::getPortInt, &AddressAPI::setPortInt));
+		registerProperty("username", make_property(this, &AddressAPI::getUsername, &AddressAPI::setUsername));
+	}
+	registerProperty("scheme", make_property(this, &AddressAPI::getScheme));
 }
 
 AddressAPI::~AddressAPI() {
@@ -126,6 +142,15 @@ void AddressAPI::setUsername(const std::string &username) {
 }
 
 AddressAPIPtr AddressAPI::get(LinphoneAddress *address) {
+	if (address == NULL)
+		return AddressAPIPtr();
+
+	AddressAPIPtr shared_ptr;
+	shared_ptr = AddressAPIPtr(new AddressAPI(address));
+	return shared_ptr;
+}
+
+AddressAPIPtr AddressAPI::get(const LinphoneAddress *address) {
 	if (address == NULL)
 		return AddressAPIPtr();
 
