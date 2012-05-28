@@ -23,9 +23,12 @@
 
 PayloadTypeAPI::PayloadTypeAPI(const CoreAPIPtr &core, PayloadType *payloadType) :
 		JSAPIAuto(APIDescription(this)), mCore(core), mPayloadType(payloadType) {
-	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", this);
+	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << "\t" << "core=" << core << ", payloadType=" << payloadType);
 	//mPayloadType->user_data = this;
+	initProxy();
+}
 
+void PayloadTypeAPI::initProxy() {
 	registerProperty("type", make_property(this, &PayloadTypeAPI::getType));
 	registerProperty("clockRate", make_property(this, &PayloadTypeAPI::getClockRate));
 	registerProperty("bitsPerSample", make_property(this, &PayloadTypeAPI::getBitsPerSample));
@@ -41,56 +44,67 @@ PayloadTypeAPI::PayloadTypeAPI(const CoreAPIPtr &core, PayloadType *payloadType)
 }
 
 PayloadTypeAPI::~PayloadTypeAPI() {
-	FBLOG_DEBUG("ProxyConfigAPI::~ProxyConfigAPI", this);
+	FBLOG_DEBUG("ProxyConfigAPI::~ProxyConfigAPI", "this=" << this);
 	mPayloadType->user_data = NULL;
 }
 
 int PayloadTypeAPI::getType() const {
+	FBLOG_DEBUG("PayloadTypeAPI::getType()", "this=" << this);
 	return mPayloadType->type;
 }
 
 int PayloadTypeAPI::getClockRate() const {
+	FBLOG_DEBUG("PayloadTypeAPI::getClockRate()", "this=" << this);
 	return mPayloadType->clock_rate;
 }
 
 int PayloadTypeAPI::getBitsPerSample() const {
+	FBLOG_DEBUG("PayloadTypeAPI::getBitsPerSample()", "this=" << this);
 	return mPayloadType->bits_per_sample;
 }
 
 std::string PayloadTypeAPI::getZeroPattern() const {
+	FBLOG_DEBUG("PayloadTypeAPI::getZeroPattern()", "this=" << this);
 	return mPayloadType->zero_pattern;
 }
 
 int PayloadTypeAPI::getPatternLength() const {
+	FBLOG_DEBUG("PayloadTypeAPI::getPatternLength()", "this=" << this);
 	return mPayloadType->pattern_length;
 }
 
 int PayloadTypeAPI::getNormalBitrate() const {
+	FBLOG_DEBUG("PayloadTypeAPI::getNormalBitrate()", "this=" << this);
 	return mPayloadType->normal_bitrate;
 }
 
 std::string PayloadTypeAPI::getMimeType() const {
+	FBLOG_DEBUG("PayloadTypeAPI::getMimeType()", "this=" << this);
 	return mPayloadType->mime_type;
 }
 
 int PayloadTypeAPI::getChannels() const {
+	FBLOG_DEBUG("PayloadTypeAPI::getChannels()", "this=" << this);
 	return mPayloadType->channels;
 }
 
 std::string PayloadTypeAPI::getRecvFmtp() const {
+	FBLOG_DEBUG("PayloadTypeAPI::getRecvFmtp()", "this=" << this);
 	return mPayloadType->recv_fmtp;
 }
 
 std::string PayloadTypeAPI::getSendFmtp() const {
+	FBLOG_DEBUG("PayloadTypeAPI::getSendFmtp()", "this=" << this);
 	return mPayloadType->send_fmtp;
 }
 
 int PayloadTypeAPI::getFlags() const {
+	FBLOG_DEBUG("PayloadTypeAPI::getFlags()", "this=" << this);
 	return mPayloadType->flags;
 }
 
 bool PayloadTypeAPI::getEnabled() const {
-	FBLOG_DEBUG("PayloadTypeAPI::getEnabled()", this);
+	FBLOG_DEBUG("PayloadTypeAPI::getEnabled()", "this=" << this);
 	CoreAPIPtr core(mCore.lock());
 	if (core != NULL) {
 		return linphone_core_payload_type_enabled(core->getRef(), mPayloadType) == TRUE ? true : false;
@@ -99,7 +113,7 @@ bool PayloadTypeAPI::getEnabled() const {
 }
 
 void PayloadTypeAPI::setEnabled(bool enable) {
-	FBLOG_DEBUG("PayloadTypeAPI::setEnabled()", "enable=" << enable);
+	FBLOG_DEBUG("PayloadTypeAPI::setEnabled()", "this=" << this << "\t" << "enable=" << enable);
 	CoreAPIPtr core(mCore.lock());
 	if (core != NULL) {
 		linphone_core_enable_payload_type(core->getRef(), mPayloadType, enable ? TRUE : FALSE);
@@ -107,7 +121,7 @@ void PayloadTypeAPI::setEnabled(bool enable) {
 }
 
 PayloadTypeAPIPtr PayloadTypeAPI::get(const CoreAPIPtr &core, PayloadType *payloadType) {
-	if(payloadType == NULL)
+	if (payloadType == NULL)
 		return PayloadTypeAPIPtr();
 
 	//void *ptr = payloadType->user_data;

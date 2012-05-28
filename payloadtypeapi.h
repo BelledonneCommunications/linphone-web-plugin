@@ -32,6 +32,7 @@ private:
 	PayloadType *mPayloadType;
 
 	PayloadTypeAPI(const CoreAPIPtr &core, PayloadType *payloadType);
+	void initProxy();
 public:
 	~PayloadTypeAPI();
 

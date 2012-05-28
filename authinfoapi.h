@@ -31,7 +31,7 @@ private:
 	bool mUsed;
 
 	AuthInfoAPI(LinphoneAuthInfo *authInfo);
-	void init_proxy();
+	void initProxy();
 public:
 	AuthInfoAPI(const std::string &username, const std::string &userid,
 			const std::string &passwd, const std::string &ha1, const std::string &realm);

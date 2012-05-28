@@ -27,7 +27,9 @@ FB_FORWARD_PTR(CallAPI)
 class CallAPI : public FB::JSAPIAuto {
 private:
 	LinphoneCall *mCall;
+
 	CallAPI(LinphoneCall *call);
+	void initProxy();
 
 public:
 	~CallAPI();

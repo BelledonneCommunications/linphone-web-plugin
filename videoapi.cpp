@@ -36,7 +36,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 VideoAPI::VideoAPI(const videoPtr& plugin, const FB::BrowserHostPtr& host) :
 		JSAPIAuto(APIDescription(this)), m_plugin(plugin), m_host(host) {
-	FBLOG_DEBUG("videoAPI::videoAPI()", this);
+	FBLOG_DEBUG("videoAPI::videoAPI()", "this=" << this);
 
 	mWindow = VideoWindow::create();
 
@@ -54,7 +54,7 @@ VideoAPI::VideoAPI(const videoPtr& plugin, const FB::BrowserHostPtr& host) :
 ///         the plugin is released.
 ///////////////////////////////////////////////////////////////////////////////
 VideoAPI::~VideoAPI() {
-	FBLOG_DEBUG("videoAPI::~videoAPI()", this);
+	FBLOG_DEBUG("videoAPI::~videoAPI()", "this=" << this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -74,26 +74,26 @@ videoPtr VideoAPI::getPlugin() {
 }
 
 void VideoAPI::setWindow(FB::PluginWindow *window) {
-	FBLOG_DEBUG("videoAPI::setWindow()", "window=" << window);
+	FBLOG_DEBUG("videoAPI::setWindow()", "this=" << this << "\t" << "window=" << window);
 	mWindow->setWindow(window);
 }
 
 const std::string &VideoAPI::getMagic() {
-	FBLOG_DEBUG("VideoAPI::getMagic()", "");
+	FBLOG_DEBUG("VideoAPI::getMagic()", "this=" << this);
 	return m_magic;
 }
 
 void VideoAPI::setMagic(const std::string &magic) {
-	FBLOG_DEBUG("VideoAPI::setMagic()", "magic=" << magic);
+	FBLOG_DEBUG("VideoAPI::setMagic()", "this=" << this << "\t" << "magic=" << magic);
 	m_magic = magic;
 }
 
 unsigned long VideoAPI::getWindow() {
-	FBLOG_DEBUG("VideoAPI::getWindow()", "");
+	FBLOG_DEBUG("VideoAPI::getWindow()", "this=" << this);
 	return mWindow->getId();
 }
 
 void VideoAPI::setBackgroundColor(int r, int g, int b) {
-	FBLOG_DEBUG("VideoAPI::setBackgroundColor()", "r=" << r << "\tg=" << g << "\tb=" << g);
+	FBLOG_DEBUG("VideoAPI::setBackgroundColor()", "this=" << this << "\t" << "r=" << r << "\tg=" << g << "\tb=" << g);
 	mWindow->setBackgroundColor(r, g, b);
 }

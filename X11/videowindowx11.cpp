@@ -28,11 +28,11 @@ VideoWindowPtr VideoWindow::create() {
 
 VideoWindowX11::VideoWindowX11() :
 		mPixmap(NULL), mGtkWidget(NULL) {
-	FBLOG_DEBUG("VideoWindowX11::VideoWindowX11()", this);
+	FBLOG_DEBUG("VideoWindowX11::VideoWindowX11()", "this=" << this);
 }
 
 VideoWindowX11::~VideoWindowX11() {
-	FBLOG_DEBUG("VideoWindowX11::~VideoWindowX11()", this);
+	FBLOG_DEBUG("VideoWindowX11::~VideoWindowX11()", "this=" << this);
 }
 
 gint VideoWindowX11::expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer *data) {
@@ -52,17 +52,17 @@ gint VideoWindowX11::configure_event(GtkWidget *widget, GdkEventConfigure *event
 }
 
 void VideoWindowX11::setBackgroundColor(int r, int g, int b) {
-	GdkColor  backgroundColor;
+	GdkColor backgroundColor;
 	backgroundColor.red = r;
 	backgroundColor.green = g;
 	backgroundColor.blue = b;
 	backgroundColor.pixel = 0;
-	gtk_widget_modify_bg (mGtkWidget, GTK_STATE_NORMAL, &backgroundColor);
+	gtk_widget_modify_bg(mGtkWidget, GTK_STATE_NORMAL, &backgroundColor);
 	gdk_draw_rectangle(mPixmap, mGtkWidget->style->bg_gc[GTK_STATE_NORMAL], TRUE, 0, 0, mGtkWidget->allocation.width, mGtkWidget->allocation.height);
 }
 
 void VideoWindowX11::setWindow(FB::PluginWindow *window) {
-	FBLOG_DEBUG("VideoWindowX11::setWindow()", "window=" << window);
+	FBLOG_DEBUG("VideoWindowX11::setWindow()", "this=" << this << "\t" << "window=" << window);
 	FB::PluginWindowX11* wnd = reinterpret_cast<FB::PluginWindowX11*>(window);
 	if (wnd) {
 		mGtkWidget = wnd->getWidget();
@@ -79,6 +79,6 @@ void VideoWindowX11::setWindow(FB::PluginWindow *window) {
 }
 
 unsigned long VideoWindowX11::getId() {
-	FBLOG_DEBUG("VideoWindowX11::getId()", this);
+	FBLOG_DEBUG("VideoWindowX11::getId()", "this=" << this);
 	return (unsigned long) GDK_DRAWABLE_XID(gtk_widget_get_window(mGtkWidget));
 }

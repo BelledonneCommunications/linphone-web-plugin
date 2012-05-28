@@ -17,49 +17,46 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef H_PROXYCONFIGAPI
-#define H_PROXYCONFIGAPI
+#ifndef H_ADDRESSAPI
+#define H_ADDRESSAPI
 
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
 
-FB_FORWARD_PTR(ProxyConfigAPI)
-class ProxyConfigAPI : public FB::JSAPIAuto {
+
+FB_FORWARD_PTR(AddressAPI)
+class AddressAPI: public FB::JSAPIAuto {
 private:
-	LinphoneProxyConfig *mProxyConfig;
+	LinphoneAddress *mAddress;
 	bool mUsed;
 
-	ProxyConfigAPI(LinphoneProxyConfig *proxyConfig);
+	AddressAPI(LinphoneAddress *address);
+	AddressAPI(const std::string &uri);
+
 	void initProxy();
 public:
-	ProxyConfigAPI();
-	~ProxyConfigAPI();
+	~AddressAPI();
 
-	int setServerAddr(const std::string &server_addr);
-	std::string getServerAddr() const;
+	std::string asString();
+	std::string asStringUriOnly();
+	void clean();
+	AddressAPIPtr clone();
+	std::string getDisplayName();
+	std::string getDomain();
+	std::string getPort();
+	int getPortInt();
+	std::string getScheme();
+	std::string getUsername();
+	void setDisplayName(const std::string &displayname);
+	void setDomain(const std::string &domain);
+	void setPort(const std::string &port);
+	void setPortInt(int port);
+	void setUsername(const std::string &username);
 
-	int setIdentity(const std::string &identity);
-	std::string getIdentity() const;
-
-	int setRoute(const std::string &route);
-	std::string getRoute() const;
-
-	void setExpires(int expires);
-	int getExpires() const;
-
-	void enableRegister(bool val);
-	bool registerEnabled() const;
-
-	int getState();
-
-	void edit();
-	int done();
-
-	inline LinphoneProxyConfig *getRef(){
-		mUsed = true;
-		return mProxyConfig;
+	inline LinphoneAddress *getRef() {
+		return mAddress;
 	}
-	static ProxyConfigAPIPtr get(LinphoneProxyConfig *proxyConfig);
+	static AddressAPIPtr get(LinphoneAddress *address);
 };
 
-#endif //H_PROXYCONFIGAPI
+#endif //H_ADDRESSAPI

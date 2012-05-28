@@ -22,31 +22,37 @@
 
 CallAPI::CallAPI(LinphoneCall *call) :
 		JSAPIAuto(APIDescription(this)), mCall(call) {
-	FBLOG_DEBUG("CallAPI::CallAPI", this);
+	FBLOG_DEBUG("CallAPI::CallAPI", "this=" << this << "\t" << "call=" << call);
 	linphone_call_ref(mCall);
 	linphone_call_set_user_pointer(mCall, this);
+	initProxy();
+}
 
+void CallAPI::initProxy() {
 	registerMethod("getState", FB::make_method(this, &CallAPI::getState));
 	registerMethod("getRemoteAddress", FB::make_method(this, &CallAPI::getRemoteAddress));
 	registerMethod("getDir", FB::make_method(this, &CallAPI::getDir));
 }
 
 CallAPI::~CallAPI() {
-	FBLOG_DEBUG("CallAPI::~CallAPI", this);
+	FBLOG_DEBUG("CallAPI::~CallAPI", "this=" << this);
 	linphone_call_set_user_pointer(mCall, NULL);
 	linphone_call_unref(mCall);
 }
 
 int CallAPI::getState() const {
+	FBLOG_DEBUG("CallAPI::getState()", "this=" << this);
 	return linphone_call_get_state(mCall);
 }
 
 std::string CallAPI::getRemoteAddress() const {
+	FBLOG_DEBUG("CallAPI::getRemoteAddress()", "this=" << this);
 	const char *txt = linphone_call_get_remote_address_as_string(mCall);
 	return txt != NULL ? txt : "";
 }
 
 int CallAPI::getDir() const {
+	FBLOG_DEBUG("CallAPI::getDir()", "this=" << this);
 	return linphone_call_get_dir(mCall);
 }
 

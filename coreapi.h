@@ -192,6 +192,8 @@ private	:
 	boost::thread *m_core_thread;
 	mythread_group *m_threads;
 
+	void initProxy();
+
 	void iterate() {
 		if (m_lin_core != NULL)
 			linphone_core_iterate(m_lin_core);
