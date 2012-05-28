@@ -65,7 +65,7 @@ int PayloadTypeAPI::getBitsPerSample() const {
 
 std::string PayloadTypeAPI::getZeroPattern() const {
 	FBLOG_DEBUG("PayloadTypeAPI::getZeroPattern()", "this=" << this);
-	return mPayloadType->zero_pattern;
+	return CHARPTR_TO_STRING(mPayloadType->zero_pattern);
 }
 
 int PayloadTypeAPI::getPatternLength() const {
@@ -80,7 +80,7 @@ int PayloadTypeAPI::getNormalBitrate() const {
 
 std::string PayloadTypeAPI::getMimeType() const {
 	FBLOG_DEBUG("PayloadTypeAPI::getMimeType()", "this=" << this);
-	return mPayloadType->mime_type;
+	return CHARPTR_TO_STRING(mPayloadType->mime_type);
 }
 
 int PayloadTypeAPI::getChannels() const {
@@ -90,12 +90,12 @@ int PayloadTypeAPI::getChannels() const {
 
 std::string PayloadTypeAPI::getRecvFmtp() const {
 	FBLOG_DEBUG("PayloadTypeAPI::getRecvFmtp()", "this=" << this);
-	return mPayloadType->recv_fmtp;
+	return CHARPTR_TO_STRING(mPayloadType->recv_fmtp);
 }
 
 std::string PayloadTypeAPI::getSendFmtp() const {
 	FBLOG_DEBUG("PayloadTypeAPI::getSendFmtp()", "this=" << this);
-	return mPayloadType->send_fmtp;
+	return CHARPTR_TO_STRING(mPayloadType->send_fmtp);
 }
 
 int PayloadTypeAPI::getFlags() const {

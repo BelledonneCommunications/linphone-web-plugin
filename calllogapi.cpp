@@ -38,7 +38,7 @@ CallLogAPI::~CallLogAPI() {
 
 std::string CallLogAPI::getRefKey() {
 	FBLOG_DEBUG("CallLogAPI::getRefKey", "this=" << this);
-	return linphone_call_log_get_ref_key(mCallLog);
+	return CHARPTR_TO_STRING(linphone_call_log_get_ref_key(mCallLog));
 }
 
 void CallLogAPI::setRefKey(const std::string &refKey) {
@@ -48,7 +48,7 @@ void CallLogAPI::setRefKey(const std::string &refKey) {
 
 std::string CallLogAPI::toStr() {
 	FBLOG_DEBUG("CallLogAPI::toStr", "this=" << this);
-	return linphone_call_log_to_str(mCallLog);
+	return CHARPTR_TO_STRING(linphone_call_log_to_str(mCallLog));
 }
 
 CallLogAPIPtr CallLogAPI::get(LinphoneCallLog *callLog) {

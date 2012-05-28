@@ -66,12 +66,12 @@ AddressAPI::~AddressAPI() {
 
 std::string AddressAPI::asString() {
 	FBLOG_DEBUG("AuthInfoAPI::asString()", "this=" << this);
-	return linphone_address_as_string(mAddress);
+	return CHARPTR_TO_STRING(linphone_address_as_string(mAddress));
 }
 
 std::string AddressAPI::asStringUriOnly() {
 	FBLOG_DEBUG("AuthInfoAPI::asStringUriOnly()", "this=" << this);
-	return linphone_address_as_string_uri_only(mAddress);
+	return CHARPTR_TO_STRING(linphone_address_as_string_uri_only(mAddress));
 }
 
 void AddressAPI::clean() {
@@ -88,7 +88,7 @@ AddressAPIPtr AddressAPI::clone() {
 
 std::string AddressAPI::getDisplayName() {
 	FBLOG_DEBUG("AuthInfoAPI::getDisplayName()", "this=" << this);
-	return linphone_address_get_display_name(mAddress);
+	return CHARPTR_TO_STRING(linphone_address_get_display_name(mAddress));
 }
 
 void AddressAPI::setDisplayName(const std::string &displayname) {
@@ -98,7 +98,7 @@ void AddressAPI::setDisplayName(const std::string &displayname) {
 
 std::string AddressAPI::getDomain() {
 	FBLOG_DEBUG("AuthInfoAPI::getDomain()", "this=" << this);
-	return linphone_address_get_domain(mAddress);
+	return CHARPTR_TO_STRING(linphone_address_get_domain(mAddress));
 }
 
 void AddressAPI::setDomain(const std::string &domain) {
@@ -108,7 +108,7 @@ void AddressAPI::setDomain(const std::string &domain) {
 
 std::string AddressAPI::getPort() {
 	FBLOG_DEBUG("AuthInfoAPI::getPort()", "this=" << this);
-	return linphone_address_get_port(mAddress);
+	return CHARPTR_TO_STRING(linphone_address_get_port(mAddress));
 }
 
 void AddressAPI::setPort(const std::string &port) {
@@ -128,12 +128,12 @@ void AddressAPI::setPortInt(int port) {
 
 std::string AddressAPI::getScheme() {
 	FBLOG_DEBUG("AuthInfoAPI::getScheme()", "this=" << this);
-	return linphone_address_get_scheme(mAddress);
+	return CHARPTR_TO_STRING(linphone_address_get_scheme(mAddress));
 }
 
 std::string AddressAPI::getUsername() {
 	FBLOG_DEBUG("AuthInfoAPI::getUsername()", "this=" << this);
-	return linphone_address_get_username(mAddress);
+	return CHARPTR_TO_STRING(linphone_address_get_username(mAddress));
 }
 
 void AddressAPI::setUsername(const std::string &username) {

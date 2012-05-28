@@ -71,8 +71,7 @@ int ProxyConfigAPI::setServerAddr(const std::string &server_addr) {
 }
 std::string ProxyConfigAPI::getServerAddr() const {
 	FBLOG_DEBUG("ProxyConfigAPI::getServerAddr()", "this=" << this);
-	const char *txt = linphone_proxy_config_get_addr(mProxyConfig);
-	return txt != NULL ? txt : "";
+	return CHARPTR_TO_STRING(linphone_proxy_config_get_addr(mProxyConfig));
 }
 
 int ProxyConfigAPI::setIdentity(const std::string &identity) {
@@ -81,8 +80,7 @@ int ProxyConfigAPI::setIdentity(const std::string &identity) {
 }
 std::string ProxyConfigAPI::getIdentity() const {
 	FBLOG_DEBUG("ProxyConfigAPI::getIdentity()", "this=" << this);
-	const char *txt = linphone_proxy_config_get_identity(mProxyConfig);
-	return txt != NULL ? txt : "";
+	return CHARPTR_TO_STRING(linphone_proxy_config_get_identity(mProxyConfig));
 }
 
 int ProxyConfigAPI::setRoute(const std::string &route) {
@@ -91,8 +89,7 @@ int ProxyConfigAPI::setRoute(const std::string &route) {
 }
 std::string ProxyConfigAPI::getRoute() const {
 	FBLOG_DEBUG("ProxyConfigAPI::getRoute()", "this=" << this);
-	const char *txt = linphone_proxy_config_get_route(mProxyConfig);
-	return txt != NULL ? txt : "";
+	return CHARPTR_TO_STRING(linphone_proxy_config_get_route(mProxyConfig));
 }
 
 void ProxyConfigAPI::setExpires(int expires) {

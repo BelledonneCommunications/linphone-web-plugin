@@ -101,4 +101,8 @@ std::string APIDescription(T *ptr) {
 	return ss.str();
 }
 
+static std::string CHARPTR_TO_STRING(const char *str) {
+	return (str != NULL)? std::string(str): std::string();
+}
+
 #endif // H_UTILS

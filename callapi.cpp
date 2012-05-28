@@ -71,7 +71,7 @@ CallAPI::~CallAPI() {
 
 std::string CallAPI::getAuthenticationToken() const {
 	FBLOG_DEBUG("CallAPI::getAuthenticationToken()", "this=" << this);
-	return linphone_call_get_authentication_token(mCall);
+	return CHARPTR_TO_STRING(linphone_call_get_authentication_token(mCall));
 }
 
 bool CallAPI::getAuthenticationTokenVerified() const {
@@ -131,7 +131,7 @@ float CallAPI::getRecordVolume() const {
 
 std::string CallAPI::getReferTo() const {
 	FBLOG_DEBUG("CallAPI::getReason()", "this=" << this);
-	return linphone_call_get_refer_to(mCall);
+	return CHARPTR_TO_STRING(linphone_call_get_refer_to(mCall));
 }
 
 AddressAPIPtr CallAPI::getRemoteAddress() const {
@@ -141,8 +141,7 @@ AddressAPIPtr CallAPI::getRemoteAddress() const {
 
 std::string CallAPI::getRemoteAddressAsString() const {
 	FBLOG_DEBUG("CallAPI::getRemoteAddressAsString()", "this=" << this);
-	const char *txt = linphone_call_get_remote_address_as_string(mCall);
-	return txt != NULL ? txt : "";
+	return CHARPTR_TO_STRING(linphone_call_get_remote_address_as_string(mCall));
 }
 
 CallParamsAPIPtr CallAPI::getRemoteParams() const {
@@ -152,7 +151,7 @@ CallParamsAPIPtr CallAPI::getRemoteParams() const {
 
 std::string CallAPI::getRemoteUserAgent() const {
 	FBLOG_DEBUG("CallAPI::getRemoteUserAgent()", "this=" << this);
-	return linphone_call_get_remote_user_agent(mCall);
+	return CHARPTR_TO_STRING(linphone_call_get_remote_user_agent(mCall));
 }
 
 CallAPIPtr CallAPI::getReplacedCall() const {

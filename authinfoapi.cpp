@@ -48,7 +48,7 @@ AuthInfoAPI::~AuthInfoAPI() {
 
 std::string AuthInfoAPI::getUserid() const {
 	FBLOG_DEBUG("AuthInfoAPI::getUserid()", "this=" << this);
-	return linphone_auth_info_get_userid(mAuthInfo);
+	return CHARPTR_TO_STRING(linphone_auth_info_get_userid(mAuthInfo));
 }
 
 void AuthInfoAPI::setUserid(const std::string &userid) {
@@ -58,7 +58,7 @@ void AuthInfoAPI::setUserid(const std::string &userid) {
 
 std::string AuthInfoAPI::getUsername() const {
 	FBLOG_DEBUG("AuthInfoAPI::getUsername()", "this=" << this);
-	return linphone_auth_info_get_username(mAuthInfo);
+	return CHARPTR_TO_STRING(linphone_auth_info_get_username(mAuthInfo));
 }
 
 void AuthInfoAPI::setUsername(const std::string &username) {
@@ -68,7 +68,7 @@ void AuthInfoAPI::setUsername(const std::string &username) {
 
 std::string AuthInfoAPI::getPasswd() const {
 	FBLOG_DEBUG("AuthInfoAPI::getPasswd()", "this=" << this);
-	return linphone_auth_info_get_passwd(mAuthInfo);
+	return CHARPTR_TO_STRING(linphone_auth_info_get_passwd(mAuthInfo));
 }
 
 void AuthInfoAPI::setPasswd(const std::string &passwd) {

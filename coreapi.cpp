@@ -480,21 +480,21 @@ std::string CoreAPI::getRingerDevice() {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRingerDevice()", "this=" << this);
-	return linphone_core_get_ringer_device(m_lin_core);
+	return CHARPTR_TO_STRING(linphone_core_get_ringer_device(m_lin_core));
 }
 
 std::string CoreAPI::getPlaybackDevice() {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getPlaybackDevice()", "this=" << this);
-	return linphone_core_get_playback_device(m_lin_core);
+	return CHARPTR_TO_STRING(linphone_core_get_playback_device(m_lin_core));
 }
 
 std::string CoreAPI::getCaptureDevice() {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getPlaybackDevice()", "this=" << this);
-	return linphone_core_get_capture_device(m_lin_core);
+	return CHARPTR_TO_STRING(linphone_core_get_capture_device(m_lin_core));
 }
 
 /*
@@ -537,7 +537,7 @@ std::string CoreAPI::getVideoDevice() {
 
 	FBLOG_DEBUG("CoreAPI::getVideoDevice()", "this=" << this);
 
-	return linphone_core_get_video_device(m_lin_core);
+	return CHARPTR_TO_STRING(linphone_core_get_video_device(m_lin_core));
 }
 
 /*
