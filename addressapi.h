@@ -38,16 +38,16 @@ private:
 public:
 	~AddressAPI();
 
-	std::string asString();
-	std::string asStringUriOnly();
+	std::string asString() const;
+	std::string asStringUriOnly() const;
 	void clean();
-	AddressAPIPtr clone();
-	std::string getDisplayName();
-	std::string getDomain();
-	std::string getPort();
-	int getPortInt();
-	std::string getScheme();
-	std::string getUsername();
+	AddressAPIPtr clone() const;
+	std::string getDisplayName() const;
+	std::string getDomain() const;
+	std::string getPort() const;
+	int getPortInt() const;
+	std::string getScheme() const;
+	std::string getUsername() const;
 	void setDisplayName(const std::string &displayname);
 	void setDomain(const std::string &domain);
 	void setPort(const std::string &port);

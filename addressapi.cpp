@@ -64,12 +64,12 @@ AddressAPI::~AddressAPI() {
 	FBLOG_DEBUG("AddressAPI::~AddressAPI", "this=" << this);
 }
 
-std::string AddressAPI::asString() {
+std::string AddressAPI::asString() const {
 	FBLOG_DEBUG("AuthInfoAPI::asString()", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_as_string(mAddress));
 }
 
-std::string AddressAPI::asStringUriOnly() {
+std::string AddressAPI::asStringUriOnly() const {
 	FBLOG_DEBUG("AuthInfoAPI::asStringUriOnly()", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_as_string_uri_only(mAddress));
 }
@@ -79,14 +79,14 @@ void AddressAPI::clean() {
 	linphone_address_clean(mAddress);
 }
 
-AddressAPIPtr AddressAPI::clone() {
+AddressAPIPtr AddressAPI::clone() const {
 	FBLOG_DEBUG("AuthInfoAPI::clone()", "this=" << this);
 	AddressAPIPtr ret(new AddressAPI(linphone_address_clone(mAddress)));
 	ret->mUsed = false;
 	return ret;
 }
 
-std::string AddressAPI::getDisplayName() {
+std::string AddressAPI::getDisplayName() const {
 	FBLOG_DEBUG("AuthInfoAPI::getDisplayName()", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_get_display_name(mAddress));
 }
@@ -96,7 +96,7 @@ void AddressAPI::setDisplayName(const std::string &displayname) {
 	linphone_address_set_display_name(mAddress, displayname.c_str());
 }
 
-std::string AddressAPI::getDomain() {
+std::string AddressAPI::getDomain() const {
 	FBLOG_DEBUG("AuthInfoAPI::getDomain()", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_get_domain(mAddress));
 }
@@ -106,7 +106,7 @@ void AddressAPI::setDomain(const std::string &domain) {
 	linphone_address_set_domain(mAddress, domain.c_str());
 }
 
-std::string AddressAPI::getPort() {
+std::string AddressAPI::getPort() const {
 	FBLOG_DEBUG("AuthInfoAPI::getPort()", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_get_port(mAddress));
 }
@@ -116,7 +116,7 @@ void AddressAPI::setPort(const std::string &port) {
 	linphone_address_set_port(mAddress, port.c_str());
 }
 
-int AddressAPI::getPortInt() {
+int AddressAPI::getPortInt() const {
 	FBLOG_DEBUG("AuthInfoAPI::getPortInt()", "this=" << this);
 	return linphone_address_get_port_int(mAddress);
 }
@@ -126,12 +126,12 @@ void AddressAPI::setPortInt(int port) {
 	linphone_address_set_port_int(mAddress, port);
 }
 
-std::string AddressAPI::getScheme() {
+std::string AddressAPI::getScheme() const {
 	FBLOG_DEBUG("AuthInfoAPI::getScheme()", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_get_scheme(mAddress));
 }
 
-std::string AddressAPI::getUsername() {
+std::string AddressAPI::getUsername() const {
 	FBLOG_DEBUG("AuthInfoAPI::getUsername()", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_get_username(mAddress));
 }

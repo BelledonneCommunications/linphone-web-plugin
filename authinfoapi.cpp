@@ -28,7 +28,8 @@ AuthInfoAPI::AuthInfoAPI(LinphoneAuthInfo *authInfo) :
 
 AuthInfoAPI::AuthInfoAPI(const std::string &username, const std::string &userid, const std::string &passwd, const std::string &ha1, const std::string &realm) :
 		JSAPIAuto(APIDescription(this)), mUsed(false) {
-	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI", "this=" << this << "username=" << username << ", userid=" << userid << ", passwd=" << passwd << ", ha1" << ha1 << ", realm=" << realm);
+	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI",
+			"this=" << this << "username=" << username << ", userid=" << userid << ", passwd=" << passwd << ", ha1" << ha1 << ", realm=" << realm);
 	mAuthInfo = linphone_auth_info_new(username.c_str(), userid.c_str(), passwd.c_str(), ha1.c_str(), realm.c_str());
 	initProxy();
 }

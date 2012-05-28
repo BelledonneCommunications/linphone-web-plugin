@@ -35,10 +35,10 @@ private:
 public:
 	~CallLogAPI();
 
-	std::string getRefKey();
+	std::string getRefKey() const;
 	void setRefKey(const std::string &refKey);
 
-	std::string toStr();
+	std::string toStr() const;
 
 	inline LinphoneCallLog *getRef() {
 		mUsed = true;

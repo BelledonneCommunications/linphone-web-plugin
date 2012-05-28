@@ -70,7 +70,7 @@ public:
 	bool hasTransferPending();
 	void sendVfuRequest();
 	void setAuthenticationTokenVerified(bool verified);
-	void zoomVideo(float zoom, float cx, float cy);
+	//void zoomVideo(float zoom, float cx, float cy);
 
 	inline LinphoneCall *getRef() const {
 		return mCall;

@@ -38,16 +38,16 @@ public:
 	~CallParamsAPI();
 
 	void setAudioBandwidthLimit(int bw);
-	bool earlyMediaSendingEnabled();
+	bool earlyMediaSendingEnabled() const;
 	void enableEarlyMediaSending(bool enable);
-	bool localConferenceMode();
+	bool localConferenceMode() const;
 	//getMediaEncryption	mediaEncryption
 	//setMediaEncryption	mediaEncryption
 	//getUsedAudioCodec	usedAudioCodec
 	//getUsedVideoCodec	usedVideoCodec
 	void enableVideo(bool enable);
-	bool videoEnabled();
-	CallParamsAPIPtr copy();
+	bool videoEnabled() const;
+	CallParamsAPIPtr copy() const;
 
 
 	inline LinphoneCallParams *getRef() {

@@ -60,7 +60,7 @@ void CallAPI::initProxy() {
 	registerMethod("hasTransferPending", make_method(this, &CallAPI::hasTransferPending));
 	registerMethod("sendVfuRequest", make_method(this, &CallAPI::sendVfuRequest));
 	registerMethod("setAuthenticationTokenVerified", make_method(this, &CallAPI::setAuthenticationTokenVerified));
-	registerMethod("zoomVideo", make_method(this, &CallAPI::zoomVideo));
+	//registerMethod("zoomVideo", make_method(this, &CallAPI::zoomVideo));
 }
 
 CallAPI::~CallAPI() {
@@ -219,10 +219,10 @@ void CallAPI::setAuthenticationTokenVerified(bool verified) {
 	linphone_call_set_authentication_token_verified(mCall, verified);
 }
 
-void CallAPI::zoomVideo(float zoom, float cx, float cy) {
+/*void CallAPI::zoomVideo(float zoom, float cx, float cy) {
 	FBLOG_DEBUG("CallAPI::zoomVideo()", "this=" << this << "\t" << "zoom=" << zoom << ", cx=" << cx << ", cy=" << cy);
 	linphone_call_zoom_video(mCall, zoom, cx, cy);
-}
+}*/
 
 CallAPIPtr CallAPI::get(LinphoneCall *call) {
 	if (call == NULL)

@@ -51,7 +51,7 @@ void CallParamsAPI::setAudioBandwidthLimit(int bw) {
 	linphone_call_params_set_audio_bandwidth_limit(mCallParams, bw);
 }
 
-bool CallParamsAPI::earlyMediaSendingEnabled() {
+bool CallParamsAPI::earlyMediaSendingEnabled() const {
 	FBLOG_DEBUG("CallParamsAPI::earlyMediaSendingEnabled", "this=" << this);
 	return linphone_call_params_early_media_sending_enabled(mCallParams) == TRUE ? true : false;
 }
@@ -61,7 +61,7 @@ void CallParamsAPI::enableEarlyMediaSending(bool enable) {
 	return linphone_call_params_enable_early_media_sending(mCallParams, enable ? TRUE : FALSE);
 }
 
-bool CallParamsAPI::localConferenceMode() {
+bool CallParamsAPI::localConferenceMode() const {
 	FBLOG_DEBUG("CallParamsAPI::localConferenceMode", "this=" << this);
 	return linphone_call_params_local_conference_mode(mCallParams) == TRUE ? true : false;
 }
@@ -76,13 +76,13 @@ void CallParamsAPI::enableVideo(bool enable) {
 
 }
 
-bool CallParamsAPI::videoEnabled() {
+bool CallParamsAPI::videoEnabled() const {
 	FBLOG_DEBUG("CallParamsAPI::videoEnabled", "this=" << this);
 	return linphone_call_params_video_enabled(mCallParams) == TRUE ? true : false;
 
 }
 
-CallParamsAPIPtr CallParamsAPI::copy() {
+CallParamsAPIPtr CallParamsAPI::copy() const {
 	FBLOG_DEBUG("CallParamsAPI::getRefKey", "this=" << this);
 	CallParamsAPIPtr ret(new CallParamsAPI(linphone_call_params_copy(mCallParams)));
 	ret->mUsed = false;
