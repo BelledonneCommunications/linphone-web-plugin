@@ -52,24 +52,25 @@ target_link_libraries(${PROJECT_NAME}
 # Copy dll dependencies
 ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
 		  PRE_BUILD
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavcodec.so.53 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavutil.so.51 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libeXosip2.so.7 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libjpeg.so.8 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.so.5 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/  
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libogg.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.so.8 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosip2.so.7 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosipparser2.so.7 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeex.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeexdsp.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libswscale.so.2 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheora.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4l1.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4l2.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4lconvert.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libz.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavcodec.so.53 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavutil.so.51 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libeXosip2.so.7 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libjpeg.so.8 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.so.5 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libogg.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.so.8 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosip2.so.7 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosipparser2.so.7 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeex.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeexdsp.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libswscale.so.2 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheora.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4l1.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4l2.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4lconvert.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libz.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
 )
 
 # Use default chrpath if not defined
@@ -80,50 +81,50 @@ ENDIF(NOT DEFINED CMAKE_CHRPATH)
 # Change rpath
 ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
                  PRE_BUILD
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libavcodec.so.53
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libavutil.so.51
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libjpeg.so.8
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libeXosip2.so.7
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/liblinphone.so.5
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libmediastreamer.so.1           
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libogg.so.0
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libortp.so.8
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libosip2.so.7
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libosipparser2.so.7
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libspeex.so.1
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libspeexdsp.so.1
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libswscale.so.2
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libtheora.so.0
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libv4l1.so.0
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libv4l2.so.0
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libv4lconvert.so.0
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libz.so.1
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libavcodec.so.53
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libavutil.so.51
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libjpeg.so.8
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libeXosip2.so.7
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/liblinphone.so.5
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libmediastreamer.so.1           
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libogg.so.0
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libortp.so.8
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libosip2.so.7
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libosipparser2.so.7
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libspeex.so.1
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libspeexdsp.so.1
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libswscale.so.2
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libtheora.so.0
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libv4l1.so.0
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libv4l2.so.0
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libv4lconvert.so.0
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libz.so.1
 )
 
 # Add rpath to generated library
 SET (CMAKE_SHARED_LINKER_FLAGS
-    "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath,'\$ORIGIN/linphonejs_libs'" )
+    "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath,'\$ORIGIN/linphoneweb_libs'" )
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/X11/XPI/install.rdf DESTINATION .)
 install(TARGETS ${PROJECT_NAME} DESTINATION plugins)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libavcodec.so.53 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libavutil.so.51 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libjpeg.so.8 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libeXosip2.so.7 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/liblinphone.so.5 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libmediastreamer.so.1 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libogg.so.0 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libortp.so.8 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libosip2.so.7 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libosipparser2.so.7 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libspeex.so.1 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libspeexdsp.so.1 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libswscale.so.2 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libtheora.so.0 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libv4l1.so.0 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libv4l2.so.0 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libv4lconvert.so.0 DESTINATION plugins/linphonejs_libs)
-install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libz.so.1 DESTINATION plugins/linphonejs_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libavcodec.so.53 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libavutil.so.51 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libjpeg.so.8 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libeXosip2.so.7 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/liblinphone.so.5 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libmediastreamer.so.1 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libogg.so.0 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libortp.so.8 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libosip2.so.7 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libosipparser2.so.7 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libspeex.so.1 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libspeexdsp.so.1 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libswscale.so.2 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libtheora.so.0 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libv4l1.so.0 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libv4l2.so.0 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libv4lconvert.so.0 DESTINATION plugins/linphoneweb_libs)
+install(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/libz.so.1 DESTINATION plugins/linphoneweb_libs)
 
 SET(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 SET(CPACK_PACKAGE_VERSION ${FBSTRING_PLUGIN_VERSION})

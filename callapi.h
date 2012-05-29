@@ -66,11 +66,11 @@ public:
 	bool echoLimiterEnabled() const;
 	void enableEchoLimiter(bool enabled);
 
-	bool askedToAutoanswer();
-	bool hasTransferPending();
+	bool askedToAutoanswer() const;
+	bool hasTransferPending() const;
 	void sendVfuRequest();
 	void setAuthenticationTokenVerified(bool verified);
-	//void zoomVideo(float zoom, float cx, float cy);
+	void zoomVideo(float zoom, float cx, float cy);
 
 	inline LinphoneCall *getRef() const {
 		return mCall;
