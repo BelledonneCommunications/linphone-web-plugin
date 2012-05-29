@@ -25,6 +25,7 @@
 
 FB_FORWARD_PTR(CallLogAPI);
 FB_FORWARD_PTR(CallParamsAPI);
+FB_FORWARD_PTR(CallStatsAPI);
 FB_FORWARD_PTR(AddressAPI);
 FB_FORWARD_PTR(CoreAPI);
 
@@ -38,6 +39,7 @@ private:
 
 public:
 	~CallAPI();
+	CallStatsAPIPtr getAudioStats() const;
 	std::string getAuthenticationToken() const;
 	bool getAuthenticationTokenVerified() const;
 	float getAverageQuality() const;
@@ -58,6 +60,7 @@ public:
 	CallAPIPtr getReplacedCall() const;
 	int getState() const;
 	int getTransferState() const;
+	CallStatsAPIPtr getVideoStats() const;
 
 	bool cameraEnabled() const;
 	void enableCamera(bool enabled);

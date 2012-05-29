@@ -21,6 +21,7 @@
 #include "callapi.h"
 #include "calllogapi.h"
 #include "callparamsapi.h"
+#include "callstatsapi.h"
 #include "coreapi.h"
 #include "utils.h"
 
@@ -33,6 +34,7 @@ CallAPI::CallAPI(LinphoneCall *call) :
 }
 
 void CallAPI::initProxy() {
+	registerProperty("audioStats", FB::make_property(this, &CallAPI::getAudioStats));
 	registerProperty("authenticationToken", FB::make_property(this, &CallAPI::getAuthenticationToken));
 	registerProperty("averageQuality", FB::make_property(this, &CallAPI::getAverageQuality));
 	registerProperty("cameraEnabled", FB::make_property(this, &CallAPI::cameraEnabled, &CallAPI::enableCamera));
@@ -55,6 +57,7 @@ void CallAPI::initProxy() {
 	registerProperty("replacedCall", FB::make_property(this, &CallAPI::getReplacedCall));
 	registerProperty("state", FB::make_property(this, &CallAPI::getState));
 	registerProperty("transferState", FB::make_property(this, &CallAPI::getTransferState));
+	registerProperty("videoStats", FB::make_property(this, &CallAPI::getVideoStats));
 
 	registerMethod("askedToAutoanswer", make_method(this, &CallAPI::askedToAutoanswer));
 	registerMethod("hasTransferPending", make_method(this, &CallAPI::hasTransferPending));
@@ -67,6 +70,11 @@ CallAPI::~CallAPI() {
 	FBLOG_DEBUG("CallAPI::~CallAPI", "this=" << this);
 	linphone_call_set_user_pointer(mCall, NULL);
 	linphone_call_unref(mCall);
+}
+
+CallStatsAPIPtr CallAPI::getAudioStats() const {
+	FBLOG_DEBUG("CallAPI::getAudioStats()", "this=" << this);
+	return CallStatsAPI::get(linphone_call_get_audio_stats(mCall));
 }
 
 std::string CallAPI::getAuthenticationToken() const {
@@ -167,6 +175,11 @@ int CallAPI::getState() const {
 int CallAPI::getTransferState() const {
 	FBLOG_DEBUG("CallAPI::getTransferState()", "this=" << this);
 	return linphone_call_get_transfer_state(mCall);
+}
+
+CallStatsAPIPtr CallAPI::getVideoStats() const {
+	FBLOG_DEBUG("CallAPI::getVideoStats()", "this=" << this);
+	return CallStatsAPI::get(linphone_call_get_video_stats(mCall));
 }
 
 bool CallAPI::cameraEnabled() const {
