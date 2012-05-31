@@ -23,8 +23,10 @@
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
 
+FB_FORWARD_PTR(CoreAPI);
+
 FB_FORWARD_PTR(ProxyConfigAPI)
-class ProxyConfigAPI : public FB::JSAPIAuto {
+class ProxyConfigAPI: public FB::JSAPIAuto {
 private:
 	LinphoneProxyConfig *mProxyConfig;
 	bool mUsed;
@@ -35,13 +37,33 @@ public:
 	ProxyConfigAPI();
 	~ProxyConfigAPI();
 
-	int setServerAddr(const std::string &server_addr);
+	CoreAPIPtr getCore() const;
+
+	bool getDialEscapePlus() const;
+	void setDialEscapePlus(bool escape);
+
+	std::string getDialPrefix() const;
+	void setDialPrefix(const std::string &prefix);
+
+	std::string getDomain() const;
+	int getError() const;
+
+	bool publishEnabled() const;
+	void enablePublish(bool enable);
+
+	std::string getSipSetup() const;
+	void setSipSetup(const std::string &sip_setup);
+
+	bool isRegistered() const;
+	//getSipSetupContext
+
+	void setServerAddr(const std::string &server_addr);
 	std::string getServerAddr() const;
 
-	int setIdentity(const std::string &identity);
+	void setIdentity(const std::string &identity);
 	std::string getIdentity() const;
 
-	int setRoute(const std::string &route);
+	void setRoute(const std::string &route);
 	std::string getRoute() const;
 
 	void setExpires(int expires);
@@ -55,7 +77,10 @@ public:
 	void edit();
 	int done();
 
-	inline LinphoneProxyConfig *getRef(){
+	std::string normalizeNumber(const std::string &username) const;
+	void refreshRegister();
+
+	inline LinphoneProxyConfig *getRef() {
 		mUsed = true;
 		return mProxyConfig;
 	}
