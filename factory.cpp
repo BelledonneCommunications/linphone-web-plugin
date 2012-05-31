@@ -34,21 +34,23 @@ public:
 		FBLOG_DEBUG("createPlugin()", mimetype);
 		if (mimetype == "application/x-linphone-web-video")
 			return boost::make_shared<video>();
-		return boost::make_shared<linphone>();
+		return boost::make_shared<core>();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
 	/// @see FB::FactoryBase::globalPluginInitialize
 	///////////////////////////////////////////////////////////////////////////////
 	void globalPluginInitialize() {
-		linphone::StaticInitialize();
+		core::StaticInitialize();
+		video::StaticInitialize();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
 	/// @see FB::FactoryBase::globalPluginDeinitialize
 	///////////////////////////////////////////////////////////////////////////////
 	void globalPluginDeinitialize() {
-		linphone::StaticDeinitialize();
+		core::StaticDeinitialize();
+		video::StaticDeinitialize();
 	}
 
 	void getLoggingMethods(FB::Log::LogMethodList& outMethods) {

@@ -83,10 +83,10 @@
 FB_FORWARD_PTR(CoreAPI)
 class CoreAPI: public FB::JSAPIAuto {
 public:
-	CoreAPI(const linphonePtr& plugin, const FB::BrowserHostPtr& host);
+	CoreAPI(const corePtr& plugin, const FB::BrowserHostPtr& host);
 	~CoreAPI();
 
-	linphonePtr getPlugin();
+	corePtr getPlugin();
 
 	// Read-only property
 	std::string getVersion();
@@ -95,10 +95,6 @@ public:
 	// Property
 	const std::string &getMagic();
 	void setMagic(const std::string &magic);
-
-	// Methods
-	int init();
-	void sendDtmf(const std::string &dtmf);
 
 	// Call functions
 	DECLARE_SYNC_N_ASYNC(invite, 1, (const std::string &), CallAPIPtr);
@@ -164,6 +160,23 @@ public:
 	AuthInfoAPIPtr newAuthInfo(const std::string &username, const std::string &userid,
 			const std::string &passwd, const std::string &ha1, const std::string &realm);
 
+	// Dtmf
+	void sendDtmf(const std::string &dtmf);
+	void stopDtmf();
+	void playDtmf(const std::string &dtmf, int duration_ms);
+
+	// Miscs
+	int init();
+	void enableEchoCancellation(bool enable);
+	bool echoCancellationEnabled();
+	void enableEchoLimiter(bool enable);
+	bool echoLimiterEnabled();
+	void enableIpv6(bool enable);
+	bool ipv6Enabled();
+	void enableKeepAlive(bool enable);
+	bool keepAliveEnabled();
+
+
 	// Event helpers
 	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const std::string&));
 	FB_JSAPI_EVENT(callStateChanged, 4, (CoreAPIPtr, CallAPIPtr, const int&, const std::string&));
@@ -177,17 +190,17 @@ public:
 	FB_JSAPI_EVENT(show, 1, (CoreAPIPtr));
 
 	inline LinphoneCore *getRef() const {
-		return m_lin_core;
+		return mCore;
 	}
 
 	static CoreAPIPtr get(LinphoneCore *core);
 private :
 	std::string m_magic;
-	linphoneWeakPtr m_plugin;
+	coreWeakPtr m_plugin;
 	FB::BrowserHostPtr m_host;
 
-	LinphoneCore *m_lin_core; // Linphone core object
-	LinphoneCoreVTable m_lin_vtable;// Linphone callback methods table
+	LinphoneCore *mCore; // Linphone core object
+	LinphoneCoreVTable mVtable;// Linphone callback methods table
 
 	boost::mutex m_core_mutex;
 	boost::thread *m_core_thread;
@@ -196,8 +209,8 @@ private :
 	void initProxy();
 
 	void iterate() {
-		if (m_lin_core != NULL)
-			linphone_core_iterate(m_lin_core);
+		if (mCore != NULL)
+			linphone_core_iterate(mCore);
 	}
 
 	friend void linphone_iterate_thread(CoreAPI *linphone_api);

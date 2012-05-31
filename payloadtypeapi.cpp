@@ -197,7 +197,7 @@ void PayloadTypeAPI::setEnabled(bool enable) {
 }
 
 PayloadTypeAPIPtr PayloadTypeAPI::clone() const {
-	return PayloadTypeAPI::get(payload_type_clone(mPayloadType));
+	return PayloadTypeAPI::get(mCore.lock(), payload_type_clone(mPayloadType));
 }
 
 std::string PayloadTypeAPI::getRtpmap() const {

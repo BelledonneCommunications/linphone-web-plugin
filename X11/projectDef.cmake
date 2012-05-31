@@ -47,6 +47,7 @@ target_link_libraries(${PROJECT_NAME}
 	${PLUGIN_INTERNAL_DEPS}
 	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.so.5"
 	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer.so.1"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.so.8"
 )
 
 # Copy dll dependencies
@@ -71,6 +72,13 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4l2.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4lconvert.so.0 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libz.so.1 ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/
+
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/share/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/share/sounds/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/share/sounds/linphone/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/share/sounds/linphone/rings/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/share/sounds/linphone/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/linphoneweb_libs/share/sounds/linphone/rings/
 )
 
 # Use default chrpath if not defined

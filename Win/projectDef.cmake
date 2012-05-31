@@ -72,6 +72,7 @@ target_link_libraries(${PROJECT_NAME}
 	${PLUGIN_INTERNAL_DEPS}
 	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone-5.lib"
 	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer-1.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp-8.lib"
 	)
 
 #Copy dll dependencies

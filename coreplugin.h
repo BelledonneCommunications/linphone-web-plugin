@@ -25,15 +25,15 @@
 #include <PluginEvents/AttachedEvent.h>
 #include <PluginCore.h>
 
-FB_FORWARD_PTR(linphone)
-class linphone: public FB::PluginCore {
+FB_FORWARD_PTR(core)
+class core: public FB::PluginCore {
 public:
 	static void StaticInitialize();
 	static void StaticDeinitialize();
 
 public:
-	linphone();
-	virtual ~linphone();
+	core();
+	virtual ~core();
 
 public:
 	void onPluginReady();
@@ -47,6 +47,7 @@ public:
 	virtual bool isWindowless() {
 		return true;
 	}
+	virtual void 	setFSPath (const std::string &path);
 
 	BEGIN_PLUGIN_EVENT_MAP()
 	EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindow)

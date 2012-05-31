@@ -25,7 +25,7 @@
 #include "utils.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @fn videoAPI::videoAPI(const linphonePtr& plugin, const FB::BrowserHostPtr host)
+/// @fn videoAPI::videoAPI(const videoPtr& plugin, const FB::BrowserHostPtr host)
 ///
 /// @brief  Constructor for your JSAPI object.  You should register your methods, properties, and events
 ///         that should be accessible to Javascript from here.
@@ -58,7 +58,7 @@ VideoAPI::~VideoAPI() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @fn linphonePtr CoreAPI::getPlugin()
+/// @fn videoPtr CoreAPI::getPlugin()
 ///
 /// @brief  Gets a reference to the plugin that was passed in when the object
 ///         was created.  If the plugin has already been released then this
