@@ -82,7 +82,6 @@ bool ProxyConfigAPI::getDialEscapePlus() const {
 	FBLOG_DEBUG("ProxyConfigAPI::getDialEscapePlus()", "this=" << this);
 	return linphone_proxy_config_get_dial_escape_plus(mProxyConfig) == TRUE ? true : false;
 }
-
 void ProxyConfigAPI::setDialEscapePlus(bool escape) {
 	FBLOG_DEBUG("ProxyConfigAPI::setDialEscapePlus()", "this=" << this << "\t" << "escape=" << escape);
 	linphone_proxy_config_set_dial_escape_plus(mProxyConfig, escape ? TRUE : FALSE);
@@ -92,7 +91,6 @@ std::string ProxyConfigAPI::getDialPrefix() const {
 	FBLOG_DEBUG("ProxyConfigAPI::getDialPrefix()", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_proxy_config_get_dial_prefix(mProxyConfig));
 }
-
 void ProxyConfigAPI::setDialPrefix(const std::string &prefix) {
 	FBLOG_DEBUG("ProxyConfigAPI::setDialEscapePlus()", "this=" << this << "\t" << "prefix=" << prefix);
 	linphone_proxy_config_set_dial_prefix(mProxyConfig, prefix.c_str());
@@ -107,7 +105,6 @@ bool ProxyConfigAPI::publishEnabled() const {
 	FBLOG_DEBUG("ProxyConfigAPI::publishEnabled()", "this=" << this);
 	return linphone_proxy_config_publish_enabled(mProxyConfig);
 }
-
 void ProxyConfigAPI::enablePublish(bool enable) {
 	FBLOG_DEBUG("ProxyConfigAPI::enablePublish()", "this=" << this << "\t" << "enable=" << enable);
 	linphone_proxy_config_enable_publish(mProxyConfig, enable ? TRUE : FALSE);
@@ -118,7 +115,6 @@ std::string ProxyConfigAPI::getSipSetup() const {
 	SipSetup *setup = linphone_proxy_config_get_sip_setup(mProxyConfig);
 	return CHARPTR_TO_STRING((setup != NULL) ? setup->name : NULL);
 }
-
 void ProxyConfigAPI::setSipSetup(const std::string &sip_setup) {
 	FBLOG_DEBUG("ProxyConfigAPI::setDialEscapePlus()", "this=" << this << "\t" << "sip_setup=" << sip_setup);
 	linphone_proxy_config_set_sip_setup(mProxyConfig, sip_setup.c_str());

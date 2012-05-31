@@ -30,23 +30,50 @@ class PayloadTypeAPI: public FB::JSAPIAuto {
 private:
 	CoreAPIWeakPtr mCore;
 	PayloadType *mPayloadType;
+	bool mConst;
 
 	PayloadTypeAPI(const CoreAPIPtr &core, PayloadType *payloadType);
+	PayloadTypeAPI(const CoreAPIPtr &core, const PayloadType *payloadType);
 	void initProxy();
 public:
 	~PayloadTypeAPI();
 
+	PayloadTypeAPIPtr clone() const;
+	std::string getRtpmap() const;
+
 	int getType() const;
+	void setType(int type);
+
 	int getClockRate() const;
+	void setClockRate(int rate);
+
 	int getBitsPerSample() const;
+	void setBitsPerSample(int bps);
+
 	std::string getZeroPattern() const;
+	void setZeroPattern(const std::string &pattern);
+
 	int getPatternLength() const;
+	void setPatternLength(int length);
+
 	int getNormalBitrate() const;
+	void setNormalBitrate(int bitrate);
+
 	std::string getMimeType() const;
+	void setMimeType(const std::string &mime);
+
 	int getChannels() const;
+	void setChannels(int channels);
+
 	std::string getRecvFmtp() const;
+	void setRecvFmtp(const std::string &rfmtp);
+
 	std::string getSendFmtp() const;
+	void setSendFmtp(const std::string &sfmtp);
+
 	int getFlags() const;
+	void setFlags(int flags);
+
 	bool getEnabled() const;
 	void setEnabled(bool enable);
 
@@ -54,6 +81,7 @@ public:
 		return mPayloadType;
 	}
 	static PayloadTypeAPIPtr get(const CoreAPIPtr &core, PayloadType *payloadType);
+	static PayloadTypeAPIPtr get(const CoreAPIPtr &core, const PayloadType *payloadType);
 };
 
 #endif //H_PAYLOADTYPEAPI
