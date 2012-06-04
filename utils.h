@@ -54,7 +54,12 @@ public:
 
 	void remove_thread(boost::thread::id id) {
 		boost::lock_guard<boost::shared_mutex> guard(m);
-		const auto it = std::find_if(threads.begin(), threads.end(), [id](const std::pair<boost::thread::id, boost::thread*> &p) -> bool {return p.second->get_id() == id;});
+		auto it = threads.begin();
+		while(it != threads.end()) {
+			if(it->second->get_id() == id)
+				break;
+			++it;
+		}
 		if (it != threads.end()) {
 			delete it->second;
 			threads.erase(it);

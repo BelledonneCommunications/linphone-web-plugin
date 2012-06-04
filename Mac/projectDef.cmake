@@ -27,11 +27,11 @@ file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/[^.]*.cmake
     )
 
-# use this to add preprocessor definitions
-add_definitions(
-    
-)
+# GCC options
+add_definitions(-std=c++0x)
 
+include_directories(Rootfs/include/linphone)
+include_directories(Rootfs/include)
 
 SOURCE_GROUP(Mac FILES ${PLATFORM})
 
@@ -48,5 +48,8 @@ add_mac_plugin(${PROJECT_NAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJECT_NAME}
-    ${PLUGIN_INTERNAL_DEPS}
-    )
+        ${PLUGIN_INTERNAL_DEPS}
+        "${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.5.dylib"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer.1.dylib"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.8.dylib"
+)
