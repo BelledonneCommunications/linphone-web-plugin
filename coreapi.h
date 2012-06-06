@@ -30,6 +30,7 @@
 #include <JSAPIAuto.h>
 #include <BrowserHost.h>
 #include <variant_list.h>
+#include <SimpleStreamHelper.h>
 #include <linphonecore.h>
 #include "coreplugin.h"
 #include "coreapi.h"
@@ -176,6 +177,19 @@ public:
 	void enableKeepAlive(bool enable);
 	bool keepAliveEnabled();
 
+	// File
+	std::string getRing();
+	void setRing(const std::string &ring);
+	void setRingAsync(const std::string &ring, const FB::JSObjectPtr& callback);
+private:
+	void setRingCallback(const std::string& download, const std::string& file, const FB::JSObjectPtr& callback);
+public:
+
+	// Download
+	typedef boost::function<void (const std::string&, const std::string&)> DownloadCallbackType;
+	void download(const std::string& url, const DownloadCallbackType& functionback);
+	void downloadCallback(const std::string& url, bool success, const FB::HeaderMap& headers,
+			const boost::shared_array<uint8_t>& data, const size_t size, const DownloadCallbackType& functionback);
 
 	// Event helpers
 	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const std::string&));
@@ -205,6 +219,8 @@ private :
 	boost::mutex m_core_mutex;
 	boost::thread *m_core_thread;
 	mythread_group *m_threads;
+
+	std::string m_internal_ring;
 
 	void initProxy();
 

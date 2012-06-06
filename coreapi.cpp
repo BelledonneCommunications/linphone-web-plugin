@@ -18,11 +18,13 @@
  */
 
 #include <JSObject.h>
+#include <SystemHelpers.h>
 #include <variant_list.h>
 #include <DOM/Document.h>
 #include <global/config.h>
 #include <sstream>
 #include <boost/foreach.hpp>
+#include <fstream>
 #include "coreapi.h"
 
 #ifndef WIN32
@@ -164,6 +166,9 @@ void CoreAPI::initProxy() {
 	registerProperty("echoLimiterEnabled", make_property(this, &CoreAPI::echoLimiterEnabled, &CoreAPI::enableEchoLimiter));
 	registerProperty("ipv6Enabled", make_property(this, &CoreAPI::ipv6Enabled, &CoreAPI::enableIpv6));
 	registerProperty("keepAliveEnabled", make_property(this, &CoreAPI::keepAliveEnabled, &CoreAPI::enableKeepAlive));
+
+	registerProperty("ring", make_property(this, &CoreAPI::getRing, &CoreAPI::setRing));
+	registerMethod("setRingAsync", make_method(this, &CoreAPI::setRingAsync));
 }
 
 int CoreAPI::init() {
@@ -692,7 +697,8 @@ ProxyConfigAPIPtr CoreAPI::newProxyConfig() {
 	return boost::make_shared<ProxyConfigAPI>();
 }
 
-AuthInfoAPIPtr CoreAPI::newAuthInfo(const std::string &username, const std::string &userid, const std::string &passwd, const std::string &ha1, const std::string &realm) {
+AuthInfoAPIPtr CoreAPI::newAuthInfo(const std::string &username, const std::string &userid, const std::string &passwd, const std::string &ha1,
+		const std::string &realm) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::newAuthInfo()", "this=" << this);
@@ -799,6 +805,94 @@ bool CoreAPI::keepAliveEnabled() {
 
 	FBLOG_DEBUG("CoreAPI::keepAliveEnabled()", "this=" << this);
 	return linphone_core_keep_alive_enabled(mCore) == TRUE ? true : false;
+}
+
+/*
+ *
+ * File functions
+ *
+ */
+
+std::string CoreAPI::getRing() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getRing()", "this=" << this);
+	return m_internal_ring;
+}
+
+void CoreAPI::setRing(const std::string &ring) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setRing()", "this=" << this << "\t" << "ring=" << ring);
+	download(ring, boost::bind(&CoreAPI::setRingCallback, this, _1, _2, FB::JSObjectPtr()));
+}
+
+void CoreAPI::setRingAsync(const std::string &ring, const FB::JSObjectPtr& callback) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setRingAsync()", "this=" << this<< "\t" << "ring=" << ring);
+	download(ring, boost::bind(&CoreAPI::setRingCallback, this, _1, _2, callback));
+}
+
+void CoreAPI::setRingCallback(const std::string& url, const std::string& file, const FB::JSObjectPtr& callback) {
+	bool result = false;
+	if(!file.empty()){
+		CORE_MUTEX
+
+		linphone_core_set_ring(mCore, file.c_str());
+		m_internal_ring = url;
+		result = true;
+	}
+
+	// Set
+	if (callback) {
+		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(result));
+	}
+}
+
+/*
+ *
+ * Download functions
+ *
+ */
+
+void CoreAPI::download(const std::string& url, const DownloadCallbackType& functionback) {
+	FBLOG_DEBUG("CoreAPI::download()", "this=" << this << "\t" << "url="<< url);
+	FB::SimpleStreamHelper::AsyncGet(m_host, FB::URI::fromString(url), boost::bind(&CoreAPI::downloadCallback, this, url, _1, _2, _3, _4, functionback));
+}
+
+void CoreAPI::downloadCallback(const std::string& url, bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data,
+		const size_t size, const DownloadCallbackType &functionback) {
+	static const char *prefix = "/linphone-web-";
+	if (success) {
+		FBLOG_DEBUG("CoreAPI::downloadCallback()", "Download " << url << " success");
+
+		// Build path
+		std::stringstream ss;
+		ss << FB::System::getTempPath();
+		if (ss.str().empty()) {
+			FBLOG_ERROR("CoreAPI::downloadCallback", "Invalid temp dir");
+			functionback(url, "");
+			return;
+		}
+		ss << prefix << rand();
+		FBLOG_DEBUG("CoreAPI::downloadCallback()", "Write to " << ss.str());
+
+		// Write to file
+		std::ofstream downloadedFile(ss.str(), std::ios_base::binary | std::ios_base::out);
+		downloadedFile.write(reinterpret_cast<const char*>(data.get()), size);
+		if (downloadedFile.bad()) {
+			downloadedFile.close();
+			FBLOG_DEBUG("CoreAPI::downloadCallback()", "Can't write into file " << ss);
+			functionback(url, "");
+			return;
+		}
+		downloadedFile.close();
+		functionback(url, ss.str());
+	} else {
+		FBLOG_WARN("CoreAPI::downloadCallback()", "Download " << url << " failure");
+		functionback(url, "");
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
