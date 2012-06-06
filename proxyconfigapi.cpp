@@ -103,7 +103,7 @@ std::string ProxyConfigAPI::getDomain() const {
 
 bool ProxyConfigAPI::publishEnabled() const {
 	FBLOG_DEBUG("ProxyConfigAPI::publishEnabled()", "this=" << this);
-	return linphone_proxy_config_publish_enabled(mProxyConfig);
+	return linphone_proxy_config_publish_enabled(mProxyConfig) == TRUE? true : false;
 }
 void ProxyConfigAPI::enablePublish(bool enable) {
 	FBLOG_DEBUG("ProxyConfigAPI::enablePublish()", "this=" << this << "\t" << "enable=" << enable);

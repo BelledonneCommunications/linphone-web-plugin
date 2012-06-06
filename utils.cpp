@@ -18,12 +18,6 @@
  */
 
 #include "utils.h"
-#include <logging.h>
-
-#ifdef XP_UNIX
-#else
-#include <windows.h>
-#endif
 
 std::string CHARPTR_TO_STRING(const char *str) {
 	return (str != NULL) ? std::string(str) : std::string();

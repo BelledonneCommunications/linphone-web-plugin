@@ -102,7 +102,11 @@ void core::setFSPath(const std::string &path) {
 	if (pos != std::string::npos) {
 		npath = npath.substr(0, pos + 1);
 		npath += "linphoneweb_libs/";
+#ifdef WIN32
+		SetCurrentDirectoryA(npath.c_str());
+#else
 		chdir(npath.c_str());
+#endif
 		FBLOG_DEBUG("core::setFSPath", "Change current directory: " << npath);
 	} else {
 		FBLOG_WARN("core::setFSPath", "Can't parse library path: " << npath);

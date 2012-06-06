@@ -84,7 +84,7 @@ std::string CallAPI::getAuthenticationToken() const {
 
 bool CallAPI::getAuthenticationTokenVerified() const {
 	FBLOG_DEBUG("CallAPI::getAuthenticationTokenVerified()", "this=" << this);
-	return linphone_call_get_authentication_token_verified(mCall);
+	return linphone_call_get_authentication_token_verified(mCall) == TRUE? true : false;
 }
 
 float CallAPI::getAverageQuality() const {
@@ -94,7 +94,7 @@ float CallAPI::getAverageQuality() const {
 
 CallLogAPIPtr CallAPI::getCallLog() const {
 	FBLOG_DEBUG("CallAPI::getCallLog()", "this=" << this);
-	CallLogAPI::get(linphone_call_get_call_log(mCall));
+	return CallLogAPI::get(linphone_call_get_call_log(mCall));
 }
 
 CoreAPIPtr CallAPI::getCore() const {
@@ -104,7 +104,7 @@ CoreAPIPtr CallAPI::getCore() const {
 
 CallParamsAPIPtr CallAPI::getCurrentParams() const {
 	FBLOG_DEBUG("CallAPI::getCurrentParams()", "this=" << this);
-	CallParamsAPI::get(linphone_call_get_current_params(mCall));
+	return CallParamsAPI::get(linphone_call_get_current_params(mCall));
 }
 
 float CallAPI::getCurrentQuality() const {
