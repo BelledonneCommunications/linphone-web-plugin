@@ -211,14 +211,6 @@ int CoreAPI::init() {
 			return 1;
 		}
 
-		for (const MSList *node = linphone_core_get_audio_codecs(mCore); node != NULL; node = ms_list_next(node)) {
-			reinterpret_cast<PayloadType*>(node->data)->user_data = NULL;
-		}
-
-		for (const MSList *node = linphone_core_get_video_codecs(mCore); node != NULL; node = ms_list_next(node)) {
-			reinterpret_cast<PayloadType*>(node->data)->user_data = NULL;
-		}
-
 		int port = 5000 + rand() % 5000;
 		FBLOG_DEBUG("CoreAPI::init()", "port=" << port);
 		linphone_core_set_sip_port(mCore, port);

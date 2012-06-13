@@ -69,7 +69,7 @@ void PayloadTypeAPI::initProxy() {
 
 PayloadTypeAPI::~PayloadTypeAPI() {
 	FBLOG_DEBUG("ProxyConfigAPI::~ProxyConfigAPI", "this=" << this);
-	mPayloadType->user_data = NULL;
+	//mPayloadType->user_data = NULL;
 }
 
 int PayloadTypeAPI::getType() const {
