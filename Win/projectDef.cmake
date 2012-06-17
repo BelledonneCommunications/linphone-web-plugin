@@ -75,6 +75,8 @@ target_link_libraries(${PROJECT_NAME}
 	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp-8.lib"
 	)
 
+SET (DEST_DIR linphoneweb)
+	
 #Copy dll dependencies
 ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
 		  PRE_BUILD
@@ -91,9 +93,17 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libspeex-1.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libspeexdsp-1.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libtheora-0.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libvpx-1.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libz-1.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/ssleay32.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/swscale-2.dll ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+		  
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${DEST_DIR}/share/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${DEST_DIR}/share/sounds/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${DEST_DIR}/share/sounds/linphone/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${DEST_DIR}/share/sounds/linphone/rings/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${DEST_DIR}/share/sounds/linphone/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${DEST_DIR}/share/sounds/linphone/rings/
 )
 
 # Sign dll dependencies
@@ -159,6 +169,11 @@ firebreath_sign_file(${PLUGIN_NAME}
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libtheora-0.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+firebreath_sign_file(${PLUGIN_NAME}
+    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/libvpx-1.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")

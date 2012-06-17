@@ -96,12 +96,19 @@ FB::JSAPIPtr core::createJSAPI() {
 	return boost::make_shared<CoreAPI>(FB::ptr_cast<core>(shared_from_this()), m_host);
 }
 
+#ifdef WIN32
+#define DIRECTORY_SEPERATOR '\\'
+#else
+#define DIRECTORY_SEPERATOR '/'
+#endif
+
 void core::setFSPath(const std::string &path) {
 	std::string npath = path;
-	std::size_t pos = path.find_last_of('/');
+	std::size_t pos = path.find_last_of(DIRECTORY_SEPERATOR);
 	if (pos != std::string::npos) {
 		npath = npath.substr(0, pos + 1);
-		npath += "linphoneweb_libs/";
+		npath += "linphoneweb";
+		npath += DIRECTORY_SEPERATOR;
 #ifdef WIN32
 		SetCurrentDirectoryA(npath.c_str());
 #else
