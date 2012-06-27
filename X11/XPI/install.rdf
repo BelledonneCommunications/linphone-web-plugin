@@ -20,10 +20,10 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
-    <em:name>Linphone Web</em:name>
-    <em:version>1.0.0</em:version>
+    <em:name>${FBSTRING_PluginName}</em:name>
+    <em:version>${FBSTRING_PLUGIN_VERSION}</em:version>
     <em:id>{29623621-22e0-bf87-16ee-1c3b683582e1}</em:id>
-    <em:description>Linphone Web plugin</em:description>
+    <em:description>${FBSTRING_PluginDescription}</em:description>
 
     <em:targetApplication>
       <!-- Firefox -->
@@ -34,7 +34,7 @@
       </Description>
     </em:targetApplication>
 
-    <em:creator>Belledonne Communications</em:creator>
+    <em:creator>${FBSTRING_CompanyName}</em:creator>
     <em:developer>Yann Diorcet</em:developer>
     <em:unpack>true</em:unpack>
   </Description>

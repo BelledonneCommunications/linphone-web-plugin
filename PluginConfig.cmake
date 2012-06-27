@@ -49,6 +49,7 @@ set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
 set(FBSTRING_ProductName "Linphone Web")
 set(FBSTRING_FileExtents "")
 set(FBSTRING_PluginName "Linphone Web")
+set(FBSTRING_PluginDescription "Web plugin of Linphone")
 
 set(FBSTRING_MIMEType 
 	"application/x-linphone-web"
