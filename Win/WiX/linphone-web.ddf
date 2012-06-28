@@ -1,9 +1,9 @@
 ;
 .Set DiskDirectoryTemplate=%BINSRC%/
-.Set CabinetNameTemplate=${PROJECT_NAME}.cab
+.Set CabinetNameTemplate=${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}.cab
 .Set Cabinet=on
 .Set Compress=on
 .Set MaxDiskSize=0
-%BINSRC%/${PROJECT_NAME}.exe
+%BINSRC%/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}.exe
 ${CMAKE_CURRENT_BINARY_DIR}/linphone-web.inf
 ;

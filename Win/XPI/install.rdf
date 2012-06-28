@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-15"?>
-<!--
+<!-- 
  Linphone Web - Web plugin of Linphone an audio/video SIP phone
  Copyright (C) 2012  Yann Diorcet <yann.diorcet@linphone.org>
 
@@ -24,10 +24,10 @@
     <em:version>${FBSTRING_PLUGIN_VERSION}</em:version>
     <em:id>{29623621-22e0-bf87-16ee-1c3b683582e1}</em:id>
     <em:description>${FBSTRING_PluginDescription}</em:description>
-
+	
 	<em:icon64URL>chrome://linphoneweb/skin/icon64.png</em:icon64URL>
 	<em:iconURL>chrome://linphoneweb/skin/icon.png</em:iconURL>
-	
+
     <em:targetApplication>
       <!-- Firefox -->
       <Description>
