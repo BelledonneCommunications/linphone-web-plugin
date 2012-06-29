@@ -213,7 +213,7 @@ create_cpack_config(${PROJECT_NAME}-TGZ.cmake)
 ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
                  POST_BUILD
                  COMMAND cpack --config ${PROJECT_NAME}-TGZ.cmake
-				 COMMAND ${CMAKE_COMMAND} -E rename ${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Linux.tgz ${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Linux.tgz
+				 COMMAND ${CMAKE_COMMAND} -E rename ${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Linux.tar.gz ${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Linux.tar.gz
                  COMMAND cpack --config ${PROJECT_NAME}-XPI.cmake
                  COMMAND ${CMAKE_COMMAND} -E rename ${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Linux.zip ${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Linux.xpi
 )
