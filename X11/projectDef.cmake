@@ -19,6 +19,7 @@
 
 # X11 template platform definition CMake file
 # Included from ../CMakeLists.txt
+include(${CMAKE_CURRENT_SOURCE_DIR}/Common/common.cmake)
 
 # remember that the current source dir is the project root; this file is in X11/
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -123,11 +124,6 @@ SET (CMAKE_SHARED_LINKER_FLAGS
     "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath,'\$ORIGIN/${LINPHONEWEB_SHAREDIR}'" )
 
 
-function(create_cpack_config filename)
-	SET(CPACK_OUTPUT_CONFIG_FILE "${filename}")
-	INCLUDE(CPack)
-endfunction(create_cpack_config)
-
 ###############################################################################
 # XPI Package
 
@@ -214,6 +210,10 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
                  POST_BUILD
                  COMMAND cpack --config ${PROJECT_NAME}-TGZ.cmake
 				 COMMAND ${CMAKE_COMMAND} -E rename ${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Linux.tar.gz ${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Linux.tar.gz
-                 COMMAND cpack --config ${PROJECT_NAME}-XPI.cmake
-                 COMMAND ${CMAKE_COMMAND} -E rename ${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Linux.zip ${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Linux.xpi
+)
+
+create_signed_xpi(${PLUGIN_NAME} 
+	"${PROJECT_NAME}-XPI.cmake"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 )

@@ -19,6 +19,7 @@
 
 # Windows template platform definition CMake file
 # Included from ../CMakeLists.txt
+include(${CMAKE_CURRENT_SOURCE_DIR}/Common/common.cmake)
 
 # remember that the current source dir is the project root; this file is in Win/
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -63,7 +64,7 @@ add_windows_plugin(${PROJECT_NAME} SOURCES)
 # source control!
 # -- uncomment lines below this to enable signing --
 firebreath_sign_plugin(${PROJECT_NAME}
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 
@@ -110,87 +111,87 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
 # Sign dll dependencies
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/avcodec-53.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/avutil-51.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/libeXosip2-7.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/libeay32.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/liblinphone-5.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx" 
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/libmediastreamer-1.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/libogg-0.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/libortp-8.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/libosip2-7.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/libosipparser2-7.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/libspeex-1.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/libspeexdsp-1.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/libtheora-0.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/libvpx-1.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/libz-1.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/ssleay32.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
     "${FB_OUT_DIR}/swscale-2.dll"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 	
@@ -214,7 +215,7 @@ add_wix_installer(${PLUGIN_NAME}
 # -- uncomment lines below this to enable signing --
 firebreath_sign_file(${PLUGIN_NAME}_WiXInstall
     "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}.msi"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 	
@@ -257,21 +258,15 @@ create_cab(${PLUGIN_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.ddf"
 
 firebreath_sign_file(${PLUGIN_NAME}_exe
     "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}.exe"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 
 firebreath_sign_file(${PLUGIN_NAME}_cab
     "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}.cab"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphonejs.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-
-	
-function(create_cpack_config filename)
-	SET(CPACK_OUTPUT_CONFIG_FILE "${filename}")
-	INCLUDE(CPack)
-	endfunction(create_cpack_config)
 
 ###############################################################################
 # XPI Package
@@ -311,9 +306,8 @@ SET(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_SOURCE_DIR}/build;${CMAKE_PROJECT_NAME
 create_cpack_config(${PROJECT_NAME}-XPI.cmake)
 ###############################################################################
 
-# Create packages
-ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
-                 POST_BUILD
-                 COMMAND cpack --config ${PROJECT_NAME}-XPI.cmake
-                 COMMAND ${CMAKE_COMMAND} -E rename ${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32.zip ${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32.xpi
+create_signed_xpi(${PLUGIN_NAME} 
+	"${PROJECT_NAME}-XPI.cmake"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 )
