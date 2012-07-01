@@ -306,8 +306,16 @@ SET(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_SOURCE_DIR}/build;${CMAKE_PROJECT_NAME
 create_cpack_config(${PROJECT_NAME}-XPI.cmake)
 ###############################################################################
 
+# Create packages
+ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
+                 POST_BUILD
+                 COMMAND cpack --config ${PROJECT_NAME}-XPI.cmake
+		 COMMAND ${CMAKE_COMMAND} -E rename ${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32.zip ${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32-unsigned.xpi
+)
+
 create_signed_xpi(${PLUGIN_NAME} 
-	"${PROJECT_NAME}-XPI.cmake"
+	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32-unsigned.xpi"
+	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32.xpi"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 )
