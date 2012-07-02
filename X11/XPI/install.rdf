@@ -26,7 +26,7 @@
     <em:description>${FBSTRING_PluginDescription}</em:description>
 
 	<em:icon64URL>chrome://linphoneweb/skin/icon64.png</em:icon64URL>
-	<em:iconURL>chrome://linphoneweb/skin/icon.png</em:iconURL>
+	<em:iconURL>chrome://linphoneweb/skin/icon48.png</em:iconURL>
 	
     <em:targetApplication>
       <!-- Firefox -->

@@ -1,17 +1,14 @@
 #Common cmake function
 
-function(create_cpack_config filename)
-	SET(CPACK_OUTPUT_CONFIG_FILE "${filename}")
-	INCLUDE(CPack)
-endfunction(create_cpack_config)
+find_package(Java)
 
-function (create_signed_xpi PROJNAME IN_FILE OUT_FILE PEMFILE PASSFILE)
+function (create_signed_xpi PROJNAME IN_FILE OUT_FILE PEMFILE PASSFILE PROJDEP)
     set (WIX_SOURCES
             ${FB_ROOT}/cmake/dummy.cpp
         )
 		
 	if (NOT FB_XPI_SUFFIX)
-		set (FB_XPI_SUFFIX _Xpi)
+		set (FB_XPI_SUFFIX _XPI)
 	endif()
 	ADD_LIBRARY(${PROJNAME}${FB_XPI_SUFFIX} STATIC ${WIX_SOURCES})
 	if (EXISTS ${PEMFILE})
@@ -19,10 +16,10 @@ function (create_signed_xpi PROJNAME IN_FILE OUT_FILE PEMFILE PASSFILE)
 					POST_BUILD
 					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/xpisign.py -f -k ${PEMFILE} -a ${PASSFILE} ${IN_FILE} ${OUT_FILE}
 		)
+		message("-- Successfully added Sign XPI step")
 	else()
 		message("-- No signtool certificate found; assuming development machine (${PEMFILE})")
 	endif()
-	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_SUFFIX} ${PROJNAME})
-	message("-- Successfully added Sign XPI step")
+	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_SUFFIX} ${PROJDEP})
 endfunction(create_signed_xpi)
 

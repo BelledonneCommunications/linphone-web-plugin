@@ -270,52 +270,71 @@ firebreath_sign_file(${PLUGIN_NAME}_cab
 
 ###############################################################################
 # XPI Package
-
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/install.rdf DESTINATION . COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome.manifest DESTINATION . COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome/skin/icon64.png DESTINATION chrome/skin COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome/skin/icon.png DESTINATION chrome/skin COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/${FBSTRING_PluginFileName}.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/avcodec-53.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/avutil-51.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/libeXosip2-7.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/libeay32.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/liblinphone-5.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/libmediastreamer-1.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/libogg-0.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/libortp-8.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/libosip2-7.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/libosipparser2-7.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/libspeex-1.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/libspeexdsp-1.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/libtheora-0.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/libvpx-1.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/libz-1.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/ssleay32.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/swscale-2.dll DESTINATION plugins COMPONENT ${PROJECT_NAME}-XPI)
-
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/ringback.wav DESTINATION plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/ COMPONENT ${PROJECT_NAME}-XPI)
-INSTALL(FILES ${FB_BIN_DIR}/${PLUGIN_NAME}/\${CMAKE_INSTALL_CONFIG_NAME}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/oldphone.wav DESTINATION plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/ COMPONENT ${PROJECT_NAME}-XPI)
-
-SET(CPACK_PACKAGE_NAME ${PROJECT_NAME})
-SET(CPACK_PACKAGE_VERSION ${FBSTRING_PLUGIN_VERSION})
-SET(CPACK_GENERATOR ZIP)
-SET(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
-SET(CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_SOURCE_DIR}/build;${CMAKE_PROJECT_NAME};${PROJECT_NAME}-XPI;/") 
-create_cpack_config(${PROJECT_NAME}-XPI.cmake)
+function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
+    set (WIX_SOURCES
+            ${FB_ROOT}/cmake/dummy.cpp
+        )
+	if (NOT FB_XPI_PACKAGE_SUFFIX)
+		set (FB_XPI_PACKAGE_SUFFIX _PKG_XPI)
+	endif()
+	
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/X11/XPI/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
+	
+	set(FB_PKG_DIR ${FB_OUT_DIR}/XPI/)
+	get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
+	
+	ADD_LIBRARY(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} STATIC ${WIX_SOURCES})
+	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}${FB_XPI_PACKAGE_SUFFIX}
+                 POST_BUILD
+                 COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/install.rdf ${FB_PKG_DIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/X11/XPI/chrome.manifest ${FB_PKG_DIR}/
+                 
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/chrome/skin
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/chrome/skin/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png ${FB_PKG_DIR}/chrome/skin/
+                 
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${ONAME}.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/avcodec-53.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/avutil-51.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libeXosip2-7.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libeay32.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/liblinphone-5.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libmediastreamer-1.dll ${FB_PKG_DIR}/plugins/		  
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libogg-0.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libortp-8.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libosip2-7.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libosipparser2-7.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libspeex-1.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libspeexdsp-1.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libtheora-0.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libvpx-1.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libz-1.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/ssleay32.dll ${FB_PKG_DIR}/plugins/
+		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/swscale-2.dll ${FB_PKG_DIR}/plugins/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/ringback.wav ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/oldphone.wav ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+                 COMMAND "${Java_JAR_EXECUTABLE}" "cfM" "${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-Linux-unsigned.xpi" 
+                 		-C ${FB_PKG_DIR} .
+	)
+	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJNAME})
+	message("-- Successfully added XPI package step")
+endfunction(create_xpi_package)
 ###############################################################################
 
-# Create packages
-ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
-                 POST_BUILD
-                 COMMAND cpack --config ${PROJECT_NAME}-XPI.cmake
-		 COMMAND ${CMAKE_COMMAND} -E rename ${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32.zip ${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32-unsigned.xpi
-)
+create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
 
 create_signed_xpi(${PLUGIN_NAME} 
 	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32-unsigned.xpi"
 	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32.xpi"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	${PLUGIN_NAME}_PKG_XPI
 )

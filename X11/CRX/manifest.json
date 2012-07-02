@@ -1,0 +1,10 @@
+{
+  "name" : "${FBSTRING_PluginName}",
+  "version" : "${FBSTRING_PLUGIN_VERSION}",
+  "description" : "${FBSTRING_PluginDescription}",
+  "icons": { "16": "icon16.png", "48": "icon48.png" },
+  "plugins": [
+     { "path": "nplinphone-web.so", "public": true }
+  ],
+  "manifest_version": 2
+}
