@@ -133,7 +133,7 @@ function (create_tgz_package PROJNAME PROJVERSION OUTDIR)
 		set (FB_TGZ_PACKAGE_SUFFIX _PKG_TGZ)
 	endif()
 	
-	set(FB_PKG_DIR ${FB_OUT_DIR}/TGZ/)
+	set(FB_PKG_DIR ${FB_OUT_DIR}/TGZ)
 	get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
 	
 	set(PKG_PREFIX ${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION})
@@ -195,7 +195,7 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
 	
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/X11/XPI/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
 	
-	set(FB_PKG_DIR ${FB_OUT_DIR}/XPI/)
+	set(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
 	get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
 	
 	ADD_LIBRARY(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} STATIC ${WIX_SOURCES})
@@ -241,7 +241,7 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/ringback.wav ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/oldphone.wav ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-                 COMMAND "${Java_JAR_EXECUTABLE}" "cfM" "${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-Linux-unsigned.xpi" 
+                 COMMAND jar cfM ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-Linux-unsigned.xpi
                  		-C ${FB_PKG_DIR} .
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJNAME})
@@ -262,7 +262,7 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR)
 	
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/X11/CRX/manifest.json ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
 	
-	set(FB_PKG_DIR ${FB_OUT_DIR}/CRX/)
+	set(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
 	get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
 	
 	ADD_LIBRARY(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} STATIC ${WIX_SOURCES})
