@@ -56,36 +56,36 @@ SET (FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
 
 # Copy dll dependencies
 ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
-		  PRE_BUILD
-		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavcodec.so.53 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavutil.so.51 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libcrypto.so.1.0.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libeXosip2.so.7 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libjpeg.so.8 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.so.5 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer.so.1 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libogg.so.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.so.8 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosip2.so.7 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosipparser2.so.7 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeex.so.1 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeexdsp.so.1 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libssl.so.1.0.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-          COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libswscale.so.2 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheora.so.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4l1.so.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4l2.so.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4lconvert.so.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libvpx.so.1 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libz.so.1 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 PRE_BUILD
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavcodec.so.53 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavutil.so.51 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libcrypto.so.1.0.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libeXosip2.so.7 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libjpeg.so.8 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.so.5 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer.so.1 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libogg.so.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.so.8 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosip2.so.7 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosipparser2.so.7 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeex.so.1 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeexdsp.so.1 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libssl.so.1.0.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libswscale.so.2 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheora.so.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4l1.so.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4l2.so.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libv4lconvert.so.0 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libvpx.so.1 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libz.so.1 ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
 
-		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/
-		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/
-		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
-		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
 )
 
 # Use default chrpath if not defined
@@ -146,13 +146,13 @@ function (create_tgz_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/${PKG_PREFIX}/
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${ONAME}.so ${FB_PKG_DIR}/${PKG_PREFIX}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavcodec.so.53 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavcodec.so.53 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavutil.so.51 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libcrypto.so.1.0.0 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libeXosip2.so.7 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libjpeg.so.8 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/liblinphone.so.5 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavcodec.so.53 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavcodec.so.53 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavutil.so.51 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libcrypto.so.1.0.0 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libeXosip2.so.7 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libjpeg.so.8 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/liblinphone.so.5 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libmediastreamer.so.1 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libogg.so.0 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libortp.so.8 ${FB_PKG_DIR}/${PKG_PREFIX}/${LINPHONEWEB_SHAREDIR}/
@@ -213,12 +213,12 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${ONAME}.so ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavcodec.so.53 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavutil.so.51 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libcrypto.so.1.0.0 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libeXosip2.so.7 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libjpeg.so.8 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/liblinphone.so.5 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavcodec.so.53 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavutil.so.51 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libcrypto.so.1.0.0 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libeXosip2.so.7 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libjpeg.so.8 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/liblinphone.so.5 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libmediastreamer.so.1 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libogg.so.0 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libortp.so.8 ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
@@ -241,8 +241,6 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/ringback.wav ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/oldphone.wav ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-                 COMMAND jar cfM ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-Linux-unsigned.xpi
-                 		-C ${FB_PKG_DIR} .
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJNAME})
 	message("-- Successfully added XPI package step")
@@ -276,12 +274,12 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png ${FB_PKG_DIR}/
                  
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavcodec.so.53 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavutil.so.51 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libcrypto.so.1.0.0 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libeXosip2.so.7 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libjpeg.so.8 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/liblinphone.so.5 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavcodec.so.53 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libavutil.so.51 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libcrypto.so.1.0.0 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libeXosip2.so.7 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libjpeg.so.8 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/liblinphone.so.5 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libmediastreamer.so.1 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libogg.so.0 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/libortp.so.8 ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/
@@ -304,6 +302,8 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/ringback.wav ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/oldphone.wav ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+                 COMMAND jar cfM ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-Linux-unsigned.crx
+                 		-C ${FB_PKG_DIR} .
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJNAME})
 	message("-- Successfully added CRX package step")
