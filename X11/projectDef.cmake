@@ -304,8 +304,6 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/ringback.wav ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/oldphone.wav ${FB_PKG_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-                 COMMAND "${Java_JAR_EXECUTABLE}" "cfM" "${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-Linux-unsigned.crx" 
-                 		-C ${FB_PKG_DIR} .
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJNAME})
 	message("-- Successfully added CRX package step")
@@ -317,7 +315,7 @@ create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
 create_crx_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
 
 create_signed_xpi(${PLUGIN_NAME} 
-	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Linux-unsigned.xpi"
+	"${FB_OUT_DIR}/XPI/"
 	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Linux.xpi"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"

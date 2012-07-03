@@ -1,111 +1,77 @@
 #!/usr/bin/env python
-# from https://github.com/nmaier/xpisign.py
-# modified for add a new argument taking the path of a the file containing the password for the certificate
-from __future__ import with_statement
+import os, sys, re, hashlib, zipfile, base64, M2Crypto
+class PassFile:
+       def __init__(self, file):
+               self.file = file
+       def password(self, v):
+               file = open(self.file, 'r');
+               line = file.read()
+               file.close()
+               return line
 
-import os
-import sys
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "xpisign/")
-
-from optparse import OptionParser
-
-from xpisign import xpisign, BytesIO, __version__
-
-def main(args):
-    global smime_pkcs7_der_sign
-
-    optparse = OptionParser(usage="Usage: %prog [options] xpifile outfile")
-    optparse.add_option("-k",
-                        "--keyfile",
-                        dest="keyfile",
-                        default="sign.pem",
-                        help="Key file to get the certificate from"
-                        )
-    optparse.add_option("-a",
-                        "--passfile",
-                        dest="passfile",
-                        default=None,
-                        help="File containing password"
-                        )
-    optparse.add_option("-f",
-                        "--force",
-                        dest="force",
-                        action="store_true",
-                        default=False,
-                        help="Force signing, i.e. overwrite outfile if it already exists"
-                        )
-    optparse.add_option("-p",
-                        "--plain",
-                        dest="optimize",
-                        action="store_false",
-                        default=True,
-                        help="Generate plain XPI without any optimizations."
-                        )
-    optparse.add_option("-s",
-                        "--signer",
-                        dest="signer",
-                        default=None,
-                        help="Force signing with a particular implementation (m2, openssl)"
-                        )
-    optparse.add_option("-v",
-                        "--version",
-                        dest="printversion",
-                        default=False,
-                        action="store_true",
-                        help="Print version"
-                        )
-    options, args = optparse.parse_args(args)
-
-    if options.printversion:
-        print __version__
-        return 0
-
-    try:
-        xpifile, outfile = args
-    except ValueError:
-        optparse.error("Need to specify xpifile and outfile!")
-
-    if not os.path.isfile(xpifile):
-        optparse.error("xpifile %s is not a file" % xpifile)
-
-    if not options.force and os.path.exists(outfile):
-        optparse.error("outfile %s already exists" % outfile)
-
-    keyfile = options.keyfile
-    if not os.path.exists(keyfile):
-        optparse.error("keyfile %s cannot be found" % keyfile)
-    passfile = options.passfile
-    optimize = options.optimize
-    signer = options.signer
-
-    try:
-        # buffer stuff, in case xpifile == outfile
-        with open(xpifile, "rb") as tp:
-            xp = BytesIO(tp.read())
-        with xp:
-            try:
-                with BytesIO() as op:
-                    try:
-                        xpisign(xpifile=xp,
-                                keyfile=keyfile,
-								passfile=passfile,
-                                outfile=op,
-                                optimize_signatures=optimize,
-                                optimize_compression=optimize,
-                                signer=signer
-                                )
-                        with open(outfile, "wb") as outp:
-                            outp.write(op.getvalue())
-                    except ValueError, ex:
-                        optparse.error(ex.message)
-            except IOError:
-                optparse.error("Failed to open outfile %s" % outfile)
-    except IOError:
-        optparse.error("Failed to open xpifile %s" % xpifile)
-
-    return 0
-
-if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
-
-# vim: ts=4:sw=4:et
+def signDir(source_dir, key_file, pass_file, output_file):
+  source_dir = os.path.abspath(source_dir)
+ 
+  # Build file list
+  filelist = []
+  for dirpath, dirs, files in os.walk(source_dir):
+    for file in files:
+      abspath = os.path.join(dirpath, file)
+      relpath = os.path.relpath(abspath, source_dir).replace('\\', '/')
+      handle = open(abspath, 'rb')
+      filelist.append((abspath, relpath, handle.read()))
+      handle.close()
+ 
+  # Generate manifest.mf and zigbert.sf data
+  manifest_sections = []
+  signature_sections = []
+  def digest(data):
+    md5 = hashlib.md5()
+    md5.update(data)
+    sha1 = hashlib.sha1()
+    sha1.update(data)
+    return 'Digest-Algorithms: MD5 SHA1\nMD5-Digest: %s\nSHA1-Digest: %s\n' % \
+           (base64.b64encode(md5.digest()), base64.b64encode(sha1.digest()))
+  def section(manifest, signature):
+    manifest_sections.append(manifest)
+    signature_sections.append(signature + digest(manifest))
+  section('Manifest-Version: 1.0\n', 'Signature-Version: 1.0\n')
+  for filepath, relpath, data in filelist:
+    section('Name: %s\n%s' % (relpath, digest(data)), 'Name: %s\n' % relpath)
+  manifest = '\n'.join(manifest_sections)
+  signature = '\n'.join(signature_sections)
+ 
+  # Generate zigbert.rsa (detached zigbert.sf signature)
+  handle = open(key_file, 'rb')
+  key_data = handle.read()
+  handle.close()
+  certstack = M2Crypto.X509.X509_Stack()
+  first = True
+  certificates = re.finditer(r'-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----', key_data, re.S)
+  # Ignore first certificate, we will sign with this one. Rest of them needs to
+  # be added to the stack manually however.
+  certificates.next()
+  for match in certificates:
+    certstack.push(M2Crypto.X509.load_cert_string(match.group(0)))
+ 
+  mime = M2Crypto.SMIME.SMIME()
+  mime.load_key(key_file, callback=PassFile(pass_file).password)
+  mime.set_x509_stack(certstack)
+  pkcs7 = mime.sign(M2Crypto.BIO.MemoryBuffer(signature),
+                    M2Crypto.SMIME.PKCS7_DETACHED | M2Crypto.SMIME.PKCS7_BINARY)
+  pkcs7_buffer = M2Crypto.BIO.MemoryBuffer()
+  pkcs7.write_der(pkcs7_buffer)
+ 
+  # Write everything into a ZIP file, with zigbert.rsa as first file
+  zip = zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED)
+  zip.writestr('META-INF/zigbert.rsa', pkcs7_buffer.read())
+  zip.writestr('META-INF/zigbert.sf', signature)
+  zip.writestr('META-INF/manifest.mf', manifest)
+  for filepath, relpath, data in filelist:
+    zip.writestr(relpath, data)
+ 
+if __name__ == '__main__':
+  if len(sys.argv) < 5:
+    print 'Usage: %s source_dir key_file pass_file output_file' % sys.argv[0]
+    sys.exit(2)
+  signDir(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])

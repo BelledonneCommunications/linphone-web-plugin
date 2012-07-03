@@ -321,8 +321,6 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/ringback.wav ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
                  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/oldphone.wav ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-                 COMMAND jar cfM ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-win32-unsigned.xpi
-                 		-C ${FB_PKG_DIR} .
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJNAME})
 	message("-- Successfully added XPI package step")
@@ -332,7 +330,7 @@ endfunction(create_xpi_package)
 create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
 
 create_signed_xpi(${PLUGIN_NAME} 
-	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32-unsigned.xpi"
+	"${FB_OUT_DIR}/XPI/"
 	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32.xpi"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
