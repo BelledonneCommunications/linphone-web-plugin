@@ -873,7 +873,7 @@ void CoreAPI::downloadCallback(const std::string& url, bool success, const FB::H
 		FBLOG_DEBUG("CoreAPI::downloadCallback()", "Write to " << ss.str());
 
 		// Write to file
-		std::ofstream downloadedFile(ss.str(), std::ios_base::binary | std::ios_base::out);
+		std::ofstream downloadedFile(ss.str().c_str(), std::ios_base::binary | std::ios_base::out);
 		downloadedFile.write(reinterpret_cast<const char*>(data.get()), size);
 		if (downloadedFile.bad()) {
 			downloadedFile.close();
