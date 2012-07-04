@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<!--
+ Linphone Web - Web plugin of Linphone an audio/video SIP phone
+ Copyright (C) 2012  Yann Diorcet <yann.diorcet@linphone.org>
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ -->
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+    <em:name>${FBSTRING_PluginName}</em:name>
+    <em:version>${FBSTRING_PLUGIN_VERSION}</em:version>
+    <em:id>{29623621-22e0-bf87-16ee-1c3b683582e1}</em:id>
+    <em:description>${FBSTRING_PluginDescription}</em:description>
+
+	<em:icon64URL>chrome://linphoneweb/skin/icon64.png</em:icon64URL>
+	<em:iconURL>chrome://linphoneweb/skin/icon48.png</em:iconURL>
+	
+    <em:targetApplication>
+      <!-- Firefox -->
+      <Description>
+       <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+       <em:minVersion>1.5</em:minVersion>
+       <em:maxVersion>*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <em:creator>${FBSTRING_CompanyName}</em:creator>
+    <em:developer>Yann Diorcet</em:developer>
+    <em:unpack>true</em:unpack>
+  </Description>
+</RDF>
