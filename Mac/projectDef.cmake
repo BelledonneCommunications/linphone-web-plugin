@@ -53,3 +53,68 @@ target_link_libraries(${PROJECT_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer.1.dylib"
         "${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.8.dylib"
 )
+
+# fix output path
+set_target_properties (${PROJECT_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${FB_BIN_DIR}/${PLUGIN_NAME}"
+        LIBRARY_OUTPUT_DIRECTORY "${FB_BIN_DIR}/${PLUGIN_NAME}"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${FB_BIN_DIR}/${PLUGIN_NAME}/Debug"
+        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${FB_BIN_DIR}/${PLUGIN_NAME}/Debug"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${FB_BIN_DIR}/${PLUGIN_NAME}/Release"
+        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${FB_BIN_DIR}/${PLUGIN_NAME}/Release"
+)
+
+get_target_property(PLUGIN_EXT ${PROJECT_NAME} BUNDLE_EXTENSION)
+SET (LINPHONEWEB_SHAREDIR linphoneweb)
+SET (FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${PLUGIN_NAME}.${PLUGIN_EXT}/Contents/MacOS)
+
+# Copy dll dependencies
+ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
+                 PRE_BUILD
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavcodec.54.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavutil.51.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libcrypto.1.0.0.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libeXosip2.7.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.5.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer.1.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libogg.0.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.8.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosip2.7.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosipparser2.7.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeex.1.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeexdsp.1.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libssl.1.0.0.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libswscale.2.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheora.0.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libz.1.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+
+# FFMPEG stuff
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libSDL-1.2.0.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libvorbisenc.2.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libvorbis.0.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheoraenc.1.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheoradec.1.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libschroedinger-1.0.0.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libopenjpeg.1.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmp3lame.0.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libdirac_encoder.0.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libdirac_decoder.0.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libbz2.1.0.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liborc-0.4.0.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmodplug.1.dylib ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+)
+
+# Change rpath
+ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
+                 POST_BUILD
+                 COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/ ${FB_OUT_DIR}/${PLUGIN_NAME}
+)
