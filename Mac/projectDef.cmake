@@ -74,6 +74,7 @@ SET (FB_BUNDLE_DIR ${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}/Contents/MacOS)
 # Copy dll dependencies
 ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
                  POST_BUILD
+                 COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavcodec.54.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavutil.51.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
@@ -113,11 +114,8 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-)
 
 # Change rpath
-ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
-                 POST_BUILD
                  COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/ ${FB_BUNDLE_DIR}/${PLUGIN_NAME}
 )

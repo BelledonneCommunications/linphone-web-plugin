@@ -51,23 +51,6 @@ include_directories(Rootfs/include)
 
 add_windows_plugin(${PROJECT_NAME} SOURCES)
 
-# This is an example of how to add a build step to sign the plugin DLL before
-# the WiX installer builds.  The first filename (certificate.pfx) should be
-# the path to your pfx file.  If it requires a passphrase, the passphrase
-# should be located inside the second file. If you don't need a passphrase
-# then set the second filename to "".  If you don't want signtool to timestamp
-# your DLL then make the last parameter "".
-#
-# Note that this will not attempt to sign if the certificate isn't there --
-# that's so that you can have development machines without the cert and it'll
-# still work. Your cert should only be on the build machine and shouldn't be in
-# source control!
-# -- uncomment lines below this to enable signing --
-firebreath_sign_plugin(${PROJECT_NAME}
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-    "http://timestamp.verisign.com/scripts/timestamp.dll")
-
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJECT_NAME} 
 	${PLUGIN_INTERNAL_DEPS}
@@ -81,9 +64,21 @@ SET (FB_PACKAGE_SUFFIX Win32)
 SET (FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
 SET (FB_ROOTFS_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/Rootfs)
 
-#Copy dll dependencies
-ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
-		  POST_BUILD
+###############################################################################
+# Create Rootfs
+function (create_rootfs PROJNAME)
+    set (WIX_SOURCES
+            ${FB_ROOT}/cmake/dummy.cpp
+        )
+	if (NOT FB_ROOTFS_SUFFIX)
+		set (FB_ROOTFS_SUFFIX _RootFS)
+	endif()
+	
+	ADD_LIBRARY(${PROJNAME}${FB_ROOTFS_SUFFIX} STATIC ${WIX_SOURCES})
+	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}${FB_ROOTFS_SUFFIX}
+		  PRE_BUILD
+                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_ROOTFS_DIR}
+                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}
 		  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll ${FB_ROOTFS_DIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avcodec-53.dll ${FB_ROOTFS_DIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avutil-51.dll ${FB_ROOTFS_DIR}/
@@ -109,90 +104,103 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
 		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-)
+	)
+	ADD_DEPENDENCIES(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
+	message("-- Successfully added Rootfs step")
+endfunction(create_rootfs)
+###############################################################################
 
+create_rootfs(${PLUGIN_NAME})
+
+# Sign generated file
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
+    "${FB_ROOTFS_DIR}/${FBSTRING_PluginFileName}.dll"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+    
 # Sign dll dependencies
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/avcodec-53.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/avutil-51.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/libeXosip2-7.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/libeay32.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/liblinphone-5.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx" 
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/libmediastreamer-1.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/libogg-0.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/libortp-8.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/libosip2-7.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/libosipparser2-7.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/libspeex-1.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/libspeexdsp-1.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/libtheora-0.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/libvpx-1.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/libz-1.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/ssleay32.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
-firebreath_sign_file(${PLUGIN_NAME}
+firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/swscale-2.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
@@ -210,14 +218,14 @@ add_wix_installer(${PLUGIN_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/linphoneInstaller.wxs
     PluginDLLGroup
     ${FB_ROOTFS_DIR}/
-    ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll
-    ${PROJECT_NAME}
+    ${FB_ROOTFS_DIR}/${FBSTRING_PluginFileName}.dll
+    ${PLUGIN_NAME}_RootFS
     )
 
 # This is an example of how to add a build step to sign the WiX installer
 # -- uncomment lines below this to enable signing --
 firebreath_sign_file(${PLUGIN_NAME}_WiXInstall
-    "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}.msi"
+    "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.msi"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
@@ -243,7 +251,7 @@ function (create_cab PROJNAME DDF FILES_CAB)
 	ADD_CUSTOM_COMMAND(
 		TARGET ${PROJECT_NAME}_exe
         COMMAND ${WIX_SETUPBLD} 
-		ARGS -out "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}.exe" -mpsu "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}.msi" -setup ${WIX_ROOT_DIR}/bin/setup.exe
+		ARGS -out "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe" -mpsu "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.msi" -setup ${WIX_ROOT_DIR}/bin/setup.exe
 	)
 	message("-- Successfully added EXE step")
 	
@@ -260,31 +268,30 @@ endfunction(create_cab)
 create_cab(${PLUGIN_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.ddf" "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.inf")
 
 firebreath_sign_file(${PLUGIN_NAME}_exe
-    "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}.exe"
+    "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 
 firebreath_sign_file(${PLUGIN_NAME}_cab
-    "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}.cab"
+    "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 
 ###############################################################################
 # XPI Package
-function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
+function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
     set (WIX_SOURCES
             ${FB_ROOT}/cmake/dummy.cpp
         )
 	if (NOT FB_XPI_PACKAGE_SUFFIX)
-		set (FB_XPI_PACKAGE_SUFFIX _PKG_XPI)
+		set (FB_XPI_PACKAGE_SUFFIX _XPI)
 	endif()
 	
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/X11/XPI/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
 	
 	set(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
-	get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
 	
 	ADD_LIBRARY(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} STATIC ${WIX_SOURCES})
 	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}${FB_XPI_PACKAGE_SUFFIX}
@@ -302,17 +309,17 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND jar cfM ${FB_OUT_DIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
 
 	)
-	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJNAME})
+	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added XPI package step")
 endfunction(create_xpi_package)
 ###############################################################################
 
-create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
+create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME}_RootFS)
 
 create_signed_xpi(${PLUGIN_NAME} 
 	"${FB_OUT_DIR}/XPI/"
 	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.xpi"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	${PLUGIN_NAME}_PKG_XPI
+	${PLUGIN_NAME}_XPI
 )

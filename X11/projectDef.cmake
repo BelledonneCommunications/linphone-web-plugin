@@ -56,12 +56,27 @@ SET (FB_PACKAGE_SUFFIX Linux)
 SET (FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
 SET (FB_ROOTFS_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/Rootfs)
 
-# Copy dll dependencies
-ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
-                 POST_BUILD
-				 COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_ROOTFS_DIR}
+# Use default chrpath if not defined
+IF(NOT DEFINED CMAKE_CHRPATH)
+	SET(CMAKE_CHRPATH chrpath)
+ENDIF(NOT DEFINED CMAKE_CHRPATH)
+
+###############################################################################
+# Create Rootfs
+function (create_rootfs PROJNAME)
+    set (WIX_SOURCES
+            ${FB_ROOT}/cmake/dummy.cpp
+        )
+	if (NOT FB_ROOTFS_SUFFIX)
+		set (FB_ROOTFS_SUFFIX _RootFS)
+	endif()
+	
+	ADD_LIBRARY(${PROJNAME}${FB_ROOTFS_SUFFIX} STATIC ${WIX_SOURCES})
+	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}${FB_ROOTFS_SUFFIX}
+		 PRE_BUILD
+                 COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_ROOTFS_DIR}
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}
-                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${ONAME}.so ${FB_ROOTFS_DIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.so ${FB_ROOTFS_DIR}/
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavcodec.so.53 ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavutil.so.51 ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/
@@ -91,16 +106,8 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-)
-
-# Use default chrpath if not defined
-IF(NOT DEFINED CMAKE_CHRPATH)
-	SET(CMAKE_CHRPATH chrpath)
-ENDIF(NOT DEFINED CMAKE_CHRPATH)
-
-# Change rpath
-ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
-                 POST_BUILD
+		 
+		 ## Change rpath
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libavcodec.so.53
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libavutil.so.51
 #                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libcrypto.so.1.0.0                 
@@ -122,7 +129,13 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libv4lconvert.so.0
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libvpx.so.1
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libz.so.1
-)
+	)
+	ADD_DEPENDENCIES(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
+	message("-- Successfully added Rootfs step")
+endfunction(create_rootfs)
+###############################################################################
+
+create_rootfs(${PLUGIN_NAME})
 
 # Add rpath to generated library
 SET (CMAKE_SHARED_LINKER_FLAGS
@@ -130,7 +143,7 @@ SET (CMAKE_SHARED_LINKER_FLAGS
 
 ###############################################################################
 # TGZ Package
-function (create_tgz_package PROJNAME PROJVERSION OUTDIR)
+function (create_tgz_package PROJNAME PROJVERSION OUTDIR PROJDEP)
     set (WIX_SOURCES
             ${FB_ROOT}/cmake/dummy.cpp
         )
@@ -152,14 +165,14 @@ function (create_tgz_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND tar zcvf "${OUTDIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.tar.gz" 
                  		-C ${FB_PKG_DIR} ${PKG_PREFIX}
 	)
-	ADD_DEPENDENCIES(${PROJNAME}${FB_TGZ_PACKAGE_SUFFIX} ${PROJNAME})
+	ADD_DEPENDENCIES(${PROJNAME}${FB_TGZ_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added TGZ package step")
 endfunction(create_tgz_package)
 ###############################################################################
 
 ###############################################################################
 # XPI Package
-function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
+function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
     set (WIX_SOURCES
             ${FB_ROOT}/cmake/dummy.cpp
         )
@@ -187,7 +200,7 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}/plugins                 
                  COMMAND jar cfM ${FB_OUT_DIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
 	)
-	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJNAME})
+	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added XPI package step")
 endfunction(create_xpi_package)
 ###############################################################################
@@ -195,7 +208,7 @@ endfunction(create_xpi_package)
 
 ###############################################################################
 # CRX Package
-function (create_crx_package PROJNAME PROJVERSION OUTDIR)
+function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
     set (WIX_SOURCES
             ${FB_ROOT}/cmake/dummy.cpp
         )
@@ -206,14 +219,12 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/X11/CRX/manifest.json ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
 	
 	set(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
-	get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
 	
 	ADD_LIBRARY(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} STATIC ${WIX_SOURCES})
 	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}${FB_CRX_PACKAGE_SUFFIX}
                  POST_BUILD
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
-                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${ONAME}.so ${FB_PKG_DIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/manifest.json ${FB_PKG_DIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png ${FB_PKG_DIR}/
@@ -221,14 +232,14 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}
                  COMMAND jar cfM ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx -C ${FB_PKG_DIR} .
 	)
-	ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJNAME})
+	ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added CRX package step")
 endfunction(create_crx_package)
 ###############################################################################
 
-create_tgz_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
-create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
-create_crx_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
+create_tgz_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME}_RootFS)
+create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME}_RootFS)
+create_crx_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME}_RootFS)
 
 create_signed_xpi(${PLUGIN_NAME} 
 	"${FB_OUT_DIR}/XPI/"

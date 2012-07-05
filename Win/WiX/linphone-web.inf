@@ -6,4 +6,4 @@ AdvancedINF=2.0
 hook1=hook1
 
 [hook1]
-run="%EXTRACT_DIR%\${PROJECT_NAME}.exe"
+run="%EXTRACT_DIR%\${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe"

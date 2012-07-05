@@ -8,7 +8,7 @@ function (create_signed_xpi PROJNAME DIRECTORY OUT_FILE PEMFILE PASSFILE PROJDEP
         )
 		
 	if (NOT FB_XPI_SUFFIX)
-		set (FB_XPI_SUFFIX _XPI)
+		set (FB_XPI_SUFFIX _XPI_signed)
 	endif()
 	ADD_LIBRARY(${PROJNAME}${FB_XPI_SUFFIX} STATIC ${WIX_SOURCES})
 	if (EXISTS ${PEMFILE})
