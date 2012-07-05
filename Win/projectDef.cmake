@@ -77,120 +77,123 @@ target_link_libraries(${PROJECT_NAME}
 	)
 
 SET (LINPHONEWEB_SHAREDIR linphoneweb)
+SET (FB_PACKAGE_SUFFIX Win32)
 SET (FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
+SET (FB_ROOTFS_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/Rootfs)
 
 #Copy dll dependencies
 ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
-		  PRE_BUILD
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avcodec-53.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avutil-51.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libeXosip2-7.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libeay32.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/liblinphone-5.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libmediastreamer-1.dll ${FB_OUT_DIR}/		  
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libogg-0.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libortp-8.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libosip2-7.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libosipparser2-7.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libspeex-1.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libspeexdsp-1.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libtheora-0.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libvpx-1.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libz-1.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/ssleay32.dll ${FB_OUT_DIR}/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/swscale-2.dll ${FB_OUT_DIR}/
+		  POST_BUILD
+		  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avcodec-53.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avutil-51.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libeXosip2-7.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libeay32.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/liblinphone-5.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libmediastreamer-1.dll ${FB_ROOTFS_DIR}/		  
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libogg-0.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libortp-8.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libosip2-7.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libosipparser2-7.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libspeex-1.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libspeexdsp-1.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libtheora-0.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libvpx-1.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libz-1.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/ssleay32.dll ${FB_ROOTFS_DIR}/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/swscale-2.dll ${FB_ROOTFS_DIR}/
 		  
-		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/
-		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/
-		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
-		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
-		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
 )
 
 # Sign dll dependencies
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/avcodec-53.dll"
+    "${FB_ROOTFS_DIR}/avcodec-53.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/avutil-51.dll"
+    "${FB_ROOTFS_DIR}/avutil-51.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/libeXosip2-7.dll"
+    "${FB_ROOTFS_DIR}/libeXosip2-7.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/libeay32.dll"
+    "${FB_ROOTFS_DIR}/libeay32.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/liblinphone-5.dll"
+    "${FB_ROOTFS_DIR}/liblinphone-5.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx" 
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/libmediastreamer-1.dll"
+    "${FB_ROOTFS_DIR}/libmediastreamer-1.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/libogg-0.dll"
+    "${FB_ROOTFS_DIR}/libogg-0.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/libortp-8.dll"
+    "${FB_ROOTFS_DIR}/libortp-8.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/libosip2-7.dll"
+    "${FB_ROOTFS_DIR}/libosip2-7.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/libosipparser2-7.dll"
+    "${FB_ROOTFS_DIR}/libosipparser2-7.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/libspeex-1.dll"
+    "${FB_ROOTFS_DIR}/libspeex-1.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/libspeexdsp-1.dll"
+    "${FB_ROOTFS_DIR}/libspeexdsp-1.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/libtheora-0.dll"
+    "${FB_ROOTFS_DIR}/libtheora-0.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/libvpx-1.dll"
+    "${FB_ROOTFS_DIR}/libvpx-1.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/libz-1.dll"
+    "${FB_ROOTFS_DIR}/libz-1.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/ssleay32.dll"
+    "${FB_ROOTFS_DIR}/ssleay32.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
 firebreath_sign_file(${PLUGIN_NAME}
-    "${FB_OUT_DIR}/swscale-2.dll"
+    "${FB_ROOTFS_DIR}/swscale-2.dll"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
     "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
     "http://timestamp.verisign.com/scripts/timestamp.dll")
@@ -202,11 +205,11 @@ SET(WIX_HEAT_FLAGS
     -dr INSTALLDIR      # Set the directory ID to put the files in
     )
 
-SET(FB_WIX_DEST ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}.msi)
+SET(FB_WIX_DEST ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.msi)
 add_wix_installer(${PLUGIN_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/linphoneInstaller.wxs
     PluginDLLGroup
-    ${FB_OUT_DIR}/
+    ${FB_ROOTFS_DIR}/
     ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll
     ${PROJECT_NAME}
     )
@@ -295,32 +298,9 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/chrome/skin/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png ${FB_PKG_DIR}/chrome/skin/
                  
-                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/
-                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${ONAME}.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/avcodec-53.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/avutil-51.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libeXosip2-7.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libeay32.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/liblinphone-5.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libmediastreamer-1.dll ${FB_PKG_DIR}/plugins/		  
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libogg-0.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libortp-8.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libosip2-7.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libosipparser2-7.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libspeex-1.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libspeexdsp-1.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libtheora-0.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libvpx-1.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/libz-1.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/ssleay32.dll ${FB_PKG_DIR}/plugins/
-		         COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/swscale-2.dll ${FB_PKG_DIR}/plugins/
-                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/
-                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/
-                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
-                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/ringback.wav ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/oldphone.wav ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+                 COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}/plugins    
+                 COMMAND jar cfM ${FB_OUT_DIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
+
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJNAME})
 	message("-- Successfully added XPI package step")
@@ -331,7 +311,7 @@ create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
 
 create_signed_xpi(${PLUGIN_NAME} 
 	"${FB_OUT_DIR}/XPI/"
-	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-win32.xpi"
+	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.xpi"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	${PLUGIN_NAME}_PKG_XPI

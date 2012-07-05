@@ -66,13 +66,14 @@ set_target_properties (${PROJECT_NAME} PROPERTIES
 )
 
 get_target_property(PLUGIN_EXT ${PROJECT_NAME} BUNDLE_EXTENSION)
+SET (FB_PACKAGE_SUFFIX Mac)
 SET (LINPHONEWEB_SHAREDIR linphoneweb)
 SET (FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
 SET (FB_BUNDLE_DIR ${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}/Contents/MacOS)
 
 # Copy dll dependencies
 ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
-                 PRE_BUILD
+                 POST_BUILD
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavcodec.54.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavutil.51.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
@@ -151,46 +152,7 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
                  
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT} ${FB_PKG_DIR}/plugins/${PLUGIN_NAME}.${PLUGIN_EXT}
-#                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${PLUGIN_NAME} ${FB_PKG_DIR}/plugins/${PLUGIN_NAME}.dylib
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libavcodec.54.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libavutil.51.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libcrypto.1.0.0.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libeXosip2.7.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/liblinphone.5.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libmediastreamer.1.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libogg.0.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libortp.8.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libosip2.7.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libosipparser2.7.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libspeex.1.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libspeexdsp.1.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libssl.1.0.0.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libswscale.2.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libtheora.0.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libz.1.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-
-# FFMPEG stuff
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libSDL-1.2.0.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libvorbisenc.2.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libvorbis.0.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libtheoraenc.1.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libtheoradec.1.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libschroedinger-1.0.0.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libopenjpeg.1.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libmp3lame.0.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libdirac_encoder.0.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libdirac_decoder.0.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libbz2.1.0.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/liborc-0.4.0.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/libmodplug.1.dylib ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/
-
-#                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/
-#                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/
-#                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
-#                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/ringback.wav ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
-#                 COMMAND ${CMAKE_COMMAND} -E copy ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/oldphone.wav ${FB_PKG_DIR}/plugins/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+                 COMMAND jar cfM ${FB_OUT_DIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJNAME})
 	message("-- Successfully added XPI package step")
@@ -201,7 +163,7 @@ create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
 
 create_signed_xpi(${PLUGIN_NAME} 
 	"${FB_OUT_DIR}/XPI/"
-	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-Mac.xpi"
+	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.xpi"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	${PLUGIN_NAME}_PKG_XPI
