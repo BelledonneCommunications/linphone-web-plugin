@@ -1,0 +1,25 @@
+<pkgref spec="1.12" uuid="701505A1-0C7E-4FE0-9E3A-643384E34C18">
+	<config>
+		<identifier>com.belledonne-communications.linphone-web</identifier>
+		<version>1.0</version>
+		<description/>
+		<post-install type="none"/>
+		<installFrom relative="true" includeRoot="true">${PLUGIN_NAME}.${PLUGIN_EXT}</installFrom>
+		<installTo>/</installTo>
+		<flags>
+			<followSymbolicLinks/>
+		</flags>
+		<packageStore type="internal"/>
+		<mod>relocatable</mod>
+		<mod>requireAuthorization</mod>
+		<mod>identifier</mod>
+		<mod>parent</mod>
+		<mod>installFrom.isRelativeType</mod>
+	</config>
+	<scripts>
+		<postinstall relative="true" mod="true">PKG.pmdoc/move.sh</postinstall>
+	></scripts>
+	<contents>
+		<file-list>01linphone-contents.xml</file-list>
+	</contents>
+</pkgref>

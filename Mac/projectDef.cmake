@@ -157,6 +157,36 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
 endfunction(create_xpi_package)
 ###############################################################################
 
+
+###############################################################################
+# PKG Package
+function (create_pkg_package PROJNAME PROJVERSION OUTDIR)
+    set (WIX_SOURCES
+            ${FB_ROOT}/cmake/dummy.cpp
+        )
+	if (NOT FB_PKG_PACKAGE_SUFFIX)
+		set (FB_PKG_PACKAGE_SUFFIX _PKG_PKG)
+	endif()
+	
+	file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/PKG.pmdoc)
+	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/move.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/index.xml ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/index.xml)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/01linphone.xml ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/01linphone.xml)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/01linphone-contents.xml ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/01linphone-contents.xml)
+	
+	ADD_LIBRARY(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} STATIC ${WIX_SOURCES})
+	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}${FB_PKG_PACKAGE_SUFFIX}
+                 POST_BUILD
+                 COMMAND ${CMAKE_COMMAND} -E remove_directory ${OUTDIR}/PKG.pmdoc
+                 COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc ${OUTDIR}/PKG.pmdoc
+                 COMMAND packagemaker --doc ${OUTDIR}/PKG.pmdoc --out ${OUTDIR}/${PROJNAME}.pkg
+	)
+	ADD_DEPENDENCIES(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} ${PROJNAME})
+	message("-- Successfully added PKG package step")
+endfunction(create_pkg_package)
+###############################################################################
+
+create_pkg_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
 create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
 
 create_signed_xpi(${PLUGIN_NAME} 
