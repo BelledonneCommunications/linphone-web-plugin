@@ -78,7 +78,7 @@ def crxmake(dirname, pem_name, pass_file, crx_name):
     else:
         der_key = subprocess.Popen(
             ["openssl", "rsa", "-pubout", "-outform", "DER",
-             "-inform", "PEM", "-in", pem_name],
+             "-inform", "PEM", "-in", pem_name, "-passin", "file:"+pass_file],
             stdout=subprocess.PIPE).stdout.read()
         pass
 
@@ -87,7 +87,7 @@ def crxmake(dirname, pem_name, pass_file, crx_name):
     version = struct.pack("<I", 2)
     key_len = struct.pack("<I", len(der_key))
     sign_len = struct.pack("<I", len(sign))
-    with open(crx_name, "w") as crx:
+    with open(crx_name, "wb") as crx:
         crx.write(magic)
         crx.write(version)
         crx.write(key_len)
