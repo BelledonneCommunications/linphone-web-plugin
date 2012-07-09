@@ -314,6 +314,37 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 endfunction(create_xpi_package)
 ###############################################################################
 
+###############################################################################
+# CRX Package
+function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
+    set (WIX_SOURCES
+            ${FB_ROOT}/cmake/dummy.cpp
+        )
+	if (NOT FB_CRX_PACKAGE_SUFFIX)
+		set (FB_CRX_PACKAGE_SUFFIX _CRX)
+	endif()
+	
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Win/CRX/manifest.json ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
+	
+	set(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
+	
+	ADD_LIBRARY(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} STATIC ${WIX_SOURCES})
+	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}${FB_CRX_PACKAGE_SUFFIX}
+                 POST_BUILD
+                 COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
+                 COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/manifest.json ${FB_PKG_DIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png ${FB_PKG_DIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/
+                 
+                 COMMAND jar cfM ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx -C ${FB_PKG_DIR} .
+	)
+	ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJDEP})
+	message("-- Successfully added CRX package step")
+endfunction(create_crx_package)
+###############################################################################
+
+create_crx_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME}_RootFS)
 create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME}_RootFS)
 
 create_signed_xpi(${PLUGIN_NAME} 
@@ -322,4 +353,12 @@ create_signed_xpi(${PLUGIN_NAME}
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	${PLUGIN_NAME}_XPI
+)
+
+create_signed_crx(${PLUGIN_NAME} 
+	"${FB_OUT_DIR}/CRX/"
+	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.crx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	${PLUGIN_NAME}_CRX
 )
