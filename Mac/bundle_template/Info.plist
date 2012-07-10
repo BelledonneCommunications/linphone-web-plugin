@@ -9,13 +9,13 @@
 	<key>CFBundleGetInfoString</key>
     <string>${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION}, ${FBSTRING_LegalCopyright}</string>
 	<key>CFBundleIdentifier</key>
-    <string>com.${FBTYPELIB_NAME}.${FBSTRING_PluginName}</string>
+    <string>${FBSTRING_CompanyDomain}.${PLUGIN_NAME}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
 	<string>BRPL</string>
 	<key>CFBundleShortVersionString</key>
-    <string>${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION}</string>
+    <string>${FBSTRING_PLUGIN_VERSION}</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>

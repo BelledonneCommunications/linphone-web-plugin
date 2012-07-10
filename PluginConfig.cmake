@@ -22,13 +22,13 @@ set(PLUGIN_PREFIX "LINWEB")
 set(COMPANY_NAME "belledonne-communications")
 
 # ActiveX constants:
-set(FBTYPELIB_NAME linphoneLib)
-set(FBTYPELIB_DESC "linphone 1.0 Type Library")
-set(IFBControl_DESC "linphone Control Interface")
-set(FBControl_DESC "linphone Control Class")
-set(IFBComJavascriptObject_DESC "linphone IComJavascriptObject Interface")
-set(FBComJavascriptObject_DESC "linphone ComJavascriptObject Class")
-set(IFBComEventSource_DESC "linphone IFBComEventSource Interface")
+set(FBTYPELIB_NAME "Linphone-web")
+set(FBTYPELIB_DESC "Linphone Web 1.0 Type Library")
+set(IFBControl_DESC "Linphone Web Control Interface")
+set(FBControl_DESC "Linphone Web Control Class")
+set(IFBComJavascriptObject_DESC "Linphone Web IComJavascriptObject Interface")
+set(FBComJavascriptObject_DESC "Linphone Web ComJavascriptObject Class")
+set(IFBComEventSource_DESC "Linphone Web IFBComEventSource Interface")
 set(AXVERSION_NUM "1")
 
 # NOTE: THESE GUIDS *MUST* BE UNIQUE TO YOUR PLUGIN/ACTIVEX CONTROL!  YES, ALL OF THEM!
@@ -42,6 +42,7 @@ set(IFBComEventSource_GUID 898a611e-b63b-58c7-bc64-0c0fa0c0cded)
 set(MOZILLA_PLUGINID "belledonne-communications.com/linphone/web")
 
 # strings
+set(FBSTRING_CompanyDomain "com.belledonne-communication")
 set(FBSTRING_CompanyName "Belledonne Communications")
 set(FBSTRING_PLUGIN_VERSION "1.0.0.0")
 set(FBSTRING_LegalCopyright "Copyright 2012 Belledonne Communications")
