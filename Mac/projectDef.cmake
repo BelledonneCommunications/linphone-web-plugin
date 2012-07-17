@@ -47,12 +47,17 @@ set(LOCALIZED "Mac/bundle_template/Localized.r")
 
 add_mac_plugin(${PROJECT_NAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
 
+find_library(OPENGL_FRAMEWORK OpenGL)
+find_library(QUARTZ_CORE_FRAMEWORK QuartzCore)
+
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJECT_NAME}
         ${PLUGIN_INTERNAL_DEPS}
         "${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.5.dylib"
         "${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer.1.dylib"
         "${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.8.dylib"
+        ${OPENGL_FRAMEWORK}
+        ${QUARTZ_CORE_FRAMEWORK}
 )
 
 # fix output path

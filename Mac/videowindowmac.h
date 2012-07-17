@@ -34,6 +34,7 @@ public:
 	void setBackgroundColor(int r, int g, int b);
 
 private:
+	void *mDrawingPrimitive;
 };
 
 #endif // H_VIDEOWINDOWMAC
