@@ -91,6 +91,7 @@ public:
 
 	// Read-only property
 	std::string getVersion();
+	std::string getPluginVersion();
 	int getSipPort();
 
 	// Property

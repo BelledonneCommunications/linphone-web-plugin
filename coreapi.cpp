@@ -97,6 +97,7 @@ CoreAPI::CoreAPI(const corePtr& plugin, const FB::BrowserHostPtr& host) :
 void CoreAPI::initProxy() {
 	// Read-only property
 	registerProperty("version", make_property(this, &CoreAPI::getVersion));
+	registerProperty("pluginVersion", make_property(this, &CoreAPI::getPluginVersion));
 	registerProperty("sip_port", make_property(this, &CoreAPI::getSipPort));
 
 	// Propery
@@ -737,6 +738,11 @@ std::string CoreAPI::getVersion() {
 
 	FBLOG_DEBUG("CoreAPI::getVersion()", "this=" << this);
 	return linphone_core_get_version();
+}
+
+std::string CoreAPI::getPluginVersion() {
+	FBLOG_DEBUG("CoreAPI::getPluginVersion()", "this=" << this << FBSTRING_PLUGIN_VERSION);
+	return FBSTRING_PLUGIN_VERSION;
 }
 
 int CoreAPI::getSipPort() {

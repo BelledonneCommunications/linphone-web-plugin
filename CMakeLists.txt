@@ -42,7 +42,7 @@ SOURCE_GROUP(Generated FILES
     ${GENERATED}
     )
 
-SET( SOURCES
+SET(SOURCES
     ${GENERAL}
     ${GENERATED}
     )

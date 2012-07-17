@@ -26,25 +26,6 @@ class PassFile:
                file.close()
                return line
 
-			   
-CRX_ALGO = "30819F300D06092A864886F70D010101050003818D00"
-CRX_TRANS = {"0":"a", 
-"1":"b",
-"2":"c",
-"3":"d",
-"4":"e",
-"5":"f",
-"6":"g",
-"7":"h",
-"8":"i",
-"9":"j",
-"a":"k",
-"b":"l",
-"c":"m",
-"d":"n",
-"e":"o",
-"f":"p"}
-
 def crxmake(dirname, pem_name, pass_file, crx_name):
     if dirname.endswith(os.path.sep): dirname = dirname[:-1]
 
