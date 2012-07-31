@@ -24,12 +24,13 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/Common/common.cmake)
 # remember that the current source dir is the project root; this file is in Mac/
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/[^.]*.cpp
+    Mac/[^.]*.mm
     Mac/[^.]*.h
     Mac/[^.]*.cmake
     )
 
 # GCC options
-add_definitions(-std=c++0x)
+# add_definitions(-std=c++0x)
 
 include_directories(Rootfs/include/linphone)
 include_directories(Rootfs/include)

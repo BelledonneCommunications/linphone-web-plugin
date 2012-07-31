@@ -20,7 +20,7 @@
 #ifndef H_VIDEOWINDOWMAC
 #define H_VIDEOWINDOWMAC
 
-#include <PluginWindow.h>
+#include <PluginWindowMac.h>
 #include <boost/shared_ptr.hpp>
 #include "../videowindow.h"
 
@@ -34,7 +34,7 @@ public:
 	void setBackgroundColor(int r, int g, int b);
 
 private:
-	void *mDrawingPrimitive;
+	void *mWindow;
 };
 
 #endif // H_VIDEOWINDOWMAC
