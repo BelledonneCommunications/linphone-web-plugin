@@ -216,7 +216,7 @@ function (create_pkg_package PROJNAME PROJVERSION OUTDIR)
                  POST_BUILD
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${OUTDIR}/PKG.pmdoc
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc ${OUTDIR}/PKG.pmdoc
-                 COMMAND packagemaker --doc ${OUTDIR}/PKG.pmdoc --out ${OUTDIR}/${PROJNAME}.pkg
+                 COMMAND packagemaker --doc ${OUTDIR}/PKG.pmdoc --out ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}.pkg
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} ${PROJNAME})
 	message("-- Successfully added PKG package step")
