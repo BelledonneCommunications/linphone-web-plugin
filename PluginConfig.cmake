@@ -22,7 +22,7 @@ set(PLUGIN_PREFIX "LINWEB")
 set(COMPANY_NAME "belledonne-communications")
 
 # ActiveX constants:
-set(FBTYPELIB_NAME "Linphone-web")
+set(FBTYPELIB_NAME "LinphoneWeb")
 set(FBTYPELIB_DESC "Linphone Web 1.0 Type Library")
 set(IFBControl_DESC "Linphone Web Control Interface")
 set(FBControl_DESC "Linphone Web Control Class")
