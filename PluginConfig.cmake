@@ -83,4 +83,5 @@ set(FBMAC_USE_INVALIDATINGCOREANIMATION 1)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
 	add_firebreath_library(log4cplus)
+	add_definitions(-DDEBUG)
 endif()

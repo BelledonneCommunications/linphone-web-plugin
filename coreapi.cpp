@@ -173,16 +173,19 @@ void CoreAPI::initProxy() {
 }
 
 int CoreAPI::init() {
-	FBLOG_DEBUG("CoreAPI::init()", "this=" << this);
+	FBLOG_DEBUG("CoreAPI::init2()", "this=" << this);
 	boost::mutex::scoped_lock scoped_instance_count_lock(sInstanceMutex);
 
 	if (sInstanceCount == 0) {
 		++sInstanceCount;
 		srand((unsigned int) time(NULL));
 
-#ifndef NDEBUG
+#ifndef DEBUG
 		// Disable logs
 		linphone_core_disable_logs();
+#else
+		// Enable logs
+		linphone_core_enable_logs(stderr);
 #endif
 		// Initialize callback table
 		memset(&mVtable, 0, sizeof(LinphoneCoreVTable));
@@ -215,8 +218,6 @@ int CoreAPI::init() {
 		int port = 5000 + rand() % 5000;
 		FBLOG_DEBUG("CoreAPI::init()", "port=" << port);
 		linphone_core_set_sip_port(mCore, port);
-
-		FBLOG_DEBUG("linphone_core_set_ring", "linphone_core_set_ring" << linphone_core_get_ring(mCore));
 
 		m_core_thread = new boost::thread(linphone_iterate_thread, this);
 		return 0;

@@ -67,16 +67,17 @@ SET (FB_ROOTFS_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/Rootfs)
 ###############################################################################
 # Create Rootfs
 function (create_rootfs PROJNAME)
-    set (WIX_SOURCES
+    	set(ROOTFS_SOURCES
             ${FB_ROOT}/cmake/dummy.cpp
+            ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll
         )
 	if (NOT FB_ROOTFS_SUFFIX)
 		set (FB_ROOTFS_SUFFIX _RootFS)
 	endif()
 	
-	ADD_LIBRARY(${PROJNAME}${FB_ROOTFS_SUFFIX} STATIC ${WIX_SOURCES})
-	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}${FB_ROOTFS_SUFFIX}
-		  PRE_BUILD
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_ROOTFS_DIR})
+	ADD_CUSTOM_COMMAND(OUTPUT ${FB_ROOTFS_DIR}
+                  DEPENDS ${ROOTFS_SOURCES}
                   COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_ROOTFS_DIR}
                   COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}
 		  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll ${FB_ROOTFS_DIR}/
@@ -98,7 +99,9 @@ function (create_rootfs PROJNAME)
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/ssleay32.dll ${FB_ROOTFS_DIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/swscale-2.dll ${FB_ROOTFS_DIR}/
 		  
-		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/
+                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/
+                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
+                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/images/nowebcamCIF.jpg ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
 		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/
 		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
 		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
@@ -282,8 +285,9 @@ firebreath_sign_file(${PLUGIN_NAME}_cab
 ###############################################################################
 # XPI Package
 function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
-    set (WIX_SOURCES
+    	set(XPI_SOURCES
             ${FB_ROOT}/cmake/dummy.cpp
+            ${FB_ROOTFS_DIR}
         )
 	if (NOT FB_XPI_PACKAGE_SUFFIX)
 		set (FB_XPI_PACKAGE_SUFFIX _XPI)
@@ -293,9 +297,9 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	
 	set(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
 	
-	ADD_LIBRARY(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} STATIC ${WIX_SOURCES})
-	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}${FB_XPI_PACKAGE_SUFFIX}
-                 POST_BUILD
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${FB_PKG_DIR})
+	ADD_CUSTOM_COMMAND(OUTPUT ${FB_PKG_DIR}
+                 DEPENDS ${XPI_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/install.rdf ${FB_PKG_DIR}/
@@ -318,8 +322,9 @@ endfunction(create_xpi_package)
 ###############################################################################
 # CRX Package
 function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
-    set (WIX_SOURCES
+    	set(CRX_SOURCES
             ${FB_ROOT}/cmake/dummy.cpp
+            ${FB_ROOTFS_DIR}
         )
 	if (NOT FB_CRX_PACKAGE_SUFFIX)
 		set (FB_CRX_PACKAGE_SUFFIX _CRX)
@@ -329,9 +334,9 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	
 	set(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
 	
-	ADD_LIBRARY(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} STATIC ${WIX_SOURCES})
-	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}${FB_CRX_PACKAGE_SUFFIX}
-                 POST_BUILD
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${FB_PKG_DIR})
+	ADD_CUSTOM_COMMAND(OUTPUT ${FB_PKG_DIR}
+                 DEPENDS ${CRX_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/manifest.json ${FB_PKG_DIR}/
