@@ -173,7 +173,7 @@ void CoreAPI::initProxy() {
 }
 
 int CoreAPI::init() {
-	FBLOG_DEBUG("CoreAPI::init2()", "this=" << this);
+	FBLOG_DEBUG("CoreAPI::init()", "this=" << this);
 	boost::mutex::scoped_lock scoped_instance_count_lock(sInstanceMutex);
 
 	if (sInstanceCount == 0) {

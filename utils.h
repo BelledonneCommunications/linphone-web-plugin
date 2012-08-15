@@ -100,7 +100,7 @@ std::string APIDescription(T *ptr) {
 		ss << std::string(name);
 	else
 		ss << "<JSAPI-Auto Javascript Object>";
-#ifndef NDEBUG
+#ifdef DEBUG
 	ss << "(" << ptr << ")";
 #endif
 	return ss.str();
