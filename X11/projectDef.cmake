@@ -64,10 +64,9 @@ ENDIF(NOT DEFINED CMAKE_CHRPATH)
 ###############################################################################
 # Create Rootfs
 function (create_rootfs PROJNAME)
-    	set(ROOTFS_SOURCES
-            ${FB_ROOT}/cmake/dummy.cpp
-            ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.so
-        )
+	set (ROOTFS_SOURCES
+		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.so
+	)
 	if (NOT FB_ROOTFS_SUFFIX)
 		set (FB_ROOTFS_SUFFIX _RootFS)
 	endif()
@@ -132,6 +131,8 @@ function (create_rootfs PROJNAME)
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libv4lconvert.so.0
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libvpx.so.1
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libz.so.1
+				 
+                 COMMAND ${CMAKE_COMMAND} -E touch ${FB_ROOTFS_DIR}.updated
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
 	message("-- Successfully added Rootfs step")
@@ -147,10 +148,9 @@ SET (CMAKE_SHARED_LINKER_FLAGS
 ###############################################################################
 # TGZ Package
 function (create_tgz_package PROJNAME PROJVERSION OUTDIR PROJDEP)
-    	set(TGZ_SOURCES
-            ${FB_ROOT}/cmake/dummy.cpp
-            ${FB_ROOTFS_DIR}
-        )
+	set (TGZ_SOURCES
+		${FB_ROOTFS_DIR}.updated
+	)
 	if (NOT FB_TGZ_PACKAGE_SUFFIX)
 		set (FB_TGZ_PACKAGE_SUFFIX _TGZ)
 	endif()
@@ -160,14 +160,13 @@ function (create_tgz_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	
 	set(PKG_PREFIX ${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION})
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_TGZ_PACKAGE_SUFFIX} ALL DEPENDS ${FB_PKG_DIR})
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_PKG_DIR}
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_TGZ_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.tar.gz)
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.tar.gz
                  DEPENDS ${TGZ_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}/${PKG_PREFIX}              
-                 COMMAND tar zcvf "${OUTDIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.tar.gz" 
-                 		-C ${FB_PKG_DIR} ${PKG_PREFIX}
+                 COMMAND tar zcvf ${OUTDIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.tar.gz -C ${FB_PKG_DIR} ${PKG_PREFIX}
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_TGZ_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added TGZ package step")
@@ -177,10 +176,9 @@ endfunction(create_tgz_package)
 ###############################################################################
 # XPI Package
 function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
-    	set(XPI_SOURCES
-            ${FB_ROOT}/cmake/dummy.cpp
-            ${FB_ROOTFS_DIR}
-        )
+	set (XPI_SOURCES
+		${FB_ROOTFS_DIR}.updated
+	)
 	if (NOT FB_XPI_PACKAGE_SUFFIX)
 		set (FB_XPI_PACKAGE_SUFFIX _XPI)
 	endif()
@@ -190,8 +188,8 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
 	get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${FB_PKG_DIR})
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_PKG_DIR}
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi)
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
                  DEPENDS ${XPI_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
@@ -204,7 +202,7 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png ${FB_PKG_DIR}/chrome/skin/
                  
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}/plugins                 
-                 COMMAND jar cfM ${FB_OUT_DIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
+                 COMMAND jar cfM ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added XPI package step")
@@ -215,10 +213,9 @@ endfunction(create_xpi_package)
 ###############################################################################
 # CRX Package
 function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
-    	set(CRX_SOURCES
-            ${FB_ROOT}/cmake/dummy.cpp
-            ${FB_ROOTFS_DIR}
-        )
+	set (CRX_SOURCES
+		${FB_ROOTFS_DIR}.updated
+	)
 	if (NOT FB_CRX_PACKAGE_SUFFIX)
 		set (FB_CRX_PACKAGE_SUFFIX _CRX)
 	endif()
@@ -227,8 +224,8 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	
 	set(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${FB_PKG_DIR})
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_PKG_DIR}
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx)
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
                  DEPENDS ${CRX_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}
@@ -236,7 +233,6 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png ${FB_PKG_DIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/
                  
-
                  COMMAND jar cfM ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx -C ${FB_PKG_DIR} .
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJDEP})

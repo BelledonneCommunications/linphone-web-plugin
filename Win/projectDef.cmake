@@ -67,16 +67,15 @@ SET (FB_ROOTFS_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/Rootfs)
 ###############################################################################
 # Create Rootfs
 function (create_rootfs PROJNAME)
-    	set(ROOTFS_SOURCES
-            ${FB_ROOT}/cmake/dummy.cpp
-            ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll
-        )
+	set (ROOTFS_SOURCES
+		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll
+	)
 	if (NOT FB_ROOTFS_SUFFIX)
 		set (FB_ROOTFS_SUFFIX _RootFS)
 	endif()
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_ROOTFS_DIR}.ok)
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_ROOTFS_DIR}.ok
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_ROOTFS_DIR})
+	ADD_CUSTOM_COMMAND(OUTPUT ${FB_ROOTFS_DIR}
 		  DEPENDS ${ROOTFS_SOURCES}
 		  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_ROOTFS_DIR}
 		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}
@@ -108,7 +107,7 @@ function (create_rootfs PROJNAME)
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
 		  
-		  COMMAND ${CMAKE_COMMAND} -E touch ${FB_ROOTFS_DIR}.ok
+		  COMMAND ${CMAKE_COMMAND} -E touch ${FB_ROOTFS_DIR}.updated
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
 	message("-- Successfully added Rootfs step")
@@ -239,7 +238,7 @@ IF(NOT DEFINED CMAKE_MAKECAB)
 	SET(CMAKE_MAKECAB makecab)
 ENDIF(NOT DEFINED CMAKE_MAKECAB)
 
-function (create_cab PROJNAME DDF FILES_CAB)
+function (create_cab PROJNAME DDF FILES_CAB PROJDEP)
     GET_FILENAME_COMPONENT(_tmp_File ${DDF} NAME)
     configure_file(${DDF} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
     message("Configuring ${DDF} -> ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File}")
@@ -251,26 +250,28 @@ function (create_cab PROJNAME DDF FILES_CAB)
         message("Configuring ${_curFile} -> ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File}")
     ENDFOREACH()
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}_exe DEPENDS ${PROJNAME}_WiXInstall)
+	ADD_CUSTOM_TARGET(${PROJNAME}_exe DEPENDS ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe)
 	SET(WIX_SETUPBLD ${WIX_ROOT_DIR}/bin/setupbld.exe)
-	ADD_CUSTOM_COMMAND(
-		TARGET ${PROJECT_NAME}_exe
+	ADD_CUSTOM_COMMAND(OUTPUT ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe
+		DEPENDS ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.msi
         COMMAND ${WIX_SETUPBLD} 
 		ARGS -out "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe" -mpsu "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.msi" -setup ${WIX_ROOT_DIR}/bin/setup.exe
 	)
+	ADD_DEPENDENCIES(${PROJNAME}_exe ${PROJDEP})
 	message("-- Successfully added EXE step")
 	
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}_cab DEPENDS ${PROJNAME}_exe)
-	ADD_CUSTOM_COMMAND(
-		TARGET ${PROJNAME}_cab
+	ADD_CUSTOM_TARGET(${PROJNAME}_cab DEPENDS ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab)
+	ADD_CUSTOM_COMMAND(OUTPUT ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab
+		DEPENDS ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe
         COMMAND ${CMAKE_MAKECAB} 
 		ARGS /D "BINSRC=${FB_OUT_DIR}/" /F "${DDF}"
 	)
+	ADD_DEPENDENCIES(${PROJNAME}_cab ${PROJNAME}_exe)
 	message("-- Successfully added CAB step")
 endfunction(create_cab)
 
-create_cab(${PLUGIN_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.ddf" "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.inf")
+create_cab(${PLUGIN_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.ddf" "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.inf" ${PLUGIN_NAME}_WiXInstall)
 
 firebreath_sign_file(${PLUGIN_NAME}_exe
     "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe"
@@ -287,10 +288,9 @@ firebreath_sign_file(${PLUGIN_NAME}_cab
 ###############################################################################
 # XPI Package
 function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
-    	set(XPI_SOURCES
-            ${FB_ROOT}/cmake/dummy.cpp
-            ${FB_ROOTFS_DIR}_Signed
-        )
+	set (XPI_SOURCES
+		${FB_ROOTFS_DIR}.updated
+	)
 	if (NOT FB_XPI_PACKAGE_SUFFIX)
 		set (FB_XPI_PACKAGE_SUFFIX _XPI)
 	endif()
@@ -299,8 +299,8 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	
 	set(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${FB_PKG_DIR})
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_PKG_DIR}
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi)
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
                  DEPENDS ${XPI_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
@@ -313,7 +313,7 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png ${FB_PKG_DIR}/chrome/skin/
                  
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}/plugins    
-                 COMMAND jar cfM ${FB_OUT_DIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
+                 COMMAND jar cfM ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added XPI package step")
@@ -323,10 +323,9 @@ endfunction(create_xpi_package)
 ###############################################################################
 # CRX Package
 function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
-    	set(CRX_SOURCES
-            ${FB_ROOT}/cmake/dummy.cpp
-            ${FB_ROOTFS_DIR}_Signed
-        )
+	set (CRX_SOURCES
+		${FB_ROOTFS_DIR}.updated
+	)
 	if (NOT FB_CRX_PACKAGE_SUFFIX)
 		set (FB_CRX_PACKAGE_SUFFIX _CRX)
 	endif()
@@ -335,8 +334,8 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	
 	set(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${FB_PKG_DIR})
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_PKG_DIR}
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx)
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
                  DEPENDS ${CRX_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}

@@ -115,8 +115,8 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmodplug.1.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
 
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/
-                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/images/nowebcamCIF.jpg ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
+                 COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/images/nowebcamCIF.jpg ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
@@ -131,11 +131,10 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
 
 ###############################################################################
 # XPI Package
-function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
-    	set(XPI_SOURCES
-            ${FB_ROOT}/cmake/dummy.cpp
-            ${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}
-        )
+function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
+	set (XPI_SOURCES
+		${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}
+	)
 	if (NOT FB_XPI_PACKAGE_SUFFIX)
 		set (FB_XPI_PACKAGE_SUFFIX _XPI)
 	endif()
@@ -145,8 +144,8 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
 	SET(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
 	get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${FB_PKG_DIR})
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_PKG_DIR}
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi)
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
                  DEPENDS ${XPI_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
@@ -160,9 +159,9 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR)
                  
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT} ${FB_PKG_DIR}/plugins/${PLUGIN_NAME}.${PLUGIN_EXT}
-                 COMMAND jar cfM ${FB_OUT_DIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
+                 COMMAND jar cfM ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
 	)
-	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJNAME})
+	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added XPI package step")
 endfunction(create_xpi_package)
 ###############################################################################
@@ -170,10 +169,9 @@ endfunction(create_xpi_package)
 ###############################################################################
 # CRX Package
 function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
-    	set(CRX_SOURCES
-            ${FB_ROOT}/cmake/dummy.cpp
-            ${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}
-        )
+	set (CRX_SOURCES
+		${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}
+	)
 	if (NOT FB_CRX_PACKAGE_SUFFIX)
 		set (FB_CRX_PACKAGE_SUFFIX _CRX)
 	endif()
@@ -182,8 +180,8 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	
 	set(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${FB_PKG_DIR})
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_PKG_DIR}
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx)
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
                  DEPENDS ${CRX_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
@@ -202,10 +200,10 @@ endfunction(create_crx_package)
 
 ###############################################################################
 # PKG Package
-function (create_pkg_package PROJNAME PROJVERSION OUTDIR)
-    set (WIX_SOURCES
-            ${FB_ROOT}/cmake/dummy.cpp
-        )
+function (create_pkg_package PROJNAME PROJVERSION OUTDIR PROJDEP)
+	set (PKG_SOURCES
+		${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}
+	)
 	if (NOT FB_PKG_PACKAGE_SUFFIX)
 		set (FB_PKG_PACKAGE_SUFFIX _PKG)
 	endif()
@@ -216,21 +214,21 @@ function (create_pkg_package PROJNAME PROJVERSION OUTDIR)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/01linphone.xml ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/01linphone.xml)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/01linphone-contents.xml ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/01linphone-contents.xml)
 	
-	ADD_LIBRARY(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} STATIC ${WIX_SOURCES})
-	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}${FB_PKG_PACKAGE_SUFFIX}
-                 POST_BUILD
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}.pkg)
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}.pkg
+                 DEPENDS ${PKG_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${OUTDIR}/PKG.pmdoc
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc ${OUTDIR}/PKG.pmdoc
                  COMMAND packagemaker --doc ${OUTDIR}/PKG.pmdoc --out ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}.pkg
 	)
-	ADD_DEPENDENCIES(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} ${PROJNAME})
+	ADD_DEPENDENCIES(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added PKG package step")
 endfunction(create_pkg_package)
 ###############################################################################
 
-create_pkg_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
-create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR})
-create_crx_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME}_RootFS)
+create_pkg_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME})
+create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME})
+create_crx_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME})
 
 create_signed_xpi(${PLUGIN_NAME} 
 	"${FB_OUT_DIR}/XPI/"

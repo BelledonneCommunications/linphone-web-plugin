@@ -41,7 +41,7 @@ public:
 	/// @see FB::FactoryBase::globalPluginInitialize
 	///////////////////////////////////////////////////////////////////////////////
 	void globalPluginInitialize() {
-		srand(time(NULL));
+		srand((unsigned int)time(NULL));
 
 		core::StaticInitialize();
 		video::StaticInitialize();
