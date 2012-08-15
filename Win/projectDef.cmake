@@ -75,11 +75,11 @@ function (create_rootfs PROJNAME)
 		set (FB_ROOTFS_SUFFIX _RootFS)
 	endif()
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_ROOTFS_DIR})
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_ROOTFS_DIR}
-                  DEPENDS ${ROOTFS_SOURCES}
-                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_ROOTFS_DIR}
-                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_ROOTFS_DIR}.ok)
+	ADD_CUSTOM_COMMAND(OUTPUT ${FB_ROOTFS_DIR}.ok
+		  DEPENDS ${ROOTFS_SOURCES}
+		  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_ROOTFS_DIR}
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}
 		  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll ${FB_ROOTFS_DIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avcodec-53.dll ${FB_ROOTFS_DIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avutil-51.dll ${FB_ROOTFS_DIR}/
@@ -99,14 +99,16 @@ function (create_rootfs PROJNAME)
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/ssleay32.dll ${FB_ROOTFS_DIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/swscale-2.dll ${FB_ROOTFS_DIR}/
 		  
-                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/
-                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
-                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/images/nowebcamCIF.jpg ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/
+		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
+		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/images/nowebcamCIF.jpg ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
 		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/
 		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
 		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+		  
+		  COMMAND ${CMAKE_COMMAND} -E touch ${FB_ROOTFS_DIR}.ok
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
 	message("-- Successfully added Rootfs step")
@@ -114,7 +116,7 @@ endfunction(create_rootfs)
 ###############################################################################
 
 create_rootfs(${PLUGIN_NAME})
-
+		  
 # Sign generated file
 firebreath_sign_file(${PLUGIN_NAME}_RootFS
     "${FB_ROOTFS_DIR}/${FBSTRING_PluginFileName}.dll"
@@ -287,7 +289,7 @@ firebreath_sign_file(${PLUGIN_NAME}_cab
 function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
     	set(XPI_SOURCES
             ${FB_ROOT}/cmake/dummy.cpp
-            ${FB_ROOTFS_DIR}
+            ${FB_ROOTFS_DIR}_Signed
         )
 	if (NOT FB_XPI_PACKAGE_SUFFIX)
 		set (FB_XPI_PACKAGE_SUFFIX _XPI)
@@ -312,7 +314,6 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
                  
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}/plugins    
                  COMMAND jar cfM ${FB_OUT_DIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
-
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added XPI package step")
@@ -324,7 +325,7 @@ endfunction(create_xpi_package)
 function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
     	set(CRX_SOURCES
             ${FB_ROOT}/cmake/dummy.cpp
-            ${FB_ROOTFS_DIR}
+            ${FB_ROOTFS_DIR}_Signed
         )
 	if (NOT FB_CRX_PACKAGE_SUFFIX)
 		set (FB_CRX_PACKAGE_SUFFIX _CRX)
