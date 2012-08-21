@@ -124,8 +124,8 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
 
 # Change rpath
-                 COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/ ${FB_BUNDLE_DIR}/${PLUGIN_NAME}
+#                 COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
+#                 COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/ ${FB_BUNDLE_DIR}/${PLUGIN_NAME}
 )
 
 

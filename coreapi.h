@@ -121,6 +121,8 @@ public:
 	unsigned long getNativeVideoWindowId();
 	void setNativePreviewWindowId(unsigned long id);
 	unsigned long getNativePreviewWindowId();
+	bool getUsePreviewWindow();
+	void setUsePreviewWindow(bool enable);
 
 	// Sound device functions
 	void reloadSoundDevices();

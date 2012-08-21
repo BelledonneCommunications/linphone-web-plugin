@@ -121,6 +121,7 @@ void CoreAPI::initProxy() {
 	registerProperty("videoEnabled", make_property(this, &CoreAPI::videoEnabled, &CoreAPI::enableVideo));
 	registerProperty("nativePreviewWindowId", make_property(this, &CoreAPI::getNativePreviewWindowId, &CoreAPI::setNativePreviewWindowId));
 	registerProperty("nativeVideoWindowId", make_property(this, &CoreAPI::getNativeVideoWindowId, &CoreAPI::setNativeVideoWindowId));
+	registerProperty("usePreviewWindow", make_property(this, &CoreAPI::getUsePreviewWindow, &CoreAPI::setUsePreviewWindow));
 
 	// Sound device bindings
 	registerMethod("reloadSoundDevices", make_method(this, &CoreAPI::reloadSoundDevices));
@@ -424,6 +425,20 @@ unsigned long CoreAPI::getNativePreviewWindowId() {
 
 	FBLOG_DEBUG("CoreAPI::getNativePreviewWindowId()", "this=" << this);
 	return linphone_core_get_native_preview_window_id(mCore);
+}
+
+bool CoreAPI::getUsePreviewWindow() {
+	CORE_MUTEX
+    
+	FBLOG_DEBUG("CoreAPI::getUsePreviewWindow()", "this=" << this);
+	return FALSE; // Don't have API yet
+}
+
+void CoreAPI::setUsePreviewWindow(bool enable) {
+	CORE_MUTEX
+    
+	FBLOG_DEBUG("CoreAPI::setUsePreviewWindow()", "this=" << this << "\t" << "enable=" << enable);
+	linphone_core_use_preview_window(mCore, enable);
 }
 
 /*
