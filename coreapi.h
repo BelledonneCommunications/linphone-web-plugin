@@ -168,6 +168,10 @@ public:
 	void sendDtmf(const std::string &dtmf);
 	void stopDtmf();
 	void playDtmf(const std::string &dtmf, int duration_ms);
+	bool getUseInfoForDtmf();
+	void setUseInfoForDtmf(bool enable);
+	bool getUseRfc2833ForDtmf();
+	void setUseRfc2833ForDtmf(bool enable);
 
 	// Miscs
 	int init();

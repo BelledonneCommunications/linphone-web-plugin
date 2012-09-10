@@ -162,6 +162,8 @@ void CoreAPI::initProxy() {
 	registerMethod("sendDtmf", make_method(this, &CoreAPI::sendDtmf));
 	registerMethod("playDtmf", make_method(this, &CoreAPI::playDtmf));
 	registerMethod("stopDtmf", make_method(this, &CoreAPI::stopDtmf));
+	registerProperty("useInfoForDtmf", make_property(this, &CoreAPI::getUseInfoForDtmf, &CoreAPI::setUseInfoForDtmf));
+	registerProperty("useRfc2833ForDtmf", make_property(this, &CoreAPI::getUseRfc2833ForDtmf, &CoreAPI::setUseRfc2833ForDtmf));
 
 	// Miscs
 	registerProperty("echoCancellationEnabled", make_property(this, &CoreAPI::echoCancellationEnabled, &CoreAPI::enableEchoCancellation));
@@ -741,6 +743,35 @@ void CoreAPI::playDtmf(const std::string &dtmf, int duration_ms) {
 	FBLOG_DEBUG("CoreAPI::playDtmf()", "this=" << this << "\t" << "dtmf="<< dtmf << ", duration_ms=" << duration_ms);
 	if (dtmf.size() == 1)
 		linphone_core_play_dtmf(mCore, dtmf[0], duration_ms);
+}
+
+bool CoreAPI::getUseInfoForDtmf() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getUseInfoForDtmf()", "this=" << this);
+	return linphone_core_get_use_info_for_dtmf(mCore) == TRUE ? true : false;
+}
+
+void CoreAPI::setUseInfoForDtmf(bool enable) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setUseInfoForDtmf()", "this=" << this << "\t" << "enable="<< enable);
+	linphone_core_set_use_info_for_dtmf(mCore, enable ? TRUE : FALSE);
+}
+
+bool CoreAPI::getUseRfc2833ForDtmf() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getUseRfc2833ForDtmf()", "this=" << this);
+	return linphone_core_get_use_rfc2833_for_dtmf(mCore) == TRUE ? true : false;
+
+}
+
+void CoreAPI::setUseRfc2833ForDtmf(bool enable) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setUseRfc2833ForDtmf()", "this=" << this << "\t" << "enable="<< enable);
+	linphone_core_set_use_rfc2833_for_dtmf(mCore, enable ? TRUE : FALSE);
 }
 
 /*
