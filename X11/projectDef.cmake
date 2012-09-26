@@ -47,7 +47,8 @@ add_x11_plugin(${PROJECT_NAME} SOURCES)
 target_link_libraries(${PROJECT_NAME} 
 	${PLUGIN_INTERNAL_DEPS}
 	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.so.5"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer.so.2"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base.so.2"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip.so.2"
 	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.so.9"
 )
 
@@ -84,7 +85,8 @@ function (create_rootfs PROJNAME)
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libeXosip2.so.7 ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libjpeg.so.8 ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.so.5 ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer.so.2 ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base.so.2 ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip.so.2 ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libogg.so.0 ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.so.9 ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosip2.so.7 ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/
@@ -116,7 +118,8 @@ function (create_rootfs PROJNAME)
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libjpeg.so.8
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libeXosip2.so.7
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/liblinphone.so.5
-                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libmediastreamer.so.2           
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libmediastreamer_base.so.2  
+                 COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libmediastreamer_voip.so.2 				 
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libogg.so.0
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libortp.so.9
                  COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/libosip2.so.7
