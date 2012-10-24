@@ -4,13 +4,80 @@ Linphone Web
 
 Rootfs
 ------
+The Rootfs is a path containing all the dependencies needed to make works 
+linphone project. In order to compile linphone-web we have to use a special
+compiled version of linphone and its dependencies.
+
+Following the used system(GNU/Linux, Windows, Mac OS X) you have to extract the
+matched *rootfs* archive in the `./Rootfs/` directory at the linphone-web
+project root (create it if doesn't exist).
+
+* [GNU/Linux x86](https://)
+* [GNU/Linux x86_64](https://)
+* [Windows 32 bits](https://)
+* [Mac OS X x86_64](https://)
+
+
+### Generate a Rootfs
+TODO
+#### Manual way
+TODO
+#### oe-lite way
+TODO
 
 
 Firebreath
 ----------
+FireBreath aims to be a cross-platform plugin architecture. You have to
+download the last stable version using git:
+
+    git clone git://github.com/firebreath/FireBreath.git -b firebreath-1.6 \
+    firebreath-1.6
+
+or [download the zip archive](https://github.com/firebreath/FireBreath/zipball/firebreath-1.6).
+
+Place linphone-web project in the `./projects/` directory at the firebreath
+root(create it if doesn't exist). Follow the [Firebreath documentation](http://www.firebreath.org/display/documentation/Building+FireBreath+Plugins)
+following the used system for compiling linphone-web.
 
 
-Licence
+Sign
+---
+In order to sign each produced container you have to copy in `./sign/` 
+directory at the linphone-web project root (create it if doesn't exist) the 
+following files:
+
+* **linphoneweb.pfx**: The file containing private/public keys and the 
+certificate(only for active-x part)
+* **linphoneweb.pem**: The file containing private/public keys and the 
+certificate
+* **passphrase.txt**: The password used for open the two previous files 
+(can be added just before compile and remove after)
+
+
+Web
+---
+The web project use [grunt](http://gruntjs.com/) for generate Web resources.
+Follow the [instructions](https://github.com/gruntjs/grunt) for install grunt
+(depends on npm). You also have to install
+[grunt-css](https://github.com/jzaefferer/grunt-css) and
+[grunt-html](https://github.com/jzaefferer/grunt-html).
+
+When theses tools are installed you have to "compile" the Web project using
+the following command in the `./Web/` directory:
+
+    grunt
+
+
+### Development
+You can use the grunt argument *dev* in order to create a server at
+[http://localhost:8000](http://localhost:8000) exposing the web resources
+using the following command:
+
+    grunt dev
+
+
+License
 -------
 
 	Linphone Web - Web plugin of Linphone an audio/video SIP phone
