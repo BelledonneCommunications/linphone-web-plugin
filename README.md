@@ -9,6 +9,7 @@ Prerequisites
 * python-M2Crypto (for python 2.7): Used for signing
 * cmake
 * java (used for packaging)
+* openssl
 
 ### Windows platform
 * Visual studio
@@ -67,7 +68,8 @@ Firebreath project root.
 
 ### Windows
 Before compile remove all `.h` files in `./Rootfs/include/` in linphone-web
-project directory.
+project directory. Added to this you have to add python and openssl in the
+PATH
 
 ### Mac OS X
 Don't use XCode directly it doesn't use corrects environment and target 
