@@ -83,8 +83,8 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
                  POST_BUILD
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavcodec.54.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavutil.51.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavcodec.53.61.100.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavutil.51.35.100.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libcrypto.1.0.0.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libeXosip2.7.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.5.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
@@ -97,24 +97,11 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeex.1.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeexdsp.1.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libssl.1.0.0.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libswscale.2.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libswscale.2.1.100.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheora.0.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheora.0.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libvpx.1.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libz.1.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-
-# FFMPEG stuff
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libSDL-1.2.0.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libvorbisenc.2.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libvorbis.0.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheoraenc.1.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheoradec.1.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libschroedinger-1.0.0.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libopenjpeg.1.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmp3lame.0.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libdirac_encoder.0.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libdirac_decoder.0.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libbz2.1.0.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liborc-0.4.0.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmodplug.1.dylib ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
 
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
@@ -221,7 +208,7 @@ function (create_pkg_package PROJNAME PROJVERSION OUTDIR PROJDEP)
                  DEPENDS ${PKG_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${OUTDIR}/PKG.pmdoc
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc ${OUTDIR}/PKG.pmdoc
-                 COMMAND packagemaker --doc ${OUTDIR}/PKG.pmdoc --out ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}.pkg
+                 COMMAND /Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker --doc ${OUTDIR}/PKG.pmdoc --out ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}.pkg
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added PKG package step")
