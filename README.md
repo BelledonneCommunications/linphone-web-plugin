@@ -8,6 +8,7 @@ Prerequisites
 * python (2.7)
 * python-M2Crypto (for python 2.7): Used for signing
 * cmake
+* java (used for packaging)
 
 ### Windows platform
 * Visual studio
