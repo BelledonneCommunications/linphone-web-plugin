@@ -29,10 +29,10 @@ Following the used system(GNU/Linux, Windows, Mac OS X) you have to extract the
 matched *rootfs* archive in the `./Rootfs/` directory at the linphone-web
 project root (create it if doesn't exist).
 
-* [GNU/Linux x86](https://)
-* [GNU/Linux x86_64](https://)
-* [Windows 32 bits](https://)
-* [Mac OS X x86_64](https://)
+* [GNU/Linux x86](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-linux-x86.tar.gz)
+* [GNU/Linux x86_64](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-linux-x86_64.tar.gz)
+* [Windows 32 bits](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-windows.tar.gz)
+* [Mac OS X x86_64](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-darwin.tar.gz)
 
 
 ### Generate a Rootfs
