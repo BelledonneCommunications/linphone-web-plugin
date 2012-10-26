@@ -65,6 +65,10 @@ Follow firebreath document in order to compile linphone-web plugin.
 The generated files can be found in `./build/bin` directory inside
 Firebreath project root. 
 
+### Windows
+Before compile remove all `.h` files in `./Rootfs/include/` in linphone-web
+project directory.
+
 ### Mac OS X
 Don't use XCode directly it doesn't use corrects environment and target 
 architectures. After having prepared the projects, enter in `./build/`
