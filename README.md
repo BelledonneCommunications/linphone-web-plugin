@@ -1,6 +1,23 @@
 Linphone Web
 ============
 
+Prerequisites
+-------------
+
+### Common
+* python (2.7)
+* python-M2Crypto (for python 2.7): Used for signing
+* cmake
+
+### Windows platform
+* Visual studio
+
+### Linux platform
+* X11 dev
+
+### Mac OS X platform
+* Xcode
+* Mac ports (for python and modules)
 
 Rootfs
 ------
@@ -39,6 +56,20 @@ or [download the zip archive](https://github.com/firebreath/FireBreath/zipball/f
 Place linphone-web project in the `./projects/` directory at the firebreath
 root(create it if doesn't exist). Follow the [Firebreath documentation](http://www.firebreath.org/display/documentation/Building+FireBreath+Plugins)
 following the used system for compiling linphone-web.
+
+
+Compile
+-------
+Follow firebreath document in order to compile linphone-web plugin. 
+The generated files can be found in `./build/bin` directory inside
+Firebreath project root. 
+
+### Mac OS X
+Don't use XCode directly it doesn't use corrects environment and target 
+architectures. After having prepared the projects, enter in `./build/`
+directory of Firebreath and run the following command:
+
+    xcodebuild -arch x86_64
 
 
 Sign
