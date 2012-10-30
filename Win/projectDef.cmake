@@ -274,7 +274,7 @@ function (create_cab PROJNAME DDF FILES_CAB PROJDEP)
         COMMAND ${CMAKE_MAKECAB} 
 		ARGS /D "BINSRC=${FB_OUT_DIR}/" /F "${DDF}"
 	)
-	ADD_DEPENDENCIES(${PROJNAME}_cab ${PROJNAME}_exe)
+	ADD_DEPENDENCIES(${PROJNAME}_cab ${PROJDEP})
 	message("-- Successfully added CAB step")
 endfunction(create_cab)
 
