@@ -110,6 +110,8 @@ public:
 	int getRecLevel();
 	void setRingLevel(int level);
 	int getRingLevel();
+	void setMuteMic(bool muted);
+	bool getMuteMic();
 
 	// Video functions
 	bool videoSupported();

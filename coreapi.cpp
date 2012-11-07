@@ -114,6 +114,7 @@ void CoreAPI::initProxy() {
 	registerProperty("playLevel", make_property(this, &CoreAPI::getPlayLevel, &CoreAPI::setPlayLevel));
 	registerProperty("recLevel", make_property(this, &CoreAPI::getRecLevel, &CoreAPI::setRecLevel));
 	registerProperty("ringLevel", make_property(this, &CoreAPI::getRingLevel, &CoreAPI::setRingLevel));
+	registerProperty("muteMic", make_property(this, &CoreAPI::getMuteMic, &CoreAPI::setRingLevel));
 
 	// Video bindings
 	registerMethod("videoSupported", make_method(this, &CoreAPI::videoSupported));
@@ -360,6 +361,21 @@ int CoreAPI::getRingLevel() {
 	FBLOG_DEBUG("CoreAPI::getRingLevel", "this=" << this);
 	return linphone_core_get_ring_level(mCore);
 }
+
+void CoreAPI::setMuteMic(bool muted) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setMuteMic", "this=" << this << "\t" << "muted=" << muted);
+	linphone_core_mute_mic(mCore, muted ? TRUE : FALSE);
+}
+
+bool CoreAPI::getMuteMic() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getMuteMic", "this=" << this);
+	return linphone_core_is_mic_muted(mCore) == TRUE ? true : false;
+}
+
 
 /*
  *
