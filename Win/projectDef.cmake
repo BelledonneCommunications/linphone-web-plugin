@@ -257,7 +257,7 @@ function (create_cab PROJNAME DDF FILES_CAB PROJDEP)
         message("Configuring ${_curFile} -> ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File}")
     ENDFOREACH()
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}_exe DEPENDS ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe)
+	ADD_CUSTOM_TARGET(${PROJNAME}_exe ALL DEPENDS ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe)
 	SET(WIX_SETUPBLD ${WIX_ROOT_DIR}/bin/setupbld.exe)
 	ADD_CUSTOM_COMMAND(OUTPUT ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe
 		DEPENDS ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.msi
@@ -267,30 +267,15 @@ function (create_cab PROJNAME DDF FILES_CAB PROJDEP)
 	ADD_DEPENDENCIES(${PROJNAME}_exe ${PROJDEP})
 	message("-- Successfully added EXE step")
 	
-	
-	ADD_CUSTOM_TARGET(${PROJNAME}_cab DEPENDS ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab)
+	ADD_CUSTOM_TARGET(${PROJNAME}_cab ALL DEPENDS ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab)
 	ADD_CUSTOM_COMMAND(OUTPUT ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab
 		DEPENDS ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe
         COMMAND ${CMAKE_MAKECAB} 
 		ARGS /D "BINSRC=${FB_OUT_DIR}/" /F "${DDF}"
 	)
-	ADD_DEPENDENCIES(${PROJNAME}_cab ${PROJDEP})
+	ADD_DEPENDENCIES(${PROJNAME}_cab ${PROJNAME}_exe)
 	message("-- Successfully added CAB step")
 endfunction(create_cab)
-
-create_cab(${PLUGIN_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.ddf" "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.inf" ${PLUGIN_NAME}_WiXInstall)
-
-firebreath_sign_file(${PLUGIN_NAME}_exe
-    "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-    "http://timestamp.verisign.com/scripts/timestamp.dll")
-
-firebreath_sign_file(${PLUGIN_NAME}_cab
-    "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-    "http://timestamp.verisign.com/scripts/timestamp.dll")
 
 ###############################################################################
 # XPI Package
@@ -356,6 +341,20 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	message("-- Successfully added CRX package step")
 endfunction(create_crx_package)
 ###############################################################################
+
+create_cab(${PLUGIN_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.ddf" "${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.inf" ${PLUGIN_NAME}_WiXInstall)
+
+firebreath_sign_file(${PLUGIN_NAME}_exe
+    "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
+
+firebreath_sign_file(${PLUGIN_NAME}_cab
+    "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+    "http://timestamp.verisign.com/scripts/timestamp.dll")
 
 create_crx_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME}_RootFS)
 create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME}_RootFS)
