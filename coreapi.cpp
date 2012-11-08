@@ -184,13 +184,6 @@ int CoreAPI::init() {
 		++sInstanceCount;
 		srand((unsigned int) time(NULL));
 
-#ifndef DEBUG
-		// Disable logs
-		linphone_core_disable_logs();
-#else
-		// Enable logs
-		linphone_core_enable_logs(stderr);
-#endif
 		// Initialize callback table
 		memset(&mVtable, 0, sizeof(LinphoneCoreVTable));
 		mVtable.global_state_changed = CoreAPI::wrapper_global_state_changed;

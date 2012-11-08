@@ -20,6 +20,10 @@
 #include "coreapi.h"
 #include "coreplugin.h"
 
+#ifdef DEBUG
+FILE * core::m_debug_file = NULL;
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 /// @fn core::StaticInitialize()
 ///
@@ -30,6 +34,19 @@
 void core::StaticInitialize() {
 	// Place one-time initialization stuff here; As of FireBreath 1.4 this should only
 	// be called once per process
+#ifndef DEBUG
+		// Disable logs
+		linphone_core_disable_logs();
+#else
+		// Enable logs
+#ifdef WIN32
+		//Not working one Windows ...
+		//m_debug_file = fopen("linphone-web.log", "w+");
+		//linphone_core_enable_logs(m_debug_file);
+#else
+		linphone_core_enable_logs(stdout);
+#endif
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -42,6 +59,14 @@ void core::StaticInitialize() {
 void core::StaticDeinitialize() {
 	// Place one-time deinitialization stuff here. As of FireBreath 1.4 this should
 	// always be called just before the plugin library is unloaded
+#ifdef DEBUG
+#ifdef WIN32
+		if(m_debug_file != NULL) {
+			linphone_core_disable_logs();
+			fclose(m_debug_file);
+		}
+#endif
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
