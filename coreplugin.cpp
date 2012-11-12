@@ -21,7 +21,35 @@
 #include "coreplugin.h"
 
 #ifdef DEBUG
-FILE * core::m_debug_file = NULL;
+FILE * core::s_debug_file = NULL;
+void core::log(OrtpLogLevel lev, const char *fmt, va_list args) {
+		const char *lname="undef";
+	char *msg;
+	if (s_debug_file==NULL) s_debug_file=stderr;
+	switch(lev){
+		case ORTP_DEBUG:
+			lname="debug";
+			break;
+		case ORTP_MESSAGE:
+			lname="message";
+			break;
+		case ORTP_WARNING:
+			lname="warning";
+			break;
+		case ORTP_ERROR:
+			lname="error";
+			break;
+		case ORTP_FATAL:
+			lname="fatal";
+			break;
+		default:
+			ortp_fatal("Bad level !");
+	}
+	msg=ortp_strdup_vprintf(fmt,args);
+	fprintf(s_debug_file,"ortp-%s-%s\r\n",lname,msg);
+	fflush(s_debug_file);
+	ortp_free(msg);
+}
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -41,8 +69,8 @@ void core::StaticInitialize() {
 		// Enable logs
 #ifdef WIN32
 		//Not working one Windows ...
-		//m_debug_file = fopen("linphone-web.log", "w+");
-		//linphone_core_enable_logs(m_debug_file);
+		s_debug_file = fopen("linphone-web.log", "w+");
+		linphone_core_enable_logs_with_cb(core::log);
 #else
 		linphone_core_enable_logs(stdout);
 #endif
@@ -61,9 +89,9 @@ void core::StaticDeinitialize() {
 	// always be called just before the plugin library is unloaded
 #ifdef DEBUG
 #ifdef WIN32
-		if(m_debug_file != NULL) {
+		if(s_debug_file != NULL) {
 			linphone_core_disable_logs();
-			fclose(m_debug_file);
+			fclose(s_debug_file);
 		}
 #endif
 #endif

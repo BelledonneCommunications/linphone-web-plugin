@@ -29,7 +29,8 @@ FB_FORWARD_PTR(core)
 class core: public FB::PluginCore {
 private:
 #ifdef DEBUG
-	static FILE * m_debug_file;
+	static FILE * s_debug_file;
+	static void log(OrtpLogLevel lev, const char *fmt, va_list args);
 #endif
 public:
 	static void StaticInitialize();
