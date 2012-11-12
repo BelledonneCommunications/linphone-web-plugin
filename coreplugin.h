@@ -25,6 +25,8 @@
 #include <PluginEvents/AttachedEvent.h>
 #include <PluginCore.h>
 
+#include <ortp/logging.h>
+
 FB_FORWARD_PTR(core)
 class core: public FB::PluginCore {
 private:

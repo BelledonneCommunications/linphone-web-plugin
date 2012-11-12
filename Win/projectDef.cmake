@@ -282,12 +282,17 @@ endfunction(create_cab)
 function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set (XPI_SOURCES
 		${FB_ROOTFS_DIR}.updated
+		${CMAKE_CURRENT_BINARY_DIR}/install.rdf
+		${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/bootstrap.js
+		${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome.manifest
+		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
+		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png
 	)
 	if (NOT FB_XPI_PACKAGE_SUFFIX)
 		set (FB_XPI_PACKAGE_SUFFIX _XPI)
 	endif()
 	
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/X11/XPI/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
 	
 	set(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
 	
@@ -298,7 +303,7 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/install.rdf ${FB_PKG_DIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/bootstrap.js ${FB_PKG_DIR}/
-                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/X11/XPI/chrome.manifest ${FB_PKG_DIR}/
+                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome.manifest ${FB_PKG_DIR}/
                  
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/chrome/skin
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/chrome/skin/
@@ -317,6 +322,9 @@ endfunction(create_xpi_package)
 function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set (CRX_SOURCES
 		${FB_ROOTFS_DIR}.updated
+		${CMAKE_CURRENT_BINARY_DIR}/manifest.json
+		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png
+		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
 	)
 	if (NOT FB_CRX_PACKAGE_SUFFIX)
 		set (FB_CRX_PACKAGE_SUFFIX _CRX)

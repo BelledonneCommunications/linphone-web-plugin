@@ -181,6 +181,11 @@ endfunction(create_tgz_package)
 function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set (XPI_SOURCES
 		${FB_ROOTFS_DIR}.updated
+		${CMAKE_CURRENT_BINARY_DIR}/install.rdf
+		${CMAKE_CURRENT_SOURCE_DIR}/X11/XPI/bootstrap.js
+		${CMAKE_CURRENT_SOURCE_DIR}/X11/XPI/chrome.manifest
+		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
+		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png
 	)
 	if (NOT FB_XPI_PACKAGE_SUFFIX)
 		set (FB_XPI_PACKAGE_SUFFIX _XPI)
@@ -218,6 +223,9 @@ endfunction(create_xpi_package)
 function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set (CRX_SOURCES
 		${FB_ROOTFS_DIR}.updated
+		${CMAKE_CURRENT_BINARY_DIR}/manifest.json
+		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png
+		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
 	)
 	if (NOT FB_CRX_PACKAGE_SUFFIX)
 		set (FB_CRX_PACKAGE_SUFFIX _CRX)
