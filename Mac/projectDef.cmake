@@ -129,6 +129,7 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png
 	)
+	
 	if (NOT FB_XPI_PACKAGE_SUFFIX)
 		set (FB_XPI_PACKAGE_SUFFIX _XPI)
 	endif()
@@ -169,6 +170,7 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
 	)
+	
 	if (NOT FB_CRX_PACKAGE_SUFFIX)
 		set (FB_CRX_PACKAGE_SUFFIX _CRX)
 	endif()
@@ -201,6 +203,7 @@ function (create_pkg_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set (PKG_SOURCES
 		${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}
 	)
+	
 	if (NOT FB_PKG_PACKAGE_SUFFIX)
 		set (FB_PKG_PACKAGE_SUFFIX _PKG)
 	endif()

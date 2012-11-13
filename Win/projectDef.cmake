@@ -31,6 +31,7 @@ file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 # use this to add preprocessor definitions
 add_definitions(
     /D "_ATL_STATIC_REGISTRY"
+	/wd4355
 )
 
 SOURCE_GROUP(Win FILES ${PLATFORM})
@@ -63,20 +64,42 @@ target_link_libraries(${PROJECT_NAME}
 SET (LINPHONEWEB_SHAREDIR linphoneweb)
 SET (FB_PACKAGE_SUFFIX Win32)
 SET (FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
-SET (FB_ROOTFS_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/Rootfs)
+SET (FB_ROOTFS_DIR ${FB_OUT_DIR}/Rootfs)
 
 ###############################################################################
 # Create Rootfs
 function (create_rootfs PROJNAME)
 	set (ROOTFS_SOURCES
 		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avcodec-53.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avutil-51.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libeXosip2-7.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libeay32.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/liblinphone-5.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libmediastreamer_base-2.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libmediastreamer_voip-2.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libogg-0.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libortp-9.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libosip2-7.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libosipparser2-7.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libspeex-1.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libspeexdsp-1.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libtheora-0.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libvpx-1.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libz-1.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/ssleay32.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/swscale-2.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/images/nowebcamCIF.jpg
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav
 	)
+	
 	if (NOT FB_ROOTFS_SUFFIX)
 		set (FB_ROOTFS_SUFFIX _RootFS)
 	endif()
 	
 	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_ROOTFS_DIR})
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_ROOTFS_DIR}
+	ADD_CUSTOM_COMMAND(OUTPUT ${FB_ROOTFS_DIR} ${FB_OUT_DIR}/Rootfs.updated
 		  DEPENDS ${ROOTFS_SOURCES}
 		  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_ROOTFS_DIR}
 		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}
@@ -109,7 +132,7 @@ function (create_rootfs PROJNAME)
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
 		  
-		  COMMAND ${CMAKE_COMMAND} -E touch ${FB_ROOTFS_DIR}.updated
+		  COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/Rootfs.updated
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
 	message("-- Successfully added Rootfs step")
@@ -281,13 +304,14 @@ endfunction(create_cab)
 # XPI Package
 function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set (XPI_SOURCES
-		${FB_ROOTFS_DIR}.updated
+		${FB_OUT_DIR}/Rootfs.updated
 		${CMAKE_CURRENT_BINARY_DIR}/install.rdf
 		${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/bootstrap.js
 		${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome.manifest
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png
 	)
+	
 	if (NOT FB_XPI_PACKAGE_SUFFIX)
 		set (FB_XPI_PACKAGE_SUFFIX _XPI)
 	endif()
@@ -297,7 +321,7 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
 	
 	ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi)
-	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi ${FB_OUT_DIR}/XPI.updated
                  DEPENDS ${XPI_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
@@ -310,7 +334,11 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png ${FB_PKG_DIR}/chrome/skin/
                  
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}/plugins    
+				 
+				 COMMAND ${CMAKE_COMMAND} -E remove ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
                  COMMAND jar cfM ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
+				 
+				 COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/XPI.updated
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added XPI package step")
@@ -321,11 +349,12 @@ endfunction(create_xpi_package)
 # CRX Package
 function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set (CRX_SOURCES
-		${FB_ROOTFS_DIR}.updated
+		${FB_OUT_DIR}/Rootfs.updated
 		${CMAKE_CURRENT_BINARY_DIR}/manifest.json
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
 	)
+	
 	if (NOT FB_CRX_PACKAGE_SUFFIX)
 		set (FB_CRX_PACKAGE_SUFFIX _CRX)
 	endif()
@@ -335,7 +364,7 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
 	
 	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx)
-	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx ${FB_OUT_DIR}/CRX.updated
                  DEPENDS ${CRX_SOURCES}
                  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}
@@ -343,7 +372,10 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png ${FB_PKG_DIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/
                  
+				 COMMAND ${CMAKE_COMMAND} -E remove ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
                  COMMAND jar cfM ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx -C ${FB_PKG_DIR} .
+				 
+				 COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/CRX.updated
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added CRX package step")
