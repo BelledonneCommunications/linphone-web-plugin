@@ -35,11 +35,16 @@ void usleep(int waitTime) {
 }
 #endif
 
+#ifdef CORE_THREADED
 #define CORE_MUTEX boost::mutex::scoped_lock scopedLock(m_core_mutex);
+#else
+#define CORE_MUTEX
+#endif //CORE_THREADED
 
 static boost::mutex sInstanceMutex;
 static int sInstanceCount = 0;
 
+#ifdef CORE_THREADED
 void linphone_iterate_thread(CoreAPI *linphone_api) {
 	FBLOG_DEBUG("linphone_thread", "start");
 	FBLOG_DEBUG("linphone_thread", linphone_api);
@@ -65,8 +70,11 @@ void linphone_destroy_thread(LinphoneCore* core, boost::thread *thread, mythread
 		delete thread;
 	}
 
-	threads->interrupt_all();
-	threads->join_all();
+	if(threads != NULL) {
+		threads->interrupt_all();
+		threads->join_all();
+		delete threads;
+	}
 
 	if (core != NULL) {
 		linphone_core_destroy(core);
@@ -77,6 +85,7 @@ void linphone_destroy_thread(LinphoneCore* core, boost::thread *thread, mythread
 	sInstanceMutex.unlock();
 	FBLOG_DEBUG("linphone_destroy_thread", "end");
 }
+#endif //CORE_THREADED
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @fn CoreAPI::CoreAPI(const corePtr& plugin, const FB::BrowserHostPtr host)
@@ -89,8 +98,12 @@ void linphone_destroy_thread(LinphoneCore* core, boost::thread *thread, mythread
 /// @see FB::JSAPIAuto::registerEvent
 ///////////////////////////////////////////////////////////////////////////////
 CoreAPI::CoreAPI(const corePtr& plugin, const FB::BrowserHostPtr& host) :
-		JSAPIAuto(APIDescription(this)), m_plugin(plugin), m_host(host), mCore(NULL), m_core_thread(NULL), m_threads(new mythread_group()) {
+		JSAPIAuto(APIDescription(this)), m_plugin(plugin), m_host(host), mCore(NULL) {
 	FBLOG_DEBUG("CoreAPI::CoreAPI()", "this=" << this);
+#ifdef CORE_THREADED
+	m_core_thread = NULL;
+	m_threads = new mythread_group();
+#endif
 	initProxy();
 }
 
@@ -215,7 +228,10 @@ int CoreAPI::init() {
 		FBLOG_DEBUG("CoreAPI::init()", "port=" << port);
 		linphone_core_set_sip_port(mCore, port);
 
+#ifdef CORE_THREADED
 		m_core_thread = new boost::thread(linphone_iterate_thread, this);
+#else
+#endif
 		return 0;
 	} else {
 		FBLOG_ERROR("CoreAPI::init()", "Already started linphone instance");
@@ -235,7 +251,15 @@ CoreAPI::~CoreAPI() {
 	if (mCore != NULL) {
 		linphone_core_set_user_data(mCore, NULL);
 
+#ifdef CORE_THREADED
 		boost::thread t(linphone_destroy_thread, mCore, m_core_thread, m_threads);
+#else
+		linphone_core_destroy(mCore);
+
+		sInstanceMutex.lock();
+		--sInstanceCount;
+		sInstanceMutex.unlock();
+#endif
 	}
 }
 
@@ -255,7 +279,7 @@ corePtr CoreAPI::getPlugin() {
 	return plugin;
 }
 
-const std::string &CoreAPI::getMagic() {
+const std::string &CoreAPI::getMagic() const {
 	FBLOG_DEBUG("CoreAPI::getMagic()", "this=" << this);
 	return m_magic;
 }
@@ -319,7 +343,7 @@ void CoreAPI::setPlayLevel(int level) {
 	linphone_core_set_play_level(mCore, level);
 }
 
-int CoreAPI::getPlayLevel() {
+int CoreAPI::getPlayLevel() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getPlayLevel", "this=" << this);
@@ -333,7 +357,7 @@ void CoreAPI::setRecLevel(int level) {
 	linphone_core_set_rec_level(mCore, level);
 }
 
-int CoreAPI::getRecLevel() {
+int CoreAPI::getRecLevel() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRecLevel", "this=" << this);
@@ -347,7 +371,7 @@ void CoreAPI::setRingLevel(int level) {
 	linphone_core_set_ring_level(mCore, level);
 }
 
-int CoreAPI::getRingLevel() {
+int CoreAPI::getRingLevel() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRingLevel", "this=" << this);
@@ -361,7 +385,7 @@ void CoreAPI::setMuteMic(bool muted) {
 	linphone_core_mute_mic(mCore, muted ? TRUE : FALSE);
 }
 
-bool CoreAPI::getMuteMic() {
+bool CoreAPI::getMuteMic() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getMuteMic", "this=" << this);
@@ -375,7 +399,7 @@ bool CoreAPI::getMuteMic() {
  *
  */
 
-bool CoreAPI::videoSupported() {
+bool CoreAPI::videoSupported() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::videoSupported()", "this=" << this);
@@ -388,7 +412,7 @@ void CoreAPI::enableVideo(bool enable) {
 	linphone_core_enable_video(mCore, enable ? TRUE : FALSE, enable ? TRUE : FALSE);
 }
 
-bool CoreAPI::videoEnabled() {
+bool CoreAPI::videoEnabled() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::videoEnabled()", "this=" << this);
@@ -402,7 +426,7 @@ void CoreAPI::enableVideoPreview(bool enable) {
 	linphone_core_enable_video_preview(mCore, enable ? TRUE : FALSE);
 }
 
-bool CoreAPI::videoPreviewEnabled() {
+bool CoreAPI::videoPreviewEnabled() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::videoPreviewEnabled()", "this=" << this);
@@ -416,7 +440,7 @@ void CoreAPI::setNativeVideoWindowId(unsigned long id) {
 	linphone_core_set_native_video_window_id(mCore, id);
 }
 
-unsigned long CoreAPI::getNativeVideoWindowId() {
+unsigned long CoreAPI::getNativeVideoWindowId() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getNativeVideoWindowId()", "this=" << this);
@@ -430,14 +454,14 @@ void CoreAPI::setNativePreviewWindowId(unsigned long id) {
 	linphone_core_set_native_preview_window_id(mCore, id);
 }
 
-unsigned long CoreAPI::getNativePreviewWindowId() {
+unsigned long CoreAPI::getNativePreviewWindowId() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getNativePreviewWindowId()", "this=" << this);
 	return linphone_core_get_native_preview_window_id(mCore);
 }
 
-bool CoreAPI::getUsePreviewWindow() {
+bool CoreAPI::getUsePreviewWindow() const {
 	CORE_MUTEX
     
 	FBLOG_DEBUG("CoreAPI::getUsePreviewWindow()", "this=" << this);
@@ -465,7 +489,7 @@ void CoreAPI::reloadSoundDevices() {
 	linphone_core_reload_sound_devices(mCore);
 }
 
-FB::VariantList CoreAPI::getSoundDevices() {
+FB::VariantList CoreAPI::getSoundDevices() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getSoundDevices()", "this=" << this);
@@ -478,14 +502,14 @@ FB::VariantList CoreAPI::getSoundDevices() {
 	return list;
 }
 
-bool CoreAPI::soundDeviceCanCapture(const std::string &devid) {
+bool CoreAPI::soundDeviceCanCapture(const std::string &devid) const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::soundDeviceCanCapture()", "this=" << this << "\t" << "devid=" << devid);
 	return linphone_core_sound_device_can_capture(mCore, devid.c_str()) == TRUE ? true : false;
 }
 
-bool CoreAPI::soundDeviceCanPlayback(const std::string &devid) {
+bool CoreAPI::soundDeviceCanPlayback(const std::string &devid) const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::soundDeviceCanPlayback()", "this=" << this << "\t" << "devid=" << devid);
@@ -513,21 +537,21 @@ void CoreAPI::setCaptureDevice(const std::string &devid) {
 	linphone_core_set_capture_device(mCore, devid.c_str());
 }
 
-std::string CoreAPI::getRingerDevice() {
+std::string CoreAPI::getRingerDevice() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRingerDevice()", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_core_get_ringer_device(mCore));
 }
 
-std::string CoreAPI::getPlaybackDevice() {
+std::string CoreAPI::getPlaybackDevice() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getPlaybackDevice()", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_core_get_playback_device(mCore));
 }
 
-std::string CoreAPI::getCaptureDevice() {
+std::string CoreAPI::getCaptureDevice() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getPlaybackDevice()", "this=" << this);
@@ -548,7 +572,7 @@ void CoreAPI::reloadVideoDevices() {
 	linphone_core_reload_video_devices(mCore);
 }
 
-FB::VariantList CoreAPI::getVideoDevices() {
+FB::VariantList CoreAPI::getVideoDevices() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVideoDevices()", "this=" << this);
@@ -569,7 +593,7 @@ void CoreAPI::setVideoDevice(const std::string &devid) {
 	linphone_core_set_video_device(mCore, devid.c_str());
 }
 
-std::string CoreAPI::getVideoDevice() {
+std::string CoreAPI::getVideoDevice() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVideoDevice()", "this=" << this);
@@ -651,19 +675,22 @@ int CoreAPI::addProxyConfig(const ProxyConfigAPIPtr &config) {
 	FBLOG_DEBUG("CoreAPI::addProxyConfig()", "this=" << this << "\t" << "config=" << config);
 	return linphone_core_add_proxy_config(mCore, config->getRef());
 }
+
 void CoreAPI::clearProxyConfig() {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::clearProxyConfig()", "this=" << this);
 	linphone_core_clear_proxy_config(mCore);
 }
+
 void CoreAPI::removeProxyConfig(const ProxyConfigAPIPtr &config) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::removeProxyConfig()", "this=" << this << "\t" << "config=" << config);
 	linphone_core_remove_proxy_config(mCore, config->getRef());
 }
-FB::VariantList CoreAPI::getProxyConfigList() {
+
+FB::VariantList CoreAPI::getProxyConfigList() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getProxyConfigList()", "this=" << this);
@@ -673,13 +700,15 @@ FB::VariantList CoreAPI::getProxyConfigList() {
 	}
 	return list;
 }
+
 void CoreAPI::setDefaultProxy(const ProxyConfigAPIPtr &config) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setDefaultProxy()", "this=" << this << "\t" << "config=" << config);
 	linphone_core_set_default_proxy(mCore, config->getRef());
 }
-ProxyConfigAPIPtr CoreAPI::getDefaultProxy() {
+
+ProxyConfigAPIPtr CoreAPI::getDefaultProxy() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getDefaultProxy()", "this=" << this);
@@ -753,7 +782,7 @@ void CoreAPI::playDtmf(const std::string &dtmf, int duration_ms) {
 		linphone_core_play_dtmf(mCore, dtmf[0], duration_ms);
 }
 
-bool CoreAPI::getUseInfoForDtmf() {
+bool CoreAPI::getUseInfoForDtmf() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getUseInfoForDtmf()", "this=" << this);
@@ -767,7 +796,7 @@ void CoreAPI::setUseInfoForDtmf(bool enable) {
 	linphone_core_set_use_info_for_dtmf(mCore, enable ? TRUE : FALSE);
 }
 
-bool CoreAPI::getUseRfc2833ForDtmf() {
+bool CoreAPI::getUseRfc2833ForDtmf() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getUseRfc2833ForDtmf()", "this=" << this);
@@ -788,19 +817,19 @@ void CoreAPI::setUseRfc2833ForDtmf(bool enable) {
  *
  */
 
-std::string CoreAPI::getVersion() {
+std::string CoreAPI::getVersion() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVersion()", "this=" << this);
 	return linphone_core_get_version();
 }
 
-std::string CoreAPI::getPluginVersion() {
+std::string CoreAPI::getPluginVersion() const {
 	FBLOG_DEBUG("CoreAPI::getPluginVersion()", "this=" << this << FBSTRING_PLUGIN_VERSION);
 	return FBSTRING_PLUGIN_VERSION;
 }
 
-int CoreAPI::getSipPort() {
+int CoreAPI::getSipPort() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getSipPort()", "this=" << this);
@@ -814,7 +843,7 @@ void CoreAPI::enableEchoCancellation(bool enable) {
 
 	linphone_core_enable_echo_cancellation(mCore, enable ? TRUE : FALSE);
 }
-bool CoreAPI::echoCancellationEnabled() {
+bool CoreAPI::echoCancellationEnabled() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::echoCancellationEnabled()", "this=" << this);
@@ -827,7 +856,8 @@ void CoreAPI::enableEchoLimiter(bool enable) {
 	FBLOG_DEBUG("CoreAPI::enableEchoLimiter()", "this=" << this << "\t" << "enable="<< enable);
 	linphone_core_enable_echo_limiter(mCore, enable ? TRUE : FALSE);
 }
-bool CoreAPI::echoLimiterEnabled() {
+
+bool CoreAPI::echoLimiterEnabled() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::echoLimiterEnabled()", "this=" << this);
@@ -840,7 +870,7 @@ void CoreAPI::enableIpv6(bool enable) {
 	FBLOG_DEBUG("CoreAPI::enableIpv6()", "this=" << this << "\t" << "enable="<< enable);
 	linphone_core_enable_ipv6(mCore, enable ? TRUE : FALSE);
 }
-bool CoreAPI::ipv6Enabled() {
+bool CoreAPI::ipv6Enabled() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::ipv6Enabled()", "this=" << this);
@@ -853,7 +883,7 @@ void CoreAPI::enableKeepAlive(bool enable) {
 	FBLOG_DEBUG("CoreAPI::enableKeepAlive()", "this=" << this << "\t" << "enable="<< enable);
 	linphone_core_enable_keep_alive(mCore, enable ? TRUE : FALSE);
 }
-bool CoreAPI::keepAliveEnabled() {
+bool CoreAPI::keepAliveEnabled() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::keepAliveEnabled()", "this=" << this);
@@ -866,7 +896,7 @@ bool CoreAPI::keepAliveEnabled() {
  *
  */
 
-std::string CoreAPI::getRing() {
+std::string CoreAPI::getRing() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRing()", "this=" << this);

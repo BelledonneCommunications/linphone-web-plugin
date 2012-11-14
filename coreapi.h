@@ -40,12 +40,21 @@
 #include "proxyconfigapi.h"
 #include "utils.h"
 
+#define CORE_THREADED
+
 #define __DECLARE_SYNC_N_ASYNC_PARAMMACRO(z, n, args) BOOST_PP_ARRAY_ELEM(n, args) p##n
 #define __DECLARE_SYNC_N_ASYNC_USEMACRO(z, n, args) p##n
 
-#define REGISTER_SYNC_N_ASYNC(name, funct_name)  \
-	registerMethod(name, make_method(this, &CoreAPI::funct_name)); \
-	registerMethod(name "_async", make_method(this, &CoreAPI::BOOST_PP_CAT(funct_name, _async)));
+#ifdef CORE_THREADED
+#define REGISTER_SYNC_N_ASYNC(name, funct_name)                                                   \
+	registerMethod(name, make_method(this, &CoreAPI::funct_name));                                \
+	registerMethod(name "_async", make_method(this, &CoreAPI::BOOST_PP_CAT(funct_name, _async))); \
+
+#else
+#define REGISTER_SYNC_N_ASYNC(name, funct_name)                                                   \
+	registerMethod(name, make_method(this, &CoreAPI::funct_name));                                \
+
+#endif //CORE_THREADED
 
 #define DECLARE_SYNC_N_ASYNC_SYNC_FCT(name, argCount, argList, ret)  		\
 	ret name (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)));
@@ -76,10 +85,17 @@
 																					\
 	}
 
-#define DECLARE_SYNC_N_ASYNC(name, argCount, argList, ret)			\
-	DECLARE_SYNC_N_ASYNC_SYNC_FCT(name, argCount, argList, ret)		\
-	DECLARE_SYNC_N_ASYNC_THREAD_FCT(name, argCount, argList, ret)  		\
-	DECLARE_SYNC_N_ASYNC_ASYNC_FCT(name, argCount, argList)
+#ifdef CORE_THREADED
+#define DECLARE_SYNC_N_ASYNC(name, argCount, argList, ret)          \
+	DECLARE_SYNC_N_ASYNC_SYNC_FCT(name, argCount, argList, ret)     \
+	DECLARE_SYNC_N_ASYNC_THREAD_FCT(name, argCount, argList, ret)   \
+	DECLARE_SYNC_N_ASYNC_ASYNC_FCT(name, argCount, argList)         \
+
+#else
+#define DECLARE_SYNC_N_ASYNC(name, argCount, argList, ret)          \
+	DECLARE_SYNC_N_ASYNC_SYNC_FCT(name, argCount, argList, ret)     \
+
+#endif //CORE_THREADED
 
 FB_FORWARD_PTR(CoreAPI)
 class CoreAPI: public FB::JSAPIAuto {
@@ -90,12 +106,12 @@ public:
 	corePtr getPlugin();
 
 	// Read-only property
-	std::string getVersion();
-	std::string getPluginVersion();
-	int getSipPort();
+	std::string getVersion() const;
+	std::string getPluginVersion() const;
+	int getSipPort() const;
 
 	// Property
-	const std::string &getMagic();
+	const std::string &getMagic() const;
 	void setMagic(const std::string &magic);
 
 	// Call functions
@@ -105,44 +121,44 @@ public:
 
 	// Level functions
 	void setPlayLevel(int level);
-	int getPlayLevel();
+	int getPlayLevel() const;
 	void setRecLevel(int level);
-	int getRecLevel();
+	int getRecLevel() const;
 	void setRingLevel(int level);
-	int getRingLevel();
+	int getRingLevel() const;
 	void setMuteMic(bool muted);
-	bool getMuteMic();
+	bool getMuteMic() const;
 
 	// Video functions
-	bool videoSupported();
+	bool videoSupported() const;
 	void enableVideo(bool enable);
-	bool videoEnabled();
+	bool videoEnabled() const;
 	void enableVideoPreview(bool enable);
-	bool videoPreviewEnabled();
+	bool videoPreviewEnabled() const;
 	void setNativeVideoWindowId(unsigned long id);
-	unsigned long getNativeVideoWindowId();
+	unsigned long getNativeVideoWindowId() const;
 	void setNativePreviewWindowId(unsigned long id);
-	unsigned long getNativePreviewWindowId();
-	bool getUsePreviewWindow();
+	unsigned long getNativePreviewWindowId() const;
+	bool getUsePreviewWindow() const;
 	void setUsePreviewWindow(bool enable);
 
 	// Sound device functions
 	void reloadSoundDevices();
-	FB::VariantList getSoundDevices();
-	bool soundDeviceCanCapture(const std::string &devid);
-	bool soundDeviceCanPlayback(const std::string &devid);
+	FB::VariantList getSoundDevices() const;
+	bool soundDeviceCanCapture(const std::string &devid) const;
+	bool soundDeviceCanPlayback(const std::string &devid) const;
 	void setRingerDevice(const std::string &devid);
 	void setPlaybackDevice(const std::string &devid);
 	void setCaptureDevice(const std::string &devid);
-	std::string getRingerDevice();
-	std::string getPlaybackDevice();
-	std::string getCaptureDevice();
+	std::string getRingerDevice() const;
+	std::string getPlaybackDevice() const;
+	std::string getCaptureDevice() const;
 
 	// Video device functions
 	void reloadVideoDevices();
-	FB::VariantList getVideoDevices();
+	FB::VariantList getVideoDevices() const;
 	void setVideoDevice(const std::string &devid);
-	std::string getVideoDevice();
+	std::string getVideoDevice() const;
 
 	// Codecs functions
 	FB::VariantList getAudioCodecs();
@@ -154,9 +170,9 @@ public:
 	int addProxyConfig(const ProxyConfigAPIPtr &config);
 	void clearProxyConfig();
 	void removeProxyConfig(const ProxyConfigAPIPtr &config);
-	FB::VariantList getProxyConfigList();
+	FB::VariantList getProxyConfigList() const;
 	void setDefaultProxy(const ProxyConfigAPIPtr &config);
-	ProxyConfigAPIPtr getDefaultProxy();
+	ProxyConfigAPIPtr getDefaultProxy() const;
 
 	// AuthInfo functions
 	void addAuthInfo(const AuthInfoAPIPtr &authInfo);
@@ -170,24 +186,24 @@ public:
 	void sendDtmf(const std::string &dtmf);
 	void stopDtmf();
 	void playDtmf(const std::string &dtmf, int duration_ms);
-	bool getUseInfoForDtmf();
+	bool getUseInfoForDtmf() const;
 	void setUseInfoForDtmf(bool enable);
-	bool getUseRfc2833ForDtmf();
+	bool getUseRfc2833ForDtmf() const;
 	void setUseRfc2833ForDtmf(bool enable);
 
 	// Miscs
 	int init();
 	void enableEchoCancellation(bool enable);
-	bool echoCancellationEnabled();
+	bool echoCancellationEnabled() const;
 	void enableEchoLimiter(bool enable);
-	bool echoLimiterEnabled();
+	bool echoLimiterEnabled() const;
 	void enableIpv6(bool enable);
-	bool ipv6Enabled();
+	bool ipv6Enabled() const;
 	void enableKeepAlive(bool enable);
-	bool keepAliveEnabled();
+	bool keepAliveEnabled() const;
 
 	// File
-	std::string getRing();
+	std::string getRing() const;
 	void setRing(const std::string &ring);
 	void setRingAsync(const std::string &ring, const FB::JSObjectPtr& callback);
 private:
@@ -225,9 +241,11 @@ private :
 	LinphoneCore *mCore; // Linphone core object
 	LinphoneCoreVTable mVtable;// Linphone callback methods table
 
-	boost::mutex m_core_mutex;
+#ifdef CORE_THREADED
+	mutable boost::mutex m_core_mutex;
 	boost::thread *m_core_thread;
 	mythread_group *m_threads;
+#endif //CORE_THREADED
 
 	std::string m_internal_ring;
 
@@ -238,11 +256,13 @@ private :
 			linphone_core_iterate(mCore);
 	}
 
+#ifdef CORE_THREADED
 	friend void linphone_iterate_thread(CoreAPI *linphone_api);
 	void iterateWithMutex() {
 		boost::mutex::scoped_lock scopedLock(m_core_mutex);
 		iterate();
 	}
+#endif
 
 	// C Wrappers
 	static void wrapper_global_state_changed(LinphoneCore *lc, LinphoneGlobalState gstate, const char *message);
