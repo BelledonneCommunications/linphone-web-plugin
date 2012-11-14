@@ -182,7 +182,6 @@ int CoreAPI::init() {
 
 	if (sInstanceCount == 0) {
 		++sInstanceCount;
-		srand((unsigned int) time(NULL));
 
 		// Initialize callback table
 		memset(&mVtable, 0, sizeof(LinphoneCoreVTable));
