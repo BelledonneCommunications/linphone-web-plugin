@@ -21,16 +21,16 @@
 #include "coreapi.h"
 #include "utils.h"
 
-PayloadTypeAPI::PayloadTypeAPI(const CoreAPIPtr &core, PayloadType *payloadType) :
-		JSAPIAuto(APIDescription(this)), mCore(core), mPayloadType(payloadType), mConst(false) {
-	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << "\t" << "core=" << core << ", payloadType=" << payloadType);
+PayloadTypeAPI::PayloadTypeAPI(PayloadType *payloadType) :
+		JSAPIAuto(APIDescription(this)), mPayloadType(payloadType), mConst(false) {
+	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << ", payloadType=" << payloadType);
 	//mPayloadType->user_data = this;
 	initProxy();
 }
 
-PayloadTypeAPI::PayloadTypeAPI(const CoreAPIPtr &core, const PayloadType *payloadType) :
-		JSAPIAuto(APIDescription(this)), mCore(core), mPayloadType(const_cast<PayloadType *>(payloadType)), mConst(true) {
-	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << "\t" << "core=" << core << ", payloadType=" << payloadType);
+PayloadTypeAPI::PayloadTypeAPI(const PayloadType *payloadType) :
+		JSAPIAuto(APIDescription(this)), mPayloadType(const_cast<PayloadType *>(payloadType)), mConst(true) {
+	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << ", payloadType=" << payloadType);
 	//mPayloadType->user_data = this;
 	initProxy();
 }
@@ -61,7 +61,6 @@ void PayloadTypeAPI::initProxy() {
 		registerProperty("sendFmtp", make_property(this, &PayloadTypeAPI::getSendFmtp, &PayloadTypeAPI::setSendFmtp));
 		registerProperty("flags", make_property(this, &PayloadTypeAPI::getFlags));
 	}
-	registerProperty("enabled", make_property(this, &PayloadTypeAPI::getEnabled, &PayloadTypeAPI::setEnabled));
 
 	registerMethod("clone", make_method(this, &PayloadTypeAPI::clone));
 	registerMethod("getRtpmap", make_method(this, &PayloadTypeAPI::getRtpmap));
@@ -179,53 +178,36 @@ void PayloadTypeAPI::setFlags(int flags) {
 	mPayloadType->flags = flags;
 }
 
-bool PayloadTypeAPI::getEnabled() const {
-	FBLOG_DEBUG("PayloadTypeAPI::getEnabled()", "this=" << this);
-	CoreAPIPtr core(mCore.lock());
-	if (core != NULL) {
-		return linphone_core_payload_type_enabled(core->getRef(), mPayloadType) == TRUE ? true : false;
-	}
-	return false;
-}
-
-void PayloadTypeAPI::setEnabled(bool enable) {
-	FBLOG_DEBUG("PayloadTypeAPI::setEnabled()", "this=" << this << "\t" << "enable=" << enable);
-	CoreAPIPtr core(mCore.lock());
-	if (core != NULL) {
-		linphone_core_enable_payload_type(core->getRef(), mPayloadType, enable ? TRUE : FALSE);
-	}
-}
-
 PayloadTypeAPIPtr PayloadTypeAPI::clone() const {
-	return PayloadTypeAPI::get(mCore.lock(), payload_type_clone(mPayloadType));
+	return PayloadTypeAPI::get(payload_type_clone(mPayloadType));
 }
 
 std::string PayloadTypeAPI::getRtpmap() const {
 	return CHARPTR_TO_STRING(payload_type_get_rtpmap(mPayloadType));
 }
 
-PayloadTypeAPIPtr PayloadTypeAPI::get(const CoreAPIPtr &core, PayloadType *payloadType) {
+PayloadTypeAPIPtr PayloadTypeAPI::get(PayloadType *payloadType) {
 	if (payloadType == NULL)
 		return PayloadTypeAPIPtr();
 
 	//void *ptr = payloadType->user_data;
 	PayloadTypeAPIPtr shared_ptr;
 	/*if (ptr == NULL) {*/
-	shared_ptr = PayloadTypeAPIPtr(new PayloadTypeAPI(core, payloadType));
+	shared_ptr = PayloadTypeAPIPtr(new PayloadTypeAPI(payloadType));
 	/*} else {
 	 shared_ptr = boost::static_pointer_cast<PayloadTypeAPI>(reinterpret_cast<PayloadTypeAPI *>(ptr)->shared_from_this());
 	 }*/
 	return shared_ptr;
 }
 
-PayloadTypeAPIPtr PayloadTypeAPI::get(const CoreAPIPtr &core, const PayloadType *payloadType) {
+PayloadTypeAPIPtr PayloadTypeAPI::get(const PayloadType *payloadType) {
 	if (payloadType == NULL)
 		return PayloadTypeAPIPtr();
 
 	//void *ptr = payloadType->user_data;
 	PayloadTypeAPIPtr shared_ptr;
 	/*if (ptr == NULL) {*/
-	shared_ptr = PayloadTypeAPIPtr(new PayloadTypeAPI(core, payloadType));
+	shared_ptr = PayloadTypeAPIPtr(new PayloadTypeAPI(payloadType));
 	/*} else {
 	 shared_ptr = boost::static_pointer_cast<PayloadTypeAPI>(reinterpret_cast<PayloadTypeAPI *>(ptr)->shared_from_this());
 	 }*/

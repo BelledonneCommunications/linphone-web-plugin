@@ -123,10 +123,12 @@ public:
 	std::string getVideoDevice() const;
 
 	// Codecs functions
-	FB::VariantList getAudioCodecs();
-	FB::VariantList getVideoCodecs();
+	FB::VariantList getAudioCodecs() const;
+	FB::VariantList getVideoCodecs() const;
 	void setAudioCodecs(const std::vector<FB::JSAPIPtr> &list);
 	void setVideoCodecs(const std::vector<FB::JSAPIPtr> &list);
+	bool payloadTypeEnabled(const PayloadTypeAPIPtr &payloadType) const;
+	void enablePayloadType(const PayloadTypeAPIPtr &payloadType, bool enable);
 
 	// ProxyConfig functions
 	int addProxyConfig(const ProxyConfigAPIPtr &config);

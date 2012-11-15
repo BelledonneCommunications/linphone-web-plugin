@@ -28,12 +28,11 @@ FB_FORWARD_PTR(CoreAPI);
 FB_FORWARD_PTR(PayloadTypeAPI)
 class PayloadTypeAPI: public FB::JSAPIAuto {
 private:
-	CoreAPIWeakPtr mCore;
 	PayloadType *mPayloadType;
 	bool mConst;
 
-	PayloadTypeAPI(const CoreAPIPtr &core, PayloadType *payloadType);
-	PayloadTypeAPI(const CoreAPIPtr &core, const PayloadType *payloadType);
+	PayloadTypeAPI(PayloadType *payloadType);
+	PayloadTypeAPI(const PayloadType *payloadType);
 	void initProxy();
 public:
 	~PayloadTypeAPI();
@@ -74,14 +73,11 @@ public:
 	int getFlags() const;
 	void setFlags(int flags);
 
-	bool getEnabled() const;
-	void setEnabled(bool enable);
-
 	inline PayloadType *getRef() const {
 		return mPayloadType;
 	}
-	static PayloadTypeAPIPtr get(const CoreAPIPtr &core, PayloadType *payloadType);
-	static PayloadTypeAPIPtr get(const CoreAPIPtr &core, const PayloadType *payloadType);
+	static PayloadTypeAPIPtr get(PayloadType *payloadType);
+	static PayloadTypeAPIPtr get(const PayloadType *payloadType);
 };
 
 #endif //H_PAYLOADTYPEAPI

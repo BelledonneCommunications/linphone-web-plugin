@@ -174,6 +174,8 @@ void CoreAPI::initProxy() {
 	registerMethod("getVideoCodecs", make_method(this, &CoreAPI::getVideoCodecs));
 	registerMethod("setAudioCodecs", make_method(this, &CoreAPI::setAudioCodecs));
 	registerMethod("setVideoCodecs", make_method(this, &CoreAPI::setVideoCodecs));
+	registerMethod("payloadTypeEnabled", make_method(this, &CoreAPI::payloadTypeEnabled));
+	registerMethod("enablePayloadType", make_method(this, &CoreAPI::enablePayloadType));
 
 	// ProxyConfig bindings
 	registerMethod("addProxyConfig", make_method(this, &CoreAPI::addProxyConfig));
@@ -746,24 +748,24 @@ std::string CoreAPI::getVideoDevice() const {
  *
  */
 
-FB::VariantList CoreAPI::getAudioCodecs() {
+FB::VariantList CoreAPI::getAudioCodecs() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getAudioCodecs()", "this=" << this);
 	FB::VariantList list;
 	for (const MSList *node = linphone_core_get_audio_codecs(mCore); node != NULL; node = ms_list_next(node)) {
-		list.push_back(PayloadTypeAPI::get(boost::static_pointer_cast<CoreAPI>(shared_from_this()), reinterpret_cast<PayloadType*>(node->data)));
+		list.push_back(PayloadTypeAPI::get(reinterpret_cast<PayloadType*>(node->data)));
 	}
 	return list;
 }
 
-FB::VariantList CoreAPI::getVideoCodecs() {
+FB::VariantList CoreAPI::getVideoCodecs() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVideoCodecs()", "this=" << this);
 	FB::VariantList list;
 	for (const MSList *node = linphone_core_get_video_codecs(mCore); node != NULL; node = ms_list_next(node)) {
-		list.push_back(PayloadTypeAPI::get(boost::static_pointer_cast<CoreAPI>(shared_from_this()), reinterpret_cast<PayloadType*>(node->data)));
+		list.push_back(PayloadTypeAPI::get(reinterpret_cast<PayloadType*>(node->data)));
 	}
 	return list;
 }
@@ -800,6 +802,20 @@ void CoreAPI::setVideoCodecs(const std::vector<FB::JSAPIPtr> &list) {
 	}
 
 	linphone_core_set_video_codecs(mCore, mslist);
+}
+
+bool CoreAPI::payloadTypeEnabled(const PayloadTypeAPIPtr &payloadType) const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::payloadTypeEnabled()", "this=" << this << "\t" << "payloadType=" << payloadType);
+	return linphone_core_payload_type_enabled(mCore, payloadType->getRef()) == TRUE ? true : false;
+}
+
+void CoreAPI::enablePayloadType(const PayloadTypeAPIPtr &payloadType, bool enable) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::enablePayloadType()", "this=" << this << "\t" << "payloadType=" << payloadType << "\t" << "enable=" << enable);
+	linphone_core_enable_payload_type(mCore, payloadType->getRef(), enable ? TRUE : FALSE);
 }
 
 /*
