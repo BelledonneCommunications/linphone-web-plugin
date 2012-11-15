@@ -30,7 +30,9 @@ file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
 # GCC options
-# add_definitions(-std=c++0x)
+add_definitions(
+    -DCORE_THREADED
+)
 
 include_directories(Rootfs/include/linphone)
 include_directories(Rootfs/include)

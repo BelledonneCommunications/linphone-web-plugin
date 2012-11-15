@@ -29,6 +29,7 @@
 #include <boost/mpl/aux_/preprocessor/token_equal.hpp>
 #include <JSAPIAuto.h>
 #include <BrowserHost.h>
+#include <Timer.h>
 #include <variant_list.h>
 #include <SimpleStreamHelper.h>
 #include <linphonecore.h>
@@ -39,63 +40,6 @@
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
 #include "utils.h"
-
-#define CORE_THREADED
-
-#define __DECLARE_SYNC_N_ASYNC_PARAMMACRO(z, n, args) BOOST_PP_ARRAY_ELEM(n, args) p##n
-#define __DECLARE_SYNC_N_ASYNC_USEMACRO(z, n, args) p##n
-
-#ifdef CORE_THREADED
-#define REGISTER_SYNC_N_ASYNC(name, funct_name)                                                   \
-	registerMethod(name, make_method(this, &CoreAPI::funct_name));                                \
-	registerMethod(name "_async", make_method(this, &CoreAPI::BOOST_PP_CAT(funct_name, _async))); \
-
-#else
-#define REGISTER_SYNC_N_ASYNC(name, funct_name)                                                   \
-	registerMethod(name, make_method(this, &CoreAPI::funct_name));                                \
-
-#endif //CORE_THREADED
-
-#define DECLARE_SYNC_N_ASYNC_SYNC_FCT(name, argCount, argList, ret)  		\
-	ret name (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)));
-
-#define BOOST_MPL_PP_TOKEN_EQUAL_void(x) x
-
-#define DECLARE_SYNC_N_ASYNC_THREAD_FCT(name, argCount, argList, ret)  																								\
-	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),																\
-			void BOOST_PP_CAT(name, _async_thread) (FB::JSObjectPtr callback) {,											\
-			void BOOST_PP_CAT(name, _async_thread) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {) 	\
-	BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),															\
-		name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList))); 										\
-		callback->InvokeAsync("", FB::variant_list_of(shared_from_this()));, 												\
-		ret value = name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList))); 								\
-		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(value));) 											\
-		m_threads->remove_thread(boost::this_thread::get_id());														\
-	}
-
-#define COMMA ,
-#define DECLARE_SYNC_N_ASYNC_ASYNC_FCT(name, argCount, argList) 													\
-	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),															\
-			void BOOST_PP_CAT(name, _async) (FB::JSObjectPtr callback) {,											\
-			void BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {) 	\
-		m_threads->create_thread(boost::bind(&CoreAPI::BOOST_PP_CAT(name, _async_thread), this, 						\
-		BOOST_PP_IF(BOOST_PP_NOT_EQUAL(argCount, 0), BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList)), BOOST_PP_EMPTY())		\
-		BOOST_PP_IF(BOOST_PP_NOT_EQUAL(argCount, 0), BOOST_PP_COMMA, BOOST_PP_EMPTY)()										\
-													callback)); 							\
-																					\
-	}
-
-#ifdef CORE_THREADED
-#define DECLARE_SYNC_N_ASYNC(name, argCount, argList, ret)          \
-	DECLARE_SYNC_N_ASYNC_SYNC_FCT(name, argCount, argList, ret)     \
-	DECLARE_SYNC_N_ASYNC_THREAD_FCT(name, argCount, argList, ret)   \
-	DECLARE_SYNC_N_ASYNC_ASYNC_FCT(name, argCount, argList)         \
-
-#else
-#define DECLARE_SYNC_N_ASYNC(name, argCount, argList, ret)          \
-	DECLARE_SYNC_N_ASYNC_SYNC_FCT(name, argCount, argList, ret)     \
-
-#endif //CORE_THREADED
 
 FB_FORWARD_PTR(CoreAPI)
 class CoreAPI: public FB::JSAPIAuto {
@@ -245,6 +189,8 @@ private :
 	mutable boost::mutex m_core_mutex;
 	boost::thread *m_core_thread;
 	mythread_group *m_threads;
+#else
+	FB::TimerPtr m_timer;
 #endif //CORE_THREADED
 
 	std::string m_internal_ring;

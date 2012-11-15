@@ -103,6 +103,8 @@ CoreAPI::CoreAPI(const corePtr& plugin, const FB::BrowserHostPtr& host) :
 #ifdef CORE_THREADED
 	m_core_thread = NULL;
 	m_threads = new mythread_group();
+#else
+	m_timer = FB::Timer::getTimer(20, true, boost::bind(&CoreAPI::iterate, this));
 #endif
 	initProxy();
 }
@@ -231,6 +233,7 @@ int CoreAPI::init() {
 #ifdef CORE_THREADED
 		m_core_thread = new boost::thread(linphone_iterate_thread, this);
 #else
+		m_timer->start();
 #endif
 		return 0;
 	} else {
@@ -254,6 +257,7 @@ CoreAPI::~CoreAPI() {
 #ifdef CORE_THREADED
 		boost::thread t(linphone_destroy_thread, mCore, m_core_thread, m_threads);
 #else
+		m_timer->stop();
 		linphone_core_destroy(mCore);
 
 		sInstanceMutex.lock();
