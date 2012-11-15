@@ -122,8 +122,24 @@ void CoreAPI::initProxy() {
 
 	// Call bindings
 	REGISTER_SYNC_N_ASYNC("invite", invite);
+	REGISTER_SYNC_N_ASYNC("inviteAddress", inviteAddress);
+	REGISTER_SYNC_N_ASYNC("inviteWithParams", inviteWithParams);
+	REGISTER_SYNC_N_ASYNC("inviteAddressWithParams", inviteAddressWithParams);
 	registerMethod("acceptCall", make_method(this, &CoreAPI::acceptCall));
+	registerMethod("acceptCallWithParams", make_method(this, &CoreAPI::acceptCallWithParams));
+	registerMethod("getCurrentCall", make_method(this, &CoreAPI::getCurrentCall));
 	registerMethod("terminateCall", make_method(this, &CoreAPI::terminateCall));
+	registerMethod("terminateAllCalls", make_method(this, &CoreAPI::terminateAllCalls));
+	registerMethod("redirectCall", make_method(this, &CoreAPI::redirectCall));
+	registerMethod("declineCall", make_method(this, &CoreAPI::declineCall));
+	registerMethod("transferCall", make_method(this, &CoreAPI::transferCall));
+	registerMethod("transferCallToAnother", make_method(this, &CoreAPI::transferCallToAnother));
+	registerMethod("pauseCall", make_method(this, &CoreAPI::pauseCall));
+	registerMethod("pauseAllCalls", make_method(this, &CoreAPI::pauseAllCalls));
+	registerMethod("updateCall", make_method(this, &CoreAPI::updateCall));
+	registerMethod("deferCallUpdate", make_method(this, &CoreAPI::deferCallUpdate));
+	registerMethod("acceptCallUpdate", make_method(this, &CoreAPI::acceptCallUpdate));
+	registerMethod("createDefaultCallParameters", make_method(this, &CoreAPI::createDefaultCallParameters));
 
 	// Levels bindings
 	registerProperty("playLevel", make_property(this, &CoreAPI::getPlayLevel, &CoreAPI::setPlayLevel));
@@ -311,28 +327,147 @@ CoreAPIPtr CoreAPI::get(LinphoneCore *core) {
  *
  */
 
-CallAPIPtr CoreAPI::invite(const std::string &dest) {
+CallAPIPtr CoreAPI::invite(const std::string &url) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::invite", "this=" << this << "\t" << "dest=" << dest);
-	LinphoneCall *call = linphone_core_invite(mCore, dest.c_str());
+	FBLOG_DEBUG("CoreAPI::invite", "this=" << this << "\t" << "url=" << url);
+	LinphoneCall *call = linphone_core_invite(mCore, url.c_str());
 	CallAPIPtr shared_call = CallAPI::get(call);
 	return shared_call;
 }
 
-void CoreAPI::terminateCall(const CallAPIPtr &call) {
+CallAPIPtr CoreAPI::inviteAddress(const AddressAPIPtr &address) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::terminateCall", "this=" << this << "\t" << "call=" << call);
-	linphone_core_terminate_call(mCore, call->getRef());
+	FBLOG_DEBUG("CoreAPI::inviteAddress", "this=" << this << "\t" << "address=" << address);
+	LinphoneCall *call = linphone_core_invite_address(mCore, address->getRef());
+	CallAPIPtr shared_call = CallAPI::get(call);
+	return shared_call;
 }
 
-void CoreAPI::acceptCall(const CallAPIPtr &call) {
+CallAPIPtr CoreAPI::inviteWithParams(const std::string &url, const CallParamsAPIPtr &params) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::invite", "this=" << this << "\t" << "url=" << url << "\t" << "params=" << params);
+	LinphoneCall *call = linphone_core_invite_with_params(mCore, url.c_str(), params->getRef());
+	CallAPIPtr shared_call = CallAPI::get(call);
+	return shared_call;
+}
+
+CallAPIPtr CoreAPI::inviteAddressWithParams(const AddressAPIPtr &address, const CallParamsAPIPtr &params) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::inviteAddress", "this=" << this << "\t" << "address=" << address << "\t" << "params=" << params);
+	LinphoneCall *call = linphone_core_invite_address_with_params(mCore, address->getRef(), params->getRef());
+	CallAPIPtr shared_call = CallAPI::get(call);
+	return shared_call;
+}
+
+int CoreAPI::acceptCall(const CallAPIPtr &call) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::acceptCall", "this=" << this << "\t" << "call=" << call);
-	linphone_core_accept_call(mCore, call->getRef());
+	return linphone_core_accept_call(mCore, call->getRef());
 }
+
+int CoreAPI::acceptCallWithParams(const CallAPIPtr &call, const CallParamsAPIPtr &params) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::acceptCallWithParams", "this=" << this << "\t" << "call=" << call << "\t" << "params=" << params);
+	return linphone_core_accept_call_with_params(mCore, call->getRef(), params->getRef());
+}
+
+CallAPIPtr CoreAPI::getCurrentCall() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getCurrentCall", "this=" << this);
+	return CallAPI::get(linphone_core_get_current_call(mCore));
+}
+
+int CoreAPI::terminateCall(const CallAPIPtr &call) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::terminateCall", "this=" << this << "\t" << "call=" << call);
+	return linphone_core_terminate_call(mCore, call->getRef());
+}
+
+int CoreAPI::terminateAllCalls() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::terminateAllCalls", "this=" << this);
+	return linphone_core_terminate_all_calls(mCore); 
+}
+
+int CoreAPI::redirectCall(const CallAPIPtr &call, const std::string &uri) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::redirectCall", "this=" << this << "\t" << "call=" << call << "\t" << "uri=" << uri);
+	return linphone_core_redirect_call(mCore, call->getRef(), uri.c_str());
+}
+
+int CoreAPI::declineCall(const CallAPIPtr &call, int reason) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::declineCall", "this=" << this << "\t" << "call=" << call << "\t" << "reason=" << reason);
+	return linphone_core_decline_call(mCore, call->getRef(), (LinphoneReason)reason);
+}
+
+int CoreAPI::transferCall(const CallAPIPtr &call, const std::string &uri) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::transferCall", "this=" << this << "\t" << "call=" << call << "\t" << "uri=" << uri);
+	return linphone_core_transfer_call(mCore, call->getRef(), uri.c_str());
+}
+
+int CoreAPI::transferCallToAnother(const CallAPIPtr &call, const CallAPIPtr &dest) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::transferCallToAnother", "this=" << this << "\t" << "call=" << call << "\t" << "dest=" << dest);
+	return linphone_core_transfer_call_to_another(mCore, call->getRef(), dest->getRef());
+}
+
+int CoreAPI::pauseCall(const CallAPIPtr &call) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::pauseCall", "this=" << this << "\t" << "call=" << call);
+	return linphone_core_pause_call(mCore, call->getRef());
+}
+
+int CoreAPI::pauseAllCalls() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::pauseAllCalls", "this=" << this);
+	return linphone_core_pause_all_calls(mCore);
+}
+
+int CoreAPI::updateCall(const CallAPIPtr &call, const CallParamsAPIPtr &params) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::updateCall", "this=" << this << "\t" << "call=" << call << "\t" << "params=" << params);
+	return linphone_core_update_call(mCore, call->getRef(), params->getRef());
+}
+
+int CoreAPI::deferCallUpdate(const CallAPIPtr &call) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::deferCallUpdate", "this=" << this << "\t" << "call=" << call);
+	return linphone_core_defer_call_update(mCore, call->getRef());
+}
+
+int CoreAPI::acceptCallUpdate(const CallAPIPtr &call, const CallParamsAPIPtr &params) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::acceptCallUpdate", "this=" << this << "\t" << "call=" << call << "\t" << "params=" << params);
+	return linphone_core_accept_call_update(mCore, call->getRef(), params->getRef());
+}
+
+CallParamsAPIPtr CoreAPI::createDefaultCallParameters() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::createDefaultCallParameters", "this=" << this);
+	return CallParamsAPI::get(linphone_core_create_default_call_parameters(mCore));
+}
+
 
 /*
  *

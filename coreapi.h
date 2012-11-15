@@ -33,8 +33,10 @@
 #include <variant_list.h>
 #include <SimpleStreamHelper.h>
 #include <linphonecore.h>
+#include "addressapi.h"
 #include "coreplugin.h"
 #include "coreapi.h"
+#include "callparamsapi.h"
 #include "callapi.h"
 #include "authinfoapi.h"
 #include "payloadtypeapi.h"
@@ -60,8 +62,24 @@ public:
 
 	// Call functions
 	DECLARE_SYNC_N_ASYNC(invite, 1, (const std::string &), CallAPIPtr);
-	void acceptCall(const CallAPIPtr &call);
-	void terminateCall(const CallAPIPtr &call);
+	DECLARE_SYNC_N_ASYNC(inviteAddress, 1, (const AddressAPIPtr &), CallAPIPtr);
+	DECLARE_SYNC_N_ASYNC(inviteWithParams, 2, (const std::string &, const CallParamsAPIPtr &), CallAPIPtr);
+	DECLARE_SYNC_N_ASYNC(inviteAddressWithParams, 2, (const AddressAPIPtr &, const CallParamsAPIPtr &), CallAPIPtr);
+	int acceptCall(const CallAPIPtr &call);
+	int acceptCallWithParams(const CallAPIPtr &call, const CallParamsAPIPtr &params);
+	CallAPIPtr getCurrentCall();
+	int terminateCall(const CallAPIPtr &call);
+	int terminateAllCalls();
+	int redirectCall(const CallAPIPtr &call, const std::string &uri);
+	int declineCall(const CallAPIPtr &call, int reason);
+	int transferCall(const CallAPIPtr &call, const std::string &uri);
+	int transferCallToAnother(const CallAPIPtr &call, const CallAPIPtr &dest);
+	int pauseCall(const CallAPIPtr &call);
+	int pauseAllCalls();
+	int updateCall(const CallAPIPtr &call, const CallParamsAPIPtr &params);
+	int deferCallUpdate(const CallAPIPtr &call);
+	int acceptCallUpdate(const CallAPIPtr &call, const CallParamsAPIPtr &params);
+	CallParamsAPIPtr createDefaultCallParameters();
 
 	// Level functions
 	void setPlayLevel(int level);

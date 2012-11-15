@@ -108,8 +108,8 @@ std::string APIDescription(T *ptr) {
 
 std::string CHARPTR_TO_STRING(const char *str);
 
-#define __DECLARE_SYNC_N_ASYNC_PARAMMACRO(z, n, args) BOOST_PP_ARRAY_ELEM(n, args) p##n
-#define __DECLARE_SYNC_N_ASYNC_USEMACRO(z, n, args) p##n
+#define __DECLARE_SYNC_N_ASYNC_PARAMMACRO(z, n, data) BOOST_PP_ARRAY_ELEM(n, data) paramater_##n
+#define __DECLARE_SYNC_N_ASYNC_USEMACRO(z, n, data) paramater_##n
 
 #define REGISTER_SYNC_N_ASYNC(name, funct_name)                                                   \
 	registerMethod(name, make_method(this, &CoreAPI::funct_name));                                \
@@ -126,9 +126,9 @@ std::string CHARPTR_TO_STRING(const char *str);
 			void BOOST_PP_CAT(name, _async_thread) (FB::JSObjectPtr callback) {,                                                                                    \
 			void BOOST_PP_CAT(name, _async_thread) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {)   \
 	BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),                                                                                                                \
-		name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList)));                                                                        \
+		name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL));                                                                                       \
 		callback->InvokeAsync("", FB::variant_list_of(shared_from_this()));,                                                                                        \
-		ret value = name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList)));                                                            \
+		ret value = name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL));                                                                           \
 		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(value));)                                                                                 \
 		m_threads->remove_thread(boost::this_thread::get_id());                                                                                                     \
 	}                                                                                                                                                               \
@@ -138,9 +138,9 @@ std::string CHARPTR_TO_STRING(const char *str);
 			void BOOST_PP_CAT(name, _async) (FB::JSObjectPtr callback) {,                                                                                           \
 			void BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {)          \
 		m_threads->create_thread(boost::bind(&CoreAPI::BOOST_PP_CAT(name, _async_thread), this,                                                                     \
-		BOOST_PP_IF(BOOST_PP_NOT_EQUAL(argCount, 0), BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList)), BOOST_PP_EMPTY())               \
+		BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL)                                                                                              \
 		BOOST_PP_IF(BOOST_PP_NOT_EQUAL(argCount, 0), BOOST_PP_COMMA, BOOST_PP_EMPTY)()                                                                              \
-													callback));                                                                                                     \
+		callback));                                                                                                                                                 \
 	}                                                                                                                                                               \
 
 #else
