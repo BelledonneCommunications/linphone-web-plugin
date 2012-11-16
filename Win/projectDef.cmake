@@ -336,10 +336,10 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
                  
                  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}/plugins    
 				 
-				 COMMAND ${CMAKE_COMMAND} -E remove ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
+                 COMMAND ${CMAKE_COMMAND} -E remove ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
                  COMMAND jar cfM ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
 				 
-				 COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/XPI.updated
+                 COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/XPI.updated
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added XPI package step")
@@ -373,10 +373,10 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png ${FB_PKG_DIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/
                  
-				 COMMAND ${CMAKE_COMMAND} -E remove ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
+                 COMMAND ${CMAKE_COMMAND} -E remove ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
                  COMMAND jar cfM ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx -C ${FB_PKG_DIR} .
 				 
-				 COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/CRX.updated
+                 COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/CRX.updated
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJDEP})
 	message("-- Successfully added CRX package step")
