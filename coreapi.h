@@ -25,8 +25,6 @@
 #include <vector>
 #include <map>
 #include <boost/weak_ptr.hpp>
-#include <boost/preprocessor/debug/assert.hpp>
-#include <boost/mpl/aux_/preprocessor/token_equal.hpp>
 #include <JSAPIAuto.h>
 #include <BrowserHost.h>
 #include <Timer.h>
@@ -42,6 +40,7 @@
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
 #include "utils.h"
+#include "macro.h"
 
 FB_FORWARD_PTR(CoreAPI)
 class CoreAPI: public FB::JSAPIAuto {
@@ -61,10 +60,10 @@ public:
 	void setMagic(const std::string &magic);
 
 	// Call functions
-	DECLARE_SYNC_N_ASYNC(invite, 1, (const std::string &), CallAPIPtr);
-	DECLARE_SYNC_N_ASYNC(inviteAddress, 1, (const AddressAPIPtr &), CallAPIPtr);
-	DECLARE_SYNC_N_ASYNC(inviteWithParams, 2, (const std::string &, const CallParamsAPIPtr &), CallAPIPtr);
-	DECLARE_SYNC_N_ASYNC(inviteAddressWithParams, 2, (const AddressAPIPtr &, const CallParamsAPIPtr &), CallAPIPtr);
+	DECLARE_SYNC_N_ASYNC(CoreAPI, invite, 1, (const std::string &), CallAPIPtr);
+	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteAddress, 1, (const AddressAPIPtr &), CallAPIPtr);
+	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteWithParams, 2, (const std::string &, const CallParamsAPIPtr &), CallAPIPtr);
+	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteAddressWithParams, 2, (const AddressAPIPtr &, const CallParamsAPIPtr &), CallAPIPtr);
 	int acceptCall(const CallAPIPtr &call);
 	int acceptCallWithParams(const CallAPIPtr &call, const CallParamsAPIPtr &params);
 	CallAPIPtr getCurrentCall();

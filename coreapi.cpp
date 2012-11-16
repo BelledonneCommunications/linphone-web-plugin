@@ -121,10 +121,10 @@ void CoreAPI::initProxy() {
 	registerMethod("init", make_method(this, &CoreAPI::init));
 
 	// Call bindings
-	REGISTER_SYNC_N_ASYNC("invite", invite);
-	REGISTER_SYNC_N_ASYNC("inviteAddress", inviteAddress);
-	REGISTER_SYNC_N_ASYNC("inviteWithParams", inviteWithParams);
-	REGISTER_SYNC_N_ASYNC("inviteAddressWithParams", inviteAddressWithParams);
+	REGISTER_SYNC_N_ASYNC(CoreAPI, "invite", invite);
+	REGISTER_SYNC_N_ASYNC(CoreAPI, "inviteAddress", inviteAddress);
+	REGISTER_SYNC_N_ASYNC(CoreAPI, "inviteWithParams", inviteWithParams);
+	REGISTER_SYNC_N_ASYNC(CoreAPI, "inviteAddressWithParams", inviteAddressWithParams);
 	registerMethod("acceptCall", make_method(this, &CoreAPI::acceptCall));
 	registerMethod("acceptCallWithParams", make_method(this, &CoreAPI::acceptCallWithParams));
 	registerMethod("getCurrentCall", make_method(this, &CoreAPI::getCurrentCall));
