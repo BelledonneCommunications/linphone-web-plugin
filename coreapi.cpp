@@ -145,7 +145,7 @@ void CoreAPI::initProxy() {
 	registerProperty("playLevel", make_property(this, &CoreAPI::getPlayLevel, &CoreAPI::setPlayLevel));
 	registerProperty("recLevel", make_property(this, &CoreAPI::getRecLevel, &CoreAPI::setRecLevel));
 	registerProperty("ringLevel", make_property(this, &CoreAPI::getRingLevel, &CoreAPI::setRingLevel));
-	registerProperty("muteMic", make_property(this, &CoreAPI::getMuteMic, &CoreAPI::setRingLevel));
+	registerProperty("muteMic", make_property(this, &CoreAPI::isMicMuted, &CoreAPI::muteMic));
 
 	// Video bindings
 	registerMethod("videoSupported", make_method(this, &CoreAPI::videoSupported));
@@ -519,17 +519,17 @@ int CoreAPI::getRingLevel() const {
 	return linphone_core_get_ring_level(mCore);
 }
 
-void CoreAPI::setMuteMic(bool muted) {
+void CoreAPI::muteMic(bool muted) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::setMuteMic", "this=" << this << "\t" << "muted=" << muted);
+	FBLOG_DEBUG("CoreAPI::muteMic", "this=" << this << "\t" << "muted=" << muted);
 	linphone_core_mute_mic(mCore, muted ? TRUE : FALSE);
 }
 
-bool CoreAPI::getMuteMic() const {
+bool CoreAPI::isMicMuted() const {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::getMuteMic", "this=" << this);
+	FBLOG_DEBUG("CoreAPI::isMicMuted", "this=" << this);
 	return linphone_core_is_mic_muted(mCore) == TRUE ? true : false;
 }
 

@@ -87,8 +87,8 @@ public:
 	int getRecLevel() const;
 	void setRingLevel(int level);
 	int getRingLevel() const;
-	void setMuteMic(bool muted);
-	bool getMuteMic() const;
+	void muteMic(bool muted);
+	bool isMicMuted() const;
 
 	// Video functions
 	bool videoSupported() const;
