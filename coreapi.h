@@ -144,6 +144,10 @@ public:
 	int getDownloadBandwidth() const;
 	void setUploadBandwidth(int bandwidth);
 	int getUploadBandwidth() const;
+	void setDownloadPtime(int ptime);
+	int getDownloadPtime() const;
+	void setUploadPtime(int ptime);
+	int getUploadPtime() const;
 
 	// AuthInfo functions
 	void addAuthInfo(const AuthInfoAPIPtr &authInfo);

@@ -189,6 +189,8 @@ void CoreAPI::initProxy() {
 	// Network bindings
 	registerProperty("downloadBandwidth", make_property(this, &CoreAPI::getDownloadBandwidth, &CoreAPI::setDownloadBandwidth));
 	registerProperty("uploadBandwidth", make_property(this, &CoreAPI::getUploadBandwidth, &CoreAPI::setUploadBandwidth));
+	registerProperty("downloadPtime", make_property(this, &CoreAPI::getDownloadPtime, &CoreAPI::setDownloadPtime));
+	registerProperty("uploadPtime", make_property(this, &CoreAPI::getUploadPtime, &CoreAPI::setUploadPtime));
 
 	// AuthInfo bindings
 	registerMethod("addAuthInfo", make_method(this, &CoreAPI::addAuthInfo));
@@ -925,6 +927,34 @@ int CoreAPI::getUploadBandwidth() const {
 
 	FBLOG_DEBUG("CoreAPI::getUploadBandwidth()", "this=" << this);
 	return linphone_core_get_upload_bandwidth(mCore);
+}
+
+void CoreAPI::setDownloadPtime(int ptime) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setDownloadPtime()", "this=" << this << "\t" << "ptime=" << ptime);
+	linphone_core_set_download_ptime(mCore, ptime);
+}
+
+int CoreAPI::getDownloadPtime() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getDownloadPtime()", "this=" << this);
+	return linphone_core_get_download_ptime(mCore);
+}
+
+void CoreAPI::setUploadPtime(int ptime) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setUploadPtime()", "this=" << this << "\t" << "ptime=" << ptime);
+	linphone_core_set_upload_ptime(mCore, ptime);
+}
+
+int CoreAPI::getUploadPtime() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getUploadPtime()", "this=" << this);
+	return linphone_core_get_upload_ptime(mCore);
 }
 
 /*
