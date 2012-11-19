@@ -150,6 +150,7 @@ void CoreAPI::initProxy() {
 	// Video bindings
 	registerMethod("videoSupported", make_method(this, &CoreAPI::videoSupported));
 	registerProperty("videoPreviewEnabled", make_property(this, &CoreAPI::videoPreviewEnabled, &CoreAPI::enableVideoPreview));
+	registerProperty("selfViewEnabled", make_property(this, &CoreAPI::selfViewEnabled, &CoreAPI::enableSelfView));
 	registerProperty("videoEnabled", make_property(this, &CoreAPI::videoEnabled, &CoreAPI::enableVideo));
 	registerProperty("nativePreviewWindowId", make_property(this, &CoreAPI::getNativePreviewWindowId, &CoreAPI::setNativePreviewWindowId));
 	registerProperty("nativeVideoWindowId", make_property(this, &CoreAPI::getNativeVideoWindowId, &CoreAPI::setNativeVideoWindowId));
@@ -184,6 +185,10 @@ void CoreAPI::initProxy() {
 	registerMethod("getProxyConfigList", make_method(this, &CoreAPI::getProxyConfigList));
 	registerMethod("setDefaultProxy", make_method(this, &CoreAPI::setDefaultProxy));
 	registerMethod("getDefaultProxy", make_method(this, &CoreAPI::getDefaultProxy));
+
+	// Network bindings
+	registerProperty("downloadBandwidth", make_property(this, &CoreAPI::getDownloadBandwidth, &CoreAPI::setDownloadBandwidth));
+	registerProperty("uploadBandwidth", make_property(this, &CoreAPI::getUploadBandwidth, &CoreAPI::setUploadBandwidth));
 
 	// AuthInfo bindings
 	registerMethod("addAuthInfo", make_method(this, &CoreAPI::addAuthInfo));
@@ -574,6 +579,20 @@ bool CoreAPI::videoPreviewEnabled() const {
 	return linphone_core_video_preview_enabled(mCore) == TRUE ? true : false;
 }
 
+void CoreAPI::enableSelfView(bool enable) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::enableSelfView()", "this=" << this << "\t" << "enable=" << enable);
+	linphone_core_enable_self_view(mCore, enable ? TRUE : FALSE);
+}
+
+bool CoreAPI::selfViewEnabled() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::selfViewEnabled()", "this=" << this);
+	return linphone_core_self_view_enabled(mCore) == TRUE ? true : false;
+}
+
 void CoreAPI::setNativeVideoWindowId(unsigned long id) {
 	CORE_MUTEX
 
@@ -872,6 +891,40 @@ ProxyConfigAPIPtr CoreAPI::getDefaultProxy() const {
 	if (ptr != NULL)
 		return ProxyConfigAPI::get(ptr);
 	return ProxyConfigAPIPtr();
+}
+
+/*
+ *
+ * Network functions
+ *
+ */
+
+void CoreAPI::setDownloadBandwidth(int bandwidth) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setDownloadBandwidth()", "this=" << this << "\t" << "bandwidth=" << bandwidth);
+	linphone_core_set_download_bandwidth(mCore, bandwidth);
+}
+
+int CoreAPI::getDownloadBandwidth() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getDownloadBandwidth()", "this=" << this);
+	return linphone_core_get_download_bandwidth(mCore);
+}
+
+void CoreAPI::setUploadBandwidth(int bandwidth) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setUploadBandwidth()", "this=" << this << "\t" << "bandwidth=" << bandwidth);
+	linphone_core_set_upload_bandwidth(mCore, bandwidth);
+}
+
+int CoreAPI::getUploadBandwidth() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getUploadBandwidth()", "this=" << this);
+	return linphone_core_get_upload_bandwidth(mCore);
 }
 
 /*

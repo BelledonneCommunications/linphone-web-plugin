@@ -96,6 +96,8 @@ public:
 	bool videoEnabled() const;
 	void enableVideoPreview(bool enable);
 	bool videoPreviewEnabled() const;
+	void enableSelfView(bool enable);
+	bool selfViewEnabled() const;
 	void setNativeVideoWindowId(unsigned long id);
 	unsigned long getNativeVideoWindowId() const;
 	void setNativePreviewWindowId(unsigned long id);
@@ -136,6 +138,12 @@ public:
 	FB::VariantList getProxyConfigList() const;
 	void setDefaultProxy(const ProxyConfigAPIPtr &config);
 	ProxyConfigAPIPtr getDefaultProxy() const;
+
+	// Network functions
+	void setDownloadBandwidth(int bandwidth);
+	int getDownloadBandwidth() const;
+	void setUploadBandwidth(int bandwidth);
+	int getUploadBandwidth() const;
 
 	// AuthInfo functions
 	void addAuthInfo(const AuthInfoAPIPtr &authInfo);
