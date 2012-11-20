@@ -40,6 +40,20 @@ bool URI_IS_FILE(const FB::URI &uri) {
 		boost::iequals(uri.protocol, LINPHONE_WEB_TEMP_PROTOCOL);
 }
 
+// MISSING BOOST FILESYSTEM OPERATION
+//  operations.cpp  --------------------------------------------------------------------//
+
+//  Copyright 2002-2009 Beman Dawes
+//  Copyright 2001 Dietmar Kuehl
+
+//  Distributed under the Boost Software License, Version 1.0.
+//  See http://www.boost.org/LICENSE_1_0.txt
+
+//  See library home page at http://www.boost.org/libs/filesystem
+
+//--------------------------------------------------------------------------------------// 
+
+
 namespace boost {
 namespace filesystem {
 # ifdef BOOST_WINDOWS_API
@@ -130,6 +144,9 @@ namespace filesystem {
   }
 }
 }
+//--------------------------------------------------------------------------------------// 
+//--------------------------------------------------------------------------------------// 
+
 
 std::string URI_TO_FILE(const FB::URI &uri) {
 	try {
