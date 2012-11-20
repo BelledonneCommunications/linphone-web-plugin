@@ -165,8 +165,8 @@ std::string URI_TO_FILE(const FB::URI &uri) {
 		if(!boost::starts_with(absFile.string(), path)) {
 			return std::string();
 		}
-		return absFile.make_preferred().native();
-	} catch(boost::filesystem::filesystem_error &err) {
+		return absFile.make_preferred().string();
+	} catch(boost::filesystem::filesystem_error &) {
 		return std::string();
 	}
 }
@@ -191,9 +191,10 @@ FB::URI FILE_TO_URI(const std::string &file) {
 			return FB::URI();
 		} else {
 			uri.path = absFile.substr(path.length());
+			std::replace(uri.path.begin(), uri.path.end(), '\\', '/');
 		}
 		return uri;
-	} catch(boost::filesystem::filesystem_error &err) {
+	} catch(boost::filesystem::filesystem_error &) {
 		return FB::URI();
 	}
 }
