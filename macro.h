@@ -88,4 +88,37 @@
 
 #endif //CORE_THREADED
 
+#define DECLARE_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)                                        \
+	void BOOST_PP_CAT(setter, _file)(const std::string &arg) {                                    \
+		FB::URI uri(arg);                                                                     \
+		std::string file = URI_TO_FILE(uri);                                                  \
+		if(file.length()) {                                                                   \
+			setter(file);                                                                 \
+		} else {                                                                              \
+			FBLOG_DEBUG(#class "::" #setter "_file", "Invalid file:" << arg);             \
+		}                                                                                     \
+	}                                                                                             \
+
+#define DECLARE_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)                                        \
+	std::string BOOST_PP_CAT(getter, _file)() const {                                             \
+		std::string ret = getter();                                                           \
+		FB::URI uri = FILE_TO_URI(ret);                                                       \
+		if(URI_IS_FILE(uri)) {                                                                \
+			return uri.toString();                                                        \
+		} else {                                                                              \
+			FBLOG_DEBUG(#class "::" #getter "_file", "Invalid file:" << ret);             \
+		}                                                                                     \
+		return std::string();                                                                 \
+	}                                                                                             \
+
+#define REGISTER_PROPERTY_FILE(class, name, getter, setter)                                                              \
+	registerProperty(name, make_property(this, &class::BOOST_PP_CAT(getter, _file), &class::BOOST_PP_CAT(setter, _file))); \
+
+#define DECLARE_PROPERTY_FILE(class, getter, setter)              \
+	std::string getter() const;                                \
+	void setter(const std::string &arg);                       \
+	DECLARE_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)     \
+	DECLARE_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)     \
+	
+
 #endif // H_MACRO

@@ -19,6 +19,7 @@
 
 #include "coreapi.h"
 #include "coreplugin.h"
+#include <boost/filesystem.hpp>
 
 #ifdef DEBUG
 FILE * core::s_debug_file = NULL;
@@ -149,28 +150,12 @@ FB::JSAPIPtr core::createJSAPI() {
 	return boost::make_shared<CoreAPI>(FB::ptr_cast<core>(shared_from_this()), m_host);
 }
 
-#ifdef WIN32
-#define DIRECTORY_SEPERATOR '\\'
-#else
-#define DIRECTORY_SEPERATOR '/'
-#endif
-
 void core::setFSPath(const std::string &path) {
-	std::string npath = path;
-	std::size_t pos = path.find_last_of(DIRECTORY_SEPERATOR);
-	if (pos != std::string::npos) {
-		npath = npath.substr(0, pos + 1);
-		npath += "linphoneweb";
-		npath += DIRECTORY_SEPERATOR;
-#ifdef WIN32
-		SetCurrentDirectoryA(npath.c_str());
-#else
-		chdir(npath.c_str());
-#endif
-		FBLOG_DEBUG("core::setFSPath", "Change current directory: " << npath);
-	} else {
-		FBLOG_WARN("core::setFSPath", "Can't parse library path: " << npath);
-	}
+	boost::filesystem::path fpath(path);
+	fpath = fpath.parent_path();
+	fpath /= std::string("linphoneweb/");
+	boost::filesystem::current_path(fpath);
+	FBLOG_DEBUG("core::setFSPath", "Change current directory: " << fpath.string());
 }
 
 bool core::setReady() {

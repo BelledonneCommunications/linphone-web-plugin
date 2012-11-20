@@ -178,18 +178,14 @@ public:
 	bool keepAliveEnabled() const;
 
 	// File
-	std::string getRing() const;
-	void setRing(const std::string &ring);
-	void setRingAsync(const std::string &ring, const FB::JSObjectPtr& callback);
-private:
-	void setRingCallback(const std::string& download, const std::string& file, const FB::JSObjectPtr& callback);
-public:
+	DECLARE_PROPERTY_FILE(CoreAPI, getRing, setRing);
 
 	// Download
-	typedef boost::function<void (const std::string&, const std::string&)> DownloadCallbackType;
-	void download(const std::string& url, const DownloadCallbackType& functionback);
-	void downloadCallback(const std::string& url, bool success, const FB::HeaderMap& headers,
-			const boost::shared_array<uint8_t>& data, const size_t size, const DownloadCallbackType& functionback);
+	void download(const std::string& url, const FB::JSObjectPtr& callback);
+private:
+	void downloadCallback(const FB::URI& url, bool success, const FB::HeaderMap& headers,
+			const boost::shared_array<uint8_t>& data, const size_t size, const FB::JSObjectPtr& callback);
+public:
 
 	// Event helpers
 	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const std::string&));
@@ -223,8 +219,6 @@ private :
 #else
 	FB::TimerPtr m_timer;
 #endif //CORE_THREADED
-
-	std::string m_internal_ring;
 
 	void initProxy();
 

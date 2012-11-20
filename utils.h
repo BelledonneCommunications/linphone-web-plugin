@@ -23,6 +23,7 @@
 #include <map>
 #include <sstream>
 #include <boost/thread.hpp>
+#include <URI.h>
 
 class mythread_group {
 private:
@@ -106,7 +107,14 @@ std::string APIDescription(T *ptr) {
 	return ss.str();
 }
 
+extern const std::string LINPHONE_WEB_INTERNAL_PROTOCOL;
+extern const std::string LINPHONE_WEB_TEMP_PROTOCOL;
+
 std::string CHARPTR_TO_STRING(const char *str);
+bool URI_IS_FILE(const FB::URI &uri);
+bool URI_IS_HTTP(const FB::URI &uri);
+std::string URI_TO_FILE(const FB::URI &uri);
+FB::URI FILE_TO_URI(const std::string &file);
 
 #endif // H_UTILS
 
