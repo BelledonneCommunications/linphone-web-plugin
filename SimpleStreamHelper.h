@@ -253,11 +253,9 @@ namespace FB {
         BlockList blocks;
         boost::shared_array<uint8_t> data;
         const size_t blockSize;
-        size_t total;
         size_t received;
         HttpCallback callback;
         HttpProgressCallback progressCallback;
-        HeaderMap headers;
 
     private:
         void keepReference(const SimpleStreamHelperPtr& ptr);

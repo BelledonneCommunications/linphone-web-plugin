@@ -120,7 +120,7 @@ FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousPost( const FB::Bro
 }
 
 FB::SimpleStreamHelper::SimpleStreamHelper( const BrowserHostPtr& host, const HttpCallback& callback, const HttpProgressCallback& progressCallback, const size_t blockSize )
-    : host(host), blockSize(blockSize), total(0), received(0), callback(callback), progressCallback(progressCallback)
+    : host(host), blockSize(blockSize), received(0), callback(callback), progressCallback(progressCallback)
 {
 
 }
@@ -151,9 +151,7 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
         blocks.clear();
     }
     if (callback && stream) {
-        if(headers.size() == 0) {
-            headers = parse_http_headers(stream->getHeaders());
-        }
+        HeaderMap headers = parse_http_headers(stream->getHeaders());
         callback(true, headers, data, received);
     }
     callback.clear();
@@ -196,15 +194,8 @@ bool FB::SimpleStreamHelper::onStreamDataArrived( FB::StreamDataArrivedEvent *ev
         len -= curLen;
     }
 
-    if(headers.size() == 0) {
-        headers = parse_http_headers(stream->getHeaders());
-        auto contentLength = headers.find("Content-Length");
-        if(contentLength != headers.end()) {
-           total = std::atoi(contentLength->second.c_str());
-        }
-    }
     if(progressCallback) {
-        progressCallback(received, total);
+        progressCallback(received, stream->getLength());
     }
     return false;
 }
