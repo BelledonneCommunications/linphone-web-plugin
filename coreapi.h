@@ -29,7 +29,7 @@
 #include <BrowserHost.h>
 #include <Timer.h>
 #include <variant_list.h>
-#include <SimpleStreamHelper.h>
+#include "SimpleStreamHelper.h"
 #include <linphonecore.h>
 #include "addressapi.h"
 #include "coreplugin.h"
@@ -185,6 +185,7 @@ public:
 private:
 	void downloadCallback(const FB::URI& url, bool success, const FB::HeaderMap& headers,
 			const boost::shared_array<uint8_t>& data, const size_t size, const FB::JSObjectPtr& callback);
+	void downloadProgressCallback(const FB::URI& url, const size_t received, const size_t total, const FB::JSObjectPtr& callback);
 public:
 
 	// Event helpers

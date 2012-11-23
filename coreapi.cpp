@@ -1161,7 +1161,7 @@ void CoreAPI::setRing(const std::string &ring) {
 void CoreAPI::download(const std::string& url, const FB::JSObjectPtr& callback) {
 	FBLOG_DEBUG("CoreAPI::download()", "this=" << this << "\t" << "url=" << url);
 	FB::URI uri = FB::URI(url);
-	FB::SimpleStreamHelper::AsyncGet(m_host, uri, boost::bind(&CoreAPI::downloadCallback, this, uri, _1, _2, _3, _4, callback));
+	FB::SimpleStreamHelper::AsyncGet(m_host, uri, boost::bind(&CoreAPI::downloadCallback, this, uri, _1, _2, _3, _4, callback), boost::bind(&CoreAPI::downloadProgressCallback, this, uri, _1, _2, callback));
 }
 
 void CoreAPI::downloadCallback(const FB::URI& url, bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data,
@@ -1180,15 +1180,20 @@ void CoreAPI::downloadCallback(const FB::URI& url, bool success, const FB::Heade
 		if (downloadedFile.bad()) {
 			downloadedFile.close();
 			FBLOG_DEBUG("CoreAPI::downloadCallback()", "Can't write into file " << local.string());
-			callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(1.0f)(url.toString())("")("Can't write"));
+			callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(size)(size)(url.toString())("")("Can't write"));
 			return;
 		}
 		downloadedFile.close();
-		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(1.0f)(url.toString())(FILE_TO_URI(local.string()).toString())(""));
+		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(size)(size)(url.toString())(FILE_TO_URI(local.string()).toString())(""));
 	} else {
 		FBLOG_WARN("CoreAPI::downloadCallback()", "Download " << url.toString() << " failure");
-		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(1.0f)(url.toString())("")("Can't download the file"));
+		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(0)(0)(url.toString())("")("Can't download the file"));
 	}
+}
+
+void CoreAPI::downloadProgressCallback(const FB::URI& url, const size_t received, const size_t total, const FB::JSObjectPtr& callback) {
+	FBLOG_WARN("CoreAPI::downloadProgressCallback()", "Download " << url.toString() << " " << received << "/" << total);
+	callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(received)(total)(url.toString())("")(""));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
