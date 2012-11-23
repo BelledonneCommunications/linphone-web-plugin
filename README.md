@@ -33,8 +33,9 @@ project root (create it if doesn't exist).
 
 * [GNU/Linux x86](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-linux-x86.tar.gz)
 * [GNU/Linux x86_64](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-linux-x86_64.tar.gz)
-* [Windows 32 bits](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-windows.tar.gz)
-* [Mac OS X x86_64](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-darwin.tar.gz)
+* [Windows 32 bits](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-windows-x86.tar.gz)
+* [Mac OS X x86](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-darwin-x86.tar.gz)
+* [Mac OS X x86_64](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-darwin-x86_64.tar.gz)
 
 
 ### Generate a Rootfs
