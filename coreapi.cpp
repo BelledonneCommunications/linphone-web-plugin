@@ -202,6 +202,7 @@ void CoreAPI::initProxy() {
 	registerMethod("getProxyConfigList", make_method(this, &CoreAPI::getProxyConfigList));
 	registerMethod("setDefaultProxy", make_method(this, &CoreAPI::setDefaultProxy));
 	registerMethod("getDefaultProxy", make_method(this, &CoreAPI::getDefaultProxy));
+	registerMethod("refreshRegisters", make_method(this, &CoreAPI::refreshRegisters));
 
 	// Network bindings
 	registerProperty("audioPort", make_property(this, &CoreAPI::getAudioPort, &CoreAPI::setAudioPort));
@@ -221,9 +222,16 @@ void CoreAPI::initProxy() {
 	registerProperty("sipDscp", make_property(this, &CoreAPI::getSipDscp, &CoreAPI::setSipDscp));
 	registerProperty("videoDscp", make_property(this, &CoreAPI::getVideoDscp, &CoreAPI::setVideoDscp));
 	registerProperty("sipPort", make_property(this, &CoreAPI::getSipPort, &CoreAPI::setSipPort));
+	registerProperty("adaptiveRateControl", make_property(this, &CoreAPI::adaptiveRateControlEnabled, &CoreAPI::enableAdaptiveRateControl));
+	registerProperty("networkReachable", make_property(this, &CoreAPI::isNetworkReachable, &CoreAPI::setNetworkReachable));
 
 	// AuthInfo bindings
 	registerMethod("addAuthInfo", make_method(this, &CoreAPI::addAuthInfo));
+	registerMethod("abortAuthentication", make_method(this, &CoreAPI::abortAuthentication));
+	registerMethod("removeAuthInfo", make_method(this, &CoreAPI::removeAuthInfo));
+	registerMethod("findAuthInfo", make_method(this, &CoreAPI::findAuthInfo));
+	registerMethod("getAuthInfoList", make_method(this, &CoreAPI::getAuthInfoList));
+	registerMethod("clearAllAuthInfo", make_method(this, &CoreAPI::clearAllAuthInfo));
 
 	// File bindings
 	REGISTER_PROPERTY_FILE(CoreAPI, "ring", getRing, setRing);
@@ -1082,6 +1090,13 @@ std::string CoreAPI::getPrimaryContact() const {
 	return CHARPTR_TO_STRING(linphone_core_get_primary_contact(mCore));
 }
 
+void CoreAPI::refreshRegisters() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::refreshRegisters()", "this=" << this);
+	linphone_core_refresh_registers(mCore);
+}
+
 /*
  *
  * Network functions
@@ -1326,6 +1341,34 @@ int CoreAPI::getSipPort() const {
 	return linphone_core_get_sip_port(mCore);
 }
 
+bool CoreAPI::adaptiveRateControlEnabled() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::adaptiveRateControlEnabled()", "this=" << this);
+	return linphone_core_adaptive_rate_control_enabled(mCore) == TRUE ? true : false;
+}
+
+void CoreAPI::enableAdaptiveRateControl(bool enable) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::enableAdaptiveRateControl()", "this=" << this << "\t" << "enable=" << enable);
+	linphone_core_enable_adaptive_rate_control(mCore, enable ? TRUE : FALSE);
+}
+
+bool CoreAPI::isNetworkReachable() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::isNetworkReachable()", "this=" << this);
+	return linphone_core_is_network_reachable(mCore) == TRUE ? true : false;
+}
+
+void CoreAPI::setNetworkReachable(bool reachable) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setNetworkReachable()", "this=" << this << "\t" << "reachable=" << reachable);
+	linphone_core_set_network_reachable(mCore, reachable ? TRUE : FALSE);
+}
+
 /*
  *
  * AuthInfo functions
@@ -1337,6 +1380,46 @@ void CoreAPI::addAuthInfo(const AuthInfoAPIPtr &authInfo) {
 
 	FBLOG_DEBUG("CoreAPI::addAuthInfo()", "this=" << this << "\t" << "authInfo=" << authInfo);
 	linphone_core_add_auth_info(mCore, authInfo->getRef());
+}
+
+void CoreAPI::abortAuthentication(const AuthInfoAPIPtr &authInfo) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::abortAuthentication()", "this=" << this << "\t" << "authInfo=" << authInfo);
+	linphone_core_abort_authentication(mCore, authInfo->getRef());
+}
+
+void CoreAPI::removeAuthInfo(const AuthInfoAPIPtr &authInfo) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::removeAuthInfo()", "this=" << this << "\t" << "authInfo=" << authInfo);
+	linphone_core_remove_auth_info(mCore, authInfo->getRef());
+}
+
+AuthInfoAPIPtr CoreAPI::findAuthInfo(const std::string &realm, const std::string &username) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::findAuthInfo()", "this=" << this << "\t" << "realm=" << realm << "\t" << "username=" << username);
+	const LinphoneAuthInfo* authInfo = linphone_core_find_auth_info(mCore, realm.c_str(), username.c_str());
+	return AuthInfoAPI::get(authInfo);
+}
+
+FB::VariantList CoreAPI::getAuthInfoList() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getAuthInfoList()", "this=" << this);
+	FB::VariantList list;
+	for (const MSList *node = linphone_core_get_auth_info_list(mCore); node != NULL; node = ms_list_next(node)) {
+		list.push_back(AuthInfoAPI::get(reinterpret_cast<LinphoneAuthInfo*>(node->data)));
+	}
+	return list;
+}
+
+void CoreAPI::clearAllAuthInfo() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::clearAllAuthInfo()", "this=" << this);
+	linphone_core_clear_all_auth_info(mCore);
 }
 
 /*
@@ -1359,6 +1442,7 @@ AuthInfoAPIPtr CoreAPI::newAuthInfo(const std::string &username, const std::stri
 	FBLOG_DEBUG("CoreAPI::newAuthInfo()", "this=" << this);
 	return boost::make_shared<AuthInfoAPI>(username, userid, passwd, ha1, realm);
 }
+
 
 /*
  *

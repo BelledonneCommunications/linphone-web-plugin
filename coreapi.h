@@ -160,6 +160,7 @@ public:
 	ProxyConfigAPIPtr getDefaultProxy() const;
 	void setPrimaryContact(const std::string &contact);
 	std::string getPrimaryContact() const;
+	void refreshRegisters();
 
 	// Network functions
 	void setAudioPort(int port);
@@ -196,10 +197,18 @@ public:
 	int getVideoDscp() const;
 	int getSipPort() const;
 	void setSipPort(int port);
-	
+	bool adaptiveRateControlEnabled() const;
+	void enableAdaptiveRateControl(bool enable);
+	bool isNetworkReachable() const;
+	void setNetworkReachable(bool reachable);
 
 	// AuthInfo functions
 	void addAuthInfo(const AuthInfoAPIPtr &authInfo);
+	void abortAuthentication(const AuthInfoAPIPtr &authInfo);
+	void removeAuthInfo(const AuthInfoAPIPtr &authInfo);
+	AuthInfoAPIPtr findAuthInfo(const std::string &realm, const std::string &username);
+	FB::VariantList getAuthInfoList() const;
+	void clearAllAuthInfo();
 
 	// Instantiator functions
 	ProxyConfigAPIPtr newProxyConfig();

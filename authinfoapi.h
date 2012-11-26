@@ -29,8 +29,10 @@ class AuthInfoAPI: public FB::JSAPIAuto {
 private:
 	LinphoneAuthInfo *mAuthInfo;
 	bool mUsed;
+	bool mConst;
 
 	AuthInfoAPI(LinphoneAuthInfo *authInfo);
+	AuthInfoAPI(const LinphoneAuthInfo *authInfo);
 	void initProxy();
 public:
 	AuthInfoAPI(const std::string &username, const std::string &userid,
@@ -52,6 +54,7 @@ public:
 	}
 
 	static AuthInfoAPIPtr get(LinphoneAuthInfo *authInfo);
+	static AuthInfoAPIPtr get(const LinphoneAuthInfo *authInfo);
 };
 
 #endif //H_AUTHINFOAPI
