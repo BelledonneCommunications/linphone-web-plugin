@@ -146,6 +146,16 @@ void CoreAPI::initProxy() {
 	registerProperty("inCallTimeout", make_property(this, &CoreAPI::getInCallTimeout, &CoreAPI::setInCallTimeout));
 	registerProperty("maxCalls", make_property(this, &CoreAPI::getMaxCalls, &CoreAPI::setMaxCalls));
 
+	// Conference bindings
+	registerMethod("addAllToConference", make_method(this, &CoreAPI::addAllToConference));
+	registerMethod("addToConference", make_method(this, &CoreAPI::addToConference));
+	registerMethod("enterConference", make_method(this, &CoreAPI::enterConference));
+	registerMethod("getConferenceSize", make_method(this, &CoreAPI::getConferenceSize));
+	registerMethod("isInConference", make_method(this, &CoreAPI::isInConference));
+	registerMethod("leaveConference", make_method(this, &CoreAPI::leaveConference));
+	registerMethod("removeFromConference", make_method(this, &CoreAPI::removeFromConference));
+	registerMethod("terminateConference", make_method(this, &CoreAPI::terminateConference));
+
 	// Levels bindings
 	registerProperty("playLevel", make_property(this, &CoreAPI::getPlayLevel, &CoreAPI::setPlayLevel));
 	registerProperty("recLevel", make_property(this, &CoreAPI::getRecLevel, &CoreAPI::setRecLevel));
@@ -550,6 +560,68 @@ void CoreAPI::setMaxCalls(int max) {
 
 	FBLOG_DEBUG("CoreAPI::setMaxCalls", "this=" << this << "\t" << "max=" << max);
 	linphone_core_set_max_calls(mCore, max);
+}
+
+/*
+ *
+ * Conference functions
+ *
+ */
+
+int CoreAPI::addAllToConference() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::addAllToConference", "this=" << this);
+	return linphone_core_add_all_to_conference(mCore);
+}
+
+int CoreAPI::addToConference(const CallAPIPtr &call) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::addToConference", "this=" << this << "\t" << "call=" << call);
+	return linphone_core_add_to_conference(mCore, call->getRef());
+}
+
+int CoreAPI::enterConference() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::enterConference", "this=" << this);
+	return linphone_core_enter_conference(mCore);
+}
+
+int CoreAPI::getConferenceSize() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getConferenceSize", "this=" << this);
+	return linphone_core_get_conference_size(mCore);
+}
+
+bool CoreAPI::isInConference() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::isInConference", "this=" << this);
+	return linphone_core_is_in_conference(mCore) == TRUE ? true : false;
+}
+
+int CoreAPI::leaveConference() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::leaveConference", "this=" << this);
+	return linphone_core_leave_conference(mCore);
+}
+
+int CoreAPI::removeFromConference(const CallAPIPtr &call) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::removeFromConference", "this=" << this << "\t" << "call=" << call);
+	return linphone_core_remove_from_conference(mCore, call->getRef());
+}
+
+int CoreAPI::terminateConference() {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::terminateConference", "this=" << this);
+	return linphone_core_terminate_conference(mCore);
 }
 
 /*

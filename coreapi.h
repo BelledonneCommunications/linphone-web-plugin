@@ -86,6 +86,16 @@ public:
 	int getMaxCalls() const;
 	void setMaxCalls(int max);
 
+	// Conference functions
+	int addAllToConference();
+	int addToConference(const CallAPIPtr &call);
+	int enterConference();
+	int getConferenceSize() const;
+	bool isInConference() const;
+	int leaveConference();
+	int removeFromConference(const CallAPIPtr &call);
+	int terminateConference();
+
 	// Level functions
 	void setPlayLevel(int level);
 	int getPlayLevel() const;
