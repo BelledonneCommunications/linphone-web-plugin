@@ -39,6 +39,9 @@ public:
 
 	CoreAPIPtr getCore() const;
 
+	std::string getContactParameters() const;
+	void setContactParameters(const std::string &parameter);
+
 	bool getDialEscapePlus() const;
 	void setDialEscapePlus(bool escape);
 

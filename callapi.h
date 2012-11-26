@@ -61,6 +61,7 @@ public:
 	int getState() const;
 	int getTransferState() const;
 	CallStatsAPIPtr getVideoStats() const;
+	bool inConference() const;
 
 	bool cameraEnabled() const;
 	void enableCamera(bool enabled);

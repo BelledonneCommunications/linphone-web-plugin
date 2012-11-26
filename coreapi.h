@@ -201,6 +201,14 @@ public:
 	void enableAdaptiveRateControl(bool enable);
 	bool isNetworkReachable() const;
 	void setNetworkReachable(bool reachable);
+	bool audioAdaptiveJittcompEnabled() const;
+	void enableAudioAdaptiveJittcomp(bool enable);
+	bool videoAdaptiveJittcompEnabled() const;
+	void enableVideoAdaptiveJittcomp(bool enable);
+	int getAudioJittcomp() const;
+	void setAudioJittcomp(int comp);
+	int getVideoJittcomp() const;
+	void setVideoJittcomp(int comp);
 
 	// AuthInfo functions
 	void addAuthInfo(const AuthInfoAPIPtr &authInfo);

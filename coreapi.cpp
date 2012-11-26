@@ -224,6 +224,10 @@ void CoreAPI::initProxy() {
 	registerProperty("sipPort", make_property(this, &CoreAPI::getSipPort, &CoreAPI::setSipPort));
 	registerProperty("adaptiveRateControl", make_property(this, &CoreAPI::adaptiveRateControlEnabled, &CoreAPI::enableAdaptiveRateControl));
 	registerProperty("networkReachable", make_property(this, &CoreAPI::isNetworkReachable, &CoreAPI::setNetworkReachable));
+	registerProperty("audioAdaptiveJittcomp", make_property(this, &CoreAPI::audioAdaptiveJittcompEnabled, &CoreAPI::enableAudioAdaptiveJittcomp));
+	registerProperty("videoAdaptiveJittcomp", make_property(this, &CoreAPI::videoAdaptiveJittcompEnabled, &CoreAPI::enableVideoAdaptiveJittcomp));
+	registerProperty("audioJittcomp", make_property(this, &CoreAPI::getAudioJittcomp, &CoreAPI::setAudioJittcomp));
+	registerProperty("videoJittcomp", make_property(this, &CoreAPI::getVideoJittcomp, &CoreAPI::setVideoJittcomp));
 
 	// AuthInfo bindings
 	registerMethod("addAuthInfo", make_method(this, &CoreAPI::addAuthInfo));
@@ -1367,6 +1371,62 @@ void CoreAPI::setNetworkReachable(bool reachable) {
 
 	FBLOG_DEBUG("CoreAPI::setNetworkReachable()", "this=" << this << "\t" << "reachable=" << reachable);
 	linphone_core_set_network_reachable(mCore, reachable ? TRUE : FALSE);
+}
+
+bool CoreAPI::audioAdaptiveJittcompEnabled() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::audioAdaptiveJittcompEnabled()", "this=" << this);
+	return linphone_core_audio_adaptive_jittcomp_enabled(mCore) == TRUE ? true : false;
+}
+
+void CoreAPI::enableAudioAdaptiveJittcomp(bool enable) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::enableAudioAdaptiveJittcomp()", "this=" << this << "\t" << "enable=" << enable);
+	linphone_core_enable_audio_adaptive_jittcomp(mCore, enable ? TRUE : FALSE);
+}
+
+bool CoreAPI::videoAdaptiveJittcompEnabled() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::videoAdaptiveJittcompEnabled()", "this=" << this);
+	return linphone_core_video_adaptive_jittcomp_enabled(mCore) == TRUE ? true : false;
+}
+
+void CoreAPI::enableVideoAdaptiveJittcomp(bool enable) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::enableVideoAdaptiveJittcomp()", "this=" << this << "\t" << "enable=" << enable);
+	linphone_core_enable_video_adaptive_jittcomp(mCore, enable ? TRUE : FALSE);
+}
+
+int CoreAPI::getAudioJittcomp() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getAudioJittcomp()", "this=" << this);
+	return linphone_core_get_audio_jittcomp(mCore);
+}
+
+void CoreAPI::setAudioJittcomp(int comp) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setAudioJittcomp()", "this=" << this << "\t" << "comp=" << comp);
+	linphone_core_set_audio_jittcomp(mCore, comp);
+}
+
+int CoreAPI::getVideoJittcomp() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getVideoJittcomp()", "this=" << this);
+	return linphone_core_get_video_jittcomp(mCore);
+}
+
+void CoreAPI::setVideoJittcomp(int comp) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setVideoJittcomp()", "this=" << this << "\t" << "comp=" << comp);
+	linphone_core_set_video_jittcomp(mCore, comp);
 }
 
 /*

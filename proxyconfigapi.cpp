@@ -38,6 +38,7 @@ ProxyConfigAPI::ProxyConfigAPI() :
 
 void ProxyConfigAPI::initProxy() {
 	registerProperty("core", make_property(this, &ProxyConfigAPI::getCore));
+	registerProperty("contactParameters", make_property(this, &ProxyConfigAPI::getContactParameters, &ProxyConfigAPI::setContactParameters));
 	registerProperty("dialEscapePlus", make_property(this, &ProxyConfigAPI::getDialEscapePlus, &ProxyConfigAPI::setDialEscapePlus));
 	registerProperty("dialPrefix", make_property(this, &ProxyConfigAPI::getDialPrefix, &ProxyConfigAPI::setDialPrefix));
 	registerProperty("domain", make_property(this, &ProxyConfigAPI::getDomain));
@@ -76,6 +77,16 @@ bool ProxyConfigAPI::isRegistered() const {
 CoreAPIPtr ProxyConfigAPI::getCore() const {
 	FBLOG_DEBUG("ProxyConfigAPI::getCore()", "this=" << this);
 	return CoreAPI::get(linphone_proxy_config_get_core(mProxyConfig));
+}
+
+std::string ProxyConfigAPI::getContactParameters() const {
+	FBLOG_DEBUG("ProxyConfigAPI::getContactParameters()", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_proxy_config_get_contact_parameters(mProxyConfig));
+}
+
+void ProxyConfigAPI::setContactParameters(const std::string &parameter) {
+	FBLOG_DEBUG("ProxyConfigAPI::setContactParameters()", "this=" << this << "\t" << "parameter=" << parameter);
+	linphone_proxy_config_set_contact_parameters(mProxyConfig, parameter.c_str());
 }
 
 bool ProxyConfigAPI::getDialEscapePlus() const {
