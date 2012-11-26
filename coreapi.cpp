@@ -199,6 +199,10 @@ void CoreAPI::initProxy() {
 
 	// File bindings
 	REGISTER_PROPERTY_FILE(CoreAPI, "ring", getRing, setRing);
+	REGISTER_PROPERTY_FILE(CoreAPI, "ringback", getRingback, setRingback);
+	REGISTER_PROPERTY_FILE(CoreAPI, "rootCa", getRootCa, setRootCa);
+	REGISTER_PROPERTY_FILE(CoreAPI, "staticPicture", getStaticPicture, setStaticPicture);
+	REGISTER_PROPERTY_FILE(CoreAPI, "zrtpSecretsFile", getZrtpSecretsFile, setZrtpSecretsFile);
 
 	// Initiator bindings
 	registerMethod("newProxyConfig", make_method(this, &CoreAPI::newProxyConfig));
@@ -1151,6 +1155,61 @@ void CoreAPI::setRing(const std::string &ring) {
 	linphone_core_set_ring(mCore, ring.c_str());
 }
 
+std::string CoreAPI::getRingback() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getRingback()", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_core_get_ringback(mCore));
+}
+
+void CoreAPI::setRingback(const std::string &ringback) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setRingback()", "this=" << this << "\t" << "ringback=" << ringback);
+	linphone_core_set_ringback(mCore, ringback.c_str());
+}
+
+std::string CoreAPI::getRootCa() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getRootCa()", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_core_get_root_ca(mCore));
+}
+
+void CoreAPI::setRootCa(const std::string &rootCa) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setRootCa()", "this=" << this << "\t" << "rootCa=" << rootCa);
+	linphone_core_set_root_ca(mCore, rootCa.c_str());
+}
+
+std::string CoreAPI::getStaticPicture() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getStaticPicture()", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_core_get_static_picture(mCore));
+}
+
+void CoreAPI::setStaticPicture(const std::string &staticPicture) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setStaticPicture()", "this=" << this << "\t" << "staticPicture=" << staticPicture);
+	linphone_core_set_static_picture(mCore, staticPicture.c_str());
+}
+
+std::string CoreAPI::getZrtpSecretsFile() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getZrtpSecretsFile()", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_core_get_zrtp_secrets_file(mCore));
+}
+
+void CoreAPI::setZrtpSecretsFile(const std::string &secretsFile) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setZrtpSecretsFile()", "this=" << this << "\t" << "secretsFile=" << secretsFile);
+	linphone_core_set_zrtp_secrets_file(mCore, secretsFile.c_str());
+}
 
 /*
  *

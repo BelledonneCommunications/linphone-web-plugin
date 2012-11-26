@@ -179,6 +179,10 @@ public:
 
 	// File
 	DECLARE_PROPERTY_FILE(CoreAPI, getRing, setRing);
+	DECLARE_PROPERTY_FILE(CoreAPI, getRingback, setRingback);
+	DECLARE_PROPERTY_FILE(CoreAPI, getRootCa, setRootCa);
+	DECLARE_PROPERTY_FILE(CoreAPI, getStaticPicture, setStaticPicture);
+	DECLARE_PROPERTY_FILE(CoreAPI, getZrtpSecretsFile, setZrtpSecretsFile);
 
 	// Download
 	void download(const std::string& url, const FB::JSObjectPtr& callback);
