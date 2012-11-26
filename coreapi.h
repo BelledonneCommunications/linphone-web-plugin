@@ -53,7 +53,6 @@ public:
 	// Read-only property
 	std::string getVersion() const;
 	std::string getPluginVersion() const;
-	int getSipPort() const;
 
 	// Property
 	const std::string &getMagic() const;
@@ -73,12 +72,19 @@ public:
 	int declineCall(const CallAPIPtr &call, int reason);
 	int transferCall(const CallAPIPtr &call, const std::string &uri);
 	int transferCallToAnother(const CallAPIPtr &call, const CallAPIPtr &dest);
+	int resumeCall(const CallAPIPtr &call);
 	int pauseCall(const CallAPIPtr &call);
 	int pauseAllCalls();
 	int updateCall(const CallAPIPtr &call, const CallParamsAPIPtr &params);
 	int deferCallUpdate(const CallAPIPtr &call);
 	int acceptCallUpdate(const CallAPIPtr &call, const CallParamsAPIPtr &params);
 	CallParamsAPIPtr createDefaultCallParameters();
+	int getIncTimeout() const;
+	void setIncTimeout(int timeout);
+	int getInCallTimeout() const;
+	void setInCallTimeout(int timeout);
+	int getMaxCalls() const;
+	void setMaxCalls(int max);
 
 	// Level functions
 	void setPlayLevel(int level);
@@ -89,6 +95,10 @@ public:
 	int getRingLevel() const;
 	void muteMic(bool muted);
 	bool isMicMuted() const;
+	float getMicGainDb() const;
+	void setMicGainDb(float gain);
+	float getPlaybackGainDb() const;
+	void setPlaybackGainDb(float gain);
 
 	// Video functions
 	bool videoSupported() const;
@@ -138,8 +148,14 @@ public:
 	FB::VariantList getProxyConfigList() const;
 	void setDefaultProxy(const ProxyConfigAPIPtr &config);
 	ProxyConfigAPIPtr getDefaultProxy() const;
+	void setPrimaryContact(const std::string &contact);
+	std::string getPrimaryContact() const;
 
 	// Network functions
+	void setAudioPort(int port);
+	int getAudioPort() const;
+	void setVideoPort(int port);
+	int getVideoPort() const;
 	void setDownloadBandwidth(int bandwidth);
 	int getDownloadBandwidth() const;
 	void setUploadBandwidth(int bandwidth);
@@ -148,6 +164,29 @@ public:
 	int getDownloadPtime() const;
 	void setUploadPtime(int ptime);
 	int getUploadPtime() const;
+	void setMtu(int mtu);
+	int getMtu() const;
+	void setStunServer(const std::string &server);
+	std::string getStunServer() const;
+	void setRelayAddr(const std::string &addr);
+	std::string getRelayAddr() const;
+	void setNatAddress(const std::string &address);
+	std::string getNatAddress() const;
+	void setGuessHostname(bool guess);
+	bool getGuessHostname() const;
+	void enableIpv6(bool enable);
+	bool ipv6Enabled() const;
+	void enableKeepAlive(bool enable);
+	bool keepAliveEnabled() const;
+	void setAudioDscp(int port);
+	int getAudioDscp() const;
+	void setSipDscp(int port);
+	int getSipDscp() const;
+	void setVideoDscp(int port);
+	int getVideoDscp() const;
+	int getSipPort() const;
+	void setSipPort(int port);
+	
 
 	// AuthInfo functions
 	void addAuthInfo(const AuthInfoAPIPtr &authInfo);
@@ -172,10 +211,8 @@ public:
 	bool echoCancellationEnabled() const;
 	void enableEchoLimiter(bool enable);
 	bool echoLimiterEnabled() const;
-	void enableIpv6(bool enable);
-	bool ipv6Enabled() const;
-	void enableKeepAlive(bool enable);
-	bool keepAliveEnabled() const;
+	void setStaticPictureFps(float fps);
+	float getStaticPictureFps() const;
 
 	// File
 	DECLARE_PROPERTY_FILE(CoreAPI, getRing, setRing);

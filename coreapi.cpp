@@ -115,7 +115,6 @@ void CoreAPI::initProxy() {
 	// Read-only property
 	registerProperty("version", make_property(this, &CoreAPI::getVersion));
 	registerProperty("pluginVersion", make_property(this, &CoreAPI::getPluginVersion));
-	registerProperty("sip_port", make_property(this, &CoreAPI::getSipPort));
 
 	// Propery
 	registerProperty("magic", make_property(this, &CoreAPI::getMagic, &CoreAPI::setMagic));
@@ -136,18 +135,24 @@ void CoreAPI::initProxy() {
 	registerMethod("declineCall", make_method(this, &CoreAPI::declineCall));
 	registerMethod("transferCall", make_method(this, &CoreAPI::transferCall));
 	registerMethod("transferCallToAnother", make_method(this, &CoreAPI::transferCallToAnother));
+	registerMethod("resumeCall", make_method(this, &CoreAPI::resumeCall));
 	registerMethod("pauseCall", make_method(this, &CoreAPI::pauseCall));
 	registerMethod("pauseAllCalls", make_method(this, &CoreAPI::pauseAllCalls));
 	registerMethod("updateCall", make_method(this, &CoreAPI::updateCall));
 	registerMethod("deferCallUpdate", make_method(this, &CoreAPI::deferCallUpdate));
 	registerMethod("acceptCallUpdate", make_method(this, &CoreAPI::acceptCallUpdate));
 	registerMethod("createDefaultCallParameters", make_method(this, &CoreAPI::createDefaultCallParameters));
+	registerProperty("incTimeout", make_property(this, &CoreAPI::getIncTimeout, &CoreAPI::setIncTimeout));
+	registerProperty("inCallTimeout", make_property(this, &CoreAPI::getInCallTimeout, &CoreAPI::setInCallTimeout));
+	registerProperty("maxCalls", make_property(this, &CoreAPI::getMaxCalls, &CoreAPI::setMaxCalls));
 
 	// Levels bindings
 	registerProperty("playLevel", make_property(this, &CoreAPI::getPlayLevel, &CoreAPI::setPlayLevel));
 	registerProperty("recLevel", make_property(this, &CoreAPI::getRecLevel, &CoreAPI::setRecLevel));
 	registerProperty("ringLevel", make_property(this, &CoreAPI::getRingLevel, &CoreAPI::setRingLevel));
 	registerProperty("muteMic", make_property(this, &CoreAPI::isMicMuted, &CoreAPI::muteMic));
+	registerProperty("micGainDb", make_property(this, &CoreAPI::getMicGainDb, &CoreAPI::setMicGainDb));
+	registerProperty("playbackGainDb", make_property(this, &CoreAPI::getPlaybackGainDb, &CoreAPI::setPlaybackGainDb));
 
 	// Video bindings
 	registerMethod("videoSupported", make_method(this, &CoreAPI::videoSupported));
@@ -189,10 +194,23 @@ void CoreAPI::initProxy() {
 	registerMethod("getDefaultProxy", make_method(this, &CoreAPI::getDefaultProxy));
 
 	// Network bindings
+	registerProperty("audioPort", make_property(this, &CoreAPI::getAudioPort, &CoreAPI::setAudioPort));
+	registerProperty("videoPort", make_property(this, &CoreAPI::getVideoPort, &CoreAPI::setVideoPort));
 	registerProperty("downloadBandwidth", make_property(this, &CoreAPI::getDownloadBandwidth, &CoreAPI::setDownloadBandwidth));
 	registerProperty("uploadBandwidth", make_property(this, &CoreAPI::getUploadBandwidth, &CoreAPI::setUploadBandwidth));
 	registerProperty("downloadPtime", make_property(this, &CoreAPI::getDownloadPtime, &CoreAPI::setDownloadPtime));
 	registerProperty("uploadPtime", make_property(this, &CoreAPI::getUploadPtime, &CoreAPI::setUploadPtime));
+	registerProperty("mtu", make_property(this, &CoreAPI::getMtu, &CoreAPI::setMtu));
+	registerProperty("stunServer", make_property(this, &CoreAPI::getStunServer, &CoreAPI::setStunServer));
+	registerProperty("relayAddr", make_property(this, &CoreAPI::getRelayAddr, &CoreAPI::setRelayAddr));
+	registerProperty("natAddress", make_property(this, &CoreAPI::getNatAddress, &CoreAPI::setNatAddress));
+	registerProperty("guessHostname", make_property(this, &CoreAPI::getGuessHostname, &CoreAPI::setGuessHostname));
+	registerProperty("ipv6Enabled", make_property(this, &CoreAPI::ipv6Enabled, &CoreAPI::enableIpv6));
+	registerProperty("keepAliveEnabled", make_property(this, &CoreAPI::keepAliveEnabled, &CoreAPI::enableKeepAlive));
+	registerProperty("audioDscp", make_property(this, &CoreAPI::getAudioDscp, &CoreAPI::setAudioDscp));
+	registerProperty("sipDscp", make_property(this, &CoreAPI::getSipDscp, &CoreAPI::setSipDscp));
+	registerProperty("videoDscp", make_property(this, &CoreAPI::getVideoDscp, &CoreAPI::setVideoDscp));
+	registerProperty("sipPort", make_property(this, &CoreAPI::getSipPort, &CoreAPI::setSipPort));
 
 	// AuthInfo bindings
 	registerMethod("addAuthInfo", make_method(this, &CoreAPI::addAuthInfo));
@@ -218,8 +236,9 @@ void CoreAPI::initProxy() {
 	// Miscs
 	registerProperty("echoCancellationEnabled", make_property(this, &CoreAPI::echoCancellationEnabled, &CoreAPI::enableEchoCancellation));
 	registerProperty("echoLimiterEnabled", make_property(this, &CoreAPI::echoLimiterEnabled, &CoreAPI::enableEchoLimiter));
-	registerProperty("ipv6Enabled", make_property(this, &CoreAPI::ipv6Enabled, &CoreAPI::enableIpv6));
-	registerProperty("keepAliveEnabled", make_property(this, &CoreAPI::keepAliveEnabled, &CoreAPI::enableKeepAlive));
+	registerProperty("staticPictureFps", make_property(this, &CoreAPI::getStaticPictureFps, &CoreAPI::setStaticPictureFps));
+
+	// Download
 	registerMethod("download", make_method(this, &CoreAPI::download));
 }
 
@@ -442,6 +461,13 @@ int CoreAPI::transferCallToAnother(const CallAPIPtr &call, const CallAPIPtr &des
 	return linphone_core_transfer_call_to_another(mCore, call->getRef(), dest->getRef());
 }
 
+int CoreAPI::resumeCall(const CallAPIPtr &call) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::resumeCall", "this=" << this << "\t" << "call=" << call);
+	return linphone_core_resume_call(mCore, call->getRef());
+}
+
 int CoreAPI::pauseCall(const CallAPIPtr &call) {
 	CORE_MUTEX
 
@@ -484,6 +510,47 @@ CallParamsAPIPtr CoreAPI::createDefaultCallParameters() {
 	return CallParamsAPI::get(linphone_core_create_default_call_parameters(mCore));
 }
 
+void CoreAPI::setIncTimeout(int timeout) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setIncTimeout", "this=" << this << "\t" << "timeout=" << timeout);
+	linphone_core_set_inc_timeout(mCore, timeout);
+}
+
+int CoreAPI::getIncTimeout() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getIncTimeout", "this=" << this);
+	return linphone_core_get_inc_timeout(mCore);
+}
+
+void CoreAPI::setInCallTimeout(int timeout) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setInCallTimeout", "this=" << this << "\t" << "timeout=" << timeout);
+	linphone_core_set_in_call_timeout(mCore, timeout);
+}
+
+int CoreAPI::getInCallTimeout() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getInCallTimeout", "this=" << this);
+	return linphone_core_get_in_call_timeout(mCore);
+}
+
+int CoreAPI::getMaxCalls() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getMaxCalls", "this=" << this);
+	return linphone_core_get_max_calls(mCore);
+}
+
+void CoreAPI::setMaxCalls(int max) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setMaxCalls", "this=" << this << "\t" << "max=" << max);
+	linphone_core_set_max_calls(mCore, max);
+}
 
 /*
  *
@@ -547,6 +614,33 @@ bool CoreAPI::isMicMuted() const {
 	return linphone_core_is_mic_muted(mCore) == TRUE ? true : false;
 }
 
+float CoreAPI::getMicGainDb() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getMicGainDb", "this=" << this);
+	return linphone_core_get_mic_gain_db(mCore);
+}
+
+void CoreAPI::setMicGainDb(float gain) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setMicGainDb", "this=" << this << "\t" << "gain=" << gain);
+	return linphone_core_set_mic_gain_db(mCore, gain);
+}
+
+float CoreAPI::getPlaybackGainDb() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getPlaybackGainDb", "this=" << this);
+	return linphone_core_get_playback_gain_db(mCore);
+}
+
+void CoreAPI::setPlaybackGainDb(float gain) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setPlaybackGainDb", "this=" << this << "\t" << "gain=" << gain);
+	return linphone_core_set_playback_gain_db(mCore, gain);
+}
 
 /*
  *
@@ -902,11 +996,53 @@ ProxyConfigAPIPtr CoreAPI::getDefaultProxy() const {
 	return ProxyConfigAPIPtr();
 }
 
+void CoreAPI::setPrimaryContact(const std::string &contact) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setPrimaryContact()", "this=" << this << "\t" << "contact=" << contact);
+	linphone_core_set_primary_contact(mCore, contact.c_str());
+}
+
+std::string CoreAPI::getPrimaryContact() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getPrimaryContact()", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_core_get_primary_contact(mCore));
+}
+
 /*
  *
  * Network functions
  *
  */
+
+void CoreAPI::setAudioPort(int port) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setAudioPort()", "this=" << this << "\t" << "port=" << port);
+	linphone_core_set_audio_port(mCore, port);
+}
+
+int CoreAPI::getAudioPort() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getAudioPort()", "this=" << this);
+	return linphone_core_get_audio_port(mCore);
+}
+
+void CoreAPI::setVideoPort(int port) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setVideoPort()", "this=" << this << "\t" << "port=" << port);
+	linphone_core_set_video_port(mCore, port);
+}
+
+int CoreAPI::getVideoPort() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getVideoPort()", "this=" << this);
+	return linphone_core_get_video_port(mCore);
+}
 
 void CoreAPI::setDownloadBandwidth(int bandwidth) {
 	CORE_MUTEX
@@ -962,6 +1098,160 @@ int CoreAPI::getUploadPtime() const {
 
 	FBLOG_DEBUG("CoreAPI::getUploadPtime()", "this=" << this);
 	return linphone_core_get_upload_ptime(mCore);
+}
+
+void CoreAPI::setMtu(int mtu) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setMtu()", "this=" << this << "\t" << "mtu=" << mtu);
+	return linphone_core_set_mtu(mCore, mtu);
+}
+
+int CoreAPI::getMtu() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getMtu()", "this=" << this);
+	return linphone_core_get_mtu(mCore);
+}
+
+void CoreAPI::setStunServer(const std::string &server) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setStunServer()", "this=" << this << "\t" << "server=" << server);
+	return linphone_core_set_stun_server(mCore, server.c_str());
+}
+
+std::string CoreAPI::getStunServer() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getStunServer()", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_core_get_stun_server(mCore));
+}
+
+void CoreAPI::setRelayAddr(const std::string &addr) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setRelayAddr()", "this=" << this << "\t" << "addr=" << addr);
+	linphone_core_set_relay_addr(mCore, addr.c_str());
+}
+
+std::string CoreAPI::getRelayAddr() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getRelayAddr()", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_core_get_relay_addr(mCore));
+}
+
+void CoreAPI::setNatAddress(const std::string &address) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setNatAddress()", "this=" << this << "\t" << "address=" << address);
+	return linphone_core_set_nat_address(mCore, address.c_str());
+}
+
+std::string CoreAPI::getNatAddress() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getNatAddress()", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_core_get_nat_address(mCore));
+}
+
+void CoreAPI::setGuessHostname(bool guess) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setGuessHostname()", "this=" << this << "\t" << "guess=" << guess);
+	return linphone_core_set_guess_hostname(mCore, guess ? TRUE : FALSE);
+}
+
+bool CoreAPI::getGuessHostname() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getGuessHostname()", "this=" << this);
+	return linphone_core_get_guess_hostname(mCore) == TRUE ? true : false;
+}
+
+void CoreAPI::enableIpv6(bool enable) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::enableIpv6()", "this=" << this << "\t" << "enable=" << enable);
+	linphone_core_enable_ipv6(mCore, enable ? TRUE : FALSE);
+}
+
+bool CoreAPI::ipv6Enabled() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::ipv6Enabled()", "this=" << this);
+	return linphone_core_ipv6_enabled(mCore) == TRUE ? true : false;
+}
+
+void CoreAPI::enableKeepAlive(bool enable) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::enableKeepAlive()", "this=" << this << "\t" << "enable=" << enable);
+	linphone_core_enable_keep_alive(mCore, enable ? TRUE : FALSE);
+}
+
+bool CoreAPI::keepAliveEnabled() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::keepAliveEnabled()", "this=" << this);
+	return linphone_core_keep_alive_enabled(mCore) == TRUE ? true : false;
+}
+
+void CoreAPI::setAudioDscp(int dscp) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setAudioDscp()", "this=" << this << "\t" << "dscp=" << dscp);
+	linphone_core_set_audio_dscp(mCore, dscp);
+}
+
+int CoreAPI::getAudioDscp() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getAudioDscp()", "this=" << this);
+	return linphone_core_get_audio_dscp(mCore);
+}
+
+void CoreAPI::setSipDscp(int dscp) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setSipDscp()", "this=" << this << "\t" << "dscp=" << dscp);
+	linphone_core_set_sip_dscp(mCore, dscp);
+}
+
+int CoreAPI::getSipDscp() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getSipDscp()", "this=" << this);
+	return linphone_core_get_sip_dscp(mCore);
+}
+
+void CoreAPI::setVideoDscp(int dscp) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setVideoDscp()", "this=" << this << "\t" << "dscp=" << dscp);
+	linphone_core_set_video_dscp(mCore, dscp);
+}
+
+int CoreAPI::getVideoDscp() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getVideoDscp()", "this=" << this);
+	return linphone_core_get_video_dscp(mCore);
+}
+
+void CoreAPI::setSipPort(int port) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setSipPort()", "this=" << this << "\t" << "port=" << port);
+	linphone_core_set_sip_port(mCore, port);
+}
+
+int CoreAPI::getSipPort() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getSipPort()", "this=" << this);
+	return linphone_core_get_sip_port(mCore);
 }
 
 /*
@@ -1066,19 +1356,12 @@ std::string CoreAPI::getVersion() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVersion()", "this=" << this);
-	return linphone_core_get_version();
+	return CHARPTR_TO_STRING(linphone_core_get_version());
 }
 
 std::string CoreAPI::getPluginVersion() const {
 	FBLOG_DEBUG("CoreAPI::getPluginVersion()", "this=" << this << FBSTRING_PLUGIN_VERSION);
 	return FBSTRING_PLUGIN_VERSION;
-}
-
-int CoreAPI::getSipPort() const {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CoreAPI::getSipPort()", "this=" << this);
-	return linphone_core_get_sip_port(mCore);
 }
 
 void CoreAPI::enableEchoCancellation(bool enable) {
@@ -1098,7 +1381,7 @@ bool CoreAPI::echoCancellationEnabled() const {
 void CoreAPI::enableEchoLimiter(bool enable) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::enableEchoLimiter()", "this=" << this << "\t" << "enable="<< enable);
+	FBLOG_DEBUG("CoreAPI::enableEchoLimiter()", "this=" << this << "\t" << "enable=" << enable);
 	linphone_core_enable_echo_limiter(mCore, enable ? TRUE : FALSE);
 }
 
@@ -1109,30 +1392,18 @@ bool CoreAPI::echoLimiterEnabled() const {
 	return linphone_core_echo_limiter_enabled(mCore) == TRUE ? true : false;
 }
 
-void CoreAPI::enableIpv6(bool enable) {
+void CoreAPI::setStaticPictureFps(float fps) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::enableIpv6()", "this=" << this << "\t" << "enable="<< enable);
-	linphone_core_enable_ipv6(mCore, enable ? TRUE : FALSE);
-}
-bool CoreAPI::ipv6Enabled() const {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CoreAPI::ipv6Enabled()", "this=" << this);
-	return linphone_core_ipv6_enabled(mCore) == TRUE ? true : false;
+	FBLOG_DEBUG("CoreAPI::setStaticPictureFps()", "this=" << this << "\t" << "fps=" << fps);
+	linphone_core_set_static_picture_fps(mCore, fps);
 }
 
-void CoreAPI::enableKeepAlive(bool enable) {
+float CoreAPI::getStaticPictureFps() const {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::enableKeepAlive()", "this=" << this << "\t" << "enable="<< enable);
-	linphone_core_enable_keep_alive(mCore, enable ? TRUE : FALSE);
-}
-bool CoreAPI::keepAliveEnabled() const {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CoreAPI::keepAliveEnabled()", "this=" << this);
-	return linphone_core_keep_alive_enabled(mCore) == TRUE ? true : false;
+	FBLOG_DEBUG("CoreAPI::getStaticPictureFps()", "this=" << this);
+	return linphone_core_get_static_picture_fps(mCore);
 }
 
 /*
