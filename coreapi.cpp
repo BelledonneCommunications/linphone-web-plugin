@@ -188,10 +188,8 @@ void CoreAPI::initProxy() {
 	registerProperty("videoDevice", make_property(this, &CoreAPI::getVideoDevice, &CoreAPI::setVideoDevice));
 
 	// Codecs bindings
-	registerMethod("getAudioCodecs", make_method(this, &CoreAPI::getAudioCodecs));
-	registerMethod("getVideoCodecs", make_method(this, &CoreAPI::getVideoCodecs));
-	registerMethod("setAudioCodecs", make_method(this, &CoreAPI::setAudioCodecs));
-	registerMethod("setVideoCodecs", make_method(this, &CoreAPI::setVideoCodecs));
+	registerProperty("audioCodecs", make_property(this, &CoreAPI::getAudioCodecs, &CoreAPI::setAudioCodecs));
+	registerProperty("videoCodecs", make_property(this, &CoreAPI::getVideoCodecs, &CoreAPI::setVideoCodecs));
 	registerMethod("payloadTypeEnabled", make_method(this, &CoreAPI::payloadTypeEnabled));
 	registerMethod("enablePayloadType", make_method(this, &CoreAPI::enablePayloadType));
 
@@ -200,8 +198,7 @@ void CoreAPI::initProxy() {
 	registerMethod("clearProxyConfig", make_method(this, &CoreAPI::clearProxyConfig));
 	registerMethod("removeProxyConfig", make_method(this, &CoreAPI::removeProxyConfig));
 	registerMethod("getProxyConfigList", make_method(this, &CoreAPI::getProxyConfigList));
-	registerMethod("setDefaultProxy", make_method(this, &CoreAPI::setDefaultProxy));
-	registerMethod("getDefaultProxy", make_method(this, &CoreAPI::getDefaultProxy));
+	registerProperty("defaultProxy", make_property(this, &CoreAPI::getDefaultProxy, &CoreAPI::setDefaultProxy));
 	registerMethod("refreshRegisters", make_method(this, &CoreAPI::refreshRegisters));
 
 	// Network bindings
