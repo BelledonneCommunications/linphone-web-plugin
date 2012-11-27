@@ -180,7 +180,7 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 		set (FB_CRX_PACKAGE_SUFFIX _CRX)
 	endif()
 	
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/MAC/CRX/manifest.json ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Mac/CRX/manifest.json ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
 	
 	set(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
 	
