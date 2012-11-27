@@ -128,7 +128,7 @@ void CoreAPI::initProxy() {
 	REGISTER_SYNC_N_ASYNC(CoreAPI, "inviteAddressWithParams", inviteAddressWithParams);
 	registerMethod("acceptCall", make_method(this, &CoreAPI::acceptCall));
 	registerMethod("acceptCallWithParams", make_method(this, &CoreAPI::acceptCallWithParams));
-	registerMethod("getCurrentCall", make_method(this, &CoreAPI::getCurrentCall));
+	registerProperty("currentCall", make_property(this, &CoreAPI::getCurrentCall));
 	registerMethod("terminateCall", make_method(this, &CoreAPI::terminateCall));
 	registerMethod("terminateAllCalls", make_method(this, &CoreAPI::terminateAllCalls));
 	registerMethod("redirectCall", make_method(this, &CoreAPI::redirectCall));
@@ -175,7 +175,7 @@ void CoreAPI::initProxy() {
 
 	// Sound device bindings
 	registerMethod("reloadSoundDevices", make_method(this, &CoreAPI::reloadSoundDevices));
-	registerMethod("getSoundDevices", make_method(this, &CoreAPI::getSoundDevices));
+	registerProperty("soundDevices", make_property(this, &CoreAPI::getSoundDevices));
 	registerMethod("soundDeviceCanCapture", make_method(this, &CoreAPI::soundDeviceCanCapture));
 	registerMethod("soundDeviceCanPlayback", make_method(this, &CoreAPI::soundDeviceCanPlayback));
 	registerProperty("ringerDevice", make_property(this, &CoreAPI::getRingerDevice, &CoreAPI::setRingerDevice));
@@ -184,7 +184,7 @@ void CoreAPI::initProxy() {
 
 	// Video device bindings
 	registerMethod("reloadVideoDevices", make_method(this, &CoreAPI::reloadVideoDevices));
-	registerMethod("getVideoDevices", make_method(this, &CoreAPI::getVideoDevices));
+	registerProperty("videoDevices", make_property(this, &CoreAPI::getVideoDevices));
 	registerProperty("videoDevice", make_property(this, &CoreAPI::getVideoDevice, &CoreAPI::setVideoDevice));
 
 	// Codecs bindings
@@ -197,7 +197,7 @@ void CoreAPI::initProxy() {
 	registerMethod("addProxyConfig", make_method(this, &CoreAPI::addProxyConfig));
 	registerMethod("clearProxyConfig", make_method(this, &CoreAPI::clearProxyConfig));
 	registerMethod("removeProxyConfig", make_method(this, &CoreAPI::removeProxyConfig));
-	registerMethod("getProxyConfigList", make_method(this, &CoreAPI::getProxyConfigList));
+	registerProperty("proxyConfigList", make_property(this, &CoreAPI::getProxyConfigList));
 	registerProperty("defaultProxy", make_property(this, &CoreAPI::getDefaultProxy, &CoreAPI::setDefaultProxy));
 	registerMethod("refreshRegisters", make_method(this, &CoreAPI::refreshRegisters));
 
@@ -231,7 +231,7 @@ void CoreAPI::initProxy() {
 	registerMethod("abortAuthentication", make_method(this, &CoreAPI::abortAuthentication));
 	registerMethod("removeAuthInfo", make_method(this, &CoreAPI::removeAuthInfo));
 	registerMethod("findAuthInfo", make_method(this, &CoreAPI::findAuthInfo));
-	registerMethod("getAuthInfoList", make_method(this, &CoreAPI::getAuthInfoList));
+	registerProperty("authInfoList", make_property(this, &CoreAPI::getAuthInfoList));
 	registerMethod("clearAllAuthInfo", make_method(this, &CoreAPI::clearAllAuthInfo));
 
 	// File bindings
