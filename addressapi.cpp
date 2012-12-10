@@ -62,6 +62,9 @@ void AddressAPI::initProxy() {
 
 AddressAPI::~AddressAPI() {
 	FBLOG_DEBUG("AddressAPI::~AddressAPI", "this=" << this);
+	if(!mUsed) {
+		linphone_address_destroy(mAddress);
+	}
 }
 
 std::string AddressAPI::asString() const {

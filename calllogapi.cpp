@@ -34,6 +34,7 @@ void CallLogAPI::initProxy() {
 
 CallLogAPI::~CallLogAPI() {
 	FBLOG_DEBUG("CallLogAPI::~CallLogAPI", "this=" << this);
+	linphone_call_log_set_user_pointer(callLog, NULL);
 }
 
 std::string CallLogAPI::getRefKey() const {
