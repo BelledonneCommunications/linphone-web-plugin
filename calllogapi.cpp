@@ -23,7 +23,7 @@
 CallLogAPI::CallLogAPI(LinphoneCallLog *callLog) :
 		JSAPIAuto(APIDescription(this)), mCallLog(callLog), mUsed(true) {
 	FBLOG_DEBUG("CallLogAPI::CallLogAPI", "this=" << this << "\t" << "callLog=" << callLog);
-	linphone_call_log_set_user_pointer(callLog, this);
+	linphone_call_log_set_user_pointer(mCallLog, this);
 	initProxy();
 }
 
@@ -34,7 +34,7 @@ void CallLogAPI::initProxy() {
 
 CallLogAPI::~CallLogAPI() {
 	FBLOG_DEBUG("CallLogAPI::~CallLogAPI", "this=" << this);
-	linphone_call_log_set_user_pointer(callLog, NULL);
+	linphone_call_log_set_user_pointer(mCallLog, NULL);
 }
 
 std::string CallLogAPI::getRefKey() const {
