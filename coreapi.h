@@ -29,8 +29,9 @@
 #include <BrowserHost.h>
 #include <Timer.h>
 #include <variant_list.h>
-#include "SimpleStreamHelper.h"
+
 #include <linphonecore.h>
+
 #include "addressapi.h"
 #include "coreplugin.h"
 #include "coreapi.h"
@@ -39,8 +40,12 @@
 #include "authinfoapi.h"
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
+
 #include "utils.h"
 #include "macro.h"
+
+#include "Ext/SimpleStreamHelper.h"
+#include "Ext/extended_variant.h"
 
 FB_FORWARD_PTR(CoreAPI)
 class CoreAPI: public FB::JSAPIAuto {
@@ -127,7 +132,7 @@ public:
 
 	// Sound device functions
 	void reloadSoundDevices();
-	FB::VariantList getSoundDevices() const;
+	std::vector<std::string> getSoundDevices() const;
 	bool soundDeviceCanCapture(const std::string &devid) const;
 	bool soundDeviceCanPlayback(const std::string &devid) const;
 	void setRingerDevice(const std::string &devid);
@@ -139,15 +144,15 @@ public:
 
 	// Video device functions
 	void reloadVideoDevices();
-	FB::VariantList getVideoDevices() const;
+	std::vector<std::string> getVideoDevices() const;
 	void setVideoDevice(const std::string &devid);
 	std::string getVideoDevice() const;
 
 	// Codecs functions
-	FB::VariantList getAudioCodecs() const;
-	FB::VariantList getVideoCodecs() const;
-	void setAudioCodecs(const std::vector<FB::JSAPIPtr> &list);
-	void setVideoCodecs(const std::vector<FB::JSAPIPtr> &list);
+	std::vector<PayloadTypeAPIPtr> getAudioCodecs() const;
+	std::vector<PayloadTypeAPIPtr> getVideoCodecs() const;
+	void setAudioCodecs(const std::vector<PayloadTypeAPIPtr> &list);
+	void setVideoCodecs(const std::vector<PayloadTypeAPIPtr> &list);
 	bool payloadTypeEnabled(const PayloadTypeAPIPtr &payloadType) const;
 	void enablePayloadType(const PayloadTypeAPIPtr &payloadType, bool enable);
 
@@ -155,7 +160,7 @@ public:
 	int addProxyConfig(const ProxyConfigAPIPtr &config);
 	void clearProxyConfig();
 	void removeProxyConfig(const ProxyConfigAPIPtr &config);
-	FB::VariantList getProxyConfigList() const;
+	std::vector<ProxyConfigAPIPtr> getProxyConfigList() const;
 	void setDefaultProxy(const ProxyConfigAPIPtr &config);
 	ProxyConfigAPIPtr getDefaultProxy() const;
 	void setPrimaryContact(const std::string &contact);
@@ -215,7 +220,7 @@ public:
 	void abortAuthentication(const AuthInfoAPIPtr &authInfo);
 	void removeAuthInfo(const AuthInfoAPIPtr &authInfo);
 	AuthInfoAPIPtr findAuthInfo(const std::string &realm, const std::string &username);
-	FB::VariantList getAuthInfoList() const;
+	std::vector<AuthInfoAPIPtr> getAuthInfoList() const;
 	void clearAllAuthInfo();
 
 	// Instantiator functions

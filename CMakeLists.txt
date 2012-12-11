@@ -28,6 +28,12 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     [^.]*.h
     [^.]*.cmake
     )
+	
+file (GLOB EXTENSION RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Ext/[^.]*.cpp
+    Ext/[^.]*.h
+    Ext/[^.]*.cmake
+    )
 
 include_directories(${PLUGIN_INCLUDE_DIRS})
 
@@ -41,9 +47,12 @@ SET_SOURCE_FILES_PROPERTIES(
 SOURCE_GROUP(Generated FILES
     ${GENERATED}
     )
+	
+SOURCE_GROUP(Ext FILES ${EXTENSION})
 
 SET(SOURCES
     ${GENERAL}
+	${EXTENSION}
     ${GENERATED}
     )
 

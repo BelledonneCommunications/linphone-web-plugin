@@ -181,7 +181,7 @@ bool ProxyConfigAPI::registerEnabled() const {
 	return linphone_proxy_config_register_enabled(mProxyConfig) == TRUE ? true : false;
 }
 
-int ProxyConfigAPI::getState() {
+int ProxyConfigAPI::getState() const {
 	FBLOG_DEBUG("ProxyConfigAPI::getState()", "this=" << this);
 	return linphone_proxy_config_get_state(mProxyConfig);
 }

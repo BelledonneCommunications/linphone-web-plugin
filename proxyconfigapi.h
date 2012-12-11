@@ -75,7 +75,7 @@ public:
 	void enableRegister(bool val);
 	bool registerEnabled() const;
 
-	int getState();
+	int getState() const;
 
 	void edit();
 	int done();

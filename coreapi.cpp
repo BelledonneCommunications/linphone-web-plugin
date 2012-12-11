@@ -833,11 +833,11 @@ void CoreAPI::reloadSoundDevices() {
 	linphone_core_reload_sound_devices(mCore);
 }
 
-FB::VariantList CoreAPI::getSoundDevices() const {
+std::vector<std::string> CoreAPI::getSoundDevices() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getSoundDevices()", "this=" << this);
-	FB::VariantList list;
+	std::vector<std::string> list;
 	const char **devlist = linphone_core_get_sound_devices(mCore);
 	while (devlist != NULL && *devlist != NULL) {
 		list.push_back(std::string(*devlist++));
@@ -916,12 +916,12 @@ void CoreAPI::reloadVideoDevices() {
 	linphone_core_reload_video_devices(mCore);
 }
 
-FB::VariantList CoreAPI::getVideoDevices() const {
+std::vector<std::string> CoreAPI::getVideoDevices() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVideoDevices()", "this=" << this);
 
-	FB::VariantList list;
+	std::vector<std::string> list;
 	const char **devlist = linphone_core_get_video_devices(mCore);
 	while (devlist != NULL && *devlist != NULL) {
 		list.push_back(std::string(*devlist++));
@@ -951,57 +951,47 @@ std::string CoreAPI::getVideoDevice() const {
  *
  */
 
-FB::VariantList CoreAPI::getAudioCodecs() const {
+std::vector<PayloadTypeAPIPtr> CoreAPI::getAudioCodecs() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getAudioCodecs()", "this=" << this);
-	FB::VariantList list;
+	std::vector<PayloadTypeAPIPtr> list;
 	for (const MSList *node = linphone_core_get_audio_codecs(mCore); node != NULL; node = ms_list_next(node)) {
 		list.push_back(PayloadTypeAPI::get(reinterpret_cast<PayloadType*>(node->data)));
 	}
 	return list;
 }
 
-FB::VariantList CoreAPI::getVideoCodecs() const {
+std::vector<PayloadTypeAPIPtr> CoreAPI::getVideoCodecs() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVideoCodecs()", "this=" << this);
-	FB::VariantList list;
+	std::vector<PayloadTypeAPIPtr> list;
 	for (const MSList *node = linphone_core_get_video_codecs(mCore); node != NULL; node = ms_list_next(node)) {
 		list.push_back(PayloadTypeAPI::get(reinterpret_cast<PayloadType*>(node->data)));
 	}
 	return list;
 }
 
-void CoreAPI::setAudioCodecs(const std::vector<FB::JSAPIPtr> &list) {
+void CoreAPI::setAudioCodecs(const std::vector<PayloadTypeAPIPtr> &list) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::set_audio_codecs()", "this=" << this << "\t" << "list.size()=" << list.size());
 	MSList *mslist = NULL;
 	for (auto it = list.begin(); it != list.end(); ++it) {
-		PayloadTypeAPIPtr payloadType = boost::dynamic_pointer_cast<PayloadTypeAPI>(*it);
-		if (payloadType != NULL) {
-			mslist = ms_list_append(mslist, payloadType->getRef());
-		} else {
-			FBLOG_DEBUG("CoreAPI::set_audio_codecs()", "Not PayloadTypeAPI");
-		}
+			mslist = ms_list_append(mslist, (*it)->getRef());
 	}
 
 	linphone_core_set_audio_codecs(mCore, mslist);
 }
 
-void CoreAPI::setVideoCodecs(const std::vector<FB::JSAPIPtr> &list) {
+void CoreAPI::setVideoCodecs(const std::vector<PayloadTypeAPIPtr> &list) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setVideoCodecs()", "this=" << this << "\t" << "list.size()=" << list.size());
 	MSList *mslist = NULL;
 	for (auto it = list.begin(); it != list.end(); ++it) {
-		PayloadTypeAPIPtr payloadType = boost::dynamic_pointer_cast<PayloadTypeAPI>(*it);
-		if (payloadType != NULL) {
-			mslist = ms_list_append(mslist, payloadType->getRef());
-		} else {
-			FBLOG_DEBUG("CoreAPI::setVideoCodecs()", "Not PayloadTypeAPI");
-		}
+		mslist = ms_list_append(mslist, (*it)->getRef());
 	}
 
 	linphone_core_set_video_codecs(mCore, mslist);
@@ -1048,11 +1038,11 @@ void CoreAPI::removeProxyConfig(const ProxyConfigAPIPtr &config) {
 	linphone_core_remove_proxy_config(mCore, config->getRef());
 }
 
-FB::VariantList CoreAPI::getProxyConfigList() const {
+std::vector<ProxyConfigAPIPtr> CoreAPI::getProxyConfigList() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getProxyConfigList()", "this=" << this);
-	FB::VariantList list;
+	std::vector<ProxyConfigAPIPtr> list;
 	for (const MSList *node = linphone_core_get_proxy_config_list(mCore); node != NULL; node = ms_list_next(node)) {
 		list.push_back(ProxyConfigAPI::get(reinterpret_cast<LinphoneProxyConfig*>(node->data)));
 	}
@@ -1461,11 +1451,11 @@ AuthInfoAPIPtr CoreAPI::findAuthInfo(const std::string &realm, const std::string
 	return AuthInfoAPI::get(authInfo);
 }
 
-FB::VariantList CoreAPI::getAuthInfoList() const {
+std::vector<AuthInfoAPIPtr> CoreAPI::getAuthInfoList() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getAuthInfoList()", "this=" << this);
-	FB::VariantList list;
+	std::vector<AuthInfoAPIPtr> list;
 	for (const MSList *node = linphone_core_get_auth_info_list(mCore); node != NULL; node = ms_list_next(node)) {
 		list.push_back(AuthInfoAPI::get(reinterpret_cast<LinphoneAuthInfo*>(node->data)));
 	}
