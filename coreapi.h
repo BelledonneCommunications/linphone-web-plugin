@@ -45,7 +45,6 @@
 #include "macro.h"
 
 #include "Ext/SimpleStreamHelper.h"
-#include "Ext/extended_variant.h"
 
 FB_FORWARD_PTR(CoreAPI)
 class CoreAPI: public FB::JSAPIAuto {
