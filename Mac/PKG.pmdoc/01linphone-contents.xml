@@ -5,36 +5,28 @@
 			<f n="MacOS" p="16877">
 				<f n="linphone-web" p="33261"/>
 				<f n="linphoneweb" p="16877">
-					<f n="libavcodec.54.dylib" p="33261"/>
-					<f n="libavutil.51.dylib" p="33261"/>
-					<f n="libbz2.1.0.dylib" p="33261"/>
+					<f n="libavcodec.53.61.100.dylib" p="33261"/>
+					<f n="libavutil.51.35.100.dylib" p="33261"/>
 					<f n="libcrypto.1.0.0.dylib" p="33261"/>
-					<f n="libdirac_decoder.0.dylib" p="33261"/>
-					<f n="libdirac_encoder.0.dylib" p="33261"/>
 					<f n="libeXosip2.7.dylib" p="33261"/>
 					<f n="liblinphone.5.dylib" p="33261"/>
-					<f n="libmediastreamer.1.dylib" p="33261"/>
-					<f n="libmodplug.1.dylib" p="33261"/>
-					<f n="libmp3lame.0.dylib" p="33261"/>
+					<f n="libmediastreamer-base.3.dylib" p="33261"/>
+					<f n="libmediastreamer-voip.3.dylib" p="33261"/>
 					<f n="libogg.0.dylib" p="33261"/>
-					<f n="libopenjpeg.1.dylib" p="33261"/>
-					<f n="liborc-0.4.0.dylib" p="33261"/>
-					<f n="libortp.8.dylib" p="33261"/>
+					<f n="libortp.9.dylib" p="33261"/>
 					<f n="libosip2.7.dylib" p="33261"/>
 					<f n="libosipparser2.7.dylib" p="33261"/>
-					<f n="libschroedinger-1.0.0.dylib" p="33261"/>
-					<f n="libSDL-1.2.0.dylib" p="33261"/>
 					<f n="libspeex.1.dylib" p="33261"/>
 					<f n="libspeexdsp.1.dylib" p="33261"/>
 					<f n="libssl.1.0.0.dylib" p="33261"/>
 					<f n="libswscale.2.dylib" p="33261"/>
 					<f n="libtheora.0.dylib" p="33261"/>
-					<f n="libtheoradec.1.dylib" p="33261"/>
-					<f n="libtheoraenc.1.dylib" p="33261"/>
-					<f n="libvorbis.0.dylib" p="33261"/>
-					<f n="libvorbisenc.2.dylib" p="33261"/>
+					<f n="libvpx.1.dylib" p="33261"/>
 					<f n="libz.1.dylib" p="33261"/>
 					<f n="share" p="16877">
+						<f n="images" p="16877">
+							<f n="nowebcamCIF.jpg" p="33188"/>
+						</f>
 						<f n="sounds" p="16877">
 							<f n="linphone" p="16877">
 								<f n="ringback.wav" p="33188"/>

@@ -62,8 +62,8 @@
 							  <File Id="libeay32" Source="$(var.BINSRC)/libeay32.dll" />
                               <File Id="libexosip2" Source="$(var.BINSRC)/libexosip2-7.dll" />
                               <File Id="liblinphone" Source="$(var.BINSRC)/liblinphone-5.dll" />
-                              <File Id="libmediastreamer_base" Source="$(var.BINSRC)/libmediastreamer_base-2.dll" />
-                              <File Id="libmediastreamer_voip" Source="$(var.BINSRC)/libmediastreamer_voip-2.dll" />
+                              <File Id="libmediastreamer_base" Source="$(var.BINSRC)/libmediastreamer_base-3.dll" />
+                              <File Id="libmediastreamer_voip" Source="$(var.BINSRC)/libmediastreamer_voip-3.dll" />
                               <File Id="libogg" Source="$(var.BINSRC)/libogg-0.dll" />
                               <File Id="libortp" Source="$(var.BINSRC)/libortp-9.dll" />
                               <File Id="libosip2" Source="$(var.BINSRC)/libosip2-7.dll" />
