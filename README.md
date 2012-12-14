@@ -74,8 +74,13 @@ PATH
 
 ### Mac OS X
 Don't use XCode directly it doesn't use corrects environment and target 
-architectures. After having prepared the projects, enter in `./build/`
-directory of Firebreath and run the following command:
+architectures. For configuring the firebreath, use the following command: 
+
+    ./prepmac.sh -DCMAKE_OSX_DEPLOYMENT_TARGET="10.5" -DCMAKE_OSX_ARCHITECTURES="x86_64"
+
+This is permit the plugin to run on older version of Mac OS X than the one
+you use and force only one architecture. After enter in `./build/` directory 
+of Firebreath and run the following command:
 
     xcodebuild -arch x86_64
 
