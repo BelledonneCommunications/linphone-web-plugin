@@ -57,8 +57,8 @@ add_windows_plugin(${PROJECT_NAME} SOURCES)
 target_link_libraries(${PROJECT_NAME} 
 	${PLUGIN_INTERNAL_DEPS}
 	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone-5.lib"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base-2.lib"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip-2.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base-3.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip-3.lib"
 	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp-9.lib"
 	)
 
@@ -82,8 +82,8 @@ function (create_rootfs PROJNAME)
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libeXosip2-7.dll
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libeay32.dll
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/liblinphone-5.dll
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libmediastreamer_base-2.dll
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libmediastreamer_voip-2.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libmediastreamer_base-3.dll
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libmediastreamer_voip-3.dll
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libogg-0.dll
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libortp-9.dll
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libosip2-7.dll

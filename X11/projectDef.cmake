@@ -50,8 +50,8 @@ add_x11_plugin(${PROJECT_NAME} SOURCES)
 target_link_libraries(${PROJECT_NAME} 
 	${PLUGIN_INTERNAL_DEPS}
 	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.so.5"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base.so.2"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip.so.2"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base.so.3"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip.so.3"
 	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.so.9"
 )
 
@@ -82,8 +82,8 @@ function (create_rootfs PROJNAME)
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libeXosip2.so.7
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libjpeg.so.8
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.so.5
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base.so.2
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip.so.2
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base.so.3
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip.so.3
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libogg.so.0
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.so.9
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosip2.so.7
