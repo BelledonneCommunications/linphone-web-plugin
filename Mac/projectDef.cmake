@@ -220,7 +220,6 @@ function (create_pkg_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 		set (FB_PKG_PACKAGE_SUFFIX _PKG)
 	endif()
 	
-	file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/PKG.pmdoc)
 	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/move.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/index.xml ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/index.xml)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/01linphone.xml ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/01linphone.xml)
