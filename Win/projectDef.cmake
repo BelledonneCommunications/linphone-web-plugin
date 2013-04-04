@@ -71,6 +71,7 @@ else ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 endif ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 SET (FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
 SET (FB_ROOTFS_DIR ${FB_OUT_DIR}/Rootfs)
+SET (WIX_LINK_FLAGS -dConfiguration=${CMAKE_CFG_INTDIR})
 
 ###############################################################################
 # Create Rootfs
@@ -109,6 +110,7 @@ function (create_rootfs PROJNAME)
 		  DEPENDS ${ROOTFS_SOURCES}
 		  COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_ROOTFS_DIR}
 		  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}
+		  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.pdb ${FB_ROOTFS_DIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll ${FB_ROOTFS_DIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avcodec-53.dll ${FB_ROOTFS_DIR}/
 		  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avutil-51.dll ${FB_ROOTFS_DIR}/

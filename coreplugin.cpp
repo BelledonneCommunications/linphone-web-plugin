@@ -20,13 +20,18 @@
 #include "coreapi.h"
 #include "coreplugin.h"
 #include <boost/filesystem.hpp>
+#include <global/config.h>
+#ifdef WIN32
+#include <Windows.h>
+#include <Strsafe.h>
+#endif //WIN32
 
 #ifdef DEBUG
-FILE * core::s_debug_file = NULL;
+FILE * core::s_log_file = NULL;
 void core::log(OrtpLogLevel lev, const char *fmt, va_list args) {
-		const char *lname="undef";
+	const char *lname="undef";
 	char *msg;
-	if (s_debug_file==NULL) s_debug_file=stderr;
+	if (s_log_file==NULL) s_log_file = stderr;
 	switch(lev){
 		case ORTP_DEBUG:
 			lname="debug";
@@ -46,12 +51,50 @@ void core::log(OrtpLogLevel lev, const char *fmt, va_list args) {
 		default:
 			ortp_fatal("Bad level !");
 	}
-	msg=ortp_strdup_vprintf(fmt,args);
-	fprintf(s_debug_file,"ortp-%s-%s\r\n",lname,msg);
-	fflush(s_debug_file);
+	msg = ortp_strdup_vprintf(fmt, args);
+	fprintf(s_log_file, FBSTRING_PluginFileName"-%s-%s\r\n", lname, msg);
+	fflush(s_log_file);
 	ortp_free(msg);
 }
-#endif
+
+void core::enableLog() {
+#ifdef WIN32
+	WCHAR szPath[MAX_PATH]; 
+    WCHAR szFileName[MAX_PATH]; 
+    WCHAR* szAppName = TEXT(FBSTRING_PluginFileName);
+    WCHAR* szVersion = TEXT(FBSTRING_PLUGIN_VERSION);
+	DWORD dwBufferSize = MAX_PATH;
+	SYSTEMTIME stLocalTime;
+
+	GetLocalTime(&stLocalTime);
+	//GetTempPath(dwBufferSize, szPath);
+	ExpandEnvironmentStrings(L"%SYSTEMDRIVE%", szPath, MAX_PATH);
+	StringCchCat (szPath, MAX_PATH, L"\\TEMP\\");
+
+    StringCchPrintf(szFileName, MAX_PATH, L"%s\\%s-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.log", 
+               szPath, szAppName, szVersion, 
+               stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay, 
+               stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond, 
+               GetCurrentProcessId(), GetCurrentThreadId());
+	s_log_file = _wfopen(szFileName, L"w+");
+
+	linphone_core_enable_logs_with_cb(core::log);
+#else
+	linphone_core_enable_logs(stdout);
+#endif //WIN32
+}
+#endif //DEBUG
+
+void core::disableLog() {
+	linphone_core_disable_logs();
+#ifdef DEBUG
+#ifdef WIN32
+	if(s_log_file != NULL) {
+		fclose(s_log_file);
+	}
+#endif //WIN32
+#endif //DEBUG
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @fn core::StaticInitialize()
@@ -64,18 +107,11 @@ void core::StaticInitialize() {
 	// Place one-time initialization stuff here; As of FireBreath 1.4 this should only
 	// be called once per process
 #ifndef DEBUG
-		// Disable logs
-		linphone_core_disable_logs();
-#else
-		// Enable logs
-#ifdef WIN32
-		//Not working one Windows ...
-		s_debug_file = fopen("linphone-web.log", "w+");
-		linphone_core_enable_logs_with_cb(core::log);
-#else
-		linphone_core_enable_logs(stdout);
-#endif
-#endif
+	disableLog();
+#else //DEBUG
+	enableLog();
+#endif //DEBUG
+	*((char*)0x0)=0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -89,12 +125,7 @@ void core::StaticDeinitialize() {
 	// Place one-time deinitialization stuff here. As of FireBreath 1.4 this should
 	// always be called just before the plugin library is unloaded
 #ifdef DEBUG
-#ifdef WIN32
-		if(s_debug_file != NULL) {
-			linphone_core_disable_logs();
-			fclose(s_debug_file);
-		}
-#endif
+	disableLog();
 #endif
 }
 
