@@ -20,16 +20,21 @@
 #include "proxyconfigapi.h"
 #include "coreapi.h"
 #include "utils.h"
+#include "factoryapi.h"
 
 ProxyConfigAPI::ProxyConfigAPI(LinphoneProxyConfig *proxyConfig) :
-		JSAPIAuto(APIDescription(this)), mProxyConfig(proxyConfig), mUsed(true) {
+		JSAPIAuto(APIDescription(this)), mProxyConfig(proxyConfig) {
+    mUsed = true;
+    mConst = false;
 	FBLOG_DEBUG("ProxyConfigAPI::ProxyConfigAPI", "this=" << this << "\t" << "proxyConfig=" << proxyConfig);
 	linphone_proxy_config_set_user_data(mProxyConfig, this);
 	initProxy();
 }
 
 ProxyConfigAPI::ProxyConfigAPI() :
-		JSAPIAuto(APIDescription(this)), mUsed(false) {
+		JSAPIAuto(APIDescription(this)) {
+    mUsed = false;
+    mConst = false;
 	FBLOG_DEBUG("ProxyConfigAPI::ProxyConfigAPI", "this=" << this);
 	mProxyConfig = linphone_proxy_config_new();
 	linphone_proxy_config_set_user_data(mProxyConfig, this);
@@ -76,7 +81,7 @@ bool ProxyConfigAPI::isRegistered() const {
 
 CoreAPIPtr ProxyConfigAPI::getCore() const {
 	FBLOG_DEBUG("ProxyConfigAPI::getCore()", "this=" << this);
-	return CoreAPI::get(linphone_proxy_config_get_core(mProxyConfig));
+	return mFactory->get(linphone_proxy_config_get_core(mProxyConfig));
 }
 
 std::string ProxyConfigAPI::getContactParameters() const {
@@ -206,18 +211,4 @@ std::string ProxyConfigAPI::normalizeNumber(const std::string &username) const {
 void ProxyConfigAPI::refreshRegister() {
 	FBLOG_DEBUG("ProxyConfigAPI::refreshRegister()", "this=" << this);
 	linphone_proxy_config_refresh_register(mProxyConfig);
-}
-
-ProxyConfigAPIPtr ProxyConfigAPI::get(LinphoneProxyConfig *proxyConfig) {
-	if (proxyConfig == NULL)
-		return ProxyConfigAPIPtr();
-
-	void *ptr = linphone_proxy_config_get_user_data(proxyConfig);
-	ProxyConfigAPIPtr shared_ptr;
-	if (ptr == NULL) {
-		shared_ptr = ProxyConfigAPIPtr(new ProxyConfigAPI(proxyConfig));
-	} else {
-		shared_ptr = boost::static_pointer_cast<ProxyConfigAPI>(reinterpret_cast<ProxyConfigAPI *>(ptr)->shared_from_this());
-	}
-	return shared_ptr;
 }

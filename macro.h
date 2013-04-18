@@ -47,14 +47,14 @@
 		callback->InvokeAsync("", FB::variant_list_of(shared_from_this()));,                                                                                        \
 		ret value = name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL));                                                                           \
 		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(value));)                                                                                 \
-		m_threads->remove_thread(boost::this_thread::get_id());                                                                                                     \
+		mThreads->remove_thread(boost::this_thread::get_id());                                                                                                     \
 	}                                                                                                                                                               \
 
 #define DECLARE_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList)                                                                                              \
 	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
 			void BOOST_PP_CAT(name, _async) (FB::JSObjectPtr callback) {,                                                                                           \
 			void BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {)          \
-		m_threads->create_thread(boost::bind(&class::BOOST_PP_CAT(name, _async_thread), this,                                                                       \
+		mThreads->create_thread(boost::bind(&class::BOOST_PP_CAT(name, _async_thread), this,                                                                       \
 		BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL)                                                                                              \
 		BOOST_PP_IF(BOOST_PP_NOT_EQUAL(argCount, 0), BOOST_PP_COMMA, BOOST_PP_EMPTY)()                                                                              \
 		callback));                                                                                                                                                 \

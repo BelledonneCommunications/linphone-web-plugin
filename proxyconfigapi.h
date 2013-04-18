@@ -22,14 +22,15 @@
 
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
+#include "wrapperapi.h"
 
-FB_FORWARD_PTR(CoreAPI);
+FB_FORWARD_PTR(CoreAPI)
 
 FB_FORWARD_PTR(ProxyConfigAPI)
-class ProxyConfigAPI: public FB::JSAPIAuto {
+class ProxyConfigAPI: public FB::JSAPIAuto, public WrapperAPI {
+    friend class FactoryAPI;
 private:
 	LinphoneProxyConfig *mProxyConfig;
-	bool mUsed;
 
 	ProxyConfigAPI(LinphoneProxyConfig *proxyConfig);
 	void initProxy();
@@ -87,7 +88,6 @@ public:
 		mUsed = true;
 		return mProxyConfig;
 	}
-	static ProxyConfigAPIPtr get(LinphoneProxyConfig *proxyConfig);
 };
 
 #endif //H_PROXYCONFIGAPI

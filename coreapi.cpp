@@ -27,7 +27,20 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <fstream>
+
+#include "coreplugin.h"
+
+#include "addressapi.h"
+#include "authinfoapi.h"
+#include "callapi.h"
+#include "calllogapi.h"
+#include "callparamsapi.h"
+#include "callstatsapi.h"
 #include "coreapi.h"
+#include "payloadtypeapi.h"
+#include "proxyconfigapi.h"
+
+#include "factoryapi.h"
 
 #ifndef WIN32
 #else
@@ -38,7 +51,7 @@ void usleep(int waitTime) {
 #endif
 
 #ifdef CORE_THREADED
-#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(m_core_mutex);
+#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(mCoreMutex);
 #else
 #define CORE_MUTEX
 #endif //CORE_THREADED
@@ -99,14 +112,16 @@ void linphone_destroy_thread(LinphoneCore* core, boost::thread *thread, mythread
 /// @see FB::JSAPIAuto::registerProperty
 /// @see FB::JSAPIAuto::registerEvent
 ///////////////////////////////////////////////////////////////////////////////
-CoreAPI::CoreAPI(const corePtr& plugin, const FB::BrowserHostPtr& host) :
-		JSAPIAuto(APIDescription(this)), m_plugin(plugin), m_host(host), mCore(NULL) {
+CoreAPI::CoreAPI() :
+		JSAPIAuto(APIDescription(this)), mCore(NULL) {
+    mUsed = false;
+    mConst = false;
 	FBLOG_DEBUG("CoreAPI::CoreAPI()", "this=" << this);
 #ifdef CORE_THREADED
-	m_core_thread = NULL;
-	m_threads = new mythread_group();
+	mCoreThread = NULL;
+	mThreads = new mythread_group();
 #else
-	m_timer = FB::Timer::getTimer(20, true, boost::bind(&CoreAPI::iterate, this));
+	mMimer = FB::Timer::getTimer(20, true, boost::bind(&CoreAPI::iterate, this));
 #endif
 	initProxy();
 }
@@ -301,9 +316,9 @@ int CoreAPI::init() {
 		linphone_core_set_sip_port(mCore, port);
 
 #ifdef CORE_THREADED
-		m_core_thread = new boost::thread(linphone_iterate_thread, this);
+		mCoreThread = new boost::thread(linphone_iterate_thread, this);
 #else
-		m_timer->start();
+		mTimer->start();
 #endif
 		return 0;
 	} else {
@@ -325,9 +340,9 @@ CoreAPI::~CoreAPI() {
 		linphone_core_set_user_data(mCore, NULL);
 
 #ifdef CORE_THREADED
-		boost::thread t(linphone_destroy_thread, mCore, m_core_thread, m_threads);
+		boost::thread t(linphone_destroy_thread, mCore, mCoreThread, mThreads);
 #else
-		m_timer->stop();
+		mTimer->stop();
 		linphone_core_destroy(mCore);
 
 		sInstanceMutex.lock();
@@ -337,42 +352,14 @@ CoreAPI::~CoreAPI() {
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/// @fn corePtr CoreAPI::getPlugin()
-///
-/// @brief  Gets a reference to the plugin that was passed in when the object
-///         was created.  If the plugin has already been released then this
-///         will throw a FB::script_error that will be translated into a
-///         javascript exception in the page.
-///////////////////////////////////////////////////////////////////////////////
-corePtr CoreAPI::getPlugin() {
-	corePtr plugin(m_plugin.lock());
-	if (!plugin) {
-		throw FB::script_error("The plugin is invalid");
-	}
-	return plugin;
-}
-
 const std::string &CoreAPI::getMagic() const {
 	FBLOG_DEBUG("CoreAPI::getMagic()", "this=" << this);
-	return m_magic;
+	return mMagic;
 }
 
 void CoreAPI::setMagic(const std::string &magic) {
 	FBLOG_DEBUG("CoreAPI::setMagic()", "this=" << this << "\t" << "magic=" << magic);
-	m_magic = magic;
-}
-
-CoreAPIPtr CoreAPI::get(LinphoneCore *core) {
-	if (core == NULL)
-		return CoreAPIPtr();
-
-	void *ptr = linphone_core_get_user_data(core);
-	CoreAPIPtr shared_ptr;
-	if (ptr != NULL) {
-		shared_ptr = boost::static_pointer_cast<CoreAPI>(reinterpret_cast<CoreAPI *>(ptr)->shared_from_this());
-	}
-	return shared_ptr;
+	mMagic = magic;
 }
 
 /*
@@ -386,7 +373,7 @@ CallAPIPtr CoreAPI::invite(const std::string &url) {
 
 	FBLOG_DEBUG("CoreAPI::invite", "this=" << this << "\t" << "url=" << url);
 	LinphoneCall *call = linphone_core_invite(mCore, url.c_str());
-	CallAPIPtr shared_call = CallAPI::get(call);
+	CallAPIPtr shared_call = mFactory->get(call);
 	return shared_call;
 }
 
@@ -395,7 +382,7 @@ CallAPIPtr CoreAPI::inviteAddress(const AddressAPIPtr &address) {
 
 	FBLOG_DEBUG("CoreAPI::inviteAddress", "this=" << this << "\t" << "address=" << address);
 	LinphoneCall *call = linphone_core_invite_address(mCore, address->getRef());
-	CallAPIPtr shared_call = CallAPI::get(call);
+	CallAPIPtr shared_call = mFactory->get(call);
 	return shared_call;
 }
 
@@ -404,7 +391,7 @@ CallAPIPtr CoreAPI::inviteWithParams(const std::string &url, const CallParamsAPI
 
 	FBLOG_DEBUG("CoreAPI::invite", "this=" << this << "\t" << "url=" << url << "\t" << "params=" << params);
 	LinphoneCall *call = linphone_core_invite_with_params(mCore, url.c_str(), params->getRef());
-	CallAPIPtr shared_call = CallAPI::get(call);
+	CallAPIPtr shared_call = mFactory->get(call);
 	return shared_call;
 }
 
@@ -413,7 +400,7 @@ CallAPIPtr CoreAPI::inviteAddressWithParams(const AddressAPIPtr &address, const 
 
 	FBLOG_DEBUG("CoreAPI::inviteAddress", "this=" << this << "\t" << "address=" << address << "\t" << "params=" << params);
 	LinphoneCall *call = linphone_core_invite_address_with_params(mCore, address->getRef(), params->getRef());
-	CallAPIPtr shared_call = CallAPI::get(call);
+	CallAPIPtr shared_call = mFactory->get(call);
 	return shared_call;
 }
 
@@ -435,7 +422,7 @@ CallAPIPtr CoreAPI::getCurrentCall() {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getCurrentCall", "this=" << this);
-	return CallAPI::get(linphone_core_get_current_call(mCore));
+	return mFactory->get(linphone_core_get_current_call(mCore));
 }
 
 int CoreAPI::terminateCall(const CallAPIPtr &call) {
@@ -526,7 +513,7 @@ CallParamsAPIPtr CoreAPI::createDefaultCallParameters() {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::createDefaultCallParameters", "this=" << this);
-	return CallParamsAPI::get(linphone_core_create_default_call_parameters(mCore));
+	return mFactory->get(linphone_core_create_default_call_parameters(mCore));
 }
 
 void CoreAPI::setIncTimeout(int timeout) {
@@ -957,7 +944,7 @@ std::vector<PayloadTypeAPIPtr> CoreAPI::getAudioCodecs() const {
 	FBLOG_DEBUG("CoreAPI::getAudioCodecs()", "this=" << this);
 	std::vector<PayloadTypeAPIPtr> list;
 	for (const MSList *node = linphone_core_get_audio_codecs(mCore); node != NULL; node = ms_list_next(node)) {
-		list.push_back(PayloadTypeAPI::get(reinterpret_cast<PayloadType*>(node->data)));
+		list.push_back(mFactory->get(reinterpret_cast<PayloadType*>(node->data)));
 	}
 	return list;
 }
@@ -968,7 +955,7 @@ std::vector<PayloadTypeAPIPtr> CoreAPI::getVideoCodecs() const {
 	FBLOG_DEBUG("CoreAPI::getVideoCodecs()", "this=" << this);
 	std::vector<PayloadTypeAPIPtr> list;
 	for (const MSList *node = linphone_core_get_video_codecs(mCore); node != NULL; node = ms_list_next(node)) {
-		list.push_back(PayloadTypeAPI::get(reinterpret_cast<PayloadType*>(node->data)));
+		list.push_back(mFactory->get(reinterpret_cast<PayloadType*>(node->data)));
 	}
 	return list;
 }
@@ -1044,7 +1031,7 @@ std::vector<ProxyConfigAPIPtr> CoreAPI::getProxyConfigList() const {
 	FBLOG_DEBUG("CoreAPI::getProxyConfigList()", "this=" << this);
 	std::vector<ProxyConfigAPIPtr> list;
 	for (const MSList *node = linphone_core_get_proxy_config_list(mCore); node != NULL; node = ms_list_next(node)) {
-		list.push_back(ProxyConfigAPI::get(reinterpret_cast<LinphoneProxyConfig*>(node->data)));
+		list.push_back(mFactory->get(reinterpret_cast<LinphoneProxyConfig*>(node->data)));
 	}
 	return list;
 }
@@ -1063,7 +1050,7 @@ ProxyConfigAPIPtr CoreAPI::getDefaultProxy() const {
 	LinphoneProxyConfig *ptr = NULL;
 	linphone_core_get_default_proxy(mCore, &ptr);
 	if (ptr != NULL)
-		return ProxyConfigAPI::get(ptr);
+		return mFactory->get(ptr);
 	return ProxyConfigAPIPtr();
 }
 
@@ -1448,7 +1435,7 @@ AuthInfoAPIPtr CoreAPI::findAuthInfo(const std::string &realm, const std::string
 
 	FBLOG_DEBUG("CoreAPI::findAuthInfo()", "this=" << this << "\t" << "realm=" << realm << "\t" << "username=" << username);
 	const LinphoneAuthInfo* authInfo = linphone_core_find_auth_info(mCore, realm.c_str(), username.c_str());
-	return AuthInfoAPI::get(authInfo);
+	return mFactory->get(authInfo);
 }
 
 std::vector<AuthInfoAPIPtr> CoreAPI::getAuthInfoList() const {
@@ -1457,7 +1444,7 @@ std::vector<AuthInfoAPIPtr> CoreAPI::getAuthInfoList() const {
 	FBLOG_DEBUG("CoreAPI::getAuthInfoList()", "this=" << this);
 	std::vector<AuthInfoAPIPtr> list;
 	for (const MSList *node = linphone_core_get_auth_info_list(mCore); node != NULL; node = ms_list_next(node)) {
-		list.push_back(AuthInfoAPI::get(reinterpret_cast<LinphoneAuthInfo*>(node->data)));
+		list.push_back(mFactory->get(reinterpret_cast<LinphoneAuthInfo*>(node->data)));
 	}
 	return list;
 }
@@ -1694,39 +1681,130 @@ void CoreAPI::setZrtpSecretsFile(const std::string &secretsFile) {
 void CoreAPI::download(const std::string& url, const FB::JSObjectPtr& callback) {
 	FBLOG_DEBUG("CoreAPI::download()", "this=" << this << "\t" << "url=" << url);
 	FB::URI uri = FB::URI(url);
-	FBExt::SimpleStreamHelper::AsyncGet(m_host, uri, boost::bind(&CoreAPI::downloadCallback, this, uri, _1, _2, _3, _4, callback), boost::bind(&CoreAPI::downloadProgressCallback, this, uri, _1, _2, callback));
+    CorePluginPtr corePlugin = mFactory->getPlugin();
+    if(!corePlugin) {
+        FBExt::SimpleStreamHelper::AsyncGet(corePlugin->getHost(), uri, boost::bind(&CoreAPI::downloadCallback, this, uri, _1, _2, _3, _4, callback), boost::bind(&CoreAPI::downloadProgressCallback, this, uri, _1, _2, callback));
+    } else {
+        FBLOG_DEBUG("CoreAPI::download()", "No plugin anymore");
+        callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(0)(0)(url)("")("Internal error"));
+    }
 }
 
 void CoreAPI::downloadCallback(const FB::URI& url, bool success, const FBExt::HeaderMap& headers, const boost::shared_array<uint8_t>& data,
 		const size_t size, const FB::JSObjectPtr& callback) {
 	if (success) {
-		FBLOG_DEBUG("CoreAPI::downloadCallback()", "Download " << url.toString() << " success");
+		FBLOG_DEBUG("CoreAPI::downloadCallback()", "this=" << this << "\t" << "Download " << url.toString() << " success");
 
 		// Build path
 		boost::filesystem::path local = boost::filesystem::path(FB::System::getTempPath());
 		local /= boost::filesystem::unique_path();
-		FBLOG_DEBUG("CoreAPI::downloadCallback()", "Write to " << local.string());
+		FBLOG_DEBUG("CoreAPI::downloadCallback()", "this=" << this << "\t" << "Write to " << local.string());
 
 		// Write to file
 		boost::filesystem::ofstream downloadedFile(local, std::ios_base::binary | std::ios_base::out);
 		downloadedFile.write(reinterpret_cast<const char*>(data.get()), size);
 		if (downloadedFile.bad()) {
 			downloadedFile.close();
-			FBLOG_DEBUG("CoreAPI::downloadCallback()", "Can't write into file " << local.string());
+			FBLOG_DEBUG("CoreAPI::downloadCallback()", "this=" << this << "\t" << "Can't write into file " << local.string());
 			callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(size)(size)(url.toString())("")("Can't write"));
 			return;
 		}
 		downloadedFile.close();
 		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(size)(size)(url.toString())(FILE_TO_URI(local.string()).toString())(""));
 	} else {
-		FBLOG_WARN("CoreAPI::downloadCallback()", "Download " << url.toString() << " failure");
+		FBLOG_WARN("CoreAPI::downloadCallback()", "this=" << this << "\t" << "Download " << url.toString() << " failure");
 		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(0)(0)(url.toString())("")("Can't download the file"));
 	}
 }
 
 void CoreAPI::downloadProgressCallback(const FB::URI& url, const size_t received, const size_t total, const FB::JSObjectPtr& callback) {
-	FBLOG_WARN("CoreAPI::downloadProgressCallback()", "Download " << url.toString() << " " << received << "/" << total);
+	FBLOG_WARN("CoreAPI::downloadProgressCallback()", "this=" << this << "\t" << "Download " << url.toString() << " " << received << "/" << total);
 	callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(received)(total)(url.toString())("")(""));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Callbacks
+///////////////////////////////////////////////////////////////////////////////
+
+void CoreAPI::onGlobalStateChanged(LinphoneGlobalState gstate, const char *message) {
+    FBLOG_DEBUG("CoreAPI::onGlobalStateChanged()",  "this=" << this << "\t" << "gstate=" << gstate << "\t" << "message=" << message);
+    fire_globalStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), gstate, CHARPTR_TO_STRING(message));
+}
+
+void CoreAPI::onRegistrationStateChanged(LinphoneProxyConfig *cfg, LinphoneRegistrationState rstate, const char *message) {
+    FBLOG_DEBUG("CoreAPI::onRegistrationStateChanged()",  "this=" << this << "\t" << "cfg=" << cfg << "\t" << "rstate=" << rstate << "\t" << "message=" << message);
+    fire_registrationStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), mFactory->get(cfg), rstate, CHARPTR_TO_STRING(message));
+}
+
+void CoreAPI::onCallStateChanged(LinphoneCall *call, LinphoneCallState cstate, const char *message) {
+    FBLOG_DEBUG("CoreAPI::onCallStateChanged()",  "this=" << this << "\t" << "call=" << call << "\t" << "cstate=" << cstate << "\t" << "message=" << message);
+    fire_callStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), mFactory->get(call), cstate, CHARPTR_TO_STRING(message));
+}
+
+void CoreAPI::onNotifyPresenceRecv(LinphoneFriend * lf) {
+    FBLOG_DEBUG("CoreAPI::onNotifyPresenceRecv()",  "this=" << this << "\t" << "lf=" << lf);
+}
+
+void CoreAPI::onNewSubscriptionRequest(LinphoneFriend *lf, const char *url) {
+    FBLOG_DEBUG("CoreAPI::onNewSubscriptionRequest()",  "this=" << this << "\t" << "lf=" << lf << "\t" << "url=" << url);
+}
+
+void CoreAPI::onAuthInfoRequested(const char *realm, const char *username) {
+    FBLOG_DEBUG("CoreAPI::onAuthInfoRequested()",  "this=" << this << "\t" << "realm=" << realm << "\t" << "username=" << username);
+    fire_authInfoRequested(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(realm), CHARPTR_TO_STRING(username));
+}
+
+void CoreAPI::onCallLogUpdated(LinphoneCallLog *newcl) {
+    FBLOG_DEBUG("CoreAPI::onCallLogUpdated()",  "this=" << this << "\t" << "newcl=" << newcl);
+}
+
+void CoreAPI::onTextReceived(LinphoneChatRoom *room, const LinphoneAddress *from, const char *message) {
+    FBLOG_DEBUG("CoreAPI::onTextReceived()",  "this=" << this << "\t" << "room=" << room << "\t" << "from=" << from << "message=" << message);
+}
+
+void CoreAPI::onDtmfReceived(LinphoneCall *call, int dtmf) {
+    FBLOG_DEBUG("CoreAPI::onDtmfReceived()",  "this=" << this << "\t" << "call=" << call << "\t" << "dtmf=" << dtmf);
+}
+
+void CoreAPI::onReferReceived(const char *refer_to) {
+    FBLOG_DEBUG("CoreAPI::onReferReceived()",  "this=" << this << "\t" << "refer_to=" << refer_to);
+}
+
+void CoreAPI::onBuddyInfoUpdated(LinphoneFriend *lf) {
+    FBLOG_DEBUG("CoreAPI::onBuddyInfo_updated()",  "this=" << this << "\t" << "lf=" << lf);
+}
+
+void CoreAPI::onNotifyRecv(LinphoneCall *call, const char *from, const char *event) {
+    FBLOG_DEBUG("CoreAPI::onNotifyRecv()",  "this=" << this << "\t" << "call=" << call  << "\t" << "from=" << from << "\t" << "event=" << event);
+}
+
+void CoreAPI::onDisplayStatus(const char *message) {
+    FBLOG_DEBUG("CoreAPI::onDisplayStatus()",  "this=" << this << "\t" << "message=" << message);
+    fire_displayStatus(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(message));
+}
+
+void CoreAPI::onDisplayMessage(const char *message) {
+    FBLOG_DEBUG("CoreAPI::onDisplayMessage()",  "this=" << this << "\t" << "message=" << message);
+    fire_displayMessage(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(message));
+}
+
+void CoreAPI::onDisplayWarning(const char *message) {
+    FBLOG_DEBUG("CoreAPI::onDisplayWarning()",  "this=" << this << "\t" << "message=" << message);
+    fire_displayWarning(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(message));
+}
+
+void CoreAPI::onDisplayUrl(const char *message, const char *url) {
+    FBLOG_DEBUG("CoreAPI::onDisplayUrl()",  "this=" << this << "\t" << "message=" << message << "\t" << "url=" << url);
+    fire_displayUrl(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(message), CHARPTR_TO_STRING(url));
+}
+
+void CoreAPI::onShow() {
+    FBLOG_DEBUG("CoreAPI::onShow()",  "this=" << this);
+    fire_show(boost::static_pointer_cast<CoreAPI>(shared_from_this()));
+}
+
+void CoreAPI::onCallEncryptionChanged(LinphoneCall *call, bool_t on, const char *authentication_token) {
+    FBLOG_DEBUG("CoreAPI::onCallEncryptionChanged()",  "this=" << this << "\t" << "call=" << call << "\t" << "on=" << on << "\t" << "authentication_token=" << authentication_token);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1735,191 +1813,132 @@ void CoreAPI::downloadProgressCallback(const FB::URI& url, const size_t received
 
 // Global callbacks which wraps CoreAPI object methods
 #define GLC_DEFINED() (linphone_core_get_user_data(lc) != NULL)
-#define GLC_THIS() boost::static_pointer_cast<CoreAPI>(((CoreAPI *)linphone_core_get_user_data(lc))->shared_from_this())
-#define GLC(X) ((CoreAPI *)linphone_core_get_user_data(lc))->X
+#define GLC_THIS() ((CoreAPI *)linphone_core_get_user_data(lc))
 
 void CoreAPI::wrapper_global_state_changed(LinphoneCore *lc, LinphoneGlobalState gstate, const char *message) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "gstate = " << gstate << ", ";
-		ss << "message = " << CHARPTR_TO_STRING(message);
-		FBLOG_DEBUG("wrapper_global_state_changed", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-		GLC(fire_globalStateChanged(GLC_THIS(), gstate, CHARPTR_TO_STRING(message)));
-	}
+        GLC_THIS()->onGlobalStateChanged(gstate, message);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_global_state_changed", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_registration_state_changed(LinphoneCore *lc, LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "cfg = " << cfg << ", ";
-		ss << "cstate = " << cstate << ", ";
-		ss << "message = " << CHARPTR_TO_STRING(message);
-		FBLOG_DEBUG("wrapper_registration_state_changed", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-		GLC(fire_registrationStateChanged(GLC_THIS(), ProxyConfigAPI::get(cfg), cstate, CHARPTR_TO_STRING(message)));
-	}
+        GLC_THIS()->onRegistrationStateChanged(cfg, cstate, message);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_registration_state_changed", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_call_state_changed(LinphoneCore *lc, LinphoneCall *call, LinphoneCallState cstate, const char *message) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "call = " << call << ", ";
-		ss << "cstate = " << cstate << ", ";
-		ss << "message = " << CHARPTR_TO_STRING(message);
-		FBLOG_DEBUG("wrapper_call_state_changed", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-		GLC(fire_callStateChanged(GLC_THIS(), CallAPI::get(call), cstate, CHARPTR_TO_STRING(message)));
-	}
+        GLC_THIS()->onCallStateChanged(call, cstate, message);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_call_state_changed", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_notify_presence_recv(LinphoneCore *lc, LinphoneFriend * lf) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "lf = " << lf;
-		FBLOG_DEBUG("wrapper_notify_presence_recv", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-	}
+        GLC_THIS()->onNotifyPresenceRecv(lf);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_notify_presence_recv", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_new_subscription_request(LinphoneCore *lc, LinphoneFriend *lf, const char *url) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "lf = " << lf << ", ";
-		ss << "url = " << url;
-		FBLOG_DEBUG("wrapper_new_subscription_request", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-	}
+        GLC_THIS()->onNewSubscriptionRequest(lf, url);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_new_subscription_request", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "realm = " << CHARPTR_TO_STRING(realm) << ", ";
-		ss << "username = " << CHARPTR_TO_STRING(username);
-		FBLOG_DEBUG("wrapper_auth_info_requested", ss.str());
-		GLC(fire_authInfoRequested(GLC_THIS(), CHARPTR_TO_STRING(realm), CHARPTR_TO_STRING(username)));
-#endif //FB_NO_LOGGING_MACROS
-	}
+        GLC_THIS()->onAuthInfoRequested(realm, username);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_auth_info_requested", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_call_log_updated(LinphoneCore *lc, LinphoneCallLog *newcl) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "newcl = " << newcl;
-		FBLOG_DEBUG("wrapper_call_log_updated", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-	}
+        GLC_THIS()->onCallLogUpdated(newcl);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_call_log_updated", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_text_received(LinphoneCore *lc, LinphoneChatRoom *room, const LinphoneAddress *from, const char *message) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "room = " << room << ", ";
-		ss << "from = " << from << ", ";
-		ss << "message = " << CHARPTR_TO_STRING(message);
-		FBLOG_DEBUG("wrapper_text_received", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-	}
+        GLC_THIS()->onTextReceived(room, from, message);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_text_received", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_dtmf_received(LinphoneCore *lc, LinphoneCall *call, int dtmf) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "call = " << call << ", ";
-		ss << "dtmf = " << dtmf;
-		FBLOG_DEBUG("wrapper_dtmf_received", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-	}
+        GLC_THIS()->onDtmfReceived(call, dtmf);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_dtmf_received", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_refer_received(LinphoneCore *lc, const char *refer_to) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "refer_to = " << CHARPTR_TO_STRING(refer_to);
-		FBLOG_DEBUG("wrapper_refer_received", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-	}
+        GLC_THIS()->onReferReceived(refer_to);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_refer_received", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_buddy_info_updated(LinphoneCore *lc, LinphoneFriend *lf) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "lf = " << lf;
-		FBLOG_DEBUG("wrapper_buddy_info_updated", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-	}
+        GLC_THIS()->onBuddyInfoUpdated(lf);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_buddy_info_updated", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_notify_recv(LinphoneCore *lc, LinphoneCall *call, const char *from, const char *event) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "call = " << call << ", ";
-		ss << "from = " << CHARPTR_TO_STRING(from) << ", ";
-		ss << "event = " << event;
-		FBLOG_DEBUG("wrapper_notify_recv", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-	}
+        GLC_THIS()->onNotifyRecv(call, from, event);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_notify_recv", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_display_status(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "message = " << CHARPTR_TO_STRING(message);
-		FBLOG_DEBUG("wrapper_display_status", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-		GLC(fire_displayStatus(GLC_THIS(), CHARPTR_TO_STRING(message)));
-	}
+        GLC_THIS()->onDisplayStatus(message);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_display_status", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_display_message(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "message = " << CHARPTR_TO_STRING(message);
-		FBLOG_DEBUG("wrapper_display_message", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-		GLC(fire_displayMessage(GLC_THIS(), CHARPTR_TO_STRING(message)));
-	}
+        GLC_THIS()->onDisplayMessage(message);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_display_message", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_display_warning(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "message = " << CHARPTR_TO_STRING(message);
-		FBLOG_DEBUG("wrapper_display_warning", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-		GLC(fire_displayWarning(GLC_THIS(), CHARPTR_TO_STRING(message)));
-	}
+        GLC_THIS()->onDisplayWarning(message);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_display_warning", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_display_url(LinphoneCore *lc, const char *message, const char *url) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "message = " << CHARPTR_TO_STRING(message) << ", ";
-		ss << "url = " << CHARPTR_TO_STRING(url);
-		FBLOG_DEBUG("wrapper_display_url", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-		GLC(fire_displayUrl(GLC_THIS(), CHARPTR_TO_STRING(message), CHARPTR_TO_STRING(url)));
-	}
+        GLC_THIS()->onDisplayUrl(message, url);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_display_url", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_show(LinphoneCore *lc) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		FBLOG_DEBUG("wrapper_show", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-		GLC(fire_show(GLC_THIS()));
-	}
+        GLC_THIS()->onShow();
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_show", "No proxy defined !");
+    }
 }
 void CoreAPI::wrapper_call_encryption_changed(LinphoneCore *lc, LinphoneCall *call, bool_t on, const char *authentication_token) {
 	if (GLC_DEFINED()) {
-#if !FB_NO_LOGGING_MACROS
-		std::stringstream ss;
-		ss << "call = " << call << ", ";
-		ss << "on = " << on << ", ";
-		ss << "authentication_token = " << authentication_token;
-		FBLOG_DEBUG("wrapper_call_encryption_changed", ss.str());
-#endif //FB_NO_LOGGING_MACROS
-	}
+        GLC_THIS()->onCallEncryptionChanged(call, on, authentication_token);
+	} else {
+        FBLOG_ERROR("CoreAPI::wrapper_call_encryption_changed", "No proxy defined !");
+    }
 }
+

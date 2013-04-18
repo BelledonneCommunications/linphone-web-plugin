@@ -22,15 +22,17 @@
 
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
+#include "wrapperapi.h"
 
-FB_FORWARD_PTR(CallLogAPI);
-FB_FORWARD_PTR(CallParamsAPI);
-FB_FORWARD_PTR(CallStatsAPI);
-FB_FORWARD_PTR(AddressAPI);
-FB_FORWARD_PTR(CoreAPI);
+FB_FORWARD_PTR(CallLogAPI)
+FB_FORWARD_PTR(CallParamsAPI)
+FB_FORWARD_PTR(CallStatsAPI)
+FB_FORWARD_PTR(AddressAPI)
+FB_FORWARD_PTR(CoreAPI)
 
 FB_FORWARD_PTR(CallAPI)
-class CallAPI: public FB::JSAPIAuto {
+class CallAPI: public FB::JSAPIAuto, public WrapperAPI {
+    friend class FactoryAPI;
 private:
 	LinphoneCall *mCall;
 
@@ -79,7 +81,6 @@ public:
 	inline LinphoneCall *getRef() const {
 		return mCall;
 	}
-	static CallAPIPtr get(LinphoneCall *call);
 };
 
 #endif //H_CALLAPI

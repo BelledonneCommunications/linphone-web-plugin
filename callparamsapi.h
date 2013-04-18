@@ -22,13 +22,13 @@
 
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
+#include "wrapperapi.h"
 
 FB_FORWARD_PTR(CallParamsAPI)
-class CallParamsAPI: public FB::JSAPIAuto {
+class CallParamsAPI: public FB::JSAPIAuto, public WrapperAPI {
+    friend class FactoryAPI;
 private:
 	LinphoneCallParams *mCallParams;
-	bool mUsed;
-	bool mConst;
 
 	CallParamsAPI(LinphoneCallParams *callParams);
 	CallParamsAPI(const LinphoneCallParams *callParams);
@@ -54,8 +54,6 @@ public:
 		mUsed = true;
 		return mCallParams;
 	}
-	static CallParamsAPIPtr get(LinphoneCallParams *callParams);
-	static CallParamsAPIPtr get(const LinphoneCallParams *callParams);
 };
 
 #endif //H_CALLPARAMSAPI

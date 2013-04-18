@@ -96,8 +96,8 @@ public:
 	FB::PluginCorePtr createPlugin(const std::string& mimetype) {
 		FBLOG_DEBUG("createPlugin()", mimetype);
 		if (mimetype == "application/x-linphone-web-video")
-			return boost::make_shared<video>();
-		return boost::make_shared<core>();
+			return boost::make_shared<VideoPlugin>();
+		return boost::make_shared<CorePlugin>();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -112,16 +112,16 @@ public:
 
 		srand((unsigned int)time(NULL));
 
-		core::StaticInitialize();
-		video::StaticInitialize();
+		CorePlugin::StaticInitialize();
+		VideoPlugin::StaticInitialize();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
 	/// @see FB::FactoryBase::globalPluginDeinitialize
 	///////////////////////////////////////////////////////////////////////////////
 	void globalPluginDeinitialize() {
-		core::StaticDeinitialize();
-		video::StaticDeinitialize();
+		CorePlugin::StaticDeinitialize();
+		VideoPlugin::StaticDeinitialize();
 	}
 
 	void getLoggingMethods(FB::Log::LogMethodList& outMethods) {

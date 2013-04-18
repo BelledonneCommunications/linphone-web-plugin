@@ -21,21 +21,27 @@
 #include "utils.h"
 
 AddressAPI::AddressAPI(LinphoneAddress *address) :
-		JSAPIAuto(APIDescription(this)), mAddress(address), mUsed(true), mConst(false) {
+		JSAPIAuto(APIDescription(this)), mAddress(address) {
+    mUsed = true;
+    mConst = false;
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this << "\t" << "address=" << address);
 	initProxy();
 }
 
 AddressAPI::AddressAPI(const LinphoneAddress *address) :
-		JSAPIAuto(APIDescription(this)), mAddress(const_cast<LinphoneAddress *>(address)), mUsed(true), mConst(true) {
+		JSAPIAuto(APIDescription(this)), mAddress(const_cast<LinphoneAddress *>(address)) {
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this << "\t" << "address=" << address);
+    mUsed = true;
+    mConst = true;
 	initProxy();
 }
 
 AddressAPI::AddressAPI(const std::string &uri) :
-		JSAPIAuto(APIDescription(this)), mUsed(false), mConst(false) {
+		JSAPIAuto(APIDescription(this)) {
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this);
 	mAddress = linphone_address_new(uri.c_str());
+    mUsed = false;
+    mConst = false;
 	initProxy();
 }
 
@@ -142,22 +148,4 @@ std::string AddressAPI::getUsername() const {
 void AddressAPI::setUsername(const std::string &username) {
 	FBLOG_DEBUG("AddressAPI::setUsername()", "this=" << this << "\t" << "username=" << username);
 	linphone_address_set_username(mAddress, username.c_str());
-}
-
-AddressAPIPtr AddressAPI::get(LinphoneAddress *address) {
-	if (address == NULL)
-		return AddressAPIPtr();
-
-	AddressAPIPtr shared_ptr;
-	shared_ptr = AddressAPIPtr(new AddressAPI(address));
-	return shared_ptr;
-}
-
-AddressAPIPtr AddressAPI::get(const LinphoneAddress *address) {
-	if (address == NULL)
-		return AddressAPIPtr();
-
-	AddressAPIPtr shared_ptr;
-	shared_ptr = AddressAPIPtr(new AddressAPI(address));
-	return shared_ptr;
 }

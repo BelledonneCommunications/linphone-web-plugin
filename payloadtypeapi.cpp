@@ -20,16 +20,21 @@
 #include "payloadtypeapi.h"
 #include "coreapi.h"
 #include "utils.h"
+#include "factoryapi.h"
 
 PayloadTypeAPI::PayloadTypeAPI(PayloadType *payloadType) :
-		JSAPIAuto(APIDescription(this)), mPayloadType(payloadType), mConst(false) {
+		JSAPIAuto(APIDescription(this)), mPayloadType(payloadType) {
+    mUsed = true;
+    mConst = false;
 	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << ", payloadType=" << payloadType);
 	//mPayloadType->user_data = this;
 	initProxy();
 }
 
 PayloadTypeAPI::PayloadTypeAPI(const PayloadType *payloadType) :
-		JSAPIAuto(APIDescription(this)), mPayloadType(const_cast<PayloadType *>(payloadType)), mConst(true) {
+		JSAPIAuto(APIDescription(this)), mPayloadType(const_cast<PayloadType *>(payloadType)) {
+    mUsed = true;
+    mConst = true;
 	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << ", payloadType=" << payloadType);
 	//mPayloadType->user_data = this;
 	initProxy();
@@ -179,37 +184,9 @@ void PayloadTypeAPI::setFlags(int flags) {
 }
 
 PayloadTypeAPIPtr PayloadTypeAPI::clone() const {
-	return PayloadTypeAPI::get(payload_type_clone(mPayloadType));
+	return mFactory->get(payload_type_clone(mPayloadType));
 }
 
 std::string PayloadTypeAPI::getRtpmap() const {
 	return CHARPTR_TO_STRING(payload_type_get_rtpmap(mPayloadType));
-}
-
-PayloadTypeAPIPtr PayloadTypeAPI::get(PayloadType *payloadType) {
-	if (payloadType == NULL)
-		return PayloadTypeAPIPtr();
-
-	//void *ptr = payloadType->user_data;
-	PayloadTypeAPIPtr shared_ptr;
-	/*if (ptr == NULL) {*/
-	shared_ptr = PayloadTypeAPIPtr(new PayloadTypeAPI(payloadType));
-	/*} else {
-	 shared_ptr = boost::static_pointer_cast<PayloadTypeAPI>(reinterpret_cast<PayloadTypeAPI *>(ptr)->shared_from_this());
-	 }*/
-	return shared_ptr;
-}
-
-PayloadTypeAPIPtr PayloadTypeAPI::get(const PayloadType *payloadType) {
-	if (payloadType == NULL)
-		return PayloadTypeAPIPtr();
-
-	//void *ptr = payloadType->user_data;
-	PayloadTypeAPIPtr shared_ptr;
-	/*if (ptr == NULL) {*/
-	shared_ptr = PayloadTypeAPIPtr(new PayloadTypeAPI(payloadType));
-	/*} else {
-	 shared_ptr = boost::static_pointer_cast<PayloadTypeAPI>(reinterpret_cast<PayloadTypeAPI *>(ptr)->shared_from_this());
-	 }*/
-	return shared_ptr;
 }

@@ -27,8 +27,8 @@
 #endif //WIN32
 
 #ifdef DEBUG
-FILE * core::s_log_file = NULL;
-void core::log(OrtpLogLevel lev, const char *fmt, va_list args) {
+FILE * CorePlugin::s_log_file = NULL;
+void CorePlugin::log(OrtpLogLevel lev, const char *fmt, va_list args) {
 	const char *lname="undef";
 	char *msg;
 	if (s_log_file==NULL) s_log_file = stderr;
@@ -57,7 +57,7 @@ void core::log(OrtpLogLevel lev, const char *fmt, va_list args) {
 	ortp_free(msg);
 }
 
-void core::enableLog() {
+void CorePlugin::enableLog() {
 #ifdef WIN32
 	WCHAR szPath[MAX_PATH]; 
     WCHAR szFileName[MAX_PATH]; 
@@ -78,14 +78,14 @@ void core::enableLog() {
                GetCurrentProcessId(), GetCurrentThreadId());
 	s_log_file = _wfopen(szFileName, L"w+");
 
-	linphone_core_enable_logs_with_cb(core::log);
+	linphone_core_enable_logs_with_cb(CorePlugin::log);
 #else
 	linphone_core_enable_logs(stdout);
 #endif //WIN32
 }
 #endif //DEBUG
 
-void core::disableLog() {
+void CorePlugin::disableLog() {
 	linphone_core_disable_logs();
 #ifdef DEBUG
 #ifdef WIN32
@@ -97,13 +97,13 @@ void core::disableLog() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @fn core::StaticInitialize()
+/// @fn CorePlugin::StaticInitialize()
 ///
 /// @brief  Called from PluginFactory::globalPluginInitialize()
 ///
 /// @see FB::FactoryBase::globalPluginInitialize
 ///////////////////////////////////////////////////////////////////////////////
-void core::StaticInitialize() {
+void CorePlugin::StaticInitialize() {
 	// Place one-time initialization stuff here; As of FireBreath 1.4 this should only
 	// be called once per process
 #ifndef DEBUG
@@ -114,13 +114,13 @@ void core::StaticInitialize() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @fn core::StaticInitialize()
+/// @fn CorePlugin::StaticInitialize()
 ///
 /// @brief  Called from PluginFactory::globalPluginDeinitialize()
 ///
 /// @see FB::FactoryBase::globalPluginDeinitialize
 ///////////////////////////////////////////////////////////////////////////////
-void core::StaticDeinitialize() {
+void CorePlugin::StaticDeinitialize() {
 	// Place one-time deinitialization stuff here. As of FireBreath 1.4 this should
 	// always be called just before the plugin library is unloaded
 #ifdef DEBUG
@@ -133,13 +133,13 @@ void core::StaticDeinitialize() {
 ///         at this point, nor the window.  For best results wait to use
 ///         the JSAPI object until the onPluginReady method is called
 ///////////////////////////////////////////////////////////////////////////////
-core::core() {
+CorePlugin::CorePlugin() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief  core destructor.
 ///////////////////////////////////////////////////////////////////////////////
-core::~core() {
+CorePlugin::~CorePlugin() {
 	// This is optional, but if you reset m_api (the shared_ptr to your JSAPI
 	// root object) and tell the host to free the retained JSAPI objects then
 	// unless you are holding another shared_ptr reference to your JSAPI object
@@ -148,14 +148,16 @@ core::~core() {
 	m_host->freeRetainedObjects();
 }
 
-void core::onPluginReady() {
-	// When this is called, the BrowserHost is attached, the JSAPI object is
-	// created, and we are ready to interact with the page and such.  The
-	// PluginWindow may or may not have already fire the AttachedEvent at
-	// this point.
+void CorePlugin::onPluginReady() {
+	FB::VariantMap::iterator fnd = m_params.find("magic");
+	if (fnd != m_params.end()) {
+		if (fnd->second.is_of_type<std::string>()) {
+			FB::ptr_cast<CoreAPI>(getRootJSAPI())->setMagic(fnd->second.convert_cast<std::string>());
+		}
+	}
 }
 
-void core::shutdown() {
+void CorePlugin::shutdown() {
 	// This will be called when it is time for the plugin to shut down;
 	// any threads or anything else that may hold a shared_ptr to this
 	// object should be released here so that this object can be safely
@@ -174,50 +176,39 @@ void core::shutdown() {
 /// Be very careful where you hold a shared_ptr to your plugin class from,
 /// as it could prevent your plugin class from getting destroyed properly.
 ///////////////////////////////////////////////////////////////////////////////
-FB::JSAPIPtr core::createJSAPI() {
-	FBLOG_DEBUG("core::createJSAPI()", this);
-	// m_host is the BrowserHost
-	return boost::make_shared<CoreAPI>(FB::ptr_cast<core>(shared_from_this()), m_host);
+FB::JSAPIPtr CorePlugin::createJSAPI() {
+	FBLOG_DEBUG("CorePlugin::createJSAPI()", this);
+	return boost::make_shared<FactoryAPI>(FB::ptr_cast<CorePlugin>(shared_from_this()))->get((LinphoneCore *)NULL);
 }
 
-void core::setFSPath(const std::string &path) {
+void CorePlugin::setFSPath(const std::string &path) {
 	boost::filesystem::path fpath(path);
 	fpath = fpath.parent_path();
 	fpath /= std::string("linphoneweb/");
 	boost::filesystem::current_path(fpath);
-	FBLOG_DEBUG("core::setFSPath", "Change current directory: " << fpath.string());
+	FBLOG_DEBUG("CorePlugin::setFSPath", "Change current directory: " << fpath.string());
 }
 
-bool core::setReady() {
-	FB::VariantMap::iterator fnd = m_params.find("magic");
-	if (fnd != m_params.end()) {
-		if (fnd->second.is_of_type<std::string>()) {
-			FB::ptr_cast<CoreAPI>(getRootJSAPI())->setMagic(fnd->second.convert_cast<std::string>());
-		}
-	}
-	return PluginCore::setReady();
-}
-
-bool core::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *) {
+bool CorePlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *) {
 	//printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
 	return false;
 }
 
-bool core::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow *) {
+bool CorePlugin::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow *) {
 	//printf("Mouse up at: %d, %d\n", evt->m_x, evt->m_y);
 	return false;
 }
 
-bool core::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow *) {
+bool CorePlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow *) {
 	//printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
 	return false;
 }
-bool core::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *) {
+bool CorePlugin::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *) {
 	// The window is attached; act appropriately
 	return false;
 }
 
-bool core::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *) {
+bool CorePlugin::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *) {
 	// The window is about to be detached; act appropriately
 	return false;
 }

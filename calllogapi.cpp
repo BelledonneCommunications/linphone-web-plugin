@@ -21,7 +21,9 @@
 #include "utils.h"
 
 CallLogAPI::CallLogAPI(LinphoneCallLog *callLog) :
-		JSAPIAuto(APIDescription(this)), mCallLog(callLog), mUsed(true) {
+		JSAPIAuto(APIDescription(this)), mCallLog(callLog) {
+    mUsed = true;
+    mConst = false;
 	FBLOG_DEBUG("CallLogAPI::CallLogAPI", "this=" << this << "\t" << "callLog=" << callLog);
 	linphone_call_log_set_user_pointer(mCallLog, this);
 	initProxy();
@@ -50,18 +52,4 @@ void CallLogAPI::setRefKey(const std::string &refKey) {
 std::string CallLogAPI::toStr() const {
 	FBLOG_DEBUG("CallLogAPI::toStr", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_call_log_to_str(mCallLog));
-}
-
-CallLogAPIPtr CallLogAPI::get(LinphoneCallLog *callLog) {
-	if (callLog == NULL)
-		return CallLogAPIPtr();
-
-	void *ptr = linphone_call_log_get_user_pointer(callLog);
-	CallLogAPIPtr shared_ptr;
-	if (ptr == NULL) {
-		shared_ptr = CallLogAPIPtr(new CallLogAPI(callLog));
-	} else {
-		shared_ptr = boost::static_pointer_cast<CallLogAPI>(reinterpret_cast<CallLogAPI *>(ptr)->shared_from_this());
-	}
-	return shared_ptr;
 }

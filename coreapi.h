@@ -24,35 +24,32 @@
 #include <sstream>
 #include <vector>
 #include <map>
-#include <boost/weak_ptr.hpp>
 #include <JSAPIAuto.h>
-#include <BrowserHost.h>
 #include <Timer.h>
 #include <variant_list.h>
 
-#include <linphonecore.h>
-
-#include "addressapi.h"
-#include "coreplugin.h"
-#include "coreapi.h"
-#include "callparamsapi.h"
-#include "callapi.h"
-#include "authinfoapi.h"
-#include "payloadtypeapi.h"
-#include "proxyconfigapi.h"
-
 #include "utils.h"
 #include "macro.h"
+#include <linphonecore.h>
+#include "wrapperapi.h"
 
 #include "Ext/SimpleStreamHelper.h"
 
+FB_FORWARD_PTR(AddressAPI)
+FB_FORWARD_PTR(AuthInfoAPI)
+FB_FORWARD_PTR(CallAPI)
+FB_FORWARD_PTR(CallParamsAPI)
+FB_FORWARD_PTR(CallStatsParamsAPI)
 FB_FORWARD_PTR(CoreAPI)
-class CoreAPI: public FB::JSAPIAuto {
-public:
-	CoreAPI(const corePtr& plugin, const FB::BrowserHostPtr& host);
-	~CoreAPI();
+FB_FORWARD_PTR(PayloadTypeAPI)
+FB_FORWARD_PTR(ProxyConfigAPI)
 
-	corePtr getPlugin();
+FB_FORWARD_PTR(CoreAPI)
+class CoreAPI: public FB::JSAPIAuto, public WrapperAPI {
+    friend class FactoryAPI;
+public:
+	CoreAPI();
+	~CoreAPI();
 
 	// Read-only property
 	std::string getVersion() const;
@@ -276,21 +273,18 @@ public:
 		return mCore;
 	}
 
-	static CoreAPIPtr get(LinphoneCore *core);
 private :
-	std::string m_magic;
-	coreWeakPtr m_plugin;
-	FB::BrowserHostPtr m_host;
+	std::string mMagic;
 
 	LinphoneCore *mCore; // Linphone core object
 	LinphoneCoreVTable mVtable;// Linphone callback methods table
 
 #ifdef CORE_THREADED
-	mutable boost::mutex m_core_mutex;
-	boost::thread *m_core_thread;
-	mythread_group *m_threads;
+	mutable boost::mutex mCoreMutex;
+	boost::thread *mCoreThread;
+	mythread_group *mThreads;
 #else
-	FB::TimerPtr m_timer;
+	FB::TimerPtr mTimer;
 #endif //CORE_THREADED
 
 	void initProxy();
@@ -303,11 +297,32 @@ private :
 #ifdef CORE_THREADED
 	friend void linphone_iterate_thread(CoreAPI *linphone_api);
 	void iterateWithMutex() {
-		boost::mutex::scoped_lock scopedLock(m_core_mutex);
+		boost::mutex::scoped_lock scopedLock(mCoreMutex);
 		iterate();
 	}
 #endif
 
+protected:
+    virtual void onGlobalStateChanged(LinphoneGlobalState gstate, const char *message);
+	virtual void onRegistrationStateChanged(LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message);
+	virtual void onCallStateChanged(LinphoneCall *call, LinphoneCallState cstate, const char *message);
+	virtual void onNotifyPresenceRecv(LinphoneFriend * lf);
+	virtual void onNewSubscriptionRequest(LinphoneFriend *lf, const char *url);
+	virtual void onAuthInfoRequested(const char *realm, const char *username);
+	virtual void onCallLogUpdated(LinphoneCallLog *newcl);
+	virtual void onTextReceived(LinphoneChatRoom *room, const LinphoneAddress *from, const char *message);
+	virtual void onDtmfReceived(LinphoneCall *call, int dtmf);
+	virtual void onReferReceived(const char *refer_to);
+	virtual void onBuddyInfoUpdated(LinphoneFriend *lf);
+	virtual void onNotifyRecv(LinphoneCall *call, const char *from, const char *event);
+	virtual void onDisplayStatus(const char *message);
+	virtual void onDisplayMessage(const char *message);
+	virtual void onDisplayWarning(const char *message);
+	virtual void onDisplayUrl(const char *message, const char *url);
+	virtual void onShow();
+	virtual void onCallEncryptionChanged(LinphoneCall *call, bool_t on, const char *authentication_token);
+
+private:
 	// C Wrappers
 	static void wrapper_global_state_changed(LinphoneCore *lc, LinphoneGlobalState gstate, const char *message);
 	static void wrapper_registration_state_changed(LinphoneCore *lc, LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message);

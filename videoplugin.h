@@ -29,15 +29,15 @@
 
 FB_FORWARD_PTR(VideoAPI)
 
-FB_FORWARD_PTR(video)
-class video: public FB::PluginCore {
+FB_FORWARD_PTR(VideoPlugin)
+class VideoPlugin: public FB::PluginCore {
 public:
 	static void StaticInitialize();
 	static void StaticDeinitialize();
 
 public:
-	video();
-	virtual ~video();
+	VideoPlugin();
+	virtual ~VideoPlugin();
 
 public:
 	void onPluginReady();

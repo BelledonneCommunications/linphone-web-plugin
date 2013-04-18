@@ -21,25 +21,25 @@
 #include "videoapi.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @fn video::StaticInitialize()
+/// @fn VideoPlugin::StaticInitialize()
 ///
 /// @brief  Called from PluginFactory::globalPluginInitialize()
 ///
 /// @see FB::FactoryBase::globalPluginInitialize
 ///////////////////////////////////////////////////////////////////////////////
-void video::StaticInitialize() {
+void VideoPlugin::StaticInitialize() {
 	// Place one-time initialization stuff here; As of FireBreath 1.4 this should only
 	// be called once per process
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @fn video::StaticInitialize()
+/// @fn VideoPlugin::StaticInitialize()
 ///
 /// @brief  Called from PluginFactory::globalPluginDeinitialize()
 ///
 /// @see FB::FactoryBase::globalPluginDeinitialize
 ///////////////////////////////////////////////////////////////////////////////
-void video::StaticDeinitialize() {
+void VideoPlugin::StaticDeinitialize() {
 	// Place one-time deinitialization stuff here. As of FireBreath 1.4 this should
 	// always be called just before the plugin library is unloaded
 }
@@ -49,13 +49,13 @@ void video::StaticDeinitialize() {
 ///         at this point, nor the window.  For best results wait to use
 ///         the JSAPI object until the onPluginReady method is called
 ///////////////////////////////////////////////////////////////////////////////
-video::video(): mWindow(NULL){
+VideoPlugin::VideoPlugin(): mWindow(NULL) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief  linphone destructor.
 ///////////////////////////////////////////////////////////////////////////////
-video::~video() {
+VideoPlugin::~VideoPlugin() {
 	// This is optional, but if you reset m_api (the shared_ptr to your JSAPI
 	// root object) and tell the host to free the retained JSAPI objects then
 	// unless you are holding another shared_ptr reference to your JSAPI object
@@ -64,14 +64,14 @@ video::~video() {
 	m_host->freeRetainedObjects();
 }
 
-void video::onPluginReady() {
+void VideoPlugin::onPluginReady() {
 	// When this is called, the BrowserHost is attached, the JSAPI object is
 	// created, and we are ready to interact with the page and such.  The
 	// PluginWindow may or may not have already fire the AttachedEvent at
 	// this point.
 }
 
-void video::shutdown() {
+void VideoPlugin::shutdown() {
 	// This will be called when it is time for the plugin to shut down;
 	// any threads or anything else that may hold a shared_ptr to this
 	// object should be released here so that this object can be safely
@@ -90,18 +90,18 @@ void video::shutdown() {
 /// Be very careful where you hold a shared_ptr to your plugin class from,
 /// as it could prevent your plugin class from getting destroyed properly.
 ///////////////////////////////////////////////////////////////////////////////
-FB::JSAPIPtr video::createJSAPI() {
-	FBLOG_DEBUG("video::createJSAPI()", this);
+FB::JSAPIPtr VideoPlugin::createJSAPI() {
+	FBLOG_DEBUG("VideoPlugin::createJSAPI()", this);
 	// m_host is the BrowserHost
 
-	mVideo = boost::make_shared<VideoAPI>(FB::ptr_cast<video>(shared_from_this()), m_host);
+	mVideo = boost::make_shared<VideoAPI>(FB::ptr_cast<VideoPlugin>(shared_from_this()));
 	if (mWindow) {
 		mVideo->setWindow(mWindow);
 	}
 	return mVideo;
 }
 
-bool video::setReady () {
+bool VideoPlugin::setReady () {
 	FB::VariantMap::iterator fnd = m_params.find("magic");
     if (fnd != m_params.end()) {
 		if(fnd->second.is_of_type<std::string>()) {
@@ -111,22 +111,22 @@ bool video::setReady () {
 	return PluginCore::setReady();
 }
 
-bool video::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *win) {
+bool VideoPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *win) {
 	//printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
 	return false;
 }
 
-bool video::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow *win) {
+bool VideoPlugin::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow *win) {
 	//printf("Mouse up at: %d, %d\n", evt->m_x, evt->m_y);
 	return false;
 }
 
-bool video::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow *win) {
+bool VideoPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow *win) {
 	//printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
 	return false;
 }
-bool video::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *win) {
-	FBLOG_DEBUG("video::onWindowAttached()", this);
+bool VideoPlugin::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *win) {
+	FBLOG_DEBUG("VideoPlugin::onWindowAttached()", this);
 	mWindow = win;
 	if (mVideo) {
 		mVideo->setWindow(mWindow);
@@ -134,8 +134,8 @@ bool video::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *win) {
 	return true;
 }
 
-bool video::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *win) {
-	FBLOG_DEBUG("video::onWindowDetached()", this);
+bool VideoPlugin::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *win) {
+	FBLOG_DEBUG("VideoPlugin::onWindowDetached()", this);
 	mWindow = NULL;
 	if (mVideo) {
 		mVideo->setWindow(mWindow);
@@ -143,7 +143,7 @@ bool video::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *win) {
 	return true;
 }
 
-bool video::onDraw(FB::RefreshEvent *evt, FB::PluginWindow* win) {
+bool VideoPlugin::onDraw(FB::RefreshEvent *evt, FB::PluginWindow* win) {
 	return false;
 }
 

@@ -21,13 +21,17 @@
 #include "utils.h"
 
 CallParamsAPI::CallParamsAPI(LinphoneCallParams *callParams) :
-		JSAPIAuto(APIDescription(this)), mCallParams(callParams), mUsed(true), mConst(false) {
+		JSAPIAuto(APIDescription(this)), mCallParams(callParams) {
+    mUsed = true;
+    mConst = false;
 	FBLOG_DEBUG("CallParamsAPI::CallParamsAPI", "this=" << this << "\t" << "callParams=" << callParams);
 	initProxy();
 }
 
 CallParamsAPI::CallParamsAPI(const LinphoneCallParams *callParams) :
-		JSAPIAuto(APIDescription(this)), mCallParams(const_cast<LinphoneCallParams *>(callParams)), mUsed(true), mConst(true) {
+		JSAPIAuto(APIDescription(this)), mCallParams(const_cast<LinphoneCallParams *>(callParams)) {
+    mUsed = true;
+    mConst = true;
 	FBLOG_DEBUG("CallParamsAPI::CallParamsAPI", "this=" << this << "\t" << "callParams=" << callParams);
 	initProxy();
 }
@@ -91,22 +95,4 @@ CallParamsAPIPtr CallParamsAPI::copy() const {
 
 CallParamsAPI::~CallParamsAPI() {
 	FBLOG_DEBUG("CallParamsAPI::~CallParamsAPI", "this=" << this);
-}
-
-CallParamsAPIPtr CallParamsAPI::get(LinphoneCallParams *callParams) {
-	if (callParams == NULL)
-		return CallParamsAPIPtr();
-
-	CallParamsAPIPtr shared_ptr;
-	shared_ptr = CallParamsAPIPtr(new CallParamsAPI(callParams));
-	return shared_ptr;
-}
-
-CallParamsAPIPtr CallParamsAPI::get(const LinphoneCallParams *callParams) {
-	if (callParams == NULL)
-		return CallParamsAPIPtr();
-
-	CallParamsAPIPtr shared_ptr;
-	shared_ptr = CallParamsAPIPtr(new CallParamsAPI(callParams));
-	return shared_ptr;
 }

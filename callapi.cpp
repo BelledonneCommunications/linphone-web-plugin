@@ -24,9 +24,12 @@
 #include "callstatsapi.h"
 #include "coreapi.h"
 #include "utils.h"
+#include "factoryapi.h"
 
 CallAPI::CallAPI(LinphoneCall *call) :
 		JSAPIAuto(APIDescription(this)), mCall(call) {
+    mUsed = true;
+    mUsed = true;
 	FBLOG_DEBUG("CallAPI::CallAPI", "this=" << this << "\t" << "call=" << call);
 	linphone_call_ref(mCall);
 	linphone_call_set_user_pointer(mCall, this);
@@ -75,7 +78,7 @@ CallAPI::~CallAPI() {
 
 CallStatsAPIPtr CallAPI::getAudioStats() const {
 	FBLOG_DEBUG("CallAPI::getAudioStats()", "this=" << this);
-	return CallStatsAPI::get(linphone_call_get_audio_stats(mCall));
+	return mFactory->get(linphone_call_get_audio_stats(mCall));
 }
 
 std::string CallAPI::getAuthenticationToken() const {
@@ -95,17 +98,17 @@ float CallAPI::getAverageQuality() const {
 
 CallLogAPIPtr CallAPI::getCallLog() const {
 	FBLOG_DEBUG("CallAPI::getCallLog()", "this=" << this);
-	return CallLogAPI::get(linphone_call_get_call_log(mCall));
+	return mFactory->get(linphone_call_get_call_log(mCall));
 }
 
 CoreAPIPtr CallAPI::getCore() const {
 	FBLOG_DEBUG("CallAPI::getCurrentQuality()", "this=" << this);
-	return CoreAPI::get(linphone_call_get_core(mCall));
+	return mFactory->get(linphone_call_get_core(mCall));
 }
 
 CallParamsAPIPtr CallAPI::getCurrentParams() const {
 	FBLOG_DEBUG("CallAPI::getCurrentParams()", "this=" << this);
-	return CallParamsAPI::get(linphone_call_get_current_params(mCall));
+	return mFactory->get(linphone_call_get_current_params(mCall));
 }
 
 float CallAPI::getCurrentQuality() const {
@@ -145,7 +148,7 @@ std::string CallAPI::getReferTo() const {
 
 AddressAPIPtr CallAPI::getRemoteAddress() const {
 	FBLOG_DEBUG("CallAPI::getRemoteAddress()", "this=" << this);
-	return AddressAPI::get(linphone_call_get_remote_address(mCall));
+	return mFactory->get(linphone_call_get_remote_address(mCall));
 }
 
 std::string CallAPI::getRemoteAddressAsString() const {
@@ -155,7 +158,7 @@ std::string CallAPI::getRemoteAddressAsString() const {
 
 CallParamsAPIPtr CallAPI::getRemoteParams() const {
 	FBLOG_DEBUG("CallAPI::getRemoteParams()", "this=" << this);
-	return CallParamsAPI::get(linphone_call_get_remote_params(mCall));
+	return mFactory->get(linphone_call_get_remote_params(mCall));
 }
 
 std::string CallAPI::getRemoteUserAgent() const {
@@ -165,7 +168,7 @@ std::string CallAPI::getRemoteUserAgent() const {
 
 CallAPIPtr CallAPI::getReplacedCall() const {
 	FBLOG_DEBUG("CallAPI::getReplacedCall()", "this=" << this);
-	return CallAPI::get(linphone_call_get_replaced_call(mCall));
+	return mFactory->get(linphone_call_get_replaced_call(mCall));
 }
 
 int CallAPI::getState() const {
@@ -180,7 +183,7 @@ int CallAPI::getTransferState() const {
 
 CallStatsAPIPtr CallAPI::getVideoStats() const {
 	FBLOG_DEBUG("CallAPI::getVideoStats()", "this=" << this);
-	return CallStatsAPI::get(linphone_call_get_video_stats(mCall));
+	return mFactory->get(linphone_call_get_video_stats(mCall));
 }
 
 bool CallAPI::inConference() const {
@@ -241,18 +244,4 @@ void CallAPI::setAuthenticationTokenVerified(bool verified) {
 void CallAPI::zoomVideo(float zoom, float cx, float cy) {
 	FBLOG_DEBUG("CallAPI::zoomVideo()", "this=" << this << "\t" << "zoom=" << zoom << ", cx=" << cx << ", cy=" << cy);
 	linphone_call_zoom_video(mCall, zoom, &cx, &cy);
-}
-
-CallAPIPtr CallAPI::get(LinphoneCall *call) {
-	if (call == NULL)
-		return CallAPIPtr();
-
-	void *ptr = linphone_call_get_user_pointer(call);
-	CallAPIPtr shared_ptr;
-	if (ptr == NULL) {
-		shared_ptr = CallAPIPtr(new CallAPI(call));
-	} else {
-		shared_ptr = boost::static_pointer_cast<CallAPI>(reinterpret_cast<CallAPI *>(ptr)->shared_from_this());
-	}
-	return shared_ptr;
 }

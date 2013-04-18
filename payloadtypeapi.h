@@ -22,14 +22,15 @@
 
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
+#include "wrapperapi.h"
 
-FB_FORWARD_PTR(CoreAPI);
+FB_FORWARD_PTR(CoreAPI)
 
 FB_FORWARD_PTR(PayloadTypeAPI)
-class PayloadTypeAPI: public FB::JSAPIAuto {
+class PayloadTypeAPI: public FB::JSAPIAuto, public WrapperAPI {
+    friend class FactoryAPI;
 private:
 	PayloadType *mPayloadType;
-	bool mConst;
 
 	PayloadTypeAPI(PayloadType *payloadType);
 	PayloadTypeAPI(const PayloadType *payloadType);
@@ -76,8 +77,6 @@ public:
 	inline PayloadType *getRef() const {
 		return mPayloadType;
 	}
-	static PayloadTypeAPIPtr get(PayloadType *payloadType);
-	static PayloadTypeAPIPtr get(const PayloadType *payloadType);
 };
 
 #endif //H_PAYLOADTYPEAPI

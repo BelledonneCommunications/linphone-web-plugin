@@ -34,8 +34,8 @@
 /// @see FB::JSAPIAuto::registerProperty
 /// @see FB::JSAPIAuto::registerEvent
 ///////////////////////////////////////////////////////////////////////////////
-VideoAPI::VideoAPI(const videoPtr& plugin, const FB::BrowserHostPtr& host) :
-		JSAPIAuto(APIDescription(this)), m_plugin(plugin), m_host(host) {
+VideoAPI::VideoAPI(const VideoPluginWeakPtr& plugin) :
+		JSAPIAuto(APIDescription(this)), mPlugin(plugin) {
 	FBLOG_DEBUG("videoAPI::videoAPI()", "this=" << this);
 
 	mWindow = VideoWindow::create();
@@ -65,8 +65,8 @@ VideoAPI::~VideoAPI() {
 ///         will throw a FB::script_error that will be translated into a
 ///         javascript exception in the page.
 ///////////////////////////////////////////////////////////////////////////////
-videoPtr VideoAPI::getPlugin() {
-	videoPtr plugin(m_plugin.lock());
+VideoPluginPtr VideoAPI::getPlugin() {
+	VideoPluginPtr plugin(mPlugin.lock());
 	if (!plugin) {
 		throw FB::script_error("The plugin is invalid");
 	}
@@ -80,12 +80,12 @@ void VideoAPI::setWindow(FB::PluginWindow *window) {
 
 const std::string &VideoAPI::getMagic() {
 	FBLOG_DEBUG("VideoAPI::getMagic()", "this=" << this);
-	return m_magic;
+	return mMagic;
 }
 
 void VideoAPI::setMagic(const std::string &magic) {
 	FBLOG_DEBUG("VideoAPI::setMagic()", "this=" << this << "\t" << "magic=" << magic);
-	m_magic = magic;
+	mMagic = magic;
 }
 
 unsigned long VideoAPI::getWindow() {

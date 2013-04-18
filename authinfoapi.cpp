@@ -21,20 +21,26 @@
 #include "utils.h"
 
 AuthInfoAPI::AuthInfoAPI(LinphoneAuthInfo *authInfo) :
-		JSAPIAuto(APIDescription(this)), mAuthInfo(authInfo), mUsed(true), mConst(false) {
+		JSAPIAuto(APIDescription(this)), mAuthInfo(authInfo) {
+    mUsed = true;
+    mConst = false;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI", "this=" << this << "\t" << "authInfo=" << authInfo);
 	initProxy();
 }
 
 AuthInfoAPI::AuthInfoAPI(const LinphoneAuthInfo *authInfo) :
-		JSAPIAuto(APIDescription(this)), mAuthInfo(const_cast<LinphoneAuthInfo *>(authInfo)), mUsed(true), mConst(true) {
+		JSAPIAuto(APIDescription(this)), mAuthInfo(const_cast<LinphoneAuthInfo *>(authInfo)) {
+    mUsed = true;
+    mConst = true;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI", "this=" << this << "\t" << "authInfo=" << authInfo);
 	initProxy();
 }
 
 
 AuthInfoAPI::AuthInfoAPI(const std::string &username, const std::string &userid, const std::string &passwd, const std::string &ha1, const std::string &realm) :
-		JSAPIAuto(APIDescription(this)), mUsed(false), mConst(false) {
+		JSAPIAuto(APIDescription(this)) {
+    mUsed = false;
+    mConst = false;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI",
 			"this=" << this << "username=" << username << ", userid=" << userid << ", passwd=" << passwd << ", ha1" << ha1 << ", realm=" << realm);
 	mAuthInfo = linphone_auth_info_new(username.c_str(), userid.c_str(), passwd.c_str(), ha1.c_str(), realm.c_str());
@@ -82,22 +88,4 @@ std::string AuthInfoAPI::getPasswd() const {
 void AuthInfoAPI::setPasswd(const std::string &passwd) {
 	FBLOG_DEBUG("AuthInfoAPI::setPasswd()", "this=" << this << "\t" << "passwd=" << passwd);
 	linphone_auth_info_set_passwd(mAuthInfo, passwd.c_str());
-}
-
-AuthInfoAPIPtr AuthInfoAPI::get(LinphoneAuthInfo *authInfo) {
-	if (authInfo == NULL)
-		return AuthInfoAPIPtr();
-
-	AuthInfoAPIPtr shared_ptr;
-	shared_ptr = AuthInfoAPIPtr(new AuthInfoAPI(authInfo));
-	return shared_ptr;
-}
-
-AuthInfoAPIPtr AuthInfoAPI::get(const LinphoneAuthInfo *authInfo) {
-	if (authInfo == NULL)
-		return AuthInfoAPIPtr();
-
-	AuthInfoAPIPtr shared_ptr;
-	shared_ptr = AuthInfoAPIPtr(new AuthInfoAPI(authInfo));
-	return shared_ptr;
 }

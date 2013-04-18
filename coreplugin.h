@@ -25,10 +25,11 @@
 #include <PluginEvents/AttachedEvent.h>
 #include <PluginCore.h>
 
+#include "factoryapi.h"
 #include <ortp/logging.h>
 
-FB_FORWARD_PTR(core)
-class core: public FB::PluginCore {
+FB_FORWARD_PTR(CorePlugin)
+class CorePlugin: public FB::PluginCore {
 private:
 #ifdef DEBUG
 	static FILE *s_log_file;
@@ -41,12 +42,11 @@ public:
 	static void StaticDeinitialize();
 
 public:
-	core();
-	virtual ~core();
+	CorePlugin();
+	virtual ~CorePlugin();
 
 public:
 	void onPluginReady();
-	virtual bool setReady();
 	void shutdown();
 	virtual FB::JSAPIPtr createJSAPI();
 	// If you want your plugin to always be windowless, set this to true

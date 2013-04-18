@@ -21,7 +21,9 @@
 #include "utils.h"
 
 CallStatsAPI::CallStatsAPI(const LinphoneCallStats *callStats) :
-		JSAPIAuto(APIDescription(this)), mCallStats(const_cast<LinphoneCallStats *>(callStats)), mUsed(true), mConst(true) {
+		JSAPIAuto(APIDescription(this)), mCallStats(const_cast<LinphoneCallStats *>(callStats)) {
+    mUsed = true;
+    mConst = true;
 	FBLOG_DEBUG("CallStatsAPI::CallStatsAPI", "this=" << this << "\t" << "callStats=" << callStats);
 	initProxy();
 }
@@ -58,13 +60,4 @@ float CallStatsAPI::getRoundTripDelay() const {
 void CallStatsAPI::setRoundTripDelay(float delay) {
 	FBLOG_DEBUG("CallStatsAPI::setRoundTripDelay", "this=" << this << "\t" << "delay=" << delay);
 	mCallStats->round_trip_delay = delay;
-}
-
-CallStatsAPIPtr CallStatsAPI::get(const LinphoneCallStats *callStats) {
-	if (callStats == NULL)
-		return CallStatsAPIPtr();
-
-	CallStatsAPIPtr shared_ptr;
-	shared_ptr = CallStatsAPIPtr(new CallStatsAPI(callStats));
-	return shared_ptr;
 }

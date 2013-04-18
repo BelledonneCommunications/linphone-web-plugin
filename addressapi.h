@@ -22,13 +22,13 @@
 
 #include <JSAPIAuto.h>
 #include <linphonecore.h>
+#include "wrapperapi.h"
 
 FB_FORWARD_PTR(AddressAPI)
-class AddressAPI: public FB::JSAPIAuto {
+class AddressAPI: public FB::JSAPIAuto, public WrapperAPI {
+    friend class FactoryAPI;
 private:
 	LinphoneAddress *mAddress;
-	bool mUsed;
-	bool mConst;
 
 	AddressAPI(LinphoneAddress *address);
 	AddressAPI(const LinphoneAddress *address);
@@ -58,8 +58,6 @@ public:
 		mUsed = true;
 		return mAddress;
 	}
-	static AddressAPIPtr get(LinphoneAddress *address);
-	static AddressAPIPtr get(const LinphoneAddress *address);
 };
 
 #endif //H_ADDRESSAPI
