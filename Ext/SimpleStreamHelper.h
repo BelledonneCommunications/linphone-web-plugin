@@ -28,10 +28,13 @@ Copyright 2011 Richard Bateman,
 #include <list>
 #include <map>
 
-namespace FB {
+namespace FB{
     FB_FORWARD_PTR(BrowserHost);
-    FB_FORWARD_PTR(SimpleStreamHelper);
+}
 
+namespace FBExt {
+    FB_FORWARD_PTR(SimpleStreamHelper);
+    
     // Modification of Manuel's answer
     struct ciLessBoost : std::binary_function<std::string, std::string, bool>
     {
@@ -41,7 +44,7 @@ namespace FB {
     };
 
     typedef std::multimap<std::string, std::string, ciLessBoost> HeaderMap;
-    typedef boost::function<void (bool, const FB::HeaderMap&, const boost::shared_array<uint8_t>&, const size_t)> HttpCallback;
+    typedef boost::function<void (bool, const FBExt::HeaderMap&, const boost::shared_array<uint8_t>&, const size_t)> HttpCallback;
     typedef boost::function<void (const size_t, const size_t)> HttpProgressCallback;
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,13 +60,13 @@ namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct HttpStreamResponse : boost::noncopyable
     {
-        HttpStreamResponse(bool success, const FB::HeaderMap& headers,
+        HttpStreamResponse(bool success, const FBExt::HeaderMap& headers,
             const boost::shared_array<uint8_t>& data, const size_t size) : success(success),
             headers(headers), data(data), size(size) { }
         // True if the request succeeded
         bool success;
         // Multimap of headers
-        const FB::HeaderMap headers;
+        const FBExt::HeaderMap headers;
         // shared_array containing the data returned by the server
         const boost::shared_array<uint8_t> data;
         // The size of data
@@ -122,7 +125,7 @@ namespace FB {
         /// @see SynchronousGet
         /// @see FB::URI
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static FB::SimpleStreamHelperPtr AsyncGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const HttpCallback& callback,
+        static FBExt::SimpleStreamHelperPtr AsyncGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const HttpCallback& callback,
             const HttpProgressCallback& progressCallback = HttpProgressCallback(), bool cache = true, size_t bufferSize = 128*1024);
 
         
@@ -165,7 +168,7 @@ namespace FB {
         /// @see SynchronousGet
         /// @see FB::URI
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static FB::SimpleStreamHelperPtr AsyncPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, const HttpCallback& callback,
+        static FBExt::SimpleStreamHelperPtr AsyncPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, const HttpCallback& callback,
             const HttpProgressCallback& progressCallback = HttpProgressCallback(), bool cache = true, size_t bufferSize = 128*1024);
 
 
@@ -240,16 +243,16 @@ namespace FB {
 
 
     public:
-        SimpleStreamHelper( const BrowserHostPtr& host, const HttpCallback& callback, const HttpProgressCallback& progressCallback = HttpProgressCallback(), const size_t blockSize = 128*1024 );
+        SimpleStreamHelper( const FB::BrowserHostPtr& host, const HttpCallback& callback, const HttpProgressCallback& progressCallback = HttpProgressCallback(), const size_t blockSize = 128*1024 );
 
         virtual bool onStreamDataArrived(FB::StreamDataArrivedEvent *evt, FB::BrowserStream *);
         virtual bool onStreamOpened(FB::StreamOpenedEvent *evt, FB::BrowserStream *);
         virtual bool onStreamCompleted(FB::StreamCompletedEvent *evt, FB::BrowserStream *);
-        static FB::HeaderMap parse_http_headers(const std::string& headers );
+        static FBExt::HeaderMap parse_http_headers(const std::string& headers );
 
     protected:
         typedef std::list<boost::shared_array<uint8_t> > BlockList;
-        BrowserHostPtr host;
+        FB::BrowserHostPtr host;
         BlockList blocks;
         boost::shared_array<uint8_t> data;
         const size_t blockSize;

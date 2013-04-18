@@ -1,4 +1,4 @@
 #!/bin/sh
-rm -rf ${HOME}/Library/Internet\ Plug-Ins/linphone-web.plugin
-mv /tmp/linphone-web.plugin ${HOME}/Library/Internet\ Plug-Ins/
+rm -rf ${HOME}/Library/Internet\ Plug-Ins/@FBSTRING_PluginFileName@.plugin
+mv /tmp/@FBSTRING_PluginFileName@.plugin ${HOME}/Library/Internet\ Plug-Ins/
 exit 0

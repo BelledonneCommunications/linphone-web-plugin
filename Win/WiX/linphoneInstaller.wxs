@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="*" Name="${FBSTRING_PluginName}" Language="1033" Version="${FBSTRING_PLUGIN_VERSION}" Manufacturer="${FBSTRING_CompanyName}" UpgradeCode="{d04684cd-332b-540f-beca-53826c14d6cf}">
+    <Product Id="*" Name="${FBSTRING_PluginName}" Language="1033" Version="${FBSTRING_PLUGIN_VERSION}" Manufacturer="${FBSTRING_CompanyName}" UpgradeCode="{${FBControl_WixUpgradeCode_GUID}}">
         <Package InstallerVersion="200" Compressed="yes" Description="Installer for the ${FBSTRING_PluginName} plugin" InstallScope="perUser" />
-        <Upgrade Id="{d04684cd-332b-540f-beca-53826c14d6cf}">
+        <Upgrade Id="{${FBControl_WixUpgradeCode_GUID}}">
             <UpgradeVersion
                 Property="OLD_VERSION_FOUND"
                 Minimum="0.0.1" IncludeMinimum="yes"
@@ -58,7 +58,7 @@
 
                             <Component Id="MainLibraries" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6a">
                                 <?if $(var.Configuration) = Debug ?>
-                                  <File Id="nplinphone-web-pdb" Source="$(var.BINSRC)/nplinphone-web.dll" />
+                                  <File Id="nplinphone-web-pdb" Source="$(var.BINSRC)/${FBSTRING_PluginFileName}.dll" />
                                 <?endif ?> 
                                 <File Id="avcodec" Source="$(var.BINSRC)/avcodec-53.dll" />
                                 <File Id="avutil" Source="$(var.BINSRC)/avutil-51.dll" />

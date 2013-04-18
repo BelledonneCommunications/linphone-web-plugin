@@ -83,7 +83,7 @@ else ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 endif ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 SET (LINPHONEWEB_SHAREDIR linphoneweb)
 SET (FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
-SET (FB_BUNDLE_DIR ${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}/Contents/MacOS)
+SET (FB_BUNDLE_DIR ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}/Contents/MacOS)
 
 # Copy dll dependencies
 ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} 
@@ -121,7 +121,7 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
 
 # Change rpath
                  COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-                 COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/ ${FB_BUNDLE_DIR}/${PLUGIN_NAME}
+                 COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/ ${FB_BUNDLE_DIR}/${FBSTRING_PluginFileName}
 )
 
 
@@ -129,7 +129,7 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
 # XPI Package
 function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set (XPI_SOURCES
-		${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}
+		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
 		${CMAKE_CURRENT_BINARY_DIR}/install.rdf
 		${CMAKE_CURRENT_SOURCE_DIR}/Mac/XPI/bootstrap.js
 		${CMAKE_CURRENT_SOURCE_DIR}/Mac/XPI/chrome.manifest
@@ -160,7 +160,7 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png ${FB_PKG_DIR}/chrome/skin/
                  
                  COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/plugins/
-                 COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT} ${FB_PKG_DIR}/plugins/${PLUGIN_NAME}.${PLUGIN_EXT}
+                 COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT} ${FB_PKG_DIR}/plugins/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
                  
                  COMMAND ${CMAKE_COMMAND} -E remove ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
                  COMMAND jar cfM ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
@@ -175,7 +175,7 @@ endfunction(create_xpi_package)
 # CRX Package
 function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set (CRX_SOURCES
-		${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}
+		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
 		${CMAKE_CURRENT_BINARY_DIR}/manifest.json
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
@@ -197,7 +197,7 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/manifest.json ${FB_PKG_DIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png ${FB_PKG_DIR}/
                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/
-                 COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT} ${FB_PKG_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}
+                 COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT} ${FB_PKG_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
 
                  COMMAND ${CMAKE_COMMAND} -E remove ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
                  COMMAND jar cfM ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx -C ${FB_PKG_DIR} .
@@ -213,7 +213,7 @@ endfunction(create_crx_package)
 # PKG Package
 function (create_pkg_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	set (PKG_SOURCES
-		${FB_OUT_DIR}/${PLUGIN_NAME}.${PLUGIN_EXT}
+		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
 	)
 	
 	if (NOT FB_PKG_PACKAGE_SUFFIX)
@@ -224,6 +224,7 @@ function (create_pkg_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/index.xml ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/index.xml)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/01linphone.xml ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/01linphone.xml)
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/01linphone-contents.xml ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/01linphone-contents.xml)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/move.sh ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/move.sh @ONLY)
 	
 	ADD_CUSTOM_TARGET(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}.pkg)
 	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}.pkg

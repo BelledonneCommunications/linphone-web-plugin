@@ -1694,10 +1694,10 @@ void CoreAPI::setZrtpSecretsFile(const std::string &secretsFile) {
 void CoreAPI::download(const std::string& url, const FB::JSObjectPtr& callback) {
 	FBLOG_DEBUG("CoreAPI::download()", "this=" << this << "\t" << "url=" << url);
 	FB::URI uri = FB::URI(url);
-	FB::SimpleStreamHelper::AsyncGet(m_host, uri, boost::bind(&CoreAPI::downloadCallback, this, uri, _1, _2, _3, _4, callback), boost::bind(&CoreAPI::downloadProgressCallback, this, uri, _1, _2, callback));
+	FBExt::SimpleStreamHelper::AsyncGet(m_host, uri, boost::bind(&CoreAPI::downloadCallback, this, uri, _1, _2, _3, _4, callback), boost::bind(&CoreAPI::downloadProgressCallback, this, uri, _1, _2, callback));
 }
 
-void CoreAPI::downloadCallback(const FB::URI& url, bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data,
+void CoreAPI::downloadCallback(const FB::URI& url, bool success, const FBExt::HeaderMap& headers, const boost::shared_array<uint8_t>& data,
 		const size_t size, const FB::JSObjectPtr& callback) {
 	if (success) {
 		FBLOG_DEBUG("CoreAPI::downloadCallback()", "Download " << url.toString() << " success");

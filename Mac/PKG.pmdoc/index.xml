@@ -11,9 +11,9 @@
 		<scripts/>
 	</distribution>
 	<contents>
-		<choice title="Linphone Web" id="linphone-web" starts_selected="true" starts_enabled="true" starts_hidden="true">
+		<choice title="${FBSTRING_PluginName}" id="${PLUGIN_NAME}" starts_selected="true" starts_enabled="true" starts_hidden="true">
 			<customLoc>/tmp</customLoc>
-			<pkgref id="com.belledonne-communications.linphone-web"/>
+			<pkgref id="${FBSTRING_CompanyDomain}.${PLUGIN_NAME}"/>
 		</choice>
 	</contents>
 	<resources bg-scale="none" bg-align="topleft">

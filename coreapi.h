@@ -255,7 +255,7 @@ public:
 	// Download
 	void download(const std::string& url, const FB::JSObjectPtr& callback);
 private:
-	void downloadCallback(const FB::URI& url, bool success, const FB::HeaderMap& headers,
+	void downloadCallback(const FB::URI& url, bool success, const FBExt::HeaderMap& headers,
 			const boost::shared_array<uint8_t>& data, const size_t size, const FB::JSObjectPtr& callback);
 	void downloadProgressCallback(const FB::URI& url, const size_t received, const size_t total, const FB::JSObjectPtr& callback);
 public:

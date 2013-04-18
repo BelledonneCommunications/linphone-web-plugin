@@ -22,7 +22,6 @@
 #include <SystemHelpers.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
-#include "Ext/FSOperations.h"
 
 const std::string LINPHONE_WEB_INTERNAL_PROTOCOL("internal");
 const std::string LINPHONE_WEB_TEMP_PROTOCOL("tmp");

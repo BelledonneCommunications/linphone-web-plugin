@@ -1,9 +1,9 @@
 <pkg-contents spec="1.12">
-	<f n="linphone-web.plugin" p="16877" pt="${PLUGIN_NAME}.${PLUGIN_EXT}" m="false" t="file">
+	<f n="${FBSTRING_PluginFileName}.${PLUGIN_EXT}" p="16877" pt="${FBSTRING_PluginFileName}.${PLUGIN_EXT}" m="false" t="file">
 		<f n="Contents" p="16877">
 			<f n="Info.plist" p="33188"/>
 			<f n="MacOS" p="16877">
-				<f n="linphone-web" p="33261"/>
+				<f n="${FBSTRING_PluginFileName}" p="33261"/>
 				<f n="linphoneweb" p="16877">
 					<f n="libavcodec.53.61.100.dylib" p="33261"/>
 					<f n="libavutil.51.35.100.dylib" p="33261"/>

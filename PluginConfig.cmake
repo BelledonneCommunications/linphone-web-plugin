@@ -21,6 +21,9 @@ set(PLUGIN_NAME "linphone-web")
 set(PLUGIN_PREFIX "LINWEB")
 set(COMPANY_NAME "belledonne-communications")
 
+# WiX
+set(FBControl_WixUpgradeCode_GUID d04684cd-332b-540f-beca-53826c14d6cf)
+
 # ActiveX constants:
 set(FBTYPELIB_NAME "LinphoneWeb")
 set(FBTYPELIB_DESC "Linphone Web 1.0 Type Library")
@@ -46,11 +49,11 @@ set(FBSTRING_CompanyDomain "com.belledonne-communication")
 set(FBSTRING_CompanyName "Belledonne Communications")
 set(FBSTRING_PLUGIN_VERSION "1.0.0.0")
 set(FBSTRING_LegalCopyright "Copyright 2012 Belledonne Communications")
-set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
+set(FBSTRING_PluginFileName "np${PLUGIN_NAME}")
 set(FBSTRING_ProductName "Linphone Web")
 set(FBSTRING_FileExtents "")
 set(FBSTRING_PluginName "Linphone Web")
-set(FBSTRING_PluginDescription "Web plugin of Linphone")
+set(FBSTRING_FileDescription "Web plugin of Linphone")
 
 set(FBSTRING_MIMEType 
 	"application/x-linphone-web"
@@ -61,7 +64,7 @@ set(ACTIVEX_PROGID
 set(FBControl_GUID 
 	1563fddd-83a0-553a-854b-a6f75ed2d5f6
 	1563fddd-83a0-553a-854b-a6f75ed2d5f7)
-set(FBSTRING_FileDescription 
+set(FBSTRING_PluginDescription 
 	"Linphone Web Plugin"
 	"Linphone Web Video Plugin")
 
