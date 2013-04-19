@@ -58,8 +58,8 @@
 
                             <Component Id="MainLibraries" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6a">
                                 <?if $(var.Configuration) = Debug ?>
-                                  <File Id="nplinphone-web-pdb" Source="$(var.BINSRC)/nplinphone-web.dll" />
-                                <?endif ?> 
+                                    <File Id="nplinphone_web_pdb" Source="$(var.BINSRC)/nplinphone-web.pdb" />
+                                <?endif ?>
                                 <File Id="avcodec" Source="$(var.BINSRC)/avcodec-53.dll" />
                                 <File Id="avutil" Source="$(var.BINSRC)/avutil-51.dll" />
                                 <File Id="libeay32" Source="$(var.BINSRC)/libeay32.dll" />
