@@ -130,7 +130,11 @@ public:
 	}
 
 	FB::Log::LogLevel getLogLevel() {
+#ifdef DEBUG
 		return FB::Log::LogLevel_Debug; // Now Debug and above is logged.
+#else
+        return FB::Log::LogLevel_Error;
+#endif //DEBUG
 	}
 };
 

@@ -18,3 +18,7 @@
  */
 
 #include "wrapperapi.h"
+
+void WrapperAPI::setFactory(FactoryAPIPtr factory) {
+    mFactory = factory;
+}

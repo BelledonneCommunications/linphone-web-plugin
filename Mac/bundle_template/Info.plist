@@ -39,7 +39,7 @@
 	<key>CFPlugInUnloadFunction</key>
 	<string></string>
 	<key>WebPluginName</key>
-	<string>${FBSTRING_ProductName}</string>
+	<string>${FBSTRING_PluginName}</string>
 	<key>WebPluginDescription</key>
 	<string>${FBSTRING_FileDescription}</string>
 	<key>WebPluginMIMETypes</key>

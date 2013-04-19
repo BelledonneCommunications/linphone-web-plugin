@@ -50,8 +50,12 @@ set(FBSTRING_CompanyName "Belledonne Communications")
 set(FBSTRING_PLUGIN_VERSION "1.0.0.0")
 set(FBSTRING_LegalCopyright "Copyright 2012 Belledonne Communications")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}")
+
+# Internal settings name
 set(FBSTRING_ProductName "Linphone Web")
 set(FBSTRING_FileExtents "")
+
+# Shown name
 set(FBSTRING_PluginName "Linphone Web")
 set(FBSTRING_FileDescription "Web plugin of Linphone")
 

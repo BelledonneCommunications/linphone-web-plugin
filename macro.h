@@ -40,31 +40,51 @@
 #ifdef CORE_THREADED
 #define DECLARE_SYNC_N_ASYNC_THREAD_FCT(class, name, argCount, argList, ret)                                                                                        \
 	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
-			void BOOST_PP_CAT(name, _async_thread) (FB::JSObjectPtr callback) {,                                                                                    \
-			void BOOST_PP_CAT(name, _async_thread) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {)   \
-	BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),                                                                                                                \
-		name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL));                                                                                       \
-		callback->InvokeAsync("", FB::variant_list_of(shared_from_this()));,                                                                                        \
-		ret value = name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL));                                                                           \
-		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(value));)                                                                                 \
-		mThreads->remove_thread(boost::this_thread::get_id());                                                                                                     \
-	}                                                                                                                                                               \
+			void BOOST_PP_CAT(name, _async_thread) (FB::JSObjectPtr callback);,                                                                                     \
+			void BOOST_PP_CAT(name, _async_thread) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback);)    \
 
 #define DECLARE_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList)                                                                                              \
 	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
-			void BOOST_PP_CAT(name, _async) (FB::JSObjectPtr callback) {,                                                                                           \
-			void BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {)          \
-		mThreads->create_thread(boost::bind(&class::BOOST_PP_CAT(name, _async_thread), this,                                                                       \
+			void BOOST_PP_CAT(name, _async) (FB::JSObjectPtr callback);,                                                                                            \
+			void BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback);)           \
+
+
+#else
+#define DECLARE_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList, ret)                                                                                         \
+	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
+			void BOOST_PP_CAT(name, _async) (FB::JSObjectPtr callback);,                                                                                            \
+			void BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback);)           \
+
+#endif //CORE_THREADED
+
+#ifdef CORE_THREADED
+#define IMPLEMENT_SYNC_N_ASYNC_THREAD_FCT(class, name, argCount, argList, ret)                                                                                           \
+	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                             \
+			void class::BOOST_PP_CAT(name, _async_thread) (FB::JSObjectPtr callback) {,                                                                                  \
+			void class::BOOST_PP_CAT(name, _async_thread) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {) \
+	BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),                                                                                                                     \
+		name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL));                                                                                            \
+		callback->InvokeAsync("", FB::variant_list_of(shared_from_this()));,                                                                                             \
+		ret value = name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL));                                                                                \
+		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(value));)                                                                                      \
+		mThreads->remove_thread(boost::this_thread::get_id());                                                                                                           \
+	}                                                                                                                                                                    \
+
+#define IMPLEMENT_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList)                                                                                            \
+	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
+			void class::BOOST_PP_CAT(name, _async) (FB::JSObjectPtr callback) {,                                                                                    \
+			void class::BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {)   \
+		mThreads->create_thread(boost::bind(&class::BOOST_PP_CAT(name, _async_thread), this,                                                                        \
 		BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL)                                                                                              \
 		BOOST_PP_IF(BOOST_PP_NOT_EQUAL(argCount, 0), BOOST_PP_COMMA, BOOST_PP_EMPTY)()                                                                              \
 		callback));                                                                                                                                                 \
 	}                                                                                                                                                               \
 
 #else
-#define DECLARE_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList, ret)                                                                                         \
+#define IMPLEMENT_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList, ret)                                                                                       \
 	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
-			void BOOST_PP_CAT(name, _async) (FB::JSObjectPtr callback) {,                                                                                           \
-			void BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {)          \
+			void class::BOOST_PP_CAT(name, _async) (FB::JSObjectPtr callback) {,                                                                                    \
+			void class::BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {)   \
 	BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),                                                                                                                \
 		name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList)));                                                                        \
 		callback->InvokeAsync("", FB::variant_list_of(shared_from_this()));,                                                                                        \
@@ -73,6 +93,7 @@
 	}                                                                                                                                                               \
 
 #endif //CORE_THREADED
+
 #ifdef CORE_THREADED
 #define DECLARE_SYNC_N_ASYNC(class, name, argCount, argList, ret)          \
 	DECLARE_SYNC_N_ASYNC_SYNC_FCT(class, name, argCount, argList, ret)     \
@@ -86,10 +107,42 @@
 
 #endif //CORE_THREADED
 
+#ifdef CORE_THREADED
+#define IMPLEMENT_SYNC_N_ASYNC(class, name, argCount, argList, ret)          \
+	IMPLEMENT_SYNC_N_ASYNC_THREAD_FCT(class, name, argCount, argList, ret)   \
+	IMPLEMENT_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList)         \
+
+#else
+#define IMPLEMENT_SYNC_N_ASYNC(class, name, argCount, argList, ret)          \
+	IMPLEMENT_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList, ret)    \
+
+#endif //CORE_THREADED
+
+
+//
+// PROPERTY FILE
+//
 #define DECLARE_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)                  \
-	void BOOST_PP_CAT(setter, _file)(const std::string &arg) {                  \
+	void BOOST_PP_CAT(setter, _file)(const std::string &arg);                   \
+
+#define DECLARE_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)                  \
+	std::string BOOST_PP_CAT(getter, _file)() const;                            \
+
+#define REGISTER_PROPERTY_FILE(class, name, getter, setter)                                                                \
+	registerProperty(name, make_property(this, &class::BOOST_PP_CAT(getter, _file), &class::BOOST_PP_CAT(setter, _file))); \
+
+
+#define DECLARE_PROPERTY_FILE(class, getter, setter)           \
+	std::string getter() const;                                \
+	void setter(const std::string &arg);                       \
+	DECLARE_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)     \
+	DECLARE_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)     \
+
+
+#define IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)                \
+	void class::BOOST_PP_CAT(setter, _file)(const std::string &arg) {           \
 		FB::URI uri(arg);                                                       \
-		std::string file = URI_TO_FILE(uri);                                    \
+		std::string file = mFactory->getFileManager()->uriToFile(uri);          \
 		if(file.length()) {                                                     \
 			setter(file);                                                       \
 		} else {                                                                \
@@ -97,11 +150,11 @@
 		}                                                                       \
 	}                                                                           \
 
-#define DECLARE_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)                  \
-	std::string BOOST_PP_CAT(getter, _file)() const {                           \
+#define IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)                \
+	std::string class::BOOST_PP_CAT(getter, _file)() const {                    \
 		std::string ret = getter();                                             \
-		FB::URI uri = FILE_TO_URI(ret);                                         \
-		if(URI_IS_FILE(uri)) {                                                  \
+		FB::URI uri = mFactory->getFileManager()->fileToUri(ret);               \
+		if(FileManagerAPI::isFile(uri)) {                                       \
 			return uri.toString();                                              \
 		} else {                                                                \
 			FBLOG_DEBUG(#class "::" #getter "_file", "Invalid file:" << ret);   \
@@ -109,14 +162,9 @@
 		return std::string();                                                   \
 	}                                                                           \
 
-#define REGISTER_PROPERTY_FILE(class, name, getter, setter)                                                                \
-	registerProperty(name, make_property(this, &class::BOOST_PP_CAT(getter, _file), &class::BOOST_PP_CAT(setter, _file))); \
 
-#define DECLARE_PROPERTY_FILE(class, getter, setter)           \
-	std::string getter() const;                                \
-	void setter(const std::string &arg);                       \
-	DECLARE_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)     \
-	DECLARE_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)     \
-	
+#define IMPLEMENT_PROPERTY_FILE(class, getter, setter)         \
+	IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)   \
+	IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)   \
 
 #endif // H_MACRO

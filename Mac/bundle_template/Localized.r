@@ -3,7 +3,7 @@
 resource 'STR#' (126) 
 { {
     "${FBSTRING_LegalCopyright}",
-    "${FBSTRING_ProductName}"
+    "${FBSTRING_PluginName}"
 } };
 
 resource 'STR#' (127) 

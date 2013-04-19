@@ -154,7 +154,7 @@
             </Directory>
         </Directory>
 
-        <Feature Id="MainPluginFeature" Title="${FBSTRING_ProductName}" Level="1">
+        <Feature Id="MainPluginFeature" Title="${FBSTRING_PluginName}" Level="1">
             <ComponentRef Id="InstallDirComp"/>
             <ComponentRef Id="PluginNameDirComp"/>
             <ComponentRef Id="CompanyDirComp"/>

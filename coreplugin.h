@@ -56,7 +56,6 @@ public:
 	virtual bool isWindowless() {
 		return true;
 	}
-	virtual void 	setFSPath (const std::string &path);
 
 	BEGIN_PLUGIN_EVENT_MAP()
 	EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindow)

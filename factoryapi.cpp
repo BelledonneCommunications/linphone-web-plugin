@@ -67,7 +67,6 @@ AuthInfoAPIPtr FactoryAPI::get(const LinphoneAuthInfo *authInfo) {
 	return get(shared_ptr);
 }
 
-
 CallAPIPtr FactoryAPI::get(LinphoneCall *call) {
 	if (call == NULL)
 		return get(CallAPIPtr());
@@ -176,4 +175,11 @@ ProxyConfigAPIPtr FactoryAPI::get(LinphoneProxyConfig *proxyConfig) {
 		shared_ptr = boost::static_pointer_cast<ProxyConfigAPI>(reinterpret_cast<ProxyConfigAPI *>(ptr)->shared_from_this());
 	}
 	return get(shared_ptr);
+}
+
+FileManagerAPIPtr FactoryAPI::getFileManager() {
+    if(!mFileManager) {
+        mFileManager = get(FileManagerAPIPtr(new FileManagerAPI()));
+    }
+    return mFileManager;
 }

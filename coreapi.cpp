@@ -28,6 +28,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <fstream>
 
+#include "factoryapi.h"
 #include "coreplugin.h"
 
 #include "addressapi.h"
@@ -39,8 +40,6 @@
 #include "coreapi.h"
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
-
-#include "factoryapi.h"
 
 #ifndef WIN32
 #else
@@ -75,7 +74,7 @@ void linphone_iterate_thread(CoreAPI *linphone_api) {
 	FBLOG_DEBUG("linphone_thread", "end");
 }
 
-void linphone_destroy_thread(LinphoneCore* core, boost::thread *thread, mythread_group *threads) {
+void linphone_destroy_thread(LinphoneCore* core, boost::thread *thread, ThreadGroup *threads) {
 	FBLOG_DEBUG("linphone_destroy_thread", "start");
 	FBLOG_DEBUG("linphone_destroy_thread", core);
 
@@ -119,7 +118,7 @@ CoreAPI::CoreAPI() :
 	FBLOG_DEBUG("CoreAPI::CoreAPI()", "this=" << this);
 #ifdef CORE_THREADED
 	mCoreThread = NULL;
-	mThreads = new mythread_group();
+	mThreads = new ThreadGroup();
 #else
 	mMimer = FB::Timer::getTimer(20, true, boost::bind(&CoreAPI::iterate, this));
 #endif
@@ -257,6 +256,7 @@ void CoreAPI::initProxy() {
 	REGISTER_PROPERTY_FILE(CoreAPI, "zrtpSecretsFile", getZrtpSecretsFile, setZrtpSecretsFile);
 
 	// Initiator bindings
+    registerMethod("getFileManager", make_method(this, &CoreAPI::getFileManager));
 	registerMethod("newProxyConfig", make_method(this, &CoreAPI::newProxyConfig));
 	registerMethod("newAuthInfo", make_method(this, &CoreAPI::newAuthInfo));
 
@@ -368,6 +368,8 @@ void CoreAPI::setMagic(const std::string &magic) {
  *
  */
 
+IMPLEMENT_SYNC_N_ASYNC(CoreAPI, invite, 1, (const std::string &), CallAPIPtr);
+
 CallAPIPtr CoreAPI::invite(const std::string &url) {
 	CORE_MUTEX
 
@@ -376,6 +378,8 @@ CallAPIPtr CoreAPI::invite(const std::string &url) {
 	CallAPIPtr shared_call = mFactory->get(call);
 	return shared_call;
 }
+
+IMPLEMENT_SYNC_N_ASYNC(CoreAPI, inviteAddress, 1, (const AddressAPIPtr &), CallAPIPtr);
 
 CallAPIPtr CoreAPI::inviteAddress(const AddressAPIPtr &address) {
 	CORE_MUTEX
@@ -386,6 +390,8 @@ CallAPIPtr CoreAPI::inviteAddress(const AddressAPIPtr &address) {
 	return shared_call;
 }
 
+IMPLEMENT_SYNC_N_ASYNC(CoreAPI, inviteWithParams, 2, (const std::string &, const CallParamsAPIPtr &), CallAPIPtr);
+
 CallAPIPtr CoreAPI::inviteWithParams(const std::string &url, const CallParamsAPIPtr &params) {
 	CORE_MUTEX
 
@@ -394,6 +400,8 @@ CallAPIPtr CoreAPI::inviteWithParams(const std::string &url, const CallParamsAPI
 	CallAPIPtr shared_call = mFactory->get(call);
 	return shared_call;
 }
+
+IMPLEMENT_SYNC_N_ASYNC(CoreAPI, inviteAddressWithParams, 2, (const AddressAPIPtr &, const CallParamsAPIPtr &), CallAPIPtr);
 
 CallAPIPtr CoreAPI::inviteAddressWithParams(const AddressAPIPtr &address, const CallParamsAPIPtr &params) {
 	CORE_MUTEX
@@ -1462,6 +1470,13 @@ void CoreAPI::clearAllAuthInfo() {
  *
  */
 
+FileManagerAPIPtr CoreAPI::getFileManager() {
+    CORE_MUTEX
+    
+    FBLOG_DEBUG("CoreAPI::newProxyConfig()", "this=" << this);
+    return mFactory->getFileManager();
+}
+
 ProxyConfigAPIPtr CoreAPI::newProxyConfig() {
 	CORE_MUTEX
 
@@ -1602,6 +1617,8 @@ float CoreAPI::getStaticPictureFps() const {
  *
  */
 
+IMPLEMENT_PROPERTY_FILE(CoreAPI, getRing, setRing);
+
 std::string CoreAPI::getRing() const {
 	CORE_MUTEX
 
@@ -1615,6 +1632,8 @@ void CoreAPI::setRing(const std::string &ring) {
 	FBLOG_DEBUG("CoreAPI::setRing()", "this=" << this << "\t" << "ring=" << ring);
 	linphone_core_set_ring(mCore, ring.c_str());
 }
+
+IMPLEMENT_PROPERTY_FILE(CoreAPI, getRingback, setRingback);
 
 std::string CoreAPI::getRingback() const {
 	CORE_MUTEX
@@ -1630,6 +1649,8 @@ void CoreAPI::setRingback(const std::string &ringback) {
 	linphone_core_set_ringback(mCore, ringback.c_str());
 }
 
+IMPLEMENT_PROPERTY_FILE(CoreAPI, getRootCa, setRootCa);
+
 std::string CoreAPI::getRootCa() const {
 	CORE_MUTEX
 
@@ -1644,6 +1665,8 @@ void CoreAPI::setRootCa(const std::string &rootCa) {
 	linphone_core_set_root_ca(mCore, rootCa.c_str());
 }
 
+IMPLEMENT_PROPERTY_FILE(CoreAPI, getStaticPicture, setStaticPicture);
+
 std::string CoreAPI::getStaticPicture() const {
 	CORE_MUTEX
 
@@ -1657,6 +1680,8 @@ void CoreAPI::setStaticPicture(const std::string &staticPicture) {
 	FBLOG_DEBUG("CoreAPI::setStaticPicture()", "this=" << this << "\t" << "staticPicture=" << staticPicture);
 	linphone_core_set_static_picture(mCore, staticPicture.c_str());
 }
+
+IMPLEMENT_PROPERTY_FILE(CoreAPI, getZrtpSecretsFile, setZrtpSecretsFile);
 
 std::string CoreAPI::getZrtpSecretsFile() const {
 	CORE_MUTEX
@@ -1682,7 +1707,7 @@ void CoreAPI::download(const std::string& url, const FB::JSObjectPtr& callback) 
 	FBLOG_DEBUG("CoreAPI::download()", "this=" << this << "\t" << "url=" << url);
 	FB::URI uri = FB::URI(url);
     CorePluginPtr corePlugin = mFactory->getPlugin();
-    if(!corePlugin) {
+    if(corePlugin) {
         FBExt::SimpleStreamHelper::AsyncGet(corePlugin->getHost(), uri, boost::bind(&CoreAPI::downloadCallback, this, uri, _1, _2, _3, _4, callback), boost::bind(&CoreAPI::downloadProgressCallback, this, uri, _1, _2, callback));
     } else {
         FBLOG_DEBUG("CoreAPI::download()", "No plugin anymore");
@@ -1710,7 +1735,7 @@ void CoreAPI::downloadCallback(const FB::URI& url, bool success, const FBExt::He
 			return;
 		}
 		downloadedFile.close();
-		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(size)(size)(url.toString())(FILE_TO_URI(local.string()).toString())(""));
+		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(size)(size)(url.toString())(mFactory->getFileManager()->fileToUri(local.string()).toString())(""));
 	} else {
 		FBLOG_WARN("CoreAPI::downloadCallback()", "this=" << this << "\t" << "Download " << url.toString() << " failure");
 		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(0)(0)(url.toString())("")("Can't download the file"));

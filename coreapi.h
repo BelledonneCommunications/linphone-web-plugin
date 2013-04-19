@@ -44,6 +44,8 @@ FB_FORWARD_PTR(CoreAPI)
 FB_FORWARD_PTR(PayloadTypeAPI)
 FB_FORWARD_PTR(ProxyConfigAPI)
 
+FB_FORWARD_PTR(FileManagerAPI)
+
 FB_FORWARD_PTR(CoreAPI)
 class CoreAPI: public FB::JSAPIAuto, public WrapperAPI {
     friend class FactoryAPI;
@@ -220,6 +222,7 @@ public:
 	void clearAllAuthInfo();
 
 	// Instantiator functions
+    FileManagerAPIPtr getFileManager();
 	ProxyConfigAPIPtr newProxyConfig();
 	AuthInfoAPIPtr newAuthInfo(const std::string &username, const std::string &userid,
 			const std::string &passwd, const std::string &ha1, const std::string &realm);
@@ -282,7 +285,7 @@ private :
 #ifdef CORE_THREADED
 	mutable boost::mutex mCoreMutex;
 	boost::thread *mCoreThread;
-	mythread_group *mThreads;
+	ThreadGroup *mThreads;
 #else
 	FB::TimerPtr mTimer;
 #endif //CORE_THREADED

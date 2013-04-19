@@ -30,6 +30,8 @@ class WrapperAPI {
     
 protected:
 	FactoryAPIPtr mFactory;
+    virtual void setFactory(FactoryAPIPtr factory);
+    
     bool mUsed;
 	bool mConst;
 };

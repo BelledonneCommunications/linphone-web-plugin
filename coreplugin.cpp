@@ -178,15 +178,12 @@ void CorePlugin::shutdown() {
 ///////////////////////////////////////////////////////////////////////////////
 FB::JSAPIPtr CorePlugin::createJSAPI() {
 	FBLOG_DEBUG("CorePlugin::createJSAPI()", this);
-	return boost::make_shared<FactoryAPI>(FB::ptr_cast<CorePlugin>(shared_from_this()))->get((LinphoneCore *)NULL);
-}
-
-void CorePlugin::setFSPath(const std::string &path) {
-	boost::filesystem::path fpath(path);
-	fpath = fpath.parent_path();
-	fpath /= std::string("linphoneweb/");
-	boost::filesystem::current_path(fpath);
-	FBLOG_DEBUG("CorePlugin::setFSPath", "Change current directory: " << fpath.string());
+    FactoryAPIPtr factory = boost::make_shared<FactoryAPI>(FB::ptr_cast<CorePlugin>(shared_from_this()));
+#ifdef DEBUG
+    // In debug initialize at startup for show logs
+    factory->getFileManager();
+#endif
+	return factory->get((LinphoneCore *)NULL);
 }
 
 bool CorePlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *) {

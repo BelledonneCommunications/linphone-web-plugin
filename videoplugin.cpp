@@ -65,10 +65,12 @@ VideoPlugin::~VideoPlugin() {
 }
 
 void VideoPlugin::onPluginReady() {
-	// When this is called, the BrowserHost is attached, the JSAPI object is
-	// created, and we are ready to interact with the page and such.  The
-	// PluginWindow may or may not have already fire the AttachedEvent at
-	// this point.
+	FB::VariantMap::iterator fnd = m_params.find("magic");
+    if (fnd != m_params.end()) {
+		if(fnd->second.is_of_type<std::string>()) {
+			FB::ptr_cast<VideoAPI>(getRootJSAPI())->setMagic(fnd->second.convert_cast<std::string>());
+		}
+	}
 }
 
 void VideoPlugin::shutdown() {
@@ -99,16 +101,6 @@ FB::JSAPIPtr VideoPlugin::createJSAPI() {
 		mVideo->setWindow(mWindow);
 	}
 	return mVideo;
-}
-
-bool VideoPlugin::setReady () {
-	FB::VariantMap::iterator fnd = m_params.find("magic");
-    if (fnd != m_params.end()) {
-		if(fnd->second.is_of_type<std::string>()) {
-			FB::ptr_cast<VideoAPI>(getRootJSAPI())->setMagic(fnd->second.convert_cast<std::string>());
-		}
-	}
-	return PluginCore::setReady();
 }
 
 bool VideoPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *win) {

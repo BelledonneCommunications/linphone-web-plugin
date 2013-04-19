@@ -33,16 +33,19 @@
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
 
+#include "filemanagerapi.h"
+
 FB_FORWARD_PTR(CorePlugin)
 
 FB_FORWARD_PTR(FactoryAPI)
 class FactoryAPI: public boost::enable_shared_from_this<FactoryAPI> {
 private:
 	CorePluginWeakPtr mPlugin;
+    FileManagerAPIPtr mFileManager;
     
     template<typename TypePtr>
     TypePtr get(TypePtr ptr) {
-        ptr->mFactory = shared_from_this();
+        ptr->setFactory(shared_from_this());
         return ptr;
     }
     
@@ -80,6 +83,8 @@ public:
     
     // ProxyConfig
     ProxyConfigAPIPtr get(LinphoneProxyConfig *proxyConfig);
+    
+    FileManagerAPIPtr getFileManager();
 };
 
 #endif // H_FACTORYAPI
