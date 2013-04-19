@@ -58,7 +58,7 @@
 
                             <Component Id="MainLibraries" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6a">
                                 <?if $(var.Configuration) = Debug ?>
-                                  <File Id="nplinphone-web-pdb" Source="$(var.BINSRC)/${FBSTRING_PluginFileName}.dll" />
+                                  <File Id="nplinphone_web_pdb" Source="$(var.BINSRC)/${FBSTRING_PluginFileName}.dll" />
                                 <?endif ?> 
                                 <File Id="avcodec" Source="$(var.BINSRC)/avcodec-53.dll" />
                                 <File Id="avutil" Source="$(var.BINSRC)/avutil-51.dll" />
