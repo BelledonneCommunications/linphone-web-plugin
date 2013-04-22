@@ -94,20 +94,21 @@ void FileManagerAPI::initializePaths() {
         FBLOG_WARN("FileManagerAPI::setFactory", "Can't find browser url: using temp path");
     }
     
+	// Create directories
+    // boost::filesystem::create_directories(internalPath);
+    boost::filesystem::create_directories(tempPath);
+    boost::filesystem::create_directories(localPath);
+
+	// Normalize
+    internalPath = boost::filesystem::canonical(internalPath);
+    tempPath = boost::filesystem::canonical(tempPath);
+    localPath = boost::filesystem::canonical(localPath);
+
     // Make generics
     internalPath = boost::filesystem::path(internalPath.generic_string());
     tempPath = boost::filesystem::path(tempPath.generic_string());
     localPath = boost::filesystem::path(localPath.generic_string());
-    
-    // Create directories
-    // boost::filesystem::create_directories(internalPath);
-    boost::filesystem::create_directories(tempPath);
-    boost::filesystem::create_directories(localPath);
-    
-    // Normalize
-    internalPath = boost::filesystem::canonical(internalPath);
-    tempPath = boost::filesystem::canonical(tempPath);
-    localPath = boost::filesystem::canonical(localPath);
+
     
     mProtocols.push_back(Protocol(Protocol::internal, internalPath));
     mProtocols.push_back(Protocol(Protocol::temp, tempPath));

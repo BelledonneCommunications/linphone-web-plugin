@@ -60,22 +60,22 @@ void CorePlugin::log(OrtpLogLevel lev, const char *fmt, va_list args) {
 void CorePlugin::enableLog() {
 #ifdef WIN32
 	WCHAR szPath[MAX_PATH]; 
-    WCHAR szFileName[MAX_PATH]; 
-    WCHAR* szAppName = TEXT(FBSTRING_PluginFileName);
-    WCHAR* szVersion = TEXT(FBSTRING_PLUGIN_VERSION);
+	WCHAR szFileName[MAX_PATH]; 
+	WCHAR* szAppName = TEXT(FBSTRING_PluginFileName);
+	WCHAR* szVersion = TEXT(FBSTRING_PLUGIN_VERSION);
 	DWORD dwBufferSize = MAX_PATH;
 	SYSTEMTIME stLocalTime;
 
 	GetLocalTime(&stLocalTime);
 	//GetTempPath(dwBufferSize, szPath);
 	ExpandEnvironmentStrings(L"%SYSTEMDRIVE%", szPath, MAX_PATH);
-	StringCchCat (szPath, MAX_PATH, L"\\TEMP\\");
+	StringCchCat(szPath, MAX_PATH, L"\\TEMP\\");
 
-    StringCchPrintf(szFileName, MAX_PATH, L"%s\\%s-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.log", 
-               szPath, szAppName, szVersion, 
-               stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay, 
-               stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond, 
-               GetCurrentProcessId(), GetCurrentThreadId());
+	StringCchPrintf(szFileName, MAX_PATH, L"%s\\%s-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.log", 
+		szPath, szAppName, szVersion, 
+		stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay,
+		stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond,
+		GetCurrentProcessId(), GetCurrentThreadId());
 	s_log_file = _wfopen(szFileName, L"w+");
 
 	linphone_core_enable_logs_with_cb(CorePlugin::log);

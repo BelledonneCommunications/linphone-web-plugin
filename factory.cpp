@@ -125,8 +125,29 @@ public:
 	}
 
 	void getLoggingMethods(FB::Log::LogMethodList& outMethods) {
+#ifndef WIN32
 		// The next line will enable logging to the console (think: printf).
 		outMethods.push_back(std::make_pair(FB::Log::LogMethod_Console, std::string()));
+#else
+		CHAR szPath[MAX_PATH]; 
+		CHAR szFileName[MAX_PATH]; 
+		CHAR* szAppName = FBSTRING_PluginFileName;
+		CHAR* szVersion = FBSTRING_PLUGIN_VERSION;
+		DWORD dwBufferSize = MAX_PATH;
+		SYSTEMTIME stLocalTime;
+
+		GetLocalTime(&stLocalTime);
+		//GetTempPath(dwBufferSize, szPath);
+		ExpandEnvironmentStringsA("%SYSTEMDRIVE%", szPath, MAX_PATH);
+		StringCchCatA(szPath, MAX_PATH, "\\TEMP\\");
+
+		StringCchPrintfA(szFileName, MAX_PATH, "%s\\%s-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld_FB.log", 
+			szPath, szAppName, szVersion, 
+			stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay,
+			stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond,
+			GetCurrentProcessId(), GetCurrentThreadId());
+		outMethods.push_back(std::make_pair(FB::Log::LogMethod_File, std::string(szFileName)));
+#endif
 	}
 
 	FB::Log::LogLevel getLogLevel() {
