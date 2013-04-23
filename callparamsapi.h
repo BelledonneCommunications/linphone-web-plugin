@@ -32,8 +32,10 @@ private:
 
 	CallParamsAPI(LinphoneCallParams *callParams);
 	CallParamsAPI(const LinphoneCallParams *callParams);
-
+    
+protected:
 	void initProxy();
+    
 public:
 	~CallParamsAPI();
 

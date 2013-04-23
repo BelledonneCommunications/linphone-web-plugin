@@ -18,6 +18,9 @@
  */
 
 #include "factoryapi.h"
+#include "Transfers/downloadfiletransferapi.h"
+#include "Transfers/uploadfiletransferapi.h"
+#include "Transfers/localfiletransferapi.h"
 
 FactoryAPI::FactoryAPI(const CorePluginWeakPtr &plugin): mPlugin(plugin) {
     
@@ -182,4 +185,15 @@ FileManagerAPIPtr FactoryAPI::getFileManager() {
         mFileManager = get(FileManagerAPIPtr(new FileManagerAPI()));
     }
     return mFileManager;
+}
+
+FileTransferAPIPtr FactoryAPI::getFileTransfer(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr &callback) {
+    if(FileManagerAPI::isFile(sourceUri) && FileManagerAPI::isHttp(targetUri)) {
+        return get(FileTransferAPIPtr(new UploadFileTransferAPI(sourceUri, targetUri, callback)));
+    } else if(FileManagerAPI::isHttp(sourceUri) && FileManagerAPI::isFile(targetUri)) {
+        return get(FileTransferAPIPtr(new DownloadFileTransferAPI(sourceUri, targetUri, callback)));
+    } else if(FileManagerAPI::isFile(sourceUri) && FileManagerAPI::isFile(targetUri)) {
+        return get(FileTransferAPIPtr(new LocalFileTransferAPI(sourceUri, targetUri, callback)));
+    }
+    return FileTransferAPIPtr();
 }

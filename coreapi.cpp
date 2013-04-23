@@ -132,7 +132,7 @@ void CoreAPI::initProxy() {
 
 	// Propery
 	registerProperty("magic", make_property(this, &CoreAPI::getMagic, &CoreAPI::setMagic));
-
+    
 	registerMethod("init", make_method(this, &CoreAPI::init));
 
 	// Call bindings
@@ -271,9 +271,6 @@ void CoreAPI::initProxy() {
 	registerProperty("echoCancellationEnabled", make_property(this, &CoreAPI::echoCancellationEnabled, &CoreAPI::enableEchoCancellation));
 	registerProperty("echoLimiterEnabled", make_property(this, &CoreAPI::echoLimiterEnabled, &CoreAPI::enableEchoLimiter));
 	registerProperty("staticPictureFps", make_property(this, &CoreAPI::getStaticPictureFps, &CoreAPI::setStaticPictureFps));
-
-	// Download
-	registerMethod("download", make_method(this, &CoreAPI::download));
 }
 
 int CoreAPI::init() {
@@ -1464,20 +1461,21 @@ void CoreAPI::clearAllAuthInfo() {
 	linphone_core_clear_all_auth_info(mCore);
 }
 
+
 /*
  *
  * Instantiator functions
  *
  */
 
-FileManagerAPIPtr CoreAPI::getFileManager() {
+FileManagerAPIPtr CoreAPI::getFileManager() const {
     CORE_MUTEX
     
     FBLOG_DEBUG("CoreAPI::newProxyConfig()", "this=" << this);
     return mFactory->getFileManager();
 }
 
-ProxyConfigAPIPtr CoreAPI::newProxyConfig() {
+ProxyConfigAPIPtr CoreAPI::newProxyConfig() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::newProxyConfig()", "this=" << this);
@@ -1485,7 +1483,7 @@ ProxyConfigAPIPtr CoreAPI::newProxyConfig() {
 }
 
 AuthInfoAPIPtr CoreAPI::newAuthInfo(const std::string &username, const std::string &userid, const std::string &passwd, const std::string &ha1,
-		const std::string &realm) {
+		const std::string &realm) const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::newAuthInfo()", "this=" << this);
@@ -1697,55 +1695,6 @@ void CoreAPI::setZrtpSecretsFile(const std::string &secretsFile) {
 	linphone_core_set_zrtp_secrets_file(mCore, secretsFile.c_str());
 }
 
-/*
- *
- * Download functions
- *
- */
-
-void CoreAPI::download(const std::string& url, const FB::JSObjectPtr& callback) {
-	FBLOG_DEBUG("CoreAPI::download()", "this=" << this << "\t" << "url=" << url);
-	FB::URI uri = FB::URI(url);
-    CorePluginPtr corePlugin = mFactory->getPlugin();
-    if(corePlugin) {
-        FBExt::SimpleStreamHelper::AsyncGet(corePlugin->getHost(), uri, boost::bind(&CoreAPI::downloadCallback, this, uri, _1, _2, _3, _4, callback), boost::bind(&CoreAPI::downloadProgressCallback, this, uri, _1, _2, callback));
-    } else {
-        FBLOG_DEBUG("CoreAPI::download()", "No plugin anymore");
-        callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(0)(0)(url)("")("Internal error"));
-    }
-}
-
-void CoreAPI::downloadCallback(const FB::URI& url, bool success, const FBExt::HeaderMap& headers, const boost::shared_array<uint8_t>& data,
-		const size_t size, const FB::JSObjectPtr& callback) {
-	if (success) {
-		FBLOG_DEBUG("CoreAPI::downloadCallback()", "this=" << this << "\t" << "Download " << url.toString() << " success");
-
-		// Build path
-		boost::filesystem::path local = boost::filesystem::path(FB::System::getTempPath());
-		local /= boost::filesystem::unique_path();
-		FBLOG_DEBUG("CoreAPI::downloadCallback()", "this=" << this << "\t" << "Write to " << local.string());
-
-		// Write to file
-		boost::filesystem::ofstream downloadedFile(local, std::ios_base::binary | std::ios_base::out);
-		downloadedFile.write(reinterpret_cast<const char*>(data.get()), size);
-		if (downloadedFile.bad()) {
-			downloadedFile.close();
-			FBLOG_DEBUG("CoreAPI::downloadCallback()", "this=" << this << "\t" << "Can't write into file " << local.string());
-			callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(size)(size)(url.toString())("")("Can't write"));
-			return;
-		}
-		downloadedFile.close();
-		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(size)(size)(url.toString())(mFactory->getFileManager()->fileToUri(local.string()).toString())(""));
-	} else {
-		FBLOG_WARN("CoreAPI::downloadCallback()", "this=" << this << "\t" << "Download " << url.toString() << " failure");
-		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(0)(0)(url.toString())("")("Can't download the file"));
-	}
-}
-
-void CoreAPI::downloadProgressCallback(const FB::URI& url, const size_t received, const size_t total, const FB::JSObjectPtr& callback) {
-	FBLOG_WARN("CoreAPI::downloadProgressCallback()", "this=" << this << "\t" << "Download " << url.toString() << " " << received << "/" << total);
-	callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(received)(total)(url.toString())("")(""));
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Callbacks

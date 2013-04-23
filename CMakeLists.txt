@@ -29,10 +29,10 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     [^.]*.cmake
     )
 	
-file (GLOB EXTENSION RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Ext/[^.]*.cpp
-    Ext/[^.]*.h
-    Ext/[^.]*.cmake
+file (GLOB TRANSFERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Transfers/[^.]*.cpp
+    Transfers/[^.]*.h
+    Transfers/[^.]*.cmake
     )
 
 include_directories(${PLUGIN_INCLUDE_DIRS})
@@ -48,11 +48,11 @@ SOURCE_GROUP(Generated FILES
     ${GENERATED}
     )
 	
-SOURCE_GROUP(Ext FILES ${EXTENSION})
+SOURCE_GROUP(Transfers FILES ${TRANSFERS})
 
 SET(SOURCES
     ${GENERAL}
-	${EXTENSION}
+    ${TRANSFERS}
     ${GENERATED}
     )
 

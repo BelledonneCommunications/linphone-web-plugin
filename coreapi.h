@@ -33,8 +33,6 @@
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
-#include "Ext/SimpleStreamHelper.h"
-
 FB_FORWARD_PTR(AddressAPI)
 FB_FORWARD_PTR(AuthInfoAPI)
 FB_FORWARD_PTR(CallAPI)
@@ -222,10 +220,10 @@ public:
 	void clearAllAuthInfo();
 
 	// Instantiator functions
-    FileManagerAPIPtr getFileManager();
-	ProxyConfigAPIPtr newProxyConfig();
+    FileManagerAPIPtr getFileManager() const;
+	ProxyConfigAPIPtr newProxyConfig() const;
 	AuthInfoAPIPtr newAuthInfo(const std::string &username, const std::string &userid,
-			const std::string &passwd, const std::string &ha1, const std::string &realm);
+			const std::string &passwd, const std::string &ha1, const std::string &realm) const;
 
 	// Dtmf
 	void sendDtmf(const std::string &dtmf);
@@ -252,14 +250,7 @@ public:
 	DECLARE_PROPERTY_FILE(CoreAPI, getStaticPicture, setStaticPicture);
 	DECLARE_PROPERTY_FILE(CoreAPI, getZrtpSecretsFile, setZrtpSecretsFile);
 
-	// Download
-	void download(const std::string& url, const FB::JSObjectPtr& callback);
-private:
-	void downloadCallback(const FB::URI& url, bool success, const FBExt::HeaderMap& headers,
-			const boost::shared_array<uint8_t>& data, const size_t size, const FB::JSObjectPtr& callback);
-	void downloadProgressCallback(const FB::URI& url, const size_t received, const size_t total, const FB::JSObjectPtr& callback);
 public:
-
 	// Event helpers
 	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const std::string&));
 	FB_JSAPI_EVENT(callStateChanged, 4, (CoreAPIPtr, CallAPIPtr, const int&, const std::string&));
@@ -276,7 +267,10 @@ public:
 		return mCore;
 	}
 
-private :
+protected:
+	void initProxy();
+    
+private:
 	std::string mMagic;
 
 	LinphoneCore *mCore; // Linphone core object
@@ -289,8 +283,6 @@ private :
 #else
 	FB::TimerPtr mTimer;
 #endif //CORE_THREADED
-
-	void initProxy();
 
 	void iterate() {
 		if (mCore != NULL)

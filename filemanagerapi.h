@@ -29,14 +29,18 @@
 #include <list>
 #include <boost/filesystem.hpp>
 
+FB_FORWARD_PTR(FileTransferAPI)
+
 FB_FORWARD_PTR(FileManagerAPI)
 class FileManagerAPI: public FB::JSAPIAuto, public WrapperAPI {
     friend class FactoryAPI;
 private:   
     FileManagerAPI();
-    void initProxy();
     void initializePaths();
     
+    /*
+     * < Protocol
+     */
     class Protocol {
     private:
         std::string mProtocol;
@@ -54,6 +58,9 @@ private:
         static const std::string temp;
         static const std::string local;
     };
+    /*
+     * Protocol >
+     */
     
     std::list<Protocol> mProtocols;
     
@@ -61,10 +68,20 @@ protected:
     virtual void setFactory(FactoryAPIPtr factory);
     
 public:
+    static bool isInternal(const FB::URI &uri);
     static bool isFile(const FB::URI &uri);
     static bool isHttp(const FB::URI &uri);
     std::string uriToFile(const FB::URI &uri);
     FB::URI fileToUri(const std::string &file);
+    
+protected:
+	void initProxy();
+    
+public:
+    FileTransferAPIPtr copy(const std::string &sourceUrl, const std::string &targetUrl, const FB::JSObjectPtr& callback);
+    void exists(const std::string &url, const FB::JSObjectPtr& callback);
+    void remove(const std::string &url, const FB::JSObjectPtr& callback);
+    void mkdir(const std::string &url, const FB::JSObjectPtr& callback);
 };
 
 #endif // H_FILEMANAGERAPI

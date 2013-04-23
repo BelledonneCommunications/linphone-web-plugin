@@ -34,7 +34,9 @@ private:
 	AddressAPI(const LinphoneAddress *address);
 	AddressAPI(const std::string &uri);
 
+protected:
 	void initProxy();
+    
 public:
 	~AddressAPI();
 

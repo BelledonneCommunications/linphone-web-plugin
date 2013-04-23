@@ -32,7 +32,9 @@ private:
 
 	CallStatsAPI(const LinphoneCallStats *callStats);
 
+protected:
 	void initProxy();
+    
 public:
 	~CallStatsAPI();
 

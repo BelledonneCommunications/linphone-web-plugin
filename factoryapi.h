@@ -19,8 +19,9 @@
 
 #ifndef H_FACTORYAPI
 #define H_FACTORYAPI
-#include <FBPointers.h>
 
+#include <JSAPIAuto.h>
+#include <URI.h>
 #include <linphonecore.h>
 
 #include "addressapi.h"
@@ -34,6 +35,7 @@
 #include "proxyconfigapi.h"
 
 #include "filemanagerapi.h"
+#include "Transfers/filetransferapi.h"
 
 FB_FORWARD_PTR(CorePlugin)
 
@@ -85,6 +87,7 @@ public:
     ProxyConfigAPIPtr get(LinphoneProxyConfig *proxyConfig);
     
     FileManagerAPIPtr getFileManager();
+    FileTransferAPIPtr getFileTransfer(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr &callback);
 };
 
 #endif // H_FACTORYAPI

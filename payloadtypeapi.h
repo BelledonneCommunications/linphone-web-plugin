@@ -34,7 +34,10 @@ private:
 
 	PayloadTypeAPI(PayloadType *payloadType);
 	PayloadTypeAPI(const PayloadType *payloadType);
+    
+protected:
 	void initProxy();
+
 public:
 	~PayloadTypeAPI();
 

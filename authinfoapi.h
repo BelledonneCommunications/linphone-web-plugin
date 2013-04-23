@@ -32,7 +32,10 @@ private:
 
 	AuthInfoAPI(LinphoneAuthInfo *authInfo);
 	AuthInfoAPI(const LinphoneAuthInfo *authInfo);
+    
+protected:
 	void initProxy();
+    
 public:
 	AuthInfoAPI(const std::string &username, const std::string &userid,
 			const std::string &passwd, const std::string &ha1, const std::string &realm);

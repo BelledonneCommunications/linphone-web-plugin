@@ -33,7 +33,10 @@ private:
 	LinphoneProxyConfig *mProxyConfig;
 
 	ProxyConfigAPI(LinphoneProxyConfig *proxyConfig);
+    
+protected:
 	void initProxy();
+    
 public:
 	ProxyConfigAPI();
 	~ProxyConfigAPI();

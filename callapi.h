@@ -37,8 +37,10 @@ private:
 	LinphoneCall *mCall;
 
 	CallAPI(LinphoneCall *call);
+    
+protected:
 	void initProxy();
-
+    
 public:
 	~CallAPI();
 	CallStatsAPIPtr getAudioStats() const;

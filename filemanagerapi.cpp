@@ -25,12 +25,21 @@
 
 #include <DOM/Window.h>
 #include <URI.h>
+#include <variant_list.h>
 #include <SystemHelpers.h>
+#include <BrowserStreamRequest.h>
+#include <SimpleStreamHelper.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/bind.hpp>
 #include <boost/bind/protect.hpp>
 #include <boost/function.hpp>
+
+#include "factoryapi.h"
+
+/*
+ * Protocol
+ */
 
 const std::string FileManagerAPI::Protocol::http("http");
 const std::string FileManagerAPI::Protocol::https("https");
@@ -39,7 +48,13 @@ const std::string FileManagerAPI::Protocol::temp("tmp");
 const std::string FileManagerAPI::Protocol::local("local");
 
 FileManagerAPI::Protocol::Protocol(const std::string &protocol, const boost::filesystem::path& path): mProtocol(protocol), mPath(path) {
-    
+}
+
+void FileManagerAPI::initProxy() {
+    registerMethod("copy", make_method(this, &FileManagerAPI::copy));
+    registerMethod("exists", make_method(this, &FileManagerAPI::exists));
+    registerMethod("mkdir", make_method(this, &FileManagerAPI::mkdir));
+    registerMethod("remove", make_method(this, &FileManagerAPI::remove));
 }
 
 const std::string &FileManagerAPI::Protocol::getProtocol() {
@@ -50,11 +65,13 @@ const boost::filesystem::path &FileManagerAPI::Protocol::getPath() {
     return mPath;
 }
 
+
+/*
+ * FileManagerAPI
+ */
+
 FileManagerAPI::FileManagerAPI() {
     initProxy();
-}
-
-void FileManagerAPI::initProxy() {
 }
 
 void FileManagerAPI::setFactory(FactoryAPIPtr factory) {
@@ -134,6 +151,10 @@ bool FileManagerAPI::isHttp(const FB::URI &uri) {
     boost::iequals(uri.protocol, Protocol::https);
 }
 
+bool FileManagerAPI::isInternal(const FB::URI &uri) {
+    return boost::iequals(uri.protocol, Protocol::internal);
+}
+
 bool FileManagerAPI::isFile(const FB::URI &uri) {
 	return boost::iequals(uri.protocol, Protocol::internal) ||
            boost::iequals(uri.protocol, Protocol::temp) ||
@@ -152,7 +173,7 @@ std::string FileManagerAPI::uriToFile(const FB::URI &uri) {
         }
         path = it->getPath().string();
         
-		boost::filesystem::path absFile = boost::filesystem::canonical(boost::filesystem::path(path + uri.path));
+		boost::filesystem::path absFile = boost::filesystem::absolute(boost::filesystem::path(path + uri.path));
 		if(!boost::starts_with(absFile.string(), path)) {
 			return std::string();
 		}
@@ -165,7 +186,7 @@ std::string FileManagerAPI::uriToFile(const FB::URI &uri) {
 FB::URI FileManagerAPI::fileToUri(const std::string &file) {
 	try {
 		FB::URI uri;
-		std::string absFile = boost::filesystem::canonical(boost::filesystem::path(file)).generic_string();
+		std::string absFile = boost::filesystem::absolute(boost::filesystem::path(file)).generic_string();
 		std::string path;
         
         // boost::starts_with(absFile, path)
@@ -183,5 +204,116 @@ FB::URI FileManagerAPI::fileToUri(const std::string &file) {
 	} catch(boost::filesystem::filesystem_error &) {
 		return FB::URI();
 	}
+}
+
+FileTransferAPIPtr FileManagerAPI::copy(const std::string &sourceUrl, const std::string &targetUrl, const FB::JSObjectPtr& callback) {
+    FBLOG_DEBUG("FileManagerAPI::copy()", "this=" << this << "\t" << "sourceUrl=" << sourceUrl << "\t" << "targetUrl=" << targetUrl << "\t" << "callback=" << callback);
+    FB::URI sourceUri(sourceUrl);
+    FB::URI targetUri(targetUrl);
+    if(FileManagerAPI::isHttp(sourceUri) && FileManagerAPI::isHttp(targetUri)) {
+        FBLOG_DEBUG("FileManagerAPI::copy()", "Can't copy two Remote resources");
+        callback->InvokeAsync("", FB::variant_list_of(false)("Can't copy two Remote resources"));
+        return FileTransferAPIPtr();
+    }
+    if(FileManagerAPI::isInternal(targetUri)) {
+        FBLOG_DEBUG("FileManagerAPI::mkdir()", "Can't copy file into Internal resources");
+        callback->InvokeAsync("", FB::variant_list_of(false)("Can't copy file into Internal resources"));
+        return;
+    }
+    FileTransferAPIPtr fileTransfer = mFactory->getFileTransfer(sourceUri, targetUri, callback);
+    return fileTransfer;
+}
+
+
+void FileManagerAPI::exists(const std::string &url, const FB::JSObjectPtr& callback) {
+    FBLOG_DEBUG("FileManagerAPI::exists()", "this=" << this << "\t" << "url=" << url << "\t" << "callback=" << callback);
+    FB::URI uri(url);
+    if(!FileManagerAPI::isFile(uri)) {
+        FBLOG_DEBUG("FileManagerAPI::exists()", "Can't check Remote resource");
+        callback->InvokeAsync("", FB::variant_list_of(false)("Can't check Remote resource"));
+        return;
+    }
+    try {
+        FB::URI uri(url);
+        std::string pathStr = uriToFile(uri);
+        if(pathStr.empty()) {
+            FBLOG_DEBUG("FileManagerAPI::exists()", "Invalid path");
+            callback->InvokeAsync("", FB::variant_list_of(false)("Invalid path"));
+            return;
+        }
+        boost::filesystem::path path(pathStr);
+        callback->InvokeAsync("", FB::variant_list_of(boost::filesystem::exists(path))(NULL));
+    } catch(boost::filesystem::filesystem_error &) {
+        FBLOG_DEBUG("FileManagerAPI::exists()", "Internal error");
+        callback->InvokeAsync("", FB::variant_list_of(false)("Internal error"));
+    }
+}
+
+void FileManagerAPI::mkdir(const std::string &url, const FB::JSObjectPtr& callback) {
+    FBLOG_DEBUG("FileManagerAPI::mkdir()", "this=" << this << "\t" << "url=" << url << "\t" << "callback=" << callback);
+    FB::URI uri(url);
+    try {
+        if(!FileManagerAPI::isFile(uri)) {
+            FBLOG_DEBUG("FileManagerAPI::mkdir()", "Can't create Remote directories");
+            callback->InvokeAsync("", FB::variant_list_of(false)("Can't create Remote directories"));
+            return;
+        }
+        if(FileManagerAPI::isInternal(uri)) {
+            FBLOG_DEBUG("FileManagerAPI::mkdir()", "Can't create Internal directories");
+            callback->InvokeAsync("", FB::variant_list_of(false)("Can't create Internal directories"));
+            return;
+        }
+        std::string pathStr = uriToFile(uri);
+        if(pathStr.empty()) {
+            FBLOG_DEBUG("FileManagerAPI::mkdir()", "Invalid path");
+            callback->InvokeAsync("", FB::variant_list_of(false)("Invalid path"));
+            return;
+        }
+        boost::filesystem::path path(pathStr);
+        if(boost::filesystem::exists(path)) {
+            FBLOG_DEBUG("FileManagerAPI::mkdir()", "The path \"" << pathStr << "\" already exists");
+            callback->InvokeAsync("", FB::variant_list_of(false)("Invalid file"));
+            return;
+        }
+        boost::filesystem::create_directories(path);
+        callback->InvokeAsync("", FB::variant_list_of(true)(NULL));
+    } catch(boost::filesystem::filesystem_error &) {
+        FBLOG_DEBUG("FileManagerAPI::mkdir()", "Internal error");
+        callback->InvokeAsync("", FB::variant_list_of(false)("Internal error"));
+    }
+}
+
+void FileManagerAPI::remove(const std::string &url, const FB::JSObjectPtr& callback) {
+    FBLOG_DEBUG("FileManagerAPI::remove()", "this=" << this << "\t" << "url=" << url << "\t" << "callback=" << callback);
+    FB::URI uri(url);
+    try {
+        if(!FileManagerAPI::isFile(uri)) {
+            FBLOG_DEBUG("FileManagerAPI::remove()", "Can't remove Remote resource");
+            callback->InvokeAsync("", FB::variant_list_of(false)("Can't remove Remote resource"));
+            return;
+        }
+        if(FileManagerAPI::isInternal(uri)) {
+            FBLOG_DEBUG("FileManagerAPI::remove()", "Can't remove Internal resource");
+            callback->InvokeAsync("", FB::variant_list_of(false)("Can't remove Internal resource"));
+            return;
+        }
+        std::string pathStr = uriToFile(uri);
+        if(pathStr.empty()) {
+            FBLOG_DEBUG("FileManagerAPI::remove()", "Invalid path");
+            callback->InvokeAsync("", FB::variant_list_of(false)("Invalid path"));
+            return;
+        }
+        boost::filesystem::path path(pathStr);
+        if(!boost::filesystem::exists(path)) {
+            FBLOG_DEBUG("FileManagerAPI::remove()", "The path \"" << pathStr << "\" doesn't exist");
+            callback->InvokeAsync("", FB::variant_list_of(false)("Invalid file"));
+            return;
+        }
+        boost::filesystem::remove_all(path);
+        callback->InvokeAsync("", FB::variant_list_of(true)(NULL));
+    } catch(boost::filesystem::filesystem_error &) {
+        FBLOG_DEBUG("FileManagerAPI::remove()", "Internal error");
+        callback->InvokeAsync("", FB::variant_list_of(false)("Internal error"));
+    }
 }
 
