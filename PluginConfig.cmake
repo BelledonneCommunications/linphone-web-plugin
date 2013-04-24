@@ -84,14 +84,13 @@ set(FBMAC_USE_COCOA 1)
 set(FBMAC_USE_COREGRAPHICS 0)
 set(FBMAC_USE_COREANIMATION 1)
 
-# Force use of filesystem v3
-set(BOOST_FILESYSTEM_V3 1)
-add_definitions(-DBOOST_FILESYSTEM_VERSION=3)
-add_boost_library(filesystem)
-
 # If you want to register per-machine on Windows, uncomment this line
 #set (FB_ATLREG_MACHINEWIDE 1)
+
+# Force use of filesystem v3
+set(BOOST_FILESYSTEM_V3 1)
+
+add_boost_library(filesystem)
 if(CMAKE_BUILD_TYPE MATCHES Debug)
 	add_firebreath_library(log4cplus)
-	add_definitions(-DDEBUG)
 endif()

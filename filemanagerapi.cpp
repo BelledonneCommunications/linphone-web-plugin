@@ -37,6 +37,43 @@
 
 #include "factoryapi.h"
 
+
+/*
+ * Boost extension
+ */
+
+namespace  boost {
+    namespace  filesystem {
+        boost::filesystem::path normalize(const boost::filesystem::path &path) {
+            boost::filesystem::path absPath = absolute(path);
+            boost::filesystem::path::iterator it = absPath.begin();
+            boost::filesystem::path result = *it++;
+            
+            // Get canonical version of the existing part
+            for (; exists(result / *it) && it != absPath.end(); ++it) {
+                result /= *it;
+            }
+            result = canonical(result);
+            
+            // For the rest remove ".." and "." in a path with no symlinks
+            for (; it != absPath.end(); ++it) {
+                // Just move back on ../
+                if (*it == "..") {
+                    result = result.parent_path();
+                }
+                // Ignore "."
+                else if (*it != ".") {
+                    // Just cat other path entries
+                    result /= *it;
+                }
+            }
+            
+            return result;
+        }
+    }
+}
+
+
 /*
  * Protocol
  */
@@ -173,7 +210,7 @@ std::string FileManagerAPI::uriToFile(const FB::URI &uri) {
         }
         path = it->getPath().string();
         
-		boost::filesystem::path absFile = boost::filesystem::absolute(boost::filesystem::path(path + uri.path));
+		boost::filesystem::path absFile = boost::filesystem::normalize(boost::filesystem::path(path + uri.path));
 		if(!boost::starts_with(absFile.string(), path)) {
 			return std::string();
 		}
@@ -186,7 +223,7 @@ std::string FileManagerAPI::uriToFile(const FB::URI &uri) {
 FB::URI FileManagerAPI::fileToUri(const std::string &file) {
 	try {
 		FB::URI uri;
-		std::string absFile = boost::filesystem::absolute(boost::filesystem::path(file)).generic_string();
+		std::string absFile = boost::filesystem::normalize(boost::filesystem::path(file)).generic_string();
 		std::string path;
         
         // boost::starts_with(absFile, path)
@@ -218,7 +255,7 @@ FileTransferAPIPtr FileManagerAPI::copy(const std::string &sourceUrl, const std:
     if(FileManagerAPI::isInternal(targetUri)) {
         FBLOG_DEBUG("FileManagerAPI::mkdir()", "Can't copy file into Internal resources");
         callback->InvokeAsync("", FB::variant_list_of(false)("Can't copy file into Internal resources"));
-        return;
+        return FileTransferAPIPtr();
     }
     FileTransferAPIPtr fileTransfer = mFactory->getFileTransfer(sourceUri, targetUri, callback);
     return fileTransfer;
@@ -242,6 +279,8 @@ void FileManagerAPI::exists(const std::string &url, const FB::JSObjectPtr& callb
             return;
         }
         boost::filesystem::path path(pathStr);
+        
+        FBLOG_DEBUG("FileManagerAPI::remove()", "Test \"" << pathStr << "\"");
         callback->InvokeAsync("", FB::variant_list_of(boost::filesystem::exists(path))(NULL));
     } catch(boost::filesystem::filesystem_error &) {
         FBLOG_DEBUG("FileManagerAPI::exists()", "Internal error");
@@ -275,6 +314,8 @@ void FileManagerAPI::mkdir(const std::string &url, const FB::JSObjectPtr& callba
             callback->InvokeAsync("", FB::variant_list_of(false)("Invalid file"));
             return;
         }
+        
+        FBLOG_DEBUG("FileManagerAPI::remove()", "Make directories \"" << pathStr << "\"");
         boost::filesystem::create_directories(path);
         callback->InvokeAsync("", FB::variant_list_of(true)(NULL));
     } catch(boost::filesystem::filesystem_error &) {
@@ -309,6 +350,8 @@ void FileManagerAPI::remove(const std::string &url, const FB::JSObjectPtr& callb
             callback->InvokeAsync("", FB::variant_list_of(false)("Invalid file"));
             return;
         }
+        
+        FBLOG_DEBUG("FileManagerAPI::remove()", "Remove \"" << pathStr << "\"");
         boost::filesystem::remove_all(path);
         callback->InvokeAsync("", FB::variant_list_of(true)(NULL));
     } catch(boost::filesystem::filesystem_error &) {

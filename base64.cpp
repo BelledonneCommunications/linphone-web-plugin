@@ -7,7 +7,7 @@
 #include "base64.h"
 #include <string.h>
 
-static const char* base64_charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+static const unsigned char* base64_charset = (const unsigned char *)"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 std::string base64_encode(const std::string& indata) {
   std::string outdata;
@@ -46,14 +46,14 @@ std::string base64_decode(const std::string& indata) {
     // Build translation table from base64_charset string (once)
     xtbl = new char[256];
     memset(xtbl, 0, 256);
-    for (char s = 0; s < 64; ++s) {
+    for (unsigned char s = 0; s < 64; ++s) {
       xtbl[base64_charset[s]] = s; 
     }
     xtbl[base64_charset[64]] = 0; // padding character
   }
 
   std::string::size_type remaining = indata.size();
-  const char* p = indata.data();
+  const unsigned char* p = (const unsigned char*)indata.data();
   while (remaining >= 4) {
     char xp[4];
     for (size_t s = 0; s < 4; ++s) xp[s] = xtbl[p[s]]; 

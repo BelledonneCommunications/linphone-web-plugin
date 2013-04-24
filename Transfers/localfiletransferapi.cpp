@@ -51,7 +51,7 @@ void LocalFileTransferAPI::start() {
     boost::filesystem::path sourceFile(sourceFileStr);
     if(!boost::filesystem::exists(sourceFile)) {
         FBLOG_DEBUG("LocalFileTransferAPI::start()", "The source path \"" << sourceFileStr << "\" doesn't exist");
-        onError("The target path doesn't exist");
+        onError("The source path doesn't exist");
         return;
     }
     
@@ -72,7 +72,7 @@ void LocalFileTransferAPI::start() {
     }
     
     mTargetFileStream.open(targetFileStr.c_str(), std::ios_base::out | std::ios_base::binary);
-    if(mSourceFileStream.fail()) {
+    if(mTargetFileStream.fail()) {
         FBLOG_DEBUG("LocalFileTransferAPI::start()", "Can't open the target file: " << targetFileStr);
         onError("Can't open the target file");
         return;
@@ -86,13 +86,13 @@ void LocalFileTransferAPI::start() {
 }
 
 void LocalFileTransferAPI::onSuccess(bool done) {
-    self.reset();
     FileTransferAPI::onSuccess(done);
+    self.reset();
 }
 
 void LocalFileTransferAPI::onError(const std::string &error) {
-    self.reset();
     FileTransferAPI::onError(error);
+    self.reset();
 }
 
 void LocalFileTransferAPI::threadFct() {

@@ -56,6 +56,22 @@ SET(SOURCES
     ${GENERATED}
     )
 
+add_definitions("-DBOOST_FILESYSTEM_VERSION=3")
+add_boost_library(filesystem)
+
+# If you want to register per-machine on Windows, uncomment this line
+#set (FB_ATLREG_MACHINEWIDE 1)
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+	add_firebreath_library(log4cplus)
+	add_definitions("-DDEBUG")
+endif()
+
+# Maximum warnings
+add_definitions("-Werror")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	add_definitions("-Wno-unused-private-field")
+endif()
+
 # This will include Win/projectDef.cmake, X11/projectDef.cmake, Mac/projectDef 
 # depending on the platform
 include_platform()
