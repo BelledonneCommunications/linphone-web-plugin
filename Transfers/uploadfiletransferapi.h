@@ -41,7 +41,7 @@ private:
 private:
 	UploadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
 	void callbackFct(bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size);
-    static void threadFctHolder(UploadFileTransferAPIPtr &self);
+	static void threadFctHolder(UploadFileTransferAPIPtr &self);
 	void threadFct();
 	
 public:

@@ -78,7 +78,7 @@ void DownloadFileTransferAPI::callbackFct(bool success, const FB::HeaderMap& hea
 }
 
 void DownloadFileTransferAPI::threadFctHolder(DownloadFileTransferAPIPtr &self, const boost::shared_array<uint8_t> &adata, size_t &size) {
-    self->threadFct(adata, size);
+	self->threadFct(adata, size);
 }
 
 void DownloadFileTransferAPI::threadFct(const boost::shared_array<uint8_t> &adata, size_t &size) {

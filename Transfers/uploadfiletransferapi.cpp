@@ -68,7 +68,7 @@ void UploadFileTransferAPI::start() {
 }
 
 void UploadFileTransferAPI::threadFctHolder(UploadFileTransferAPIPtr &self) {
-    self->threadFct();
+	self->threadFct();
 }
 
 

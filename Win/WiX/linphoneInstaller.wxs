@@ -135,6 +135,7 @@
                                                 <Component Id="ShareSoundsLinphoneRingsDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6c">
                                                     <RemoveFolder Id="RemoveShareSoundsLinphoneRingsDir" On="uninstall" />
                                                     <File Id="oldphone" Source="$(var.BINSRC)/linphoneweb/share/sounds/linphone/rings/oldphone.wav" />
+                                                    <File Id="toy-mono" Source="$(var.BINSRC)/linphoneweb/share/sounds/linphone/rings/toy-mono.wav" />
                                                     <RegistryValue
                                                         Root="HKCU"
                                                         Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsLinphoneRingsDirComp"

@@ -245,6 +245,8 @@ public:
 	// File
 	DECLARE_PROPERTY_FILE(CoreAPI, getRing, setRing);
 	DECLARE_PROPERTY_FILE(CoreAPI, getRingback, setRingback);
+	DECLARE_PROPERTY_FILE(CoreAPI, getPlayFile, setPlayFile);
+	DECLARE_PROPERTY_FILE(CoreAPI, getRecordFile, setRecordFile);
 	DECLARE_PROPERTY_FILE(CoreAPI, getRootCa, setRootCa);
 	DECLARE_PROPERTY_FILE(CoreAPI, getStaticPicture, setStaticPicture);
 	DECLARE_PROPERTY_FILE(CoreAPI, getZrtpSecretsFile, setZrtpSecretsFile);
