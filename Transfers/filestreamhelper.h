@@ -35,6 +35,9 @@ public:
             return host->CallOnMainThread(boost::bind(&AsyncRequest, host, req));
         }
         FB::BrowserStreamPtr stream(host->createStream(req, false));
+        if (!stream) {
+            throw std::runtime_error("Invalid stream");
+        }
         return AsyncRequest(host, stream, req);
     }
     

@@ -21,8 +21,9 @@
 #define H_UPLOADFILETRANSFERAPI
 
 #include "filetransferapi.h"
-
 #include "filestreamhelper.h"
+#include <fstream>
+#include <boost/filesystem.hpp>
 
 FB_FORWARD_PTR(UploadFileTransferAPI)
 class UploadFileTransferAPI: public FileTransferAPI {
@@ -30,6 +31,12 @@ class UploadFileTransferAPI: public FileTransferAPI {
 private:
     FileStreamHelperPtr mHelper;
     static const unsigned int BUFFER_SIZE;
+    
+    std::string mFileStr;
+    boost::filesystem::path mFilePath;
+    std::ifstream mFileStream;
+    
+    boost::shared_ptr<boost::thread> mThread;
     
 private:
     UploadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);

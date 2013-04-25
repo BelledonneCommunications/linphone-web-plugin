@@ -20,11 +20,9 @@
 #include "uploadfiletransferapi.h"
 #include "../coreplugin.h"
 #include "../factoryapi.h"
-#include <boost/filesystem.hpp>
-#include <fstream>
 #include "../base64.h"
 
-const unsigned int UploadFileTransferAPI::BUFFER_SIZE = 4096;
+const unsigned int UploadFileTransferAPI::BUFFER_SIZE = 32 * 1024;
 
 UploadFileTransferAPI::UploadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
     FileTransferAPI(sourceUri, targetUri, callback) {
@@ -37,60 +35,87 @@ UploadFileTransferAPI::~UploadFileTransferAPI() {
 
 void UploadFileTransferAPI::start() {
     FBLOG_DEBUG("UploadFileTransferAPI::start()", "this=" << this);
-    std::string fileStr = mFactory->getFileManager()->uriToFile(mSourceUri);
-    if(fileStr.empty()) {
+    mFileStr = mFactory->getFileManager()->uriToFile(mSourceUri);
+    if(mFileStr.empty()) {
         FBLOG_DEBUG("UploadFileTransferAPI::start()", "Invalid source path");
         onError("Invalid source path");
         return;
     }
-    FBLOG_DEBUG("UploadFileTransferAPI::start()", "sourceFile=" << fileStr);
+    FBLOG_DEBUG("UploadFileTransferAPI::start()", "sourceFile=" << mFileStr);
     
-    boost::filesystem::path file(fileStr);
-    if(!boost::filesystem::exists(file)) {
-        FBLOG_DEBUG("UploadFileTransferAPI::start()", "The path source \"" << fileStr << "\" doesn't exist");
+    mFilePath = boost::filesystem::path(mFileStr);
+    if(!boost::filesystem::exists(mFilePath)) {
+        FBLOG_DEBUG("UploadFileTransferAPI::start()", "The path source \"" << mFileStr << "\" doesn't exist");
         onError("The source path doesn't exist");
         return;
     }
-    if(boost::filesystem::is_directory(file)) {
+    if(boost::filesystem::is_directory(mFilePath)) {
         FBLOG_DEBUG("UploadFileTransferAPI::start()", "Can't upload a directory");
         onError("Can't transfer a directory");
         return;
     }
     
-    std::ifstream fileStream;
-    fileStream.open(fileStr.c_str(), std::ios_base::in | std::ios_base::binary);
-    if(fileStream.fail()) {
-        FBLOG_DEBUG("UploadFileTransferAPI::start()", "Can't open the source file: " << fileStr);
+    mFileStream.open(mFileStr.c_str(), std::ios_base::in | std::ios_base::binary);
+    if(mFileStream.fail()) {
+        FBLOG_DEBUG("UploadFileTransferAPI::start()", "Can't open the source file: " << mFileStr);
         onError("Can't open the source file");
         return;
     }
-    std::string binaryData((std::istreambuf_iterator<char>(fileStream)), std::istreambuf_iterator<char>());
-    if(fileStream.fail()) {
-        FBLOG_DEBUG("UploadFileTransferAPI::start()", "Can't read the source file: " << fileStr);
-        onError("Can't read the source file");
-        return;
-    }
-    fileStream.close();
     
-    std::string base64Data = base64_encode(binaryData);
-    
-    // Create the POST data
-    std::string postData;
-    postData += "filename=";
-    postData += file.filename().string();
-    postData += "&data=";
-    postData += base64Data;
-    
-    FBLOG_DEBUG("UploadFileTransferAPI::start()", fileStr << "(" << binaryData.length() << "->" << base64Data.length() <<")");
-    
-    // Create the request
-    FB::BrowserStreamRequest req(mTargetUri, "POST");
-    req.setPostData(postData);
-    req.setCallback(boost::bind(&UploadFileTransferAPI::callbackFct, this, _1, _2, _3, _4));
+    // Run thread
+    mThread = boost::make_shared<boost::thread>(boost::bind(&UploadFileTransferAPI::threadFct, this));
+    attachThread(mThread);
+}
 
-    // Start transfer
-    FB::BrowserHostPtr host = mFactory->getPlugin()->getHost();
-    mHelper = FileStreamHelper::AsyncRequest(host, req);
+void UploadFileTransferAPI::threadFct() {
+    FBLOG_DEBUG("UploadFileTransferAPI::threadFct()", "this=" << this);
+    try {
+        // Read the file by chunk
+        char buffer[BUFFER_SIZE];
+        size_t readSize = 1;
+        std::string binaryData;
+        while(!boost::this_thread::interruption_requested() && readSize > 0) {
+            readSize = mFileStream.readsome(buffer, BUFFER_SIZE);
+            if(mFileStream.fail()) {
+                mFileStream.close();
+                FBLOG_DEBUG("UploadFileTransferAPI::threadFct()", "File read error");
+                onError("File read error");
+                throw std::runtime_error("File read error");
+            }
+            binaryData.append(buffer, readSize);
+        }
+        mFileStream.close();
+        
+        // Convert
+        std::string base64Data = base64_encode(binaryData);
+        
+        // Create the POST data
+        std::string postData;
+        postData += "filename=";
+        postData += mFilePath.filename().string();
+        postData += "&data=";
+        postData += base64Data;
+        
+        FBLOG_DEBUG("UploadFileTransferAPI::threadFct()", mFileStr << "(" << binaryData.length() << "->" << base64Data.length() <<")");
+        
+        // Create the request
+        FB::BrowserStreamRequest req(mTargetUri, "POST");
+        req.setPostData(postData);
+        req.setCallback(boost::bind(&UploadFileTransferAPI::callbackFct, this, _1, _2, _3, _4));
+        
+        // Start transfer
+        FB::BrowserHostPtr host = mFactory->getPlugin()->getHost();
+        try {
+            mHelper = FileStreamHelper::AsyncRequest(host, req);
+        } catch(std::runtime_error&) {
+            FBLOG_DEBUG("UploadFileTransferAPI::threadFct()", "Internal error");
+            onError("Internal error");
+        }
+    } catch(std::runtime_error&) {
+        // Nothing to do
+    }
+    detachThread(boost::this_thread::get_id());
+    mThread.reset();
 }
 
 void UploadFileTransferAPI::callbackFct(bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size) {
@@ -107,6 +132,9 @@ void UploadFileTransferAPI::cancel() {
     FBLOG_DEBUG("UploadFileTransferAPI::cancel()", "this=" << this);
     if(mHelper) {
         mHelper->cancel();
+    }
+    if(mThread) {
+        mThread->interrupt();
     }
 }
 

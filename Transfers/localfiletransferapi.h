@@ -22,7 +22,6 @@
 
 #include "filetransferapi.h"
 #include <fstream>
-#include <boost/thread/mutex.hpp>
 
 FB_FORWARD_PTR(LocalFileTransferAPI)
 class LocalFileTransferAPI: public FileTransferAPI {

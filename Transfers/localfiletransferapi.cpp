@@ -113,7 +113,7 @@ void LocalFileTransferAPI::threadFct() {
                 mTargetFileStream.close();
                 FBLOG_DEBUG("LocalFileTransferAPI::threadFct()", "this=" << this << " | Can't read the source file" << mSourceFileStream.rdstate());
                 onError("Can't read the source file");
-                return;
+                throw std::runtime_error("Can't read the source file");
             }
             FBLOG_DEBUG("LocalFileTransferAPI::threadFct()", "this=" << this << " | Read " << readSize << "(" << mTransferedBytes << " of " << mTotalBytes << ")");
             mTransferedBytes += readSize;
@@ -123,13 +123,13 @@ void LocalFileTransferAPI::threadFct() {
                 mTargetFileStream.close();
                 FBLOG_DEBUG("LocalFileTransferAPI::threadFct()", "this=" << this << " | Can't write the target file " << mTargetFileStream.rdstate());
                 onError("Can't write the target file");
-                return;
+                throw std::runtime_error("Can't write the target file");
             }
         }
         if(mTransferedBytes != mTotalBytes) {
             FBLOG_DEBUG("LocalFileTransferAPI::threadFct()", "this=" << this << " | Incomplet transfer");
             onError("Incomplet transfer");
-            return;
+            throw std::runtime_error("Incomplet transfer");
         }
         FBLOG_DEBUG("LocalFileTransferAPI::threadFct()", "this=" << this << " | Done");
         onSuccess(true);
@@ -137,6 +137,7 @@ void LocalFileTransferAPI::threadFct() {
         // Nothing to do
     }
     detachThread(boost::this_thread::get_id());
+    mThread.reset();
 }
 
 void LocalFileTransferAPI::cancel() {

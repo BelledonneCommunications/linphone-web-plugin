@@ -201,7 +201,11 @@ bool FileManagerAPI::isFile(const FB::URI &uri) {
 
 std::string FileManagerAPI::uriToFile(const FB::URI &uri) {
 	try {
-		std::string path;
+        // A domain it's not valid
+        if(!uri.domain.empty()) {
+            return std::string();
+        }
+        
         // boost::iequals(uri.protocol, internalProtocol)
         std::list<Protocol>::iterator it = std::find_if(mProtocols.begin(),
                                                         mProtocols.end(),
@@ -209,7 +213,7 @@ std::string FileManagerAPI::uriToFile(const FB::URI &uri) {
         if(it == mProtocols.end()) {
             return std::string();
         }
-        path = it->getPath().string();
+        std::string path = it->getPath().string();
         
 		boost::filesystem::path absFile = boost::filesystem::normalize(boost::filesystem::path(path + uri.path));
 		if(!boost::starts_with(absFile.string(), path)) {
