@@ -28,13 +28,13 @@
 #include <Windows.h>
 #include <Dbghelp.h>
 #include <Strsafe.h>
-int GenerateDump(EXCEPTION_POINTERS* pExceptionPointers)
-{
+
+void GenerateDump(EXCEPTION_POINTERS* pExceptionPointers) {
 	BOOL bMiniDumpSuccessful;
-	WCHAR szPath[MAX_PATH]; 
-	WCHAR szFileName[MAX_PATH]; 
-	WCHAR* szAppName = TEXT(FBSTRING_PluginFileName);
-	WCHAR* szVersion = TEXT(FBSTRING_PLUGIN_VERSION);
+	CHAR szPath[MAX_PATH]; 
+	CHAR szFileName[MAX_PATH]; 
+	CHAR* szAppName = FBSTRING_PluginFileName;
+	CHAR* szVersion = FBSTRING_PLUGIN_VERSION;
 	DWORD dwBufferSize = MAX_PATH;
 	HANDLE hDumpFile;
 	SYSTEMTIME stLocalTime;
@@ -43,23 +43,26 @@ int GenerateDump(EXCEPTION_POINTERS* pExceptionPointers)
 	// Dynamic get function
 	auto hDbgHelp = LoadLibraryA("dbghelp");
 	if(hDbgHelp == NULL)
-	    return EXCEPTION_EXECUTE_HANDLER;
+	    return;
 	auto pMiniDumpWriteDump = (decltype(&MiniDumpWriteDump))GetProcAddress(hDbgHelp, "MiniDumpWriteDump");
 	if(pMiniDumpWriteDump == NULL)
-	    return EXCEPTION_EXECUTE_HANDLER;
+	    return;
 
 	GetLocalTime(&stLocalTime);
 
 	//GetTempPath(dwBufferSize, szPath);
-	ExpandEnvironmentStrings(L"%SYSTEMDRIVE%", szPath, MAX_PATH);
-	StringCchCat (szPath, MAX_PATH, L"\\TEMP\\");
+	ExpandEnvironmentStringsA("%SYSTEMDRIVE%", szPath, MAX_PATH);
+	StringCchCatA(szPath, MAX_PATH, "\\TEMP\\");
 
-	StringCchPrintf(szFileName, MAX_PATH, L"%s%s-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.dmp", 
+	StringCchPrintfA(szFileName, MAX_PATH, "%s%s-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.dmp", 
 	           szPath, szAppName, szVersion, 
 	           stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay, 
 	           stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond, 
 	           GetCurrentProcessId(), GetCurrentThreadId());
-	hDumpFile = CreateFile(szFileName, GENERIC_READ|GENERIC_WRITE, 
+
+	FBLOG_DEBUG("GenerateDump", "ExceptionCode=" << pExceptionPointers->ExceptionRecord->ExceptionCode << "\t" << "file=" << szFileName);
+
+	hDumpFile = CreateFileA(szFileName, GENERIC_READ|GENERIC_WRITE, 
 	            FILE_SHARE_WRITE|FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
 
 	ExpParam.ThreadId = GetCurrentThreadId();
@@ -70,17 +73,11 @@ int GenerateDump(EXCEPTION_POINTERS* pExceptionPointers)
 	                hDumpFile, MiniDumpWithDataSegs, &ExpParam, NULL, NULL);
 
 	CloseHandle(hDumpFile);
-
-	return EXCEPTION_EXECUTE_HANDLER;
 }
 
-LONG CALLBACK unhandled_handler(EXCEPTION_POINTERS* e)
-{
-	HANDLE hDumpFile = CreateFile(L"C:\\TEMP\AA", GENERIC_READ|GENERIC_WRITE, 
-	            FILE_SHARE_WRITE|FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
-	CloseHandle(hDumpFile);
+LONG CALLBACK unhandled_handler(EXCEPTION_POINTERS* e) {
 	GenerateDump(e);
-	return EXCEPTION_CONTINUE_SEARCH;
+	return EXCEPTION_EXECUTE_HANDLER;
 }
 #endif //WIN32
 #endif //DEBUG
@@ -109,7 +106,6 @@ public:
 		AddVectoredExceptionHandler(TRUE, unhandled_handler);
 #endif //WIN32
 #endif //DEBUG
-
 		srand((unsigned int)time(NULL));
 
 		CorePlugin::StaticInitialize();

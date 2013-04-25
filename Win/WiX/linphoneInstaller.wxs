@@ -108,8 +108,21 @@
                                             Value="${FBSTRING_PLUGIN_VERSION}"
                                             KeyPath="yes" />
                                     </Component>
+                                    <Directory Id="ShareImagesDir" Name="images">
+                                        <Component Id="ShareImagesDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6e">
+                                            <RemoveFolder Id="RemoveShareImagesDir" On="uninstall" />
+											<File Id="nowebcamCIF" Source="$(var.BINSRC)/linphoneweb/share/images/nowebcamCIF.jpg" />
+                                            <RegistryValue
+                                                Root="HKCU"
+                                                Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\ShareImagesDirComp"
+                                                Name="Uninstall"
+                                                Type="string"
+                                                Value="${FBSTRING_PLUGIN_VERSION}"
+                                                KeyPath="yes" />
+                                        </Component>
+									</Directory>
                                     <Directory Id="ShareSoundsDir" Name="sounds">
-                                        <Component Id="ShareSoundsDirComp" Guid="*">
+                                        <Component Id="ShareSoundsDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6d">
                                             <RemoveFolder Id="RemoveShareSoundsDir" On="uninstall" />
                                             <RegistryValue
                                                 Root="HKCU"
@@ -162,6 +175,7 @@
             <ComponentRef Id="MainLibraries"/>
             <ComponentRef Id="LinphoneWebDirComp"/>
             <ComponentRef Id="ShareDirComp"/>
+			<ComponentRef Id="ShareImagesDirComp"/>
             <ComponentRef Id="ShareSoundsDirComp"/>
             <ComponentRef Id="ShareSoundsLinphoneDirComp"/>
             <ComponentRef Id="ShareSoundsLinphoneRingsDirComp"/>

@@ -68,7 +68,7 @@ namespace  boost {
 	            }
 	        }
 	        
-	        return result;
+	        return boost::filesystem::path(result.generic_string());
 	    }
 	}
 }
@@ -285,7 +285,7 @@ void FileManagerAPI::exists(const std::string &url, const FB::JSObjectPtr& callb
 	    }
 	    boost::filesystem::path path(pathStr);
 	    
-	    FBLOG_DEBUG("FileManagerAPI::remove()", "Test \"" << pathStr << "\"");
+	    FBLOG_DEBUG("FileManagerAPI::exists()", "Test \"" << pathStr << "\"");
 	    callback->InvokeAsync("", FB::variant_list_of(boost::filesystem::exists(path))(NULL));
 	} catch(boost::filesystem::filesystem_error &) {
 	    FBLOG_DEBUG("FileManagerAPI::exists()", "Internal error");
@@ -320,7 +320,7 @@ void FileManagerAPI::mkdir(const std::string &url, const FB::JSObjectPtr& callba
 	        return;
 	    }
 	    
-	    FBLOG_DEBUG("FileManagerAPI::remove()", "Make directories \"" << pathStr << "\"");
+	    FBLOG_DEBUG("FileManagerAPI::mkdir()", "Make directories \"" << pathStr << "\"");
 	    boost::filesystem::create_directories(path);
 	    callback->InvokeAsync("", FB::variant_list_of(true)(NULL));
 	} catch(boost::filesystem::filesystem_error &) {

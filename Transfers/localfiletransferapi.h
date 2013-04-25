@@ -22,6 +22,7 @@
 
 #include "filetransferapi.h"
 #include <fstream>
+#include <boost/filesystem.hpp>
 
 FB_FORWARD_PTR(LocalFileTransferAPI)
 class LocalFileTransferAPI: public FileTransferAPI {
@@ -30,7 +31,11 @@ class LocalFileTransferAPI: public FileTransferAPI {
 private:
 	LocalFileTransferAPIPtr self;
 	static const unsigned int BUFFER_SIZE;
+	std::string mTargetFileStr;
+	boost::filesystem::path mTargetFilePath;
 	std::ofstream mTargetFileStream;
+	std::string mSourceFileStr;
+	boost::filesystem::path mSourceFilePath;
 	std::ifstream mSourceFileStream;
 	int mTotalBytes;
 	int mTransferedBytes;
