@@ -43,7 +43,8 @@ protected:
 	// Thread
 	void attachThread(const boost::shared_ptr<boost::thread> &thread);
 	void detachThread(boost::thread::id id);
-	
+    
+public:
 	virtual void shutdown();
 };
 

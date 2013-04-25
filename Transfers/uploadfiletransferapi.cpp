@@ -63,9 +63,14 @@ void UploadFileTransferAPI::start() {
 	}
 	
 	// Run thread
-	mThread = boost::make_shared<boost::thread>(boost::bind(&UploadFileTransferAPI::threadFct, this));
+	mThread = boost::make_shared<boost::thread>(boost::bind(&UploadFileTransferAPI::threadFctHolder, boost::static_pointer_cast<UploadFileTransferAPI>(shared_from_this())));
 	attachThread(mThread);
 }
+
+void UploadFileTransferAPI::threadFctHolder(UploadFileTransferAPIPtr &self) {
+    self->threadFct();
+}
+
 
 void UploadFileTransferAPI::threadFct() {
 	FBLOG_DEBUG("UploadFileTransferAPI::threadFct()", "this=" << this);

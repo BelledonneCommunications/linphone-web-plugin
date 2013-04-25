@@ -67,8 +67,11 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 # Maximum warnings
-add_definitions("-Werror")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+	add_definitions("-Werror")
+endif()
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	add_definitions("-Werror")
 	add_definitions("-Wno-unused-private-field")
 endif()
 

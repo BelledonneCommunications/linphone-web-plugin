@@ -73,11 +73,15 @@ void DownloadFileTransferAPI::callbackFct(bool success, const FB::HeaderMap& hea
 	}
 	
 	// Run thread
-	mThread = boost::make_shared<boost::thread>(boost::bind(&DownloadFileTransferAPI::threadFct, this, data, size));
+	mThread = boost::make_shared<boost::thread>(boost::bind(DownloadFileTransferAPI::threadFctHolder, boost::static_pointer_cast<DownloadFileTransferAPI>(shared_from_this()), data, size));
 	attachThread(mThread);
 }
 
-void DownloadFileTransferAPI::threadFct(const boost::shared_array<uint8_t> adata, size_t size) {
+void DownloadFileTransferAPI::threadFctHolder(DownloadFileTransferAPIPtr &self, const boost::shared_array<uint8_t> &adata, size_t &size) {
+    self->threadFct(adata, size);
+}
+
+void DownloadFileTransferAPI::threadFct(const boost::shared_array<uint8_t> &adata, size_t &size) {
 	FBLOG_DEBUG("DownloadFileTransferAPI::threadFct()", "this=" << this);
 	
 	mFileStream.open(mFileStr.c_str(), std::ios_base::out | std::ios_base::binary);

@@ -83,21 +83,22 @@ void LocalFileTransferAPI::start() {
 	}
 	
 	mTransferedBytes = 0;
-	self = boost::static_pointer_cast<LocalFileTransferAPI>(shared_from_this());
 	
 	// Run thread
-	mThread = boost::make_shared<boost::thread>(boost::bind(&LocalFileTransferAPI::threadFct, this));
+	mThread = boost::make_shared<boost::thread>(boost::bind(&LocalFileTransferAPI::threadFctHolder, boost::static_pointer_cast<LocalFileTransferAPI>(shared_from_this())));
 	attachThread(mThread);
 }
 
 void LocalFileTransferAPI::onSuccess(bool done) {
 	FileTransferAPI::onSuccess(done);
-	self.reset();
 }
 
 void LocalFileTransferAPI::onError(const std::string &error) {
 	FileTransferAPI::onError(error);
-	self.reset();
+}
+
+void LocalFileTransferAPI::threadFctHolder(LocalFileTransferAPIPtr &self) {
+    self->threadFct();
 }
 
 void LocalFileTransferAPI::threadFct() {

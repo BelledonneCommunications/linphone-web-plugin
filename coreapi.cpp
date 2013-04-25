@@ -69,7 +69,7 @@ void CoreAPI::destroyThread(LinphoneCore *core) {
 	FBLOG_DEBUG("CoreAPI::destroyThread", "end" << "\t" << "core=" << core);
 }
 
-void CoreAPI::iterateThread(CoreAPIPtr core) {
+void CoreAPI::iterateThread(CoreAPIPtr &core) {
 	FBLOG_DEBUG("CoreAPI::iterateThread", "start" << "\t" << "core=" << core);
 
 	boost::this_thread::disable_interruption di;

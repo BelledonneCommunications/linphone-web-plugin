@@ -289,7 +289,7 @@ private:
 
 #ifdef CORE_THREADED
 	static void destroyThread(LinphoneCore *core);
-	static void iterateThread(CoreAPIPtr core);
+	static void iterateThread(CoreAPIPtr &core);
 	void iterateWithMutex() {
 		boost::mutex::scoped_lock scopedLock(mCoreMutex);
 		iterate();

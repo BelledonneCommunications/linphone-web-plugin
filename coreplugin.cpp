@@ -134,6 +134,7 @@ void CorePlugin::StaticDeinitialize() {
 ///         the JSAPI object until the onPluginReady method is called
 ///////////////////////////////////////////////////////////////////////////////
 CorePlugin::CorePlugin() {
+    FBLOG_DEBUG("CorePlugin::CorePlugin", "this" << this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -144,6 +145,7 @@ CorePlugin::~CorePlugin() {
 	// root object) and tell the host to free the retained JSAPI objects then
 	// unless you are holding another shared_ptr reference to your JSAPI object
 	// they will be released here.
+    FBLOG_DEBUG("CorePlugin::~CorePlugin", "this=" << this);
 	releaseRootJSAPI();
 	m_host->freeRetainedObjects();
 }
@@ -163,6 +165,10 @@ void CorePlugin::shutdown() {
 	// object should be released here so that this object can be safely
 	// destroyed. This is the last point that shared_from_this and weak_ptr
 	// references to this object will be valid
+    FBLOG_DEBUG("CorePlugin::shutdown", "this=" << this);
+    
+    // Sometimes the object is release before shutdown
+    getRootJSAPI()->shutdown();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
