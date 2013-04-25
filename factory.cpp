@@ -43,10 +43,10 @@ void GenerateDump(EXCEPTION_POINTERS* pExceptionPointers) {
 	// Dynamic get function
 	auto hDbgHelp = LoadLibraryA("dbghelp");
 	if(hDbgHelp == NULL)
-	    return;
+		return;
 	auto pMiniDumpWriteDump = (decltype(&MiniDumpWriteDump))GetProcAddress(hDbgHelp, "MiniDumpWriteDump");
 	if(pMiniDumpWriteDump == NULL)
-	    return;
+		return;
 
 	GetLocalTime(&stLocalTime);
 
@@ -55,22 +55,22 @@ void GenerateDump(EXCEPTION_POINTERS* pExceptionPointers) {
 	StringCchCatA(szPath, MAX_PATH, "\\TEMP\\");
 
 	StringCchPrintfA(szFileName, MAX_PATH, "%s%s-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.dmp", 
-	           szPath, szAppName, szVersion, 
-	           stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay, 
-	           stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond, 
-	           GetCurrentProcessId(), GetCurrentThreadId());
+			   szPath, szAppName, szVersion, 
+			   stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay, 
+			   stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond, 
+			   GetCurrentProcessId(), GetCurrentThreadId());
 
 	FBLOG_DEBUG("GenerateDump", "ExceptionCode=" << pExceptionPointers->ExceptionRecord->ExceptionCode << "\t" << "file=" << szFileName);
 
 	hDumpFile = CreateFileA(szFileName, GENERIC_READ|GENERIC_WRITE, 
-	            FILE_SHARE_WRITE|FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
+				FILE_SHARE_WRITE|FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
 
 	ExpParam.ThreadId = GetCurrentThreadId();
 	ExpParam.ExceptionPointers = pExceptionPointers;
 	ExpParam.ClientPointers = TRUE;
 
 	bMiniDumpSuccessful = pMiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), 
-	                hDumpFile, MiniDumpWithDataSegs, &ExpParam, NULL, NULL);
+					hDumpFile, MiniDumpWithDataSegs, &ExpParam, NULL, NULL);
 
 	CloseHandle(hDumpFile);
 }
@@ -150,7 +150,7 @@ public:
 #ifdef DEBUG
 		return FB::Log::LogLevel_Debug; // Now Debug and above is logged.
 #else
-	    return FB::Log::LogLevel_Error;
+		return FB::Log::LogLevel_Error;
 #endif //DEBUG
 	}
 };

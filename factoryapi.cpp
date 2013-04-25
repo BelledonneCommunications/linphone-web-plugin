@@ -199,18 +199,18 @@ ProxyConfigAPIPtr FactoryAPI::get(LinphoneProxyConfig *proxyConfig) {
 
 FileManagerAPIPtr FactoryAPI::getFileManager() {
 	if(!mFileManager) {
-	    mFileManager = get(FileManagerAPIPtr(new FileManagerAPI()));
+		mFileManager = get(FileManagerAPIPtr(new FileManagerAPI()));
 	}
 	return mFileManager;
 }
 
 FileTransferAPIPtr FactoryAPI::getFileTransfer(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr &callback) {
 	if(FileManagerAPI::isFile(sourceUri) && FileManagerAPI::isHttp(targetUri)) {
-	    return get(FileTransferAPIPtr(new UploadFileTransferAPI(sourceUri, targetUri, callback)));
+		return get(FileTransferAPIPtr(new UploadFileTransferAPI(sourceUri, targetUri, callback)));
 	} else if(FileManagerAPI::isHttp(sourceUri) && FileManagerAPI::isFile(targetUri)) {
-	    return get(FileTransferAPIPtr(new DownloadFileTransferAPI(sourceUri, targetUri, callback)));
+		return get(FileTransferAPIPtr(new DownloadFileTransferAPI(sourceUri, targetUri, callback)));
 	} else if(FileManagerAPI::isFile(sourceUri) && FileManagerAPI::isFile(targetUri)) {
-	    return get(FileTransferAPIPtr(new LocalFileTransferAPI(sourceUri, targetUri, callback)));
+		return get(FileTransferAPIPtr(new LocalFileTransferAPI(sourceUri, targetUri, callback)));
 	}
 	return FileTransferAPIPtr();
 }

@@ -46,8 +46,8 @@ private:
 	FileManagerAPIPtr mFileManager;
 	template<typename TypePtr>
 	TypePtr get(TypePtr ptr) {
-	    ptr->setFactory(shared_from_this());
-	    return ptr;
+		ptr->setFactory(shared_from_this());
+		return ptr;
 	}
 	
 public:

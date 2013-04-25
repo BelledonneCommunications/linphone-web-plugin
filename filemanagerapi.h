@@ -42,20 +42,20 @@ private:
 	 */
 	class Protocol {
 	private:
-	    std::string mProtocol;
-	    boost::filesystem::path mPath;
-	    
+		std::string mProtocol;
+		boost::filesystem::path mPath;
+		
 	public:
-	    Protocol(const std::string &protocol, const boost::filesystem::path& path);
-	    const std::string &getProtocol();
-	    const boost::filesystem::path &getPath();
-	    
+		Protocol(const std::string &protocol, const boost::filesystem::path& path);
+		const std::string &getProtocol();
+		const boost::filesystem::path &getPath();
+		
 	public:
-	    static const std::string http;
-	    static const std::string https;
-	    static const std::string internal;
-	    static const std::string temp;
-	    static const std::string local;
+		static const std::string http;
+		static const std::string https;
+		static const std::string internal;
+		static const std::string temp;
+		static const std::string local;
 	};
 	/*
 	 * Protocol >

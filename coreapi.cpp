@@ -300,7 +300,7 @@ int CoreAPI::init() {
 
 #ifdef CORE_THREADED
 		mCoreThread = boost::make_shared<boost::thread>(CoreAPI::iterateThread, boost::static_pointer_cast<CoreAPI>(shared_from_this()));
-	    attachThread(mCoreThread);
+		attachThread(mCoreThread);
 #else
 		mTimer->start();
 #endif
@@ -324,16 +324,16 @@ CoreAPI::~CoreAPI() {
 		linphone_core_set_user_data(mCore, NULL);
 
 #ifdef CORE_THREADED
-	    // TODO find a better way to do that
-	    boost::thread t(boost::bind(CoreAPI::destroyThread, mCore));
+		// TODO find a better way to do that
+		boost::thread t(boost::bind(CoreAPI::destroyThread, mCore));
 #else
 		mTimer->stop();
-	    linphone_core_destroy(mCore);
-	    sInstanceMutex.lock();
+		linphone_core_destroy(mCore);
+		sInstanceMutex.lock();
 		--sInstanceCount;
 		sInstanceMutex.unlock();
 #endif //CORE_THREADED
-	    mCore = NULL;
+		mCore = NULL;
 	}
 }
 
@@ -1813,128 +1813,128 @@ void CoreAPI::onCallEncryptionChanged(LinphoneCall *call, bool_t on, const char 
 
 void CoreAPI::wrapper_global_state_changed(LinphoneCore *lc, LinphoneGlobalState gstate, const char *message) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onGlobalStateChanged(gstate, message);
+		GLC_THIS()->onGlobalStateChanged(gstate, message);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_global_state_changed", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_global_state_changed", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_registration_state_changed(LinphoneCore *lc, LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onRegistrationStateChanged(cfg, cstate, message);
+		GLC_THIS()->onRegistrationStateChanged(cfg, cstate, message);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_registration_state_changed", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_registration_state_changed", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_call_state_changed(LinphoneCore *lc, LinphoneCall *call, LinphoneCallState cstate, const char *message) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onCallStateChanged(call, cstate, message);
+		GLC_THIS()->onCallStateChanged(call, cstate, message);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_call_state_changed", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_call_state_changed", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_notify_presence_recv(LinphoneCore *lc, LinphoneFriend * lf) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onNotifyPresenceRecv(lf);
+		GLC_THIS()->onNotifyPresenceRecv(lf);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_notify_presence_recv", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_notify_presence_recv", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_new_subscription_request(LinphoneCore *lc, LinphoneFriend *lf, const char *url) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onNewSubscriptionRequest(lf, url);
+		GLC_THIS()->onNewSubscriptionRequest(lf, url);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_new_subscription_request", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_new_subscription_request", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onAuthInfoRequested(realm, username);
+		GLC_THIS()->onAuthInfoRequested(realm, username);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_auth_info_requested", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_auth_info_requested", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_call_log_updated(LinphoneCore *lc, LinphoneCallLog *newcl) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onCallLogUpdated(newcl);
+		GLC_THIS()->onCallLogUpdated(newcl);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_call_log_updated", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_call_log_updated", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_text_received(LinphoneCore *lc, LinphoneChatRoom *room, const LinphoneAddress *from, const char *message) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onTextReceived(room, from, message);
+		GLC_THIS()->onTextReceived(room, from, message);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_text_received", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_text_received", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_dtmf_received(LinphoneCore *lc, LinphoneCall *call, int dtmf) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onDtmfReceived(call, dtmf);
+		GLC_THIS()->onDtmfReceived(call, dtmf);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_dtmf_received", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_dtmf_received", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_refer_received(LinphoneCore *lc, const char *refer_to) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onReferReceived(refer_to);
+		GLC_THIS()->onReferReceived(refer_to);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_refer_received", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_refer_received", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_buddy_info_updated(LinphoneCore *lc, LinphoneFriend *lf) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onBuddyInfoUpdated(lf);
+		GLC_THIS()->onBuddyInfoUpdated(lf);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_buddy_info_updated", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_buddy_info_updated", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_notify_recv(LinphoneCore *lc, LinphoneCall *call, const char *from, const char *event) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onNotifyRecv(call, from, event);
+		GLC_THIS()->onNotifyRecv(call, from, event);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_notify_recv", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_notify_recv", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_display_status(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onDisplayStatus(message);
+		GLC_THIS()->onDisplayStatus(message);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_display_status", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_display_status", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_display_message(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onDisplayMessage(message);
+		GLC_THIS()->onDisplayMessage(message);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_display_message", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_display_message", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_display_warning(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onDisplayWarning(message);
+		GLC_THIS()->onDisplayWarning(message);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_display_warning", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_display_warning", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_display_url(LinphoneCore *lc, const char *message, const char *url) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onDisplayUrl(message, url);
+		GLC_THIS()->onDisplayUrl(message, url);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_display_url", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_display_url", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_show(LinphoneCore *lc) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onShow();
+		GLC_THIS()->onShow();
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_show", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_show", "No proxy defined !");
 	}
 }
 void CoreAPI::wrapper_call_encryption_changed(LinphoneCore *lc, LinphoneCall *call, bool_t on, const char *authentication_token) {
 	if (GLC_DEFINED()) {
-	    GLC_THIS()->onCallEncryptionChanged(call, on, authentication_token);
+		GLC_THIS()->onCallEncryptionChanged(call, on, authentication_token);
 	} else {
-	    FBLOG_ERROR("CoreAPI::wrapper_call_encryption_changed", "No proxy defined !");
+		FBLOG_ERROR("CoreAPI::wrapper_call_encryption_changed", "No proxy defined !");
 	}
 }
 

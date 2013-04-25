@@ -47,9 +47,9 @@ void VideoWindowMac::setWindow(FB::PluginWindow *window) {
 	if (wnd) {
 		FBLOG_DEBUG("VideoWindowMac::setWindow()", "this=" << this << "\t" << "Model=" << wnd->getDrawingModel());
 		mWindow = wnd->getDrawingPrimitive();
-	    if (FB::PluginWindowMac::DrawingModelInvalidatingCoreAnimation == wnd->getDrawingModel())
-	        wnd->StartAutoInvalidate(1.0/30.0);
-	    
+		if (FB::PluginWindowMac::DrawingModelInvalidatingCoreAnimation == wnd->getDrawingModel())
+			wnd->StartAutoInvalidate(1.0/30.0);
+		
 		FBLOG_DEBUG("VideoWindowMac::setWindow()", "this=" << this << "\t" << "LOAD DRAWINGPRIMITIVE=" << mWindow);
 	} else {
 		mWindow = NULL;
