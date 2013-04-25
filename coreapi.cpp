@@ -235,6 +235,8 @@ void CoreAPI::initProxy() {
 	// File bindings
 	REGISTER_PROPERTY_FILE(CoreAPI, "ring", getRing, setRing);
 	REGISTER_PROPERTY_FILE(CoreAPI, "ringback", getRingback, setRingback);
+	REGISTER_PROPERTY_FILE(CoreAPI, "playFile", getPlayFile, setPlayFile);
+	REGISTER_PROPERTY_FILE(CoreAPI, "recordFile", getRecordFile, setRecordFile);
 	REGISTER_PROPERTY_FILE(CoreAPI, "rootCa", getRootCa, setRootCa);
 	REGISTER_PROPERTY_FILE(CoreAPI, "staticPicture", getStaticPicture, setStaticPicture);
 	REGISTER_PROPERTY_FILE(CoreAPI, "zrtpSecretsFile", getZrtpSecretsFile, setZrtpSecretsFile);
@@ -1631,6 +1633,40 @@ void CoreAPI::setRingback(const std::string &ringback) {
 
 	FBLOG_DEBUG("CoreAPI::setRingback()", "this=" << this << "\t" << "ringback=" << ringback);
 	linphone_core_set_ringback(mCore, ringback.c_str());
+}
+
+IMPLEMENT_PROPERTY_FILE(CoreAPI, getPlayFile, setPlayFile);
+
+std::string CoreAPI::getPlayFile() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getPlayFile()", "this=" << this);
+	//TODO STUB
+	return "";// CHARPTR_TO_STRING(linphone_core_get_ringback(mCore));
+}
+
+void CoreAPI::setPlayFile(const std::string &playFile) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setPlayFile()", "this=" << this << "\t" << "playFile=" << playFile);
+	linphone_core_set_play_file(mCore, playFile.c_str());
+}
+
+IMPLEMENT_PROPERTY_FILE(CoreAPI, getRecordFile, setRecordFile);
+
+std::string CoreAPI::getRecordFile() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getRecordFile()", "this=" << this);
+	//TODO STUB
+	return "";// CHARPTR_TO_STRING(linphone_core_get_ringback(mCore));
+}
+
+void CoreAPI::setRecordFile(const std::string &recordFile) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setRecordFile()", "this=" << this << "\t" << "recordFile=" << recordFile);
+	linphone_core_set_record_file(mCore, recordFile.c_str());
 }
 
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getRootCa, setRootCa);

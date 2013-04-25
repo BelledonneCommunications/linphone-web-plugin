@@ -82,7 +82,7 @@ void LocalFileTransferAPI::onError(const std::string &error) {
 }
 
 void LocalFileTransferAPI::threadFctHolder(LocalFileTransferAPIPtr &self) {
-    self->threadFct();
+	self->threadFct();
 }
 
 void LocalFileTransferAPI::threadFct() {

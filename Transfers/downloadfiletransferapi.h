@@ -42,7 +42,7 @@ private:
 	DownloadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
 	void callbackFct(bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size);
 	void threadFct(const boost::shared_array<uint8_t> &data, size_t &size);
-    static void threadFctHolder(DownloadFileTransferAPIPtr &self, const boost::shared_array<uint8_t> &data, size_t &size);
+	static void threadFctHolder(DownloadFileTransferAPIPtr &self, const boost::shared_array<uint8_t> &data, size_t &size);
 	
 public:
 	~DownloadFileTransferAPI();

@@ -32,6 +32,7 @@
 								<f n="ringback.wav" p="33188"/>
 								<f n="rings" p="16877">
 									<f n="oldphone.wav" p="33188"/>
+									<f n="toy-mono.wav" p="33188"/>
 								</f>
 							</f>
 						</f>

@@ -42,9 +42,9 @@ private:
 	boost::shared_ptr<boost::thread> mThread;
 	
 	LocalFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
-    static void threadFctHolder(LocalFileTransferAPIPtr &self);
+	static void threadFctHolder(LocalFileTransferAPIPtr &self);
 	void threadFct();
-    
+	
 protected:
 	virtual void onSuccess(bool done);
 	virtual void onError(const std::string &error);
