@@ -20,14 +20,13 @@
 #ifndef H_FILETRANSFERAPI
 #define H_FILETRANSFERAPI
 
-#include <JSAPIAuto.h>
 #include <linphonecore.h>
 #include "../wrapperapi.h"
 
 #include <URI.h>
 
 FB_FORWARD_PTR(FileTransferAPI)
-class FileTransferAPI: public FB::JSAPIAuto, public WrapperAPI {
+class FileTransferAPI: public WrapperAPI {
     friend class FactoryAPI;
 protected:
     const FB::URI mSourceUri;

@@ -21,7 +21,7 @@
 #include "utils.h"
 
 CallStatsAPI::CallStatsAPI(const LinphoneCallStats *callStats) :
-		JSAPIAuto(APIDescription(this)), mCallStats(const_cast<LinphoneCallStats *>(callStats)) {
+		WrapperAPI(APIDescription(this)), mCallStats(const_cast<LinphoneCallStats *>(callStats)) {
     mUsed = true;
     mConst = true;
 	FBLOG_DEBUG("CallStatsAPI::CallStatsAPI", "this=" << this << "\t" << "callStats=" << callStats);

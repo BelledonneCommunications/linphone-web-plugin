@@ -21,7 +21,7 @@
 #include "utils.h"
 
 AddressAPI::AddressAPI(LinphoneAddress *address) :
-		JSAPIAuto(APIDescription(this)), mAddress(address) {
+		WrapperAPI(APIDescription(this)), mAddress(address) {
     mUsed = true;
     mConst = false;
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this << "\t" << "address=" << address);
@@ -29,7 +29,7 @@ AddressAPI::AddressAPI(LinphoneAddress *address) :
 }
 
 AddressAPI::AddressAPI(const LinphoneAddress *address) :
-		JSAPIAuto(APIDescription(this)), mAddress(const_cast<LinphoneAddress *>(address)) {
+		WrapperAPI(APIDescription(this)), mAddress(const_cast<LinphoneAddress *>(address)) {
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this << "\t" << "address=" << address);
     mUsed = true;
     mConst = true;
@@ -37,7 +37,7 @@ AddressAPI::AddressAPI(const LinphoneAddress *address) :
 }
 
 AddressAPI::AddressAPI(const std::string &uri) :
-		JSAPIAuto(APIDescription(this)) {
+		WrapperAPI(APIDescription(this)) {
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this);
 	mAddress = linphone_address_new(uri.c_str());
     mUsed = false;

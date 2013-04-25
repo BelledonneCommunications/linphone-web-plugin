@@ -20,14 +20,13 @@
 #ifndef H_PROXYCONFIGAPI
 #define H_PROXYCONFIGAPI
 
-#include <JSAPIAuto.h>
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
 FB_FORWARD_PTR(CoreAPI)
 
 FB_FORWARD_PTR(ProxyConfigAPI)
-class ProxyConfigAPI: public FB::JSAPIAuto, public WrapperAPI {
+class ProxyConfigAPI: public WrapperAPI {
     friend class FactoryAPI;
 private:
 	LinphoneProxyConfig *mProxyConfig;

@@ -20,7 +20,7 @@
 #include "filetransferapi.h"
 
 FileTransferAPI::FileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
-    mSourceUri(sourceUri), mTargetUri(targetUri), mCallback(callback), mDone(false) {
+    WrapperAPI(APIDescription(this)), mSourceUri(sourceUri), mTargetUri(targetUri), mCallback(callback), mDone(false) {
     initProxy();
 }
 

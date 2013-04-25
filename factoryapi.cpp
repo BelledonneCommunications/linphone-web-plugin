@@ -23,7 +23,11 @@
 #include "Transfers/localfiletransferapi.h"
 
 FactoryAPI::FactoryAPI(const CorePluginWeakPtr &plugin): mPlugin(plugin) {
-    
+    FBLOG_DEBUG("FactoryAPI::FactoryAPI()", "this=" << this);
+}
+
+FactoryAPI::~FactoryAPI() {
+    FBLOG_DEBUG("FactoryAPI::~FactoryAPI()", "this=" << this);
 }
 
 CorePluginPtr FactoryAPI::getPlugin() {
@@ -35,6 +39,7 @@ CorePluginPtr FactoryAPI::getPlugin() {
 }
 
 AddressAPIPtr FactoryAPI::get(LinphoneAddress *address) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "address=" << address);
 	if (address == NULL)
 		return get(AddressAPIPtr());
     
@@ -44,6 +49,7 @@ AddressAPIPtr FactoryAPI::get(LinphoneAddress *address) {
 }
 
 AddressAPIPtr FactoryAPI::get(const LinphoneAddress *address) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "address=" << address);
 	if (address == NULL)
 		return get(AddressAPIPtr());
     
@@ -53,6 +59,7 @@ AddressAPIPtr FactoryAPI::get(const LinphoneAddress *address) {
 }
 
 AuthInfoAPIPtr FactoryAPI::get(LinphoneAuthInfo *authInfo) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "authInfo=" << authInfo);
 	if (authInfo == NULL)
 		return get(AuthInfoAPIPtr());
     
@@ -62,6 +69,7 @@ AuthInfoAPIPtr FactoryAPI::get(LinphoneAuthInfo *authInfo) {
 }
 
 AuthInfoAPIPtr FactoryAPI::get(const LinphoneAuthInfo *authInfo) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "authInfo=" << authInfo);
 	if (authInfo == NULL)
 		return get(AuthInfoAPIPtr());
     
@@ -71,6 +79,7 @@ AuthInfoAPIPtr FactoryAPI::get(const LinphoneAuthInfo *authInfo) {
 }
 
 CallAPIPtr FactoryAPI::get(LinphoneCall *call) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "call=" << call);
 	if (call == NULL)
 		return get(CallAPIPtr());
     
@@ -85,6 +94,7 @@ CallAPIPtr FactoryAPI::get(LinphoneCall *call) {
 }
 
 CallLogAPIPtr FactoryAPI::get(LinphoneCallLog *callLog) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "callLog=" << callLog);
 	if (callLog == NULL)
 		return get(CallLogAPIPtr());
     
@@ -99,6 +109,7 @@ CallLogAPIPtr FactoryAPI::get(LinphoneCallLog *callLog) {
 }
 
 CallParamsAPIPtr FactoryAPI::get(LinphoneCallParams *callParams) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "callParams=" << callParams);
 	if (callParams == NULL)
 		return get(CallParamsAPIPtr());
     
@@ -108,6 +119,7 @@ CallParamsAPIPtr FactoryAPI::get(LinphoneCallParams *callParams) {
 }
 
 CallParamsAPIPtr FactoryAPI::get(const LinphoneCallParams *callParams) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "callParams=" << callParams);
 	if (callParams == NULL)
 		return get(CallParamsAPIPtr());
     
@@ -117,6 +129,7 @@ CallParamsAPIPtr FactoryAPI::get(const LinphoneCallParams *callParams) {
 }
 
 CallStatsAPIPtr FactoryAPI::get(const LinphoneCallStats *callStats) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "callStats=" << callStats);
 	if (callStats == NULL)
 		return get(CallStatsAPIPtr());
     
@@ -126,6 +139,7 @@ CallStatsAPIPtr FactoryAPI::get(const LinphoneCallStats *callStats) {
 }
 
 CoreAPIPtr FactoryAPI::get(LinphoneCore *core) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "core=" << core);
 	if (core == NULL)
 		return get(CoreAPIPtr(new CoreAPI()));
     
@@ -138,6 +152,7 @@ CoreAPIPtr FactoryAPI::get(LinphoneCore *core) {
 }
 
 PayloadTypeAPIPtr FactoryAPI::get(PayloadType *payloadType) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "payloadType=" << payloadType);
 	if (payloadType == NULL)
 		return get(PayloadTypeAPIPtr());
     
@@ -152,6 +167,7 @@ PayloadTypeAPIPtr FactoryAPI::get(PayloadType *payloadType) {
 }
 
 PayloadTypeAPIPtr FactoryAPI::get(const PayloadType *payloadType) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "payloadType=" << payloadType);
 	if (payloadType == NULL)
 		return get(PayloadTypeAPIPtr());
     
@@ -167,6 +183,7 @@ PayloadTypeAPIPtr FactoryAPI::get(const PayloadType *payloadType) {
 
 
 ProxyConfigAPIPtr FactoryAPI::get(LinphoneProxyConfig *proxyConfig) {
+    FBLOG_DEBUG("FactoryAPI::get()", "this=" << this << "\t" << "proxyConfig=" << proxyConfig);
 	if (proxyConfig == NULL)
 		return get(ProxyConfigAPIPtr());
     

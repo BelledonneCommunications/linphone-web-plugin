@@ -20,12 +20,11 @@
 #ifndef H_CALLSTATSAPI
 #define H_CALLSTATSAPI
 
-#include <JSAPIAuto.h>
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
 FB_FORWARD_PTR(CallStatsAPI)
-class CallStatsAPI: public FB::JSAPIAuto, public WrapperAPI {
+class CallStatsAPI: public WrapperAPI {
     friend class FactoryAPI;
 private:
 	LinphoneCallStats *mCallStats;

@@ -23,6 +23,8 @@
 #include <map>
 #include <sstream>
 #include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 class ThreadGroup {
 private:
@@ -32,64 +34,60 @@ public:
 	ThreadGroup() {
 	}
 	~ThreadGroup() {
-		for (auto it = threads.begin(), end = threads.end(); it != end; ++it) {
-			delete it->second;
-		}
 	}
 
 	template<typename F>
-	boost::thread* create_thread(F threadfunc) {
-		boost::lock_guard<boost::shared_mutex> guard(m);
-		boost::thread *thread = new boost::thread(threadfunc);
-		threads.insert(std::pair<boost::thread::id, boost::thread*>(thread->get_id(), thread));
+	boost::shared_ptr<boost::thread> create_thread(F threadfunc) {
+		boost::lock_guard<boost::shared_mutex> guard(mMutex);
+		boost::shared_ptr<boost::thread> thread = boost::make_shared<boost::thread>(threadfunc);
+		mThreadsMap.insert(std::pair<boost::thread::id, boost::shared_ptr<boost::thread> >(thread->get_id(), thread));
 		return thread;
 	}
 
-	void add_thread(boost::thread* thrd) {
+	void addThread(const boost::shared_ptr<boost::thread> &thrd) {
 		if (thrd) {
-			boost::lock_guard<boost::shared_mutex> guard(m);
-			threads.insert(std::pair<boost::thread::id, boost::thread*>(thrd->get_id(), thrd));
+			boost::lock_guard<boost::shared_mutex> guard(mMutex);
+			mThreadsMap.insert(std::pair<boost::thread::id, boost::shared_ptr<boost::thread> >(thrd->get_id(), thrd));
 		}
 	}
 
-	void remove_thread(boost::thread::id id) {
-		boost::lock_guard<boost::shared_mutex> guard(m);
-		auto it = threads.begin();
-		while(it != threads.end()) {
+	void removeThread(boost::thread::id id) {
+		boost::lock_guard<boost::shared_mutex> guard(mMutex);
+		auto it = mThreadsMap.begin();
+		while(it != mThreadsMap.end()) {
 			if(it->second->get_id() == id)
 				break;
 			++it;
 		}
-		if (it != threads.end()) {
-			delete it->second;
-			threads.erase(it);
+		if (it != mThreadsMap.end()) {
+			mThreadsMap.erase(it);
 		}
 	}
 
-	void join_all() {
-		boost::shared_lock<boost::shared_mutex> guard(m);
+	void joinAll() {
+		boost::shared_lock<boost::shared_mutex> guard(mMutex);
 
-		for (auto it = threads.begin(), end = threads.end(); it != end; ++it) {
+		for (auto it = mThreadsMap.begin(), end = mThreadsMap.end(); it != end; ++it) {
 			(*it).second->join();
 		}
 	}
 
-	void interrupt_all() {
-		boost::shared_lock<boost::shared_mutex> guard(m);
+	void interruptAll() {
+		boost::shared_lock<boost::shared_mutex> guard(mMutex);
 
-		for (auto it = threads.begin(), end = threads.end(); it != end; ++it) {
+		for (auto it = mThreadsMap.begin(), end = mThreadsMap.end(); it != end; ++it) {
 			(*it).second->interrupt();
 		}
 	}
 
 	size_t size() const {
-		boost::shared_lock<boost::shared_mutex> guard(m);
-		return threads.size();
+		boost::shared_lock<boost::shared_mutex> guard(mMutex);
+		return mThreadsMap.size();
 	}
 
 private:
-	std::map<boost::thread::id, boost::thread*> threads;
-	mutable boost::shared_mutex m;
+	std::map<boost::thread::id, boost::shared_ptr<boost::thread> > mThreadsMap;
+	mutable boost::shared_mutex mMutex;
 };
 
 template<class T>

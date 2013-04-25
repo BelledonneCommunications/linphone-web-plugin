@@ -44,7 +44,6 @@ class FactoryAPI: public boost::enable_shared_from_this<FactoryAPI> {
 private:
 	CorePluginWeakPtr mPlugin;
     FileManagerAPIPtr mFileManager;
-    
     template<typename TypePtr>
     TypePtr get(TypePtr ptr) {
         ptr->setFactory(shared_from_this());
@@ -53,6 +52,8 @@ private:
     
 public:
     FactoryAPI(const CorePluginWeakPtr &plugin);
+    ~FactoryAPI();
+    
 	CorePluginPtr getPlugin();
     
     // Address
@@ -86,6 +87,7 @@ public:
     // ProxyConfig
     ProxyConfigAPIPtr get(LinphoneProxyConfig *proxyConfig);
     
+    // File
     FileManagerAPIPtr getFileManager();
     FileTransferAPIPtr getFileTransfer(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr &callback);
 };

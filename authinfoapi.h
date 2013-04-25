@@ -20,12 +20,11 @@
 #ifndef H_AUTHINFOAPI
 #define H_AUTHINFOAPI
 
-#include <JSAPIAuto.h>
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
 FB_FORWARD_PTR(AuthInfoAPI)
-class AuthInfoAPI: public FB::JSAPIAuto, public WrapperAPI {
+class AuthInfoAPI: public WrapperAPI {
     friend class FactoryAPI;
 private:
 	LinphoneAuthInfo *mAuthInfo;

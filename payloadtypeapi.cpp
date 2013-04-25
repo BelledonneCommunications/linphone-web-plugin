@@ -23,7 +23,7 @@
 #include "factoryapi.h"
 
 PayloadTypeAPI::PayloadTypeAPI(PayloadType *payloadType) :
-		JSAPIAuto(APIDescription(this)), mPayloadType(payloadType) {
+		WrapperAPI(APIDescription(this)), mPayloadType(payloadType) {
     mUsed = true;
     mConst = false;
 	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << ", payloadType=" << payloadType);
@@ -32,7 +32,7 @@ PayloadTypeAPI::PayloadTypeAPI(PayloadType *payloadType) :
 }
 
 PayloadTypeAPI::PayloadTypeAPI(const PayloadType *payloadType) :
-		JSAPIAuto(APIDescription(this)), mPayloadType(const_cast<PayloadType *>(payloadType)) {
+		WrapperAPI(APIDescription(this)), mPayloadType(const_cast<PayloadType *>(payloadType)) {
     mUsed = true;
     mConst = true;
 	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << ", payloadType=" << payloadType);

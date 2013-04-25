@@ -20,7 +20,6 @@
 #ifndef H_CALLAPI
 #define H_CALLAPI
 
-#include <JSAPIAuto.h>
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
@@ -31,7 +30,7 @@ FB_FORWARD_PTR(AddressAPI)
 FB_FORWARD_PTR(CoreAPI)
 
 FB_FORWARD_PTR(CallAPI)
-class CallAPI: public FB::JSAPIAuto, public WrapperAPI {
+class CallAPI: public WrapperAPI {
     friend class FactoryAPI;
 private:
 	LinphoneCall *mCall;

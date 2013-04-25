@@ -28,7 +28,7 @@
 #include "factoryapi.h"
 
 CallAPI::CallAPI(LinphoneCall *call) :
-		JSAPIAuto(APIDescription(this)), mCall(call) {
+		WrapperAPI(APIDescription(this)), mCall(call) {
     mUsed = true;
     mUsed = true;
 	FBLOG_DEBUG("CallAPI::CallAPI", "this=" << this << "\t" << "call=" << call);

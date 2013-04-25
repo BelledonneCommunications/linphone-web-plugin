@@ -20,13 +20,16 @@
 #ifndef H_WRAPPERAPI
 #define H_WRAPPERAPI
 
-#include <FBPointers.h>
+#include <JSAPIAuto.h>
+#include "utils.h"
 
 FB_FORWARD_PTR(FactoryAPI)
 
 FB_FORWARD_PTR(WrapperAPI)
-class WrapperAPI {
+class WrapperAPI: public FB::JSAPIAuto {
     friend class FactoryAPI;
+private:
+    ThreadGroup mThreads;
     
 protected:
 	FactoryAPIPtr mFactory;
@@ -34,6 +37,14 @@ protected:
     
     bool mUsed;
 	bool mConst;
+    
+    WrapperAPI(const std::string& description = "<JSAPI-Auto Javascript Object>");
+    
+    // Thread
+    void attachThread(const boost::shared_ptr<boost::thread> &thread);
+    void detachThread(boost::thread::id id);
+    
+    virtual void shutdown();
 };
 
 #endif // H_WRAPPERAPI

@@ -107,7 +107,8 @@ const boost::filesystem::path &FileManagerAPI::Protocol::getPath() {
  * FileManagerAPI
  */
 
-FileManagerAPI::FileManagerAPI() {
+FileManagerAPI::FileManagerAPI():
+    WrapperAPI(APIDescription(this)) {
     initProxy();
 }
 

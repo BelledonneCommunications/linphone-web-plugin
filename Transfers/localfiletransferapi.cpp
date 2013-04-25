@@ -25,8 +25,12 @@
 const unsigned int LocalFileTransferAPI::BUFFER_SIZE = 32 * 1024;
 
 LocalFileTransferAPI::LocalFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
-    FileTransferAPI(sourceUri, targetUri, callback), mTotalBytes(-1), mTransferedBytes(-1), mStop(false) {
-    
+    FileTransferAPI(sourceUri, targetUri, callback), mTotalBytes(-1), mTransferedBytes(-1) {
+    FBLOG_DEBUG("LocalFileTransferAPI::LocalFileTransferAPI()", "this=" << this);
+}
+
+LocalFileTransferAPI::~LocalFileTransferAPI() {
+    FBLOG_DEBUG("LocalFileTransferAPI::~LocalFileTransferAPI()", "this=" << this);
 }
 
 void LocalFileTransferAPI::start() {
@@ -82,7 +86,8 @@ void LocalFileTransferAPI::start() {
     self = boost::static_pointer_cast<LocalFileTransferAPI>(shared_from_this());
     
     // Run thread
-    boost::thread t(boost::bind(&LocalFileTransferAPI::threadFct, this));
+    mThread = boost::make_shared<boost::thread>(boost::bind(&LocalFileTransferAPI::threadFct, this));
+    attachThread(mThread);
 }
 
 void LocalFileTransferAPI::onSuccess(bool done) {
@@ -100,10 +105,8 @@ void LocalFileTransferAPI::threadFct() {
     char buffer[BUFFER_SIZE];
     size_t readSize = 1;
     try {
-        mMutex.lock();
-        while(!mStop && readSize > 0) {
-            mMutex.unlock();
-            
+        boost::this_thread::disable_interruption di;
+        while(!boost::this_thread::interruption_requested() && readSize > 0) {
             readSize = mSourceFileStream.readsome(buffer, BUFFER_SIZE);
             if(mSourceFileStream.fail()) {
                 mSourceFileStream.close();
@@ -122,29 +125,33 @@ void LocalFileTransferAPI::threadFct() {
                 onError("Can't write the target file");
                 return;
             }
-            mMutex.lock();
         }
-        mMutex.unlock();
+        if(mTransferedBytes != mTotalBytes) {
+            FBLOG_DEBUG("LocalFileTransferAPI::threadFct()", "this=" << this << " | Incomplet transfer");
+            onError("Incomplet transfer");
+            return;
+        }
         FBLOG_DEBUG("LocalFileTransferAPI::threadFct()", "this=" << this << " | Done");
         onSuccess(true);
     } catch(std::runtime_error&) {
         // Nothing to do
     }
+    detachThread(boost::this_thread::get_id());
 }
 
 void LocalFileTransferAPI::cancel() {
     FBLOG_DEBUG("LocalFileTransferAPI::cancel()", "this=" << this);
-    mMutex.lock();
-    mStop = true;
-    mMutex.unlock();
+    if(mThread) {
+        mThread->interrupt();
+    }
 }
 
 int LocalFileTransferAPI::getTransferedBytes() {
     FBLOG_DEBUG("LocalFileTransferAPI::getTransferedBytes()", "this=" << this);
-    return -1;
+    return mTransferedBytes;
 }
 
 int LocalFileTransferAPI::getTotalBytes() {
     FBLOG_DEBUG("LocalFileTransferAPI::getTotalBytes()", "this=" << this);
-    return -1;
+    return mTotalBytes;
 }

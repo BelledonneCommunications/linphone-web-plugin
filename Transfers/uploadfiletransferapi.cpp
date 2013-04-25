@@ -28,6 +28,11 @@ const unsigned int UploadFileTransferAPI::BUFFER_SIZE = 4096;
 
 UploadFileTransferAPI::UploadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
     FileTransferAPI(sourceUri, targetUri, callback) {
+    FBLOG_DEBUG("UploadFileTransferAPI::UploadFileTransferAPI()", "this=" << this);
+}
+
+UploadFileTransferAPI::~UploadFileTransferAPI() {
+    FBLOG_DEBUG("UploadFileTransferAPI::~UploadFileTransferAPI()", "this=" << this);
 }
 
 void UploadFileTransferAPI::start() {

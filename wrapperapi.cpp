@@ -19,6 +19,25 @@
 
 #include "wrapperapi.h"
 
+WrapperAPI::WrapperAPI(const std::string& description): FB::JSAPIAuto(description) {
+    
+}
+
 void WrapperAPI::setFactory(FactoryAPIPtr factory) {
     mFactory = factory;
+}
+
+void WrapperAPI::shutdown() {
+    FBLOG_DEBUG("WrapperAPI::shutdown()", "this=" << this);
+    mThreads.interruptAll();
+}
+
+void WrapperAPI::attachThread(const boost::shared_ptr<boost::thread> &thread) {
+    FBLOG_DEBUG("WrapperAPI::attachThread()", "this=" << this  << "\t" << "id=" << thread->get_id());
+    mThreads.addThread(thread);
+}
+
+void WrapperAPI::detachThread(boost::thread::id id) {
+    FBLOG_DEBUG("WrapperAPI::detachThread()", "this=" << this << "\t" << "id=" << id);
+    mThreads.removeThread(id);
 }

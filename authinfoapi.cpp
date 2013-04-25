@@ -21,7 +21,7 @@
 #include "utils.h"
 
 AuthInfoAPI::AuthInfoAPI(LinphoneAuthInfo *authInfo) :
-		JSAPIAuto(APIDescription(this)), mAuthInfo(authInfo) {
+		WrapperAPI(APIDescription(this)), mAuthInfo(authInfo) {
     mUsed = true;
     mConst = false;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI", "this=" << this << "\t" << "authInfo=" << authInfo);
@@ -29,7 +29,7 @@ AuthInfoAPI::AuthInfoAPI(LinphoneAuthInfo *authInfo) :
 }
 
 AuthInfoAPI::AuthInfoAPI(const LinphoneAuthInfo *authInfo) :
-		JSAPIAuto(APIDescription(this)), mAuthInfo(const_cast<LinphoneAuthInfo *>(authInfo)) {
+		WrapperAPI(APIDescription(this)), mAuthInfo(const_cast<LinphoneAuthInfo *>(authInfo)) {
     mUsed = true;
     mConst = true;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI", "this=" << this << "\t" << "authInfo=" << authInfo);
@@ -38,7 +38,7 @@ AuthInfoAPI::AuthInfoAPI(const LinphoneAuthInfo *authInfo) :
 
 
 AuthInfoAPI::AuthInfoAPI(const std::string &username, const std::string &userid, const std::string &passwd, const std::string &ha1, const std::string &realm) :
-		JSAPIAuto(APIDescription(this)) {
+		WrapperAPI(APIDescription(this)) {
     mUsed = false;
     mConst = false;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI",

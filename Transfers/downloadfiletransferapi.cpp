@@ -23,7 +23,11 @@
 
 DownloadFileTransferAPI::DownloadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
     FileTransferAPI(sourceUri, targetUri, callback) {
-    
+    FBLOG_DEBUG("DownloadFileTransferAPI::DownloadFileTransferAPI()", "this=" << this);
+}
+
+DownloadFileTransferAPI::~DownloadFileTransferAPI() {
+    FBLOG_DEBUG("DownloadFileTransferAPI::~DownloadFileTransferAPI()", "this=" << this);
 }
 
 void DownloadFileTransferAPI::start() {

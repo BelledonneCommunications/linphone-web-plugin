@@ -22,8 +22,8 @@
 #include "utils.h"
 #include "factoryapi.h"
 
-ProxyConfigAPI::ProxyConfigAPI(LinphoneProxyConfig *proxyConfig) :
-		JSAPIAuto(APIDescription(this)), mProxyConfig(proxyConfig) {
+ProxyConfigAPI::ProxyConfigAPI(LinphoneProxyConfig *proxyConfig):
+		WrapperAPI(APIDescription(this)), mProxyConfig(proxyConfig) {
     mUsed = true;
     mConst = false;
 	FBLOG_DEBUG("ProxyConfigAPI::ProxyConfigAPI", "this=" << this << "\t" << "proxyConfig=" << proxyConfig);
@@ -31,8 +31,8 @@ ProxyConfigAPI::ProxyConfigAPI(LinphoneProxyConfig *proxyConfig) :
 	initProxy();
 }
 
-ProxyConfigAPI::ProxyConfigAPI() :
-		JSAPIAuto(APIDescription(this)) {
+ProxyConfigAPI::ProxyConfigAPI():
+		WrapperAPI(APIDescription(this)) {
     mUsed = false;
     mConst = false;
 	FBLOG_DEBUG("ProxyConfigAPI::ProxyConfigAPI", "this=" << this);

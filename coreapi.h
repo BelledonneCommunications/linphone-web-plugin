@@ -24,7 +24,6 @@
 #include <sstream>
 #include <vector>
 #include <map>
-#include <JSAPIAuto.h>
 #include <Timer.h>
 #include <variant_list.h>
 
@@ -45,7 +44,7 @@ FB_FORWARD_PTR(ProxyConfigAPI)
 FB_FORWARD_PTR(FileManagerAPI)
 
 FB_FORWARD_PTR(CoreAPI)
-class CoreAPI: public FB::JSAPIAuto, public WrapperAPI {
+class CoreAPI: public WrapperAPI {
     friend class FactoryAPI;
 public:
 	CoreAPI();
@@ -278,8 +277,7 @@ private:
 
 #ifdef CORE_THREADED
 	mutable boost::mutex mCoreMutex;
-	boost::thread *mCoreThread;
-	ThreadGroup *mThreads;
+    boost::shared_ptr<boost::thread> mCoreThread;
 #else
 	FB::TimerPtr mTimer;
 #endif //CORE_THREADED
@@ -290,7 +288,8 @@ private:
 	}
 
 #ifdef CORE_THREADED
-	friend void linphone_iterate_thread(CoreAPI *linphone_api);
+    static void destroyThread(LinphoneCore *core);
+    static void iterateThread(CoreAPIPtr core);
 	void iterateWithMutex() {
 		boost::mutex::scoped_lock scopedLock(mCoreMutex);
 		iterate();

@@ -59,46 +59,31 @@ static boost::mutex sInstanceMutex;
 static int sInstanceCount = 0;
 
 #ifdef CORE_THREADED
-void linphone_iterate_thread(CoreAPI *linphone_api) {
-	FBLOG_DEBUG("linphone_thread", "start");
-	FBLOG_DEBUG("linphone_thread", linphone_api);
+
+void CoreAPI::destroyThread(LinphoneCore *core) {
+    FBLOG_DEBUG("CoreAPI::destroyThread", "start" << "\t" << "core=" << core);
+    linphone_core_destroy(core);
+    sInstanceMutex.lock();
+    --sInstanceCount;
+    sInstanceMutex.unlock();
+    FBLOG_DEBUG("CoreAPI::destroyThread", "end" << "\t" << "core=" << core);
+}
+
+void CoreAPI::iterateThread(CoreAPIPtr core) {
+	FBLOG_DEBUG("CoreAPI::iterateThread", "start" << "\t" << "core=" << core);
 
 	boost::this_thread::disable_interruption di;
 
 	while (!boost::this_thread::interruption_requested()) {
-		linphone_api->iterateWithMutex();
+		core->iterateWithMutex();
 		usleep(20000);
-		//FBLOG_DEBUG("linphone_thread", "it");
+		//FBLOG_DEBUG("linphone_iterate_thread", "it" << "\t" << "core=" << core);
 	}
-
-	FBLOG_DEBUG("linphone_thread", "end");
+    core->detachThread(boost::this_thread::get_id());
+    core->mCoreThread.reset();
+	FBLOG_DEBUG("CoreAPI::iterateThread", "end" << "\t" << "core=" << core);
 }
 
-void linphone_destroy_thread(LinphoneCore* core, boost::thread *thread, ThreadGroup *threads) {
-	FBLOG_DEBUG("linphone_destroy_thread", "start");
-	FBLOG_DEBUG("linphone_destroy_thread", core);
-
-	if (thread != NULL) {
-		thread->interrupt();
-		thread->join();
-		delete thread;
-	}
-
-	if(threads != NULL) {
-		threads->interrupt_all();
-		threads->join_all();
-		delete threads;
-	}
-
-	if (core != NULL) {
-		linphone_core_destroy(core);
-	}
-
-	sInstanceMutex.lock();
-	--sInstanceCount;
-	sInstanceMutex.unlock();
-	FBLOG_DEBUG("linphone_destroy_thread", "end");
-}
 #endif //CORE_THREADED
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -112,20 +97,19 @@ void linphone_destroy_thread(LinphoneCore* core, boost::thread *thread, ThreadGr
 /// @see FB::JSAPIAuto::registerEvent
 ///////////////////////////////////////////////////////////////////////////////
 CoreAPI::CoreAPI() :
-		JSAPIAuto(APIDescription(this)), mCore(NULL) {
+		WrapperAPI(APIDescription(this)), mCore(NULL) {
     mUsed = false;
     mConst = false;
 	FBLOG_DEBUG("CoreAPI::CoreAPI()", "this=" << this);
-#ifdef CORE_THREADED
-	mCoreThread = NULL;
-	mThreads = new ThreadGroup();
-#else
-	mMimer = FB::Timer::getTimer(20, true, boost::bind(&CoreAPI::iterate, this));
+#ifndef CORE_THREADED
+	mTimer = FB::Timer::getTimer(20, true, boost::bind(&CoreAPI::iterate, this));
 #endif
 	initProxy();
 }
 
 void CoreAPI::initProxy() {
+    FBLOG_DEBUG("CoreAPI::initProxy()", "this=" << this);
+    
 	// Read-only property
 	registerProperty("version", make_property(this, &CoreAPI::getVersion));
 	registerProperty("pluginVersion", make_property(this, &CoreAPI::getPluginVersion));
@@ -313,7 +297,8 @@ int CoreAPI::init() {
 		linphone_core_set_sip_port(mCore, port);
 
 #ifdef CORE_THREADED
-		mCoreThread = new boost::thread(linphone_iterate_thread, this);
+		mCoreThread = boost::make_shared<boost::thread>(CoreAPI::iterateThread, boost::static_pointer_cast<CoreAPI>(shared_from_this()));
+        attachThread(mCoreThread);
 #else
 		mTimer->start();
 #endif
@@ -337,15 +322,16 @@ CoreAPI::~CoreAPI() {
 		linphone_core_set_user_data(mCore, NULL);
 
 #ifdef CORE_THREADED
-		boost::thread t(linphone_destroy_thread, mCore, mCoreThread, mThreads);
+        // TODO find a better way to do that
+        boost::thread t(boost::bind(CoreAPI::destroyThread, mCore));
 #else
 		mTimer->stop();
-		linphone_core_destroy(mCore);
-
-		sInstanceMutex.lock();
+        linphone_core_destroy(mCore);
+        sInstanceMutex.lock();
 		--sInstanceCount;
 		sInstanceMutex.unlock();
-#endif
+#endif //CORE_THREADED
+        mCore = NULL;
 	}
 }
 

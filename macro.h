@@ -62,22 +62,23 @@
 	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                             \
 			void class::BOOST_PP_CAT(name, _async_thread) (FB::JSObjectPtr callback) {,                                                                                  \
 			void class::BOOST_PP_CAT(name, _async_thread) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {) \
-	BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),                                                                                                                     \
+	try {BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),                                                                                                                \
 		name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL));                                                                                            \
 		callback->InvokeAsync("", FB::variant_list_of(shared_from_this()));,                                                                                             \
 		ret value = name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL));                                                                                \
 		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(value));)                                                                                      \
-		mThreads->remove_thread(boost::this_thread::get_id());                                                                                                           \
+		detachThread(boost::this_thread::get_id());                                                                                                                      \
+        } catch(std::runtime_error&) {}                                                                                                                                  \
 	}                                                                                                                                                                    \
 
 #define IMPLEMENT_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList)                                                                                            \
 	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
 			void class::BOOST_PP_CAT(name, _async) (FB::JSObjectPtr callback) {,                                                                                    \
 			void class::BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {)   \
-		mThreads->create_thread(boost::bind(&class::BOOST_PP_CAT(name, _async_thread), this,                                                                        \
+		attachThread(boost::make_shared<boost::thread>(boost::bind(&class::BOOST_PP_CAT(name, _async_thread), this,                                                 \
 		BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL)                                                                                              \
 		BOOST_PP_IF(BOOST_PP_NOT_EQUAL(argCount, 0), BOOST_PP_COMMA, BOOST_PP_EMPTY)()                                                                              \
-		callback));                                                                                                                                                 \
+		callback)));                                                                                                                                                \
 	}                                                                                                                                                               \
 
 #else
@@ -85,11 +86,12 @@
 	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
 			void class::BOOST_PP_CAT(name, _async) (FB::JSObjectPtr callback) {,                                                                                    \
 			void class::BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)), FB::JSObjectPtr callback) {)   \
-	BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),                                                                                                                \
+	try {BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),                                                                                                           \
 		name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList)));                                                                        \
 		callback->InvokeAsync("", FB::variant_list_of(shared_from_this()));,                                                                                        \
 		ret value = name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList)));                                                            \
 		callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(value));)                                                                                 \
+        } catch(std::runtime_error&) {}                                                                                                                             \
 	}                                                                                                                                                               \
 
 #endif //CORE_THREADED

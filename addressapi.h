@@ -20,12 +20,11 @@
 #ifndef H_ADDRESSAPI
 #define H_ADDRESSAPI
 
-#include <JSAPIAuto.h>
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
 FB_FORWARD_PTR(AddressAPI)
-class AddressAPI: public FB::JSAPIAuto, public WrapperAPI {
+class AddressAPI: public WrapperAPI {
     friend class FactoryAPI;
 private:
 	LinphoneAddress *mAddress;

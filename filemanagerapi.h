@@ -20,7 +20,6 @@
 #ifndef H_FILEMANAGERAPI
 #define H_FILEMANAGERAPI
 
-#include <JSAPIAuto.h>
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
@@ -32,7 +31,7 @@
 FB_FORWARD_PTR(FileTransferAPI)
 
 FB_FORWARD_PTR(FileManagerAPI)
-class FileManagerAPI: public FB::JSAPIAuto, public WrapperAPI {
+class FileManagerAPI: public WrapperAPI {
     friend class FactoryAPI;
 private:   
     FileManagerAPI();

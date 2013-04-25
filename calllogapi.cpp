@@ -21,7 +21,7 @@
 #include "utils.h"
 
 CallLogAPI::CallLogAPI(LinphoneCallLog *callLog) :
-		JSAPIAuto(APIDescription(this)), mCallLog(callLog) {
+		WrapperAPI(APIDescription(this)), mCallLog(callLog) {
     mUsed = true;
     mConst = false;
 	FBLOG_DEBUG("CallLogAPI::CallLogAPI", "this=" << this << "\t" << "callLog=" << callLog);

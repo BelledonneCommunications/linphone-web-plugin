@@ -21,7 +21,7 @@
 #include "utils.h"
 
 CallParamsAPI::CallParamsAPI(LinphoneCallParams *callParams) :
-		JSAPIAuto(APIDescription(this)), mCallParams(callParams) {
+		WrapperAPI(APIDescription(this)), mCallParams(callParams) {
     mUsed = true;
     mConst = false;
 	FBLOG_DEBUG("CallParamsAPI::CallParamsAPI", "this=" << this << "\t" << "callParams=" << callParams);
@@ -29,7 +29,7 @@ CallParamsAPI::CallParamsAPI(LinphoneCallParams *callParams) :
 }
 
 CallParamsAPI::CallParamsAPI(const LinphoneCallParams *callParams) :
-		JSAPIAuto(APIDescription(this)), mCallParams(const_cast<LinphoneCallParams *>(callParams)) {
+		WrapperAPI(APIDescription(this)), mCallParams(const_cast<LinphoneCallParams *>(callParams)) {
     mUsed = true;
     mConst = true;
 	FBLOG_DEBUG("CallParamsAPI::CallParamsAPI", "this=" << this << "\t" << "callParams=" << callParams);

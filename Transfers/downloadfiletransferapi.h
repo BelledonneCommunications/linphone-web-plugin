@@ -35,8 +35,10 @@ private:
 private:
     DownloadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
     void callbackFct(bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size);
+    void threadFct();
     
 public:
+    ~DownloadFileTransferAPI();
     virtual void start();
     virtual void cancel();
     virtual int getTransferedBytes();

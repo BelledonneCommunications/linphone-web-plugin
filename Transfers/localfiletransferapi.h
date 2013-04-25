@@ -35,8 +35,7 @@ private:
     std::ifstream mSourceFileStream;
     int mTotalBytes;
     int mTransferedBytes;
-    bool mStop;
-    boost::mutex mMutex;
+    boost::shared_ptr<boost::thread> mThread;
     
     LocalFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
     void threadFct();
@@ -45,6 +44,7 @@ protected:
     virtual void onError(const std::string &error);
     
 public:
+    ~LocalFileTransferAPI();
     virtual void start();
     virtual void cancel();
     virtual int getTransferedBytes();
