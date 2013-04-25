@@ -25,7 +25,7 @@
 
 FB_FORWARD_PTR(CallStatsAPI)
 class CallStatsAPI: public WrapperAPI {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 private:
 	LinphoneCallStats *mCallStats;
 
@@ -33,7 +33,7 @@ private:
 
 protected:
 	void initProxy();
-    
+	
 public:
 	~CallStatsAPI();
 

@@ -25,7 +25,7 @@
 
 FB_FORWARD_PTR(AddressAPI)
 class AddressAPI: public WrapperAPI {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 private:
 	LinphoneAddress *mAddress;
 
@@ -35,7 +35,7 @@ private:
 
 protected:
 	void initProxy();
-    
+	
 public:
 	~AddressAPI();
 

@@ -22,16 +22,16 @@
 
 CallParamsAPI::CallParamsAPI(LinphoneCallParams *callParams) :
 		WrapperAPI(APIDescription(this)), mCallParams(callParams) {
-    mUsed = true;
-    mConst = false;
+	mUsed = true;
+	mConst = false;
 	FBLOG_DEBUG("CallParamsAPI::CallParamsAPI", "this=" << this << "\t" << "callParams=" << callParams);
 	initProxy();
 }
 
 CallParamsAPI::CallParamsAPI(const LinphoneCallParams *callParams) :
 		WrapperAPI(APIDescription(this)), mCallParams(const_cast<LinphoneCallParams *>(callParams)) {
-    mUsed = true;
-    mConst = true;
+	mUsed = true;
+	mConst = true;
 	FBLOG_DEBUG("CallParamsAPI::CallParamsAPI", "this=" << this << "\t" << "callParams=" << callParams);
 	initProxy();
 }

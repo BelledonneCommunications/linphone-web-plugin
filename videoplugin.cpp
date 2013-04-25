@@ -66,7 +66,7 @@ VideoPlugin::~VideoPlugin() {
 
 void VideoPlugin::onPluginReady() {
 	FB::VariantMap::iterator fnd = m_params.find("magic");
-    if (fnd != m_params.end()) {
+	if (fnd != m_params.end()) {
 		if(fnd->second.is_of_type<std::string>()) {
 			FB::ptr_cast<VideoAPI>(getRootJSAPI())->setMagic(fnd->second.convert_cast<std::string>());
 		}

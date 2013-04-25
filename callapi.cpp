@@ -29,8 +29,8 @@
 
 CallAPI::CallAPI(LinphoneCall *call) :
 		WrapperAPI(APIDescription(this)), mCall(call) {
-    mUsed = true;
-    mUsed = true;
+	mUsed = true;
+	mUsed = true;
 	FBLOG_DEBUG("CallAPI::CallAPI", "this=" << this << "\t" << "call=" << call);
 	linphone_call_ref(mCall);
 	linphone_call_set_user_pointer(mCall, this);

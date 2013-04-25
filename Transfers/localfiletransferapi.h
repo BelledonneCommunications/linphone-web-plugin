@@ -25,29 +25,29 @@
 
 FB_FORWARD_PTR(LocalFileTransferAPI)
 class LocalFileTransferAPI: public FileTransferAPI {
-    friend class FactoryAPI;
-    
+	friend class FactoryAPI;
+	
 private:
-    LocalFileTransferAPIPtr self;
-    static const unsigned int BUFFER_SIZE;
-    std::ofstream mTargetFileStream;
-    std::ifstream mSourceFileStream;
-    int mTotalBytes;
-    int mTransferedBytes;
-    boost::shared_ptr<boost::thread> mThread;
-    
-    LocalFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
-    void threadFct();
+	LocalFileTransferAPIPtr self;
+	static const unsigned int BUFFER_SIZE;
+	std::ofstream mTargetFileStream;
+	std::ifstream mSourceFileStream;
+	int mTotalBytes;
+	int mTransferedBytes;
+	boost::shared_ptr<boost::thread> mThread;
+	
+	LocalFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
+	void threadFct();
 protected:
-    virtual void onSuccess(bool done);
-    virtual void onError(const std::string &error);
-    
+	virtual void onSuccess(bool done);
+	virtual void onError(const std::string &error);
+	
 public:
-    ~LocalFileTransferAPI();
-    virtual void start();
-    virtual void cancel();
-    virtual int getTransferedBytes();
-    virtual int getTotalBytes();
+	~LocalFileTransferAPI();
+	virtual void start();
+	virtual void cancel();
+	virtual int getTransferedBytes();
+	virtual int getTotalBytes();
 };
 
 #endif //H_LOCALFILETRANSFERAPI

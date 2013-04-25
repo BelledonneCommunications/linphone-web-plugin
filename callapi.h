@@ -31,15 +31,15 @@ FB_FORWARD_PTR(CoreAPI)
 
 FB_FORWARD_PTR(CallAPI)
 class CallAPI: public WrapperAPI {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 private:
 	LinphoneCall *mCall;
 
 	CallAPI(LinphoneCall *call);
-    
+	
 protected:
 	void initProxy();
-    
+	
 public:
 	~CallAPI();
 	CallStatsAPIPtr getAudioStats() const;

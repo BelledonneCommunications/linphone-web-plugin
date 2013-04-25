@@ -27,13 +27,13 @@ FB_FORWARD_PTR(CoreAPI)
 
 FB_FORWARD_PTR(PayloadTypeAPI)
 class PayloadTypeAPI: public WrapperAPI {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 private:
 	PayloadType *mPayloadType;
 
 	PayloadTypeAPI(PayloadType *payloadType);
 	PayloadTypeAPI(const PayloadType *payloadType);
-    
+	
 protected:
 	void initProxy();
 

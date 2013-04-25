@@ -22,16 +22,16 @@
 
 AuthInfoAPI::AuthInfoAPI(LinphoneAuthInfo *authInfo) :
 		WrapperAPI(APIDescription(this)), mAuthInfo(authInfo) {
-    mUsed = true;
-    mConst = false;
+	mUsed = true;
+	mConst = false;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI", "this=" << this << "\t" << "authInfo=" << authInfo);
 	initProxy();
 }
 
 AuthInfoAPI::AuthInfoAPI(const LinphoneAuthInfo *authInfo) :
 		WrapperAPI(APIDescription(this)), mAuthInfo(const_cast<LinphoneAuthInfo *>(authInfo)) {
-    mUsed = true;
-    mConst = true;
+	mUsed = true;
+	mConst = true;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI", "this=" << this << "\t" << "authInfo=" << authInfo);
 	initProxy();
 }
@@ -39,8 +39,8 @@ AuthInfoAPI::AuthInfoAPI(const LinphoneAuthInfo *authInfo) :
 
 AuthInfoAPI::AuthInfoAPI(const std::string &username, const std::string &userid, const std::string &passwd, const std::string &ha1, const std::string &realm) :
 		WrapperAPI(APIDescription(this)) {
-    mUsed = false;
-    mConst = false;
+	mUsed = false;
+	mConst = false;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI",
 			"this=" << this << "username=" << username << ", userid=" << userid << ", passwd=" << passwd << ", ha1" << ha1 << ", realm=" << realm);
 	mAuthInfo = linphone_auth_info_new(username.c_str(), userid.c_str(), passwd.c_str(), ha1.c_str(), realm.c_str());

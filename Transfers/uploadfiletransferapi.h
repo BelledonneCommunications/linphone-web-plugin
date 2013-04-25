@@ -27,28 +27,28 @@
 
 FB_FORWARD_PTR(UploadFileTransferAPI)
 class UploadFileTransferAPI: public FileTransferAPI {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 private:
-    FileStreamHelperPtr mHelper;
-    static const unsigned int BUFFER_SIZE;
-    
-    std::string mFileStr;
-    boost::filesystem::path mFilePath;
-    std::ifstream mFileStream;
-    
-    boost::shared_ptr<boost::thread> mThread;
-    
+	FileStreamHelperPtr mHelper;
+	static const unsigned int BUFFER_SIZE;
+	
+	std::string mFileStr;
+	boost::filesystem::path mFilePath;
+	std::ifstream mFileStream;
+	
+	boost::shared_ptr<boost::thread> mThread;
+	
 private:
-    UploadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
-    void callbackFct(bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size);
-    void threadFct();
-    
+	UploadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
+	void callbackFct(bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size);
+	void threadFct();
+	
 public:
-    ~UploadFileTransferAPI();
-    virtual void start();
-    virtual void cancel();
-    virtual int getTransferedBytes();
-    virtual int getTotalBytes();
+	~UploadFileTransferAPI();
+	virtual void start();
+	virtual void cancel();
+	virtual int getTransferedBytes();
+	virtual int getTotalBytes();
 };
 
 #endif //H_UPLOADFILETRANSFERAPI

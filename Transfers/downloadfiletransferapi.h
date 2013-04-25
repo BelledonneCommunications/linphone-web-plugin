@@ -27,28 +27,28 @@
 
 FB_FORWARD_PTR(DownloadFileTransferAPI)
 class DownloadFileTransferAPI: public FileTransferAPI {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 private:
-    FileStreamHelperPtr mHelper;
-    static const unsigned int BUFFER_SIZE;
-    
-    std::string mFileStr;
-    boost::filesystem::path mFilePath;
-    std::ofstream mFileStream;
-    
-    boost::shared_ptr<boost::thread> mThread;
-    
+	FileStreamHelperPtr mHelper;
+	static const unsigned int BUFFER_SIZE;
+	
+	std::string mFileStr;
+	boost::filesystem::path mFilePath;
+	std::ofstream mFileStream;
+	
+	boost::shared_ptr<boost::thread> mThread;
+	
 private:
-    DownloadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
-    void callbackFct(bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size);
-    void threadFct(const boost::shared_array<uint8_t> data, size_t size);
-    
+	DownloadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
+	void callbackFct(bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size);
+	void threadFct(const boost::shared_array<uint8_t> data, size_t size);
+	
 public:
-    ~DownloadFileTransferAPI();
-    virtual void start();
-    virtual void cancel();
-    virtual int getTransferedBytes();
-    virtual int getTotalBytes();
+	~DownloadFileTransferAPI();
+	virtual void start();
+	virtual void cancel();
+	virtual int getTransferedBytes();
+	virtual int getTotalBytes();
 };
 
 #endif //H_DOWNLOADFILETRANSFERAPI

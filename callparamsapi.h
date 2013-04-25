@@ -25,16 +25,16 @@
 
 FB_FORWARD_PTR(CallParamsAPI)
 class CallParamsAPI: public WrapperAPI {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 private:
 	LinphoneCallParams *mCallParams;
 
 	CallParamsAPI(LinphoneCallParams *callParams);
 	CallParamsAPI(const LinphoneCallParams *callParams);
-    
+	
 protected:
 	void initProxy();
-    
+	
 public:
 	~CallParamsAPI();
 

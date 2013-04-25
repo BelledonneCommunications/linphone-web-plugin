@@ -22,8 +22,8 @@
 
 CallLogAPI::CallLogAPI(LinphoneCallLog *callLog) :
 		WrapperAPI(APIDescription(this)), mCallLog(callLog) {
-    mUsed = true;
-    mConst = false;
+	mUsed = true;
+	mConst = false;
 	FBLOG_DEBUG("CallLogAPI::CallLogAPI", "this=" << this << "\t" << "callLog=" << callLog);
 	linphone_call_log_set_user_pointer(mCallLog, this);
 	initProxy();

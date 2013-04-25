@@ -43,53 +43,53 @@ FB_FORWARD_PTR(FactoryAPI)
 class FactoryAPI: public boost::enable_shared_from_this<FactoryAPI> {
 private:
 	CorePluginWeakPtr mPlugin;
-    FileManagerAPIPtr mFileManager;
-    template<typename TypePtr>
-    TypePtr get(TypePtr ptr) {
-        ptr->setFactory(shared_from_this());
-        return ptr;
-    }
-    
+	FileManagerAPIPtr mFileManager;
+	template<typename TypePtr>
+	TypePtr get(TypePtr ptr) {
+	    ptr->setFactory(shared_from_this());
+	    return ptr;
+	}
+	
 public:
-    FactoryAPI(const CorePluginWeakPtr &plugin);
-    ~FactoryAPI();
-    
+	FactoryAPI(const CorePluginWeakPtr &plugin);
+	~FactoryAPI();
+	
 	CorePluginPtr getPlugin();
-    
-    // Address
-    AddressAPIPtr get(LinphoneAddress *address);
+	
+	// Address
+	AddressAPIPtr get(LinphoneAddress *address);
 	AddressAPIPtr get(const LinphoneAddress *address);
-    
-    // AuthInfo
-    AuthInfoAPIPtr get(LinphoneAuthInfo *authInfo);
+	
+	// AuthInfo
+	AuthInfoAPIPtr get(LinphoneAuthInfo *authInfo);
 	AuthInfoAPIPtr get(const LinphoneAuthInfo *authInfo);
-    
-    // Call
-    CallAPIPtr get(LinphoneCall *call);
-    
-    // CallLog
-    CallLogAPIPtr get(LinphoneCallLog *callLog);
-    
-    // CallParams
-    CallParamsAPIPtr get(LinphoneCallParams *callParams);
+	
+	// Call
+	CallAPIPtr get(LinphoneCall *call);
+	
+	// CallLog
+	CallLogAPIPtr get(LinphoneCallLog *callLog);
+	
+	// CallParams
+	CallParamsAPIPtr get(LinphoneCallParams *callParams);
 	CallParamsAPIPtr get(const LinphoneCallParams *callParams);
-    
-    // CallStats
+	
+	// CallStats
 	CallStatsAPIPtr get(const LinphoneCallStats *callStats);
-    
-    // Core
+	
+	// Core
 	CoreAPIPtr get(LinphoneCore *core);
-    
-    // PayloadType
-    PayloadTypeAPIPtr get(PayloadType *payloadType);
+	
+	// PayloadType
+	PayloadTypeAPIPtr get(PayloadType *payloadType);
 	PayloadTypeAPIPtr get(const PayloadType *payloadType);
-    
-    // ProxyConfig
-    ProxyConfigAPIPtr get(LinphoneProxyConfig *proxyConfig);
-    
-    // File
-    FileManagerAPIPtr getFileManager();
-    FileTransferAPIPtr getFileTransfer(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr &callback);
+	
+	// ProxyConfig
+	ProxyConfigAPIPtr get(LinphoneProxyConfig *proxyConfig);
+	
+	// File
+	FileManagerAPIPtr getFileManager();
+	FileTransferAPIPtr getFileTransfer(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr &callback);
 };
 
 #endif // H_FACTORYAPI

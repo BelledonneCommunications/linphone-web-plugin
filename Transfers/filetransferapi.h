@@ -27,29 +27,29 @@
 
 FB_FORWARD_PTR(FileTransferAPI)
 class FileTransferAPI: public WrapperAPI {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 protected:
-    const FB::URI mSourceUri;
-    const FB::URI mTargetUri;
-    const FB::JSObjectPtr mCallback;
-    bool mDone;
-    std::string mError;
-    
+	const FB::URI mSourceUri;
+	const FB::URI mTargetUri;
+	const FB::JSObjectPtr mCallback;
+	bool mDone;
+	std::string mError;
+	
 protected:
-    FileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
-    virtual void onSuccess(bool done);
-    virtual void onError(const std::string &error);
+	FileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
+	virtual void onSuccess(bool done);
+	virtual void onError(const std::string &error);
 	void initProxy();
-    
+	
 public:
-    virtual void start() = 0;
-    virtual void cancel() = 0;
-    std::string getError();
-    bool isDone();
-    virtual int getTransferedBytes() = 0;
-    virtual int getTotalBytes() = 0;
-    std::string getSourceUrl();
-    std::string getTargetUrl();
+	virtual void start() = 0;
+	virtual void cancel() = 0;
+	std::string getError();
+	bool isDone();
+	virtual int getTransferedBytes() = 0;
+	virtual int getTotalBytes() = 0;
+	std::string getSourceUrl();
+	std::string getTargetUrl();
 };
 
 #endif //H_FILETRANSFERAPI

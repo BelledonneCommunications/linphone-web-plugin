@@ -36,9 +36,9 @@ VideoWindowMac::~VideoWindowMac() {
 }
 
 void VideoWindowMac::setBackgroundColor(int r, int g, int b) {
-    CGColorRef bgc = CGColorCreateGenericRGB(r/255.0f, g/255.0f, b/255.0f, 1.0f);
-    [(CALayer *)mWindow setBackgroundColor:bgc];
-    CGColorRelease(bgc);
+	CGColorRef bgc = CGColorCreateGenericRGB(r/255.0f, g/255.0f, b/255.0f, 1.0f);
+	[(CALayer *)mWindow setBackgroundColor:bgc];
+	CGColorRelease(bgc);
 }
 
 void VideoWindowMac::setWindow(FB::PluginWindow *window) {
@@ -47,14 +47,14 @@ void VideoWindowMac::setWindow(FB::PluginWindow *window) {
 	if (wnd) {
 		FBLOG_DEBUG("VideoWindowMac::setWindow()", "this=" << this << "\t" << "Model=" << wnd->getDrawingModel());
 		mWindow = wnd->getDrawingPrimitive();
-        if (FB::PluginWindowMac::DrawingModelInvalidatingCoreAnimation == wnd->getDrawingModel())
-            wnd->StartAutoInvalidate(1.0/30.0);
-        
+	    if (FB::PluginWindowMac::DrawingModelInvalidatingCoreAnimation == wnd->getDrawingModel())
+	        wnd->StartAutoInvalidate(1.0/30.0);
+	    
 		FBLOG_DEBUG("VideoWindowMac::setWindow()", "this=" << this << "\t" << "LOAD DRAWINGPRIMITIVE=" << mWindow);
 	} else {
 		mWindow = NULL;
 		FBLOG_DEBUG("VideoWindowMac::setWindow()", "this=" << this << "\t" << "UNLOAD DRAWINGPRIMITIVE=" << mWindow);
-    }
+	}
 }
 
 unsigned long VideoWindowMac::getId() {

@@ -45,7 +45,7 @@ FB_FORWARD_PTR(FileManagerAPI)
 
 FB_FORWARD_PTR(CoreAPI)
 class CoreAPI: public WrapperAPI {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 public:
 	CoreAPI();
 	~CoreAPI();
@@ -219,7 +219,7 @@ public:
 	void clearAllAuthInfo();
 
 	// Instantiator functions
-    FileManagerAPIPtr getFileManager() const;
+	FileManagerAPIPtr getFileManager() const;
 	ProxyConfigAPIPtr newProxyConfig() const;
 	AuthInfoAPIPtr newAuthInfo(const std::string &username, const std::string &userid,
 			const std::string &passwd, const std::string &ha1, const std::string &realm) const;
@@ -268,7 +268,7 @@ public:
 
 protected:
 	void initProxy();
-    
+	
 private:
 	std::string mMagic;
 
@@ -277,7 +277,7 @@ private:
 
 #ifdef CORE_THREADED
 	mutable boost::mutex mCoreMutex;
-    boost::shared_ptr<boost::thread> mCoreThread;
+	boost::shared_ptr<boost::thread> mCoreThread;
 #else
 	FB::TimerPtr mTimer;
 #endif //CORE_THREADED
@@ -288,8 +288,8 @@ private:
 	}
 
 #ifdef CORE_THREADED
-    static void destroyThread(LinphoneCore *core);
-    static void iterateThread(CoreAPIPtr core);
+	static void destroyThread(LinphoneCore *core);
+	static void iterateThread(CoreAPIPtr core);
 	void iterateWithMutex() {
 		boost::mutex::scoped_lock scopedLock(mCoreMutex);
 		iterate();
@@ -297,7 +297,7 @@ private:
 #endif
 
 protected:
-    virtual void onGlobalStateChanged(LinphoneGlobalState gstate, const char *message);
+	virtual void onGlobalStateChanged(LinphoneGlobalState gstate, const char *message);
 	virtual void onRegistrationStateChanged(LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message);
 	virtual void onCallStateChanged(LinphoneCall *call, LinphoneCallState cstate, const char *message);
 	virtual void onNotifyPresenceRecv(LinphoneFriend * lf);

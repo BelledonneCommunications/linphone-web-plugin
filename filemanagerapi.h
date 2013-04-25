@@ -32,55 +32,55 @@ FB_FORWARD_PTR(FileTransferAPI)
 
 FB_FORWARD_PTR(FileManagerAPI)
 class FileManagerAPI: public WrapperAPI {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 private:   
-    FileManagerAPI();
-    void initializePaths();
-    
-    /*
-     * < Protocol
-     */
-    class Protocol {
-    private:
-        std::string mProtocol;
-        boost::filesystem::path mPath;
-        
-    public:
-        Protocol(const std::string &protocol, const boost::filesystem::path& path);
-        const std::string &getProtocol();
-        const boost::filesystem::path &getPath();
-        
-    public:
-        static const std::string http;
-        static const std::string https;
-        static const std::string internal;
-        static const std::string temp;
-        static const std::string local;
-    };
-    /*
-     * Protocol >
-     */
-    
-    std::list<Protocol> mProtocols;
-    
+	FileManagerAPI();
+	void initializePaths();
+	
+	/*
+	 * < Protocol
+	 */
+	class Protocol {
+	private:
+	    std::string mProtocol;
+	    boost::filesystem::path mPath;
+	    
+	public:
+	    Protocol(const std::string &protocol, const boost::filesystem::path& path);
+	    const std::string &getProtocol();
+	    const boost::filesystem::path &getPath();
+	    
+	public:
+	    static const std::string http;
+	    static const std::string https;
+	    static const std::string internal;
+	    static const std::string temp;
+	    static const std::string local;
+	};
+	/*
+	 * Protocol >
+	 */
+	
+	std::list<Protocol> mProtocols;
+	
 protected:
-    virtual void setFactory(FactoryAPIPtr factory);
-    
+	virtual void setFactory(FactoryAPIPtr factory);
+	
 public:
-    static bool isInternal(const FB::URI &uri);
-    static bool isFile(const FB::URI &uri);
-    static bool isHttp(const FB::URI &uri);
-    std::string uriToFile(const FB::URI &uri);
-    FB::URI fileToUri(const std::string &file);
-    
+	static bool isInternal(const FB::URI &uri);
+	static bool isFile(const FB::URI &uri);
+	static bool isHttp(const FB::URI &uri);
+	std::string uriToFile(const FB::URI &uri);
+	FB::URI fileToUri(const std::string &file);
+	
 protected:
 	void initProxy();
-    
+	
 public:
-    FileTransferAPIPtr copy(const std::string &sourceUrl, const std::string &targetUrl, const FB::JSObjectPtr& callback);
-    void exists(const std::string &url, const FB::JSObjectPtr& callback);
-    void remove(const std::string &url, const FB::JSObjectPtr& callback);
-    void mkdir(const std::string &url, const FB::JSObjectPtr& callback);
+	FileTransferAPIPtr copy(const std::string &sourceUrl, const std::string &targetUrl, const FB::JSObjectPtr& callback);
+	void exists(const std::string &url, const FB::JSObjectPtr& callback);
+	void remove(const std::string &url, const FB::JSObjectPtr& callback);
+	void mkdir(const std::string &url, const FB::JSObjectPtr& callback);
 };
 
 #endif // H_FILEMANAGERAPI

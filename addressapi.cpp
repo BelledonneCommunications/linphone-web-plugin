@@ -22,8 +22,8 @@
 
 AddressAPI::AddressAPI(LinphoneAddress *address) :
 		WrapperAPI(APIDescription(this)), mAddress(address) {
-    mUsed = true;
-    mConst = false;
+	mUsed = true;
+	mConst = false;
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this << "\t" << "address=" << address);
 	initProxy();
 }
@@ -31,8 +31,8 @@ AddressAPI::AddressAPI(LinphoneAddress *address) :
 AddressAPI::AddressAPI(const LinphoneAddress *address) :
 		WrapperAPI(APIDescription(this)), mAddress(const_cast<LinphoneAddress *>(address)) {
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this << "\t" << "address=" << address);
-    mUsed = true;
-    mConst = true;
+	mUsed = true;
+	mConst = true;
 	initProxy();
 }
 
@@ -40,8 +40,8 @@ AddressAPI::AddressAPI(const std::string &uri) :
 		WrapperAPI(APIDescription(this)) {
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this);
 	mAddress = linphone_address_new(uri.c_str());
-    mUsed = false;
-    mConst = false;
+	mUsed = false;
+	mConst = false;
 	initProxy();
 }
 

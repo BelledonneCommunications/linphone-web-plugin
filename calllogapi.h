@@ -25,15 +25,15 @@
 
 FB_FORWARD_PTR(CallLogAPI)
 class CallLogAPI: public WrapperAPI {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 private:
 	LinphoneCallLog *mCallLog;
 
 	CallLogAPI(LinphoneCallLog *callLog);
-    
+	
 protected:
 	void initProxy();
-    
+	
 public:
 	~CallLogAPI();
 

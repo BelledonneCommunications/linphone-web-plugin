@@ -24,8 +24,8 @@
 
 PayloadTypeAPI::PayloadTypeAPI(PayloadType *payloadType) :
 		WrapperAPI(APIDescription(this)), mPayloadType(payloadType) {
-    mUsed = true;
-    mConst = false;
+	mUsed = true;
+	mConst = false;
 	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << ", payloadType=" << payloadType);
 	//mPayloadType->user_data = this;
 	initProxy();
@@ -33,8 +33,8 @@ PayloadTypeAPI::PayloadTypeAPI(PayloadType *payloadType) :
 
 PayloadTypeAPI::PayloadTypeAPI(const PayloadType *payloadType) :
 		WrapperAPI(APIDescription(this)), mPayloadType(const_cast<PayloadType *>(payloadType)) {
-    mUsed = true;
-    mConst = true;
+	mUsed = true;
+	mConst = true;
 	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << ", payloadType=" << payloadType);
 	//mPayloadType->user_data = this;
 	initProxy();

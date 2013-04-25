@@ -20,53 +20,53 @@
 #include "filetransferapi.h"
 
 FileTransferAPI::FileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
-    WrapperAPI(APIDescription(this)), mSourceUri(sourceUri), mTargetUri(targetUri), mCallback(callback), mDone(false) {
-    initProxy();
+	WrapperAPI(APIDescription(this)), mSourceUri(sourceUri), mTargetUri(targetUri), mCallback(callback), mDone(false) {
+	initProxy();
 }
 
 void FileTransferAPI::initProxy() {
-    registerMethod("start", make_method(this, &FileTransferAPI::start));
-    registerMethod("cancel", make_method(this, &FileTransferAPI::cancel));
-    registerProperty("error", make_property(this, &FileTransferAPI::getError));
-    registerProperty("done", make_property(this, &FileTransferAPI::isDone));
-    registerProperty("receivedBytes", make_property(this, &FileTransferAPI::getTransferedBytes));
-    registerProperty("totalBytes", make_property(this, &FileTransferAPI::getTotalBytes));
-    registerProperty("sourceUrl", make_property(this, &FileTransferAPI::getSourceUrl));
-    registerProperty("targetUrl", make_property(this, &FileTransferAPI::getTargetUrl));;
+	registerMethod("start", make_method(this, &FileTransferAPI::start));
+	registerMethod("cancel", make_method(this, &FileTransferAPI::cancel));
+	registerProperty("error", make_property(this, &FileTransferAPI::getError));
+	registerProperty("done", make_property(this, &FileTransferAPI::isDone));
+	registerProperty("receivedBytes", make_property(this, &FileTransferAPI::getTransferedBytes));
+	registerProperty("totalBytes", make_property(this, &FileTransferAPI::getTotalBytes));
+	registerProperty("sourceUrl", make_property(this, &FileTransferAPI::getSourceUrl));
+	registerProperty("targetUrl", make_property(this, &FileTransferAPI::getTargetUrl));;
 }
 
 void FileTransferAPI::onSuccess(bool done) {
-    FBLOG_DEBUG("FileManagerAPI::onSuccess()", "this=" << this << "\t" << "done=" << done);
-    mDone = done;
-    mError.clear();
+	FBLOG_DEBUG("FileManagerAPI::onSuccess()", "this=" << this << "\t" << "done=" << done);
+	mDone = done;
+	mError.clear();
 
-    mCallback->InvokeAsync("", FB::variant_list_of(done)(NULL));
+	mCallback->InvokeAsync("", FB::variant_list_of(done)(NULL));
 }
 
 void FileTransferAPI::onError(const std::string &error) {
-    FBLOG_DEBUG("FileManagerAPI::onError()", "this=" << this << "\t" << "error=" << error);
-    mDone = false;
-    mError = error;
-    
-    mCallback->InvokeAsync("", FB::variant_list_of(false)(mError));
+	FBLOG_DEBUG("FileManagerAPI::onError()", "this=" << this << "\t" << "error=" << error);
+	mDone = false;
+	mError = error;
+	
+	mCallback->InvokeAsync("", FB::variant_list_of(false)(mError));
 }
 
 std::string FileTransferAPI::getError() {
-    FBLOG_DEBUG("FileTransferAPI::getError()", "this=" << this);
-    return mError;
+	FBLOG_DEBUG("FileTransferAPI::getError()", "this=" << this);
+	return mError;
 }
 
 bool FileTransferAPI::isDone() {
-    FBLOG_DEBUG("FileTransferAPI::isDone()", "this=" << this);
-    return mDone;
+	FBLOG_DEBUG("FileTransferAPI::isDone()", "this=" << this);
+	return mDone;
 }
 
 std::string FileTransferAPI::getSourceUrl() {
-    FBLOG_DEBUG("FileTransferAPI::getSourceUrl()", "this=" << this);
-    return mSourceUri.toString();
+	FBLOG_DEBUG("FileTransferAPI::getSourceUrl()", "this=" << this);
+	return mSourceUri.toString();
 }
 
 std::string FileTransferAPI::getTargetUrl() {
-    FBLOG_DEBUG("FileTransferAPI::getTargetUrl()", "this=" << this);
-    return mTargetUri.toString();
+	FBLOG_DEBUG("FileTransferAPI::getTargetUrl()", "this=" << this);
+	return mTargetUri.toString();
 }

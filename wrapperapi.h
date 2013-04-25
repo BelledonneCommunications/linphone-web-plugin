@@ -27,24 +27,24 @@ FB_FORWARD_PTR(FactoryAPI)
 
 FB_FORWARD_PTR(WrapperAPI)
 class WrapperAPI: public FB::JSAPIAuto {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 private:
-    ThreadGroup mThreads;
-    
+	ThreadGroup mThreads;
+	
 protected:
 	FactoryAPIPtr mFactory;
-    virtual void setFactory(FactoryAPIPtr factory);
-    
-    bool mUsed;
+	virtual void setFactory(FactoryAPIPtr factory);
+	
+	bool mUsed;
 	bool mConst;
-    
-    WrapperAPI(const std::string& description = "<JSAPI-Auto Javascript Object>");
-    
-    // Thread
-    void attachThread(const boost::shared_ptr<boost::thread> &thread);
-    void detachThread(boost::thread::id id);
-    
-    virtual void shutdown();
+	
+	WrapperAPI(const std::string& description = "<JSAPI-Auto Javascript Object>");
+	
+	// Thread
+	void attachThread(const boost::shared_ptr<boost::thread> &thread);
+	void detachThread(boost::thread::id id);
+	
+	virtual void shutdown();
 };
 
 #endif // H_WRAPPERAPI

@@ -61,12 +61,12 @@ static int sInstanceCount = 0;
 #ifdef CORE_THREADED
 
 void CoreAPI::destroyThread(LinphoneCore *core) {
-    FBLOG_DEBUG("CoreAPI::destroyThread", "start" << "\t" << "core=" << core);
-    linphone_core_destroy(core);
-    sInstanceMutex.lock();
-    --sInstanceCount;
-    sInstanceMutex.unlock();
-    FBLOG_DEBUG("CoreAPI::destroyThread", "end" << "\t" << "core=" << core);
+	FBLOG_DEBUG("CoreAPI::destroyThread", "start" << "\t" << "core=" << core);
+	linphone_core_destroy(core);
+	sInstanceMutex.lock();
+	--sInstanceCount;
+	sInstanceMutex.unlock();
+	FBLOG_DEBUG("CoreAPI::destroyThread", "end" << "\t" << "core=" << core);
 }
 
 void CoreAPI::iterateThread(CoreAPIPtr core) {
@@ -79,8 +79,8 @@ void CoreAPI::iterateThread(CoreAPIPtr core) {
 		usleep(20000);
 		//FBLOG_DEBUG("linphone_iterate_thread", "it" << "\t" << "core=" << core);
 	}
-    core->detachThread(boost::this_thread::get_id());
-    core->mCoreThread.reset();
+	core->detachThread(boost::this_thread::get_id());
+	core->mCoreThread.reset();
 	FBLOG_DEBUG("CoreAPI::iterateThread", "end" << "\t" << "core=" << core);
 }
 
@@ -98,8 +98,8 @@ void CoreAPI::iterateThread(CoreAPIPtr core) {
 ///////////////////////////////////////////////////////////////////////////////
 CoreAPI::CoreAPI() :
 		WrapperAPI(APIDescription(this)), mCore(NULL) {
-    mUsed = false;
-    mConst = false;
+	mUsed = false;
+	mConst = false;
 	FBLOG_DEBUG("CoreAPI::CoreAPI()", "this=" << this);
 #ifndef CORE_THREADED
 	mTimer = FB::Timer::getTimer(20, true, boost::bind(&CoreAPI::iterate, this));
@@ -108,15 +108,15 @@ CoreAPI::CoreAPI() :
 }
 
 void CoreAPI::initProxy() {
-    FBLOG_DEBUG("CoreAPI::initProxy()", "this=" << this);
-    
+	FBLOG_DEBUG("CoreAPI::initProxy()", "this=" << this);
+	
 	// Read-only property
 	registerProperty("version", make_property(this, &CoreAPI::getVersion));
 	registerProperty("pluginVersion", make_property(this, &CoreAPI::getPluginVersion));
 
 	// Propery
 	registerProperty("magic", make_property(this, &CoreAPI::getMagic, &CoreAPI::setMagic));
-    
+	
 	registerMethod("init", make_method(this, &CoreAPI::init));
 
 	// Call bindings
@@ -240,7 +240,7 @@ void CoreAPI::initProxy() {
 	REGISTER_PROPERTY_FILE(CoreAPI, "zrtpSecretsFile", getZrtpSecretsFile, setZrtpSecretsFile);
 
 	// Initiator bindings
-    registerMethod("getFileManager", make_method(this, &CoreAPI::getFileManager));
+	registerMethod("getFileManager", make_method(this, &CoreAPI::getFileManager));
 	registerMethod("newProxyConfig", make_method(this, &CoreAPI::newProxyConfig));
 	registerMethod("newAuthInfo", make_method(this, &CoreAPI::newAuthInfo));
 
@@ -298,7 +298,7 @@ int CoreAPI::init() {
 
 #ifdef CORE_THREADED
 		mCoreThread = boost::make_shared<boost::thread>(CoreAPI::iterateThread, boost::static_pointer_cast<CoreAPI>(shared_from_this()));
-        attachThread(mCoreThread);
+	    attachThread(mCoreThread);
 #else
 		mTimer->start();
 #endif
@@ -322,16 +322,16 @@ CoreAPI::~CoreAPI() {
 		linphone_core_set_user_data(mCore, NULL);
 
 #ifdef CORE_THREADED
-        // TODO find a better way to do that
-        boost::thread t(boost::bind(CoreAPI::destroyThread, mCore));
+	    // TODO find a better way to do that
+	    boost::thread t(boost::bind(CoreAPI::destroyThread, mCore));
 #else
 		mTimer->stop();
-        linphone_core_destroy(mCore);
-        sInstanceMutex.lock();
+	    linphone_core_destroy(mCore);
+	    sInstanceMutex.lock();
 		--sInstanceCount;
 		sInstanceMutex.unlock();
 #endif //CORE_THREADED
-        mCore = NULL;
+	    mCore = NULL;
 	}
 }
 
@@ -785,14 +785,14 @@ unsigned long CoreAPI::getNativePreviewWindowId() const {
 
 bool CoreAPI::getUsePreviewWindow() const {
 	CORE_MUTEX
-    
+	
 	FBLOG_DEBUG("CoreAPI::getUsePreviewWindow()", "this=" << this);
 	return FALSE; // Don't have API yet
 }
 
 void CoreAPI::setUsePreviewWindow(bool enable) {
 	CORE_MUTEX
-    
+	
 	FBLOG_DEBUG("CoreAPI::setUsePreviewWindow()", "this=" << this << "\t" << "enable=" << enable);
 	linphone_core_use_preview_window(mCore, enable);
 }
@@ -1455,10 +1455,10 @@ void CoreAPI::clearAllAuthInfo() {
  */
 
 FileManagerAPIPtr CoreAPI::getFileManager() const {
-    CORE_MUTEX
-    
-    FBLOG_DEBUG("CoreAPI::newProxyConfig()", "this=" << this);
-    return mFactory->getFileManager();
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::newProxyConfig()", "this=" << this);
+	return mFactory->getFileManager();
 }
 
 ProxyConfigAPIPtr CoreAPI::newProxyConfig() const {
@@ -1687,84 +1687,84 @@ void CoreAPI::setZrtpSecretsFile(const std::string &secretsFile) {
 ///////////////////////////////////////////////////////////////////////////////
 
 void CoreAPI::onGlobalStateChanged(LinphoneGlobalState gstate, const char *message) {
-    FBLOG_DEBUG("CoreAPI::onGlobalStateChanged()",  "this=" << this << "\t" << "gstate=" << gstate << "\t" << "message=" << message);
-    fire_globalStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), gstate, CHARPTR_TO_STRING(message));
+	FBLOG_DEBUG("CoreAPI::onGlobalStateChanged()",  "this=" << this << "\t" << "gstate=" << gstate << "\t" << "message=" << message);
+	fire_globalStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), gstate, CHARPTR_TO_STRING(message));
 }
 
 void CoreAPI::onRegistrationStateChanged(LinphoneProxyConfig *cfg, LinphoneRegistrationState rstate, const char *message) {
-    FBLOG_DEBUG("CoreAPI::onRegistrationStateChanged()",  "this=" << this << "\t" << "cfg=" << cfg << "\t" << "rstate=" << rstate << "\t" << "message=" << message);
-    fire_registrationStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), mFactory->get(cfg), rstate, CHARPTR_TO_STRING(message));
+	FBLOG_DEBUG("CoreAPI::onRegistrationStateChanged()",  "this=" << this << "\t" << "cfg=" << cfg << "\t" << "rstate=" << rstate << "\t" << "message=" << message);
+	fire_registrationStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), mFactory->get(cfg), rstate, CHARPTR_TO_STRING(message));
 }
 
 void CoreAPI::onCallStateChanged(LinphoneCall *call, LinphoneCallState cstate, const char *message) {
-    FBLOG_DEBUG("CoreAPI::onCallStateChanged()",  "this=" << this << "\t" << "call=" << call << "\t" << "cstate=" << cstate << "\t" << "message=" << message);
-    fire_callStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), mFactory->get(call), cstate, CHARPTR_TO_STRING(message));
+	FBLOG_DEBUG("CoreAPI::onCallStateChanged()",  "this=" << this << "\t" << "call=" << call << "\t" << "cstate=" << cstate << "\t" << "message=" << message);
+	fire_callStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), mFactory->get(call), cstate, CHARPTR_TO_STRING(message));
 }
 
 void CoreAPI::onNotifyPresenceRecv(LinphoneFriend * lf) {
-    FBLOG_DEBUG("CoreAPI::onNotifyPresenceRecv()",  "this=" << this << "\t" << "lf=" << lf);
+	FBLOG_DEBUG("CoreAPI::onNotifyPresenceRecv()",  "this=" << this << "\t" << "lf=" << lf);
 }
 
 void CoreAPI::onNewSubscriptionRequest(LinphoneFriend *lf, const char *url) {
-    FBLOG_DEBUG("CoreAPI::onNewSubscriptionRequest()",  "this=" << this << "\t" << "lf=" << lf << "\t" << "url=" << url);
+	FBLOG_DEBUG("CoreAPI::onNewSubscriptionRequest()",  "this=" << this << "\t" << "lf=" << lf << "\t" << "url=" << url);
 }
 
 void CoreAPI::onAuthInfoRequested(const char *realm, const char *username) {
-    FBLOG_DEBUG("CoreAPI::onAuthInfoRequested()",  "this=" << this << "\t" << "realm=" << realm << "\t" << "username=" << username);
-    fire_authInfoRequested(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(realm), CHARPTR_TO_STRING(username));
+	FBLOG_DEBUG("CoreAPI::onAuthInfoRequested()",  "this=" << this << "\t" << "realm=" << realm << "\t" << "username=" << username);
+	fire_authInfoRequested(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(realm), CHARPTR_TO_STRING(username));
 }
 
 void CoreAPI::onCallLogUpdated(LinphoneCallLog *newcl) {
-    FBLOG_DEBUG("CoreAPI::onCallLogUpdated()",  "this=" << this << "\t" << "newcl=" << newcl);
+	FBLOG_DEBUG("CoreAPI::onCallLogUpdated()",  "this=" << this << "\t" << "newcl=" << newcl);
 }
 
 void CoreAPI::onTextReceived(LinphoneChatRoom *room, const LinphoneAddress *from, const char *message) {
-    FBLOG_DEBUG("CoreAPI::onTextReceived()",  "this=" << this << "\t" << "room=" << room << "\t" << "from=" << from << "message=" << message);
+	FBLOG_DEBUG("CoreAPI::onTextReceived()",  "this=" << this << "\t" << "room=" << room << "\t" << "from=" << from << "message=" << message);
 }
 
 void CoreAPI::onDtmfReceived(LinphoneCall *call, int dtmf) {
-    FBLOG_DEBUG("CoreAPI::onDtmfReceived()",  "this=" << this << "\t" << "call=" << call << "\t" << "dtmf=" << dtmf);
+	FBLOG_DEBUG("CoreAPI::onDtmfReceived()",  "this=" << this << "\t" << "call=" << call << "\t" << "dtmf=" << dtmf);
 }
 
 void CoreAPI::onReferReceived(const char *refer_to) {
-    FBLOG_DEBUG("CoreAPI::onReferReceived()",  "this=" << this << "\t" << "refer_to=" << refer_to);
+	FBLOG_DEBUG("CoreAPI::onReferReceived()",  "this=" << this << "\t" << "refer_to=" << refer_to);
 }
 
 void CoreAPI::onBuddyInfoUpdated(LinphoneFriend *lf) {
-    FBLOG_DEBUG("CoreAPI::onBuddyInfo_updated()",  "this=" << this << "\t" << "lf=" << lf);
+	FBLOG_DEBUG("CoreAPI::onBuddyInfo_updated()",  "this=" << this << "\t" << "lf=" << lf);
 }
 
 void CoreAPI::onNotifyRecv(LinphoneCall *call, const char *from, const char *event) {
-    FBLOG_DEBUG("CoreAPI::onNotifyRecv()",  "this=" << this << "\t" << "call=" << call  << "\t" << "from=" << from << "\t" << "event=" << event);
+	FBLOG_DEBUG("CoreAPI::onNotifyRecv()",  "this=" << this << "\t" << "call=" << call  << "\t" << "from=" << from << "\t" << "event=" << event);
 }
 
 void CoreAPI::onDisplayStatus(const char *message) {
-    FBLOG_DEBUG("CoreAPI::onDisplayStatus()",  "this=" << this << "\t" << "message=" << message);
-    fire_displayStatus(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(message));
+	FBLOG_DEBUG("CoreAPI::onDisplayStatus()",  "this=" << this << "\t" << "message=" << message);
+	fire_displayStatus(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(message));
 }
 
 void CoreAPI::onDisplayMessage(const char *message) {
-    FBLOG_DEBUG("CoreAPI::onDisplayMessage()",  "this=" << this << "\t" << "message=" << message);
-    fire_displayMessage(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(message));
+	FBLOG_DEBUG("CoreAPI::onDisplayMessage()",  "this=" << this << "\t" << "message=" << message);
+	fire_displayMessage(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(message));
 }
 
 void CoreAPI::onDisplayWarning(const char *message) {
-    FBLOG_DEBUG("CoreAPI::onDisplayWarning()",  "this=" << this << "\t" << "message=" << message);
-    fire_displayWarning(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(message));
+	FBLOG_DEBUG("CoreAPI::onDisplayWarning()",  "this=" << this << "\t" << "message=" << message);
+	fire_displayWarning(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(message));
 }
 
 void CoreAPI::onDisplayUrl(const char *message, const char *url) {
-    FBLOG_DEBUG("CoreAPI::onDisplayUrl()",  "this=" << this << "\t" << "message=" << message << "\t" << "url=" << url);
-    fire_displayUrl(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(message), CHARPTR_TO_STRING(url));
+	FBLOG_DEBUG("CoreAPI::onDisplayUrl()",  "this=" << this << "\t" << "message=" << message << "\t" << "url=" << url);
+	fire_displayUrl(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(message), CHARPTR_TO_STRING(url));
 }
 
 void CoreAPI::onShow() {
-    FBLOG_DEBUG("CoreAPI::onShow()",  "this=" << this);
-    fire_show(boost::static_pointer_cast<CoreAPI>(shared_from_this()));
+	FBLOG_DEBUG("CoreAPI::onShow()",  "this=" << this);
+	fire_show(boost::static_pointer_cast<CoreAPI>(shared_from_this()));
 }
 
 void CoreAPI::onCallEncryptionChanged(LinphoneCall *call, bool_t on, const char *authentication_token) {
-    FBLOG_DEBUG("CoreAPI::onCallEncryptionChanged()",  "this=" << this << "\t" << "call=" << call << "\t" << "on=" << on << "\t" << "authentication_token=" << authentication_token);
+	FBLOG_DEBUG("CoreAPI::onCallEncryptionChanged()",  "this=" << this << "\t" << "call=" << call << "\t" << "on=" << on << "\t" << "authentication_token=" << authentication_token);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1777,128 +1777,128 @@ void CoreAPI::onCallEncryptionChanged(LinphoneCall *call, bool_t on, const char 
 
 void CoreAPI::wrapper_global_state_changed(LinphoneCore *lc, LinphoneGlobalState gstate, const char *message) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onGlobalStateChanged(gstate, message);
+	    GLC_THIS()->onGlobalStateChanged(gstate, message);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_global_state_changed", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_global_state_changed", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_registration_state_changed(LinphoneCore *lc, LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onRegistrationStateChanged(cfg, cstate, message);
+	    GLC_THIS()->onRegistrationStateChanged(cfg, cstate, message);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_registration_state_changed", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_registration_state_changed", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_call_state_changed(LinphoneCore *lc, LinphoneCall *call, LinphoneCallState cstate, const char *message) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onCallStateChanged(call, cstate, message);
+	    GLC_THIS()->onCallStateChanged(call, cstate, message);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_call_state_changed", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_call_state_changed", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_notify_presence_recv(LinphoneCore *lc, LinphoneFriend * lf) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onNotifyPresenceRecv(lf);
+	    GLC_THIS()->onNotifyPresenceRecv(lf);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_notify_presence_recv", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_notify_presence_recv", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_new_subscription_request(LinphoneCore *lc, LinphoneFriend *lf, const char *url) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onNewSubscriptionRequest(lf, url);
+	    GLC_THIS()->onNewSubscriptionRequest(lf, url);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_new_subscription_request", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_new_subscription_request", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onAuthInfoRequested(realm, username);
+	    GLC_THIS()->onAuthInfoRequested(realm, username);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_auth_info_requested", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_auth_info_requested", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_call_log_updated(LinphoneCore *lc, LinphoneCallLog *newcl) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onCallLogUpdated(newcl);
+	    GLC_THIS()->onCallLogUpdated(newcl);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_call_log_updated", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_call_log_updated", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_text_received(LinphoneCore *lc, LinphoneChatRoom *room, const LinphoneAddress *from, const char *message) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onTextReceived(room, from, message);
+	    GLC_THIS()->onTextReceived(room, from, message);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_text_received", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_text_received", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_dtmf_received(LinphoneCore *lc, LinphoneCall *call, int dtmf) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onDtmfReceived(call, dtmf);
+	    GLC_THIS()->onDtmfReceived(call, dtmf);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_dtmf_received", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_dtmf_received", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_refer_received(LinphoneCore *lc, const char *refer_to) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onReferReceived(refer_to);
+	    GLC_THIS()->onReferReceived(refer_to);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_refer_received", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_refer_received", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_buddy_info_updated(LinphoneCore *lc, LinphoneFriend *lf) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onBuddyInfoUpdated(lf);
+	    GLC_THIS()->onBuddyInfoUpdated(lf);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_buddy_info_updated", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_buddy_info_updated", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_notify_recv(LinphoneCore *lc, LinphoneCall *call, const char *from, const char *event) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onNotifyRecv(call, from, event);
+	    GLC_THIS()->onNotifyRecv(call, from, event);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_notify_recv", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_notify_recv", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_display_status(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onDisplayStatus(message);
+	    GLC_THIS()->onDisplayStatus(message);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_display_status", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_display_status", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_display_message(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onDisplayMessage(message);
+	    GLC_THIS()->onDisplayMessage(message);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_display_message", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_display_message", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_display_warning(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onDisplayWarning(message);
+	    GLC_THIS()->onDisplayWarning(message);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_display_warning", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_display_warning", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_display_url(LinphoneCore *lc, const char *message, const char *url) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onDisplayUrl(message, url);
+	    GLC_THIS()->onDisplayUrl(message, url);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_display_url", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_display_url", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_show(LinphoneCore *lc) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onShow();
+	    GLC_THIS()->onShow();
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_show", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_show", "No proxy defined !");
+	}
 }
 void CoreAPI::wrapper_call_encryption_changed(LinphoneCore *lc, LinphoneCall *call, bool_t on, const char *authentication_token) {
 	if (GLC_DEFINED()) {
-        GLC_THIS()->onCallEncryptionChanged(call, on, authentication_token);
+	    GLC_THIS()->onCallEncryptionChanged(call, on, authentication_token);
 	} else {
-        FBLOG_ERROR("CoreAPI::wrapper_call_encryption_changed", "No proxy defined !");
-    }
+	    FBLOG_ERROR("CoreAPI::wrapper_call_encryption_changed", "No proxy defined !");
+	}
 }
 

@@ -24,8 +24,8 @@
 
 ProxyConfigAPI::ProxyConfigAPI(LinphoneProxyConfig *proxyConfig):
 		WrapperAPI(APIDescription(this)), mProxyConfig(proxyConfig) {
-    mUsed = true;
-    mConst = false;
+	mUsed = true;
+	mConst = false;
 	FBLOG_DEBUG("ProxyConfigAPI::ProxyConfigAPI", "this=" << this << "\t" << "proxyConfig=" << proxyConfig);
 	linphone_proxy_config_set_user_data(mProxyConfig, this);
 	initProxy();
@@ -33,8 +33,8 @@ ProxyConfigAPI::ProxyConfigAPI(LinphoneProxyConfig *proxyConfig):
 
 ProxyConfigAPI::ProxyConfigAPI():
 		WrapperAPI(APIDescription(this)) {
-    mUsed = false;
-    mConst = false;
+	mUsed = false;
+	mConst = false;
 	FBLOG_DEBUG("ProxyConfigAPI::ProxyConfigAPI", "this=" << this);
 	mProxyConfig = linphone_proxy_config_new();
 	linphone_proxy_config_set_user_data(mProxyConfig, this);

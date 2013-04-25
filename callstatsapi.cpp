@@ -22,8 +22,8 @@
 
 CallStatsAPI::CallStatsAPI(const LinphoneCallStats *callStats) :
 		WrapperAPI(APIDescription(this)), mCallStats(const_cast<LinphoneCallStats *>(callStats)) {
-    mUsed = true;
-    mConst = true;
+	mUsed = true;
+	mConst = true;
 	FBLOG_DEBUG("CallStatsAPI::CallStatsAPI", "this=" << this << "\t" << "callStats=" << callStats);
 	initProxy();
 }

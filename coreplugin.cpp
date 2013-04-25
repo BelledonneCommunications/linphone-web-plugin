@@ -178,10 +178,10 @@ void CorePlugin::shutdown() {
 ///////////////////////////////////////////////////////////////////////////////
 FB::JSAPIPtr CorePlugin::createJSAPI() {
 	FBLOG_DEBUG("CorePlugin::createJSAPI()", this);
-    FactoryAPIPtr factory = boost::make_shared<FactoryAPI>(FB::ptr_cast<CorePlugin>(shared_from_this()));
+	FactoryAPIPtr factory = boost::make_shared<FactoryAPI>(FB::ptr_cast<CorePlugin>(shared_from_this()));
 #ifdef DEBUG
-    // In debug initialize at startup for show logs
-    factory->getFileManager();
+	// In debug initialize at startup for show logs
+	factory->getFileManager();
 #endif
 	return factory->get((LinphoneCore *)NULL);
 }

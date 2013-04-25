@@ -27,15 +27,15 @@ FB_FORWARD_PTR(CoreAPI)
 
 FB_FORWARD_PTR(ProxyConfigAPI)
 class ProxyConfigAPI: public WrapperAPI {
-    friend class FactoryAPI;
+	friend class FactoryAPI;
 private:
 	LinphoneProxyConfig *mProxyConfig;
 
 	ProxyConfigAPI(LinphoneProxyConfig *proxyConfig);
-    
+	
 protected:
 	void initProxy();
-    
+	
 public:
 	ProxyConfigAPI();
 	~ProxyConfigAPI();
