@@ -145,7 +145,7 @@
 	void class::BOOST_PP_CAT(setter, _file)(const std::string &arg) {           \
 		FB::URI uri(arg);                                                       \
 		std::string file = mFactory->getFileManager()->uriToFile(uri);          \
-		if(file.length()) {                                                     \
+		if(!file.empty()) {                                                     \
 			setter(file);                                                       \
 		} else {                                                                \
 			FBLOG_DEBUG(#class "::" #setter "_file", "Invalid file:" << arg);   \

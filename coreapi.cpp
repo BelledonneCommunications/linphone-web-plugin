@@ -259,8 +259,8 @@ void CoreAPI::initProxy() {
 	registerProperty("staticPictureFps", make_property(this, &CoreAPI::getStaticPictureFps, &CoreAPI::setStaticPictureFps));
 }
 
-int CoreAPI::init() {
-	FBLOG_DEBUG("CoreAPI::init()", "this=" << this);
+int CoreAPI::init(const boost::optional<std::string> &config, const boost::optional<std::string> &factory) {
+	FBLOG_DEBUG("CoreAPI::init()", "this=" << this << "\t" << "config=" << (config?config.get():"(NULL)") << "\t" << "factory=" << (factory?factory.get():"(NULL)"));
 	boost::mutex::scoped_lock scoped_instance_count_lock(sInstanceMutex);
 
 	if (sInstanceCount == 0) {
@@ -287,7 +287,29 @@ int CoreAPI::init() {
 		mVtable.show = CoreAPI::wrapper_show;
 		mVtable.call_encryption_changed = CoreAPI::wrapper_call_encryption_changed;
 
-		mCore = linphone_core_new(&mVtable, NULL, NULL, (void *) this);
+		// Get config real path
+		const char *configCStr = NULL;
+		std::string configStr;
+		if(config) {
+			FB::URI configURI = FB::URI(config.get());
+			configStr = mFactory->getFileManager()->uriToFile(configURI);
+			if(!configStr.empty()) {
+				configCStr = configStr.c_str();
+			}
+		}
+		
+		// Get factory real path
+		const char *factoryCStr = NULL;
+		std::string factoryStr;
+		if(factory) {
+			FB::URI factoryURI = FB::URI(factory.get());
+			factoryStr = mFactory->getFileManager()->uriToFile(factoryURI);
+			if(!factoryStr.empty()) {
+				factoryCStr = factoryStr.c_str();
+			}
+		}
+		
+		mCore = linphone_core_new(&mVtable, configCStr, factoryCStr, (void *) this);
 		if (linphone_core_get_user_data(mCore) != this) {
 			FBLOG_ERROR("CoreAPI::init()", "Too old version of linphone core!");
 			--sInstanceCount;
