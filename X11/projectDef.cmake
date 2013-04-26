@@ -34,6 +34,7 @@ add_definitions(
     -DCORE_THREADED
 )
 
+include_directories(${GTK_INCLUDE_DIRS})
 include_directories(Rootfs/include/linphone)
 include_directories(Rootfs/include)
 

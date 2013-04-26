@@ -286,7 +286,7 @@ void FileManagerAPI::exists(const std::string &url, const FB::JSObjectPtr& callb
 		boost::filesystem::path path(pathStr);
 		
 		FBLOG_DEBUG("FileManagerAPI::exists()", "Test \"" << pathStr << "\"");
-		callback->InvokeAsync("", FB::variant_list_of(boost::filesystem::exists(path))(NULL));
+		callback->InvokeAsync("", FB::variant_list_of(boost::filesystem::exists(path))(FB::variant()));
 	} catch(boost::filesystem::filesystem_error &) {
 		FBLOG_DEBUG("FileManagerAPI::exists()", "Internal error");
 		callback->InvokeAsync("", FB::variant_list_of(false)("Internal error"));
@@ -322,7 +322,7 @@ void FileManagerAPI::mkdir(const std::string &url, const FB::JSObjectPtr& callba
 		
 		FBLOG_DEBUG("FileManagerAPI::mkdir()", "Make directories \"" << pathStr << "\"");
 		boost::filesystem::create_directories(path);
-		callback->InvokeAsync("", FB::variant_list_of(true)(NULL));
+		callback->InvokeAsync("", FB::variant_list_of(true)(FB::variant()));
 	} catch(boost::filesystem::filesystem_error &) {
 		FBLOG_DEBUG("FileManagerAPI::mkdir()", "Internal error");
 		callback->InvokeAsync("", FB::variant_list_of(false)("Internal error"));
@@ -358,7 +358,7 @@ void FileManagerAPI::remove(const std::string &url, const FB::JSObjectPtr& callb
 		
 		FBLOG_DEBUG("FileManagerAPI::remove()", "Remove \"" << pathStr << "\"");
 		boost::filesystem::remove_all(path);
-		callback->InvokeAsync("", FB::variant_list_of(true)(NULL));
+		callback->InvokeAsync("", FB::variant_list_of(true)(FB::variant()));
 	} catch(boost::filesystem::filesystem_error &) {
 		FBLOG_DEBUG("FileManagerAPI::remove()", "Internal error");
 		callback->InvokeAsync("", FB::variant_list_of(false)("Internal error"));

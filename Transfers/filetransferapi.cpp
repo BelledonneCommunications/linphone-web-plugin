@@ -40,7 +40,7 @@ void FileTransferAPI::onSuccess(bool done) {
 	mDone = done;
 	mError.clear();
 
-	mCallback->InvokeAsync("", FB::variant_list_of(done)(NULL));
+	mCallback->InvokeAsync("", FB::variant_list_of(done)(FB::variant()));
 }
 
 void FileTransferAPI::onError(const std::string &error) {
