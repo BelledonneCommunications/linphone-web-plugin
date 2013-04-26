@@ -26,6 +26,7 @@
 #include <map>
 #include <Timer.h>
 #include <variant_list.h>
+#include <boost/optional/optional.hpp>
 
 #include "utils.h"
 #include "macro.h"
@@ -234,7 +235,7 @@ public:
 	void setUseRfc2833ForDtmf(bool enable);
 
 	// Miscs
-	int init();
+	int init(const boost::optional<std::string> &config, const boost::optional<std::string> &factory);
 	void enableEchoCancellation(bool enable);
 	bool echoCancellationEnabled() const;
 	void enableEchoLimiter(bool enable);
