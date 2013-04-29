@@ -32,6 +32,7 @@ public:
 	void setWindow(FB::PluginWindow *window);
 	unsigned long getId();
 	void setBackgroundColor(int r, int g, int b);
+	bool draw();
 
 private:
 	void *mWindow;

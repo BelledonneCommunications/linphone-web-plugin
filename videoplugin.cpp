@@ -136,6 +136,9 @@ bool VideoPlugin::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *win
 }
 
 bool VideoPlugin::onDraw(FB::RefreshEvent *evt, FB::PluginWindow* win) {
+	if (mVideo) {
+		return mVideo->draw();
+	}
 	return false;
 }
 

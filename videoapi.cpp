@@ -97,3 +97,8 @@ void VideoAPI::setBackgroundColor(int r, int g, int b) {
 	FBLOG_DEBUG("VideoAPI::setBackgroundColor()", "this=" << this << "\t" << "r=" << r << "\tg=" << g << "\tb=" << g);
 	mWindow->setBackgroundColor(r, g, b);
 }
+
+bool VideoAPI::draw() {
+	// FBLOG_DEBUG("VideoAPI::draw()", "this=" << this); // TOO VERBOSE
+	return mWindow->draw();
+}

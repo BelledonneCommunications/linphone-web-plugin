@@ -21,6 +21,7 @@
 #define H_VIDEOWINDOWWIN
 
 #include <PluginWindow.h>
+#include <PluginWindowWin.h>
 #include <boost/shared_ptr.hpp>
 #include "../videowindow.h"
 #include <WinDef.h>
@@ -33,9 +34,11 @@ public:
 	void setWindow(FB::PluginWindow *window);
 	unsigned long getId();
 	void setBackgroundColor(int r, int g, int b);
+	bool draw();
 
 private:
-	HWND mHwnd;
+	FB::PluginWindowWin *mWin;
+	HBRUSH mBrush;
 };
 
 #endif // H_VIDEOWINDOWWIN

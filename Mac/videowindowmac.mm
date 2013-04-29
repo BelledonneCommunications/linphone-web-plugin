@@ -61,3 +61,7 @@ unsigned long VideoWindowMac::getId() {
 	FBLOG_DEBUG("VideoWindowMac::getId()", "this=" << this);
 	return (unsigned long) mWindow;
 }
+
+bool VideoWindowMac::draw() {
+	return false;
+}

@@ -42,6 +42,7 @@ public:
 	unsigned long getWindow();
 
 	void setBackgroundColor(int r, int g, int b);
+	bool draw();
 
 private:
 	std::string mMagic;

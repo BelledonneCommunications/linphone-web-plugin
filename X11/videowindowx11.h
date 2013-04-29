@@ -33,6 +33,7 @@ public:
 	void setWindow(FB::PluginWindow *window);
 	unsigned long getId();
 	void setBackgroundColor(int r, int g, int b);
+	bool draw();
 
 	static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer *data);
 	static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer *data);
