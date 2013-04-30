@@ -25,26 +25,26 @@ const unsigned int DownloadFileTransferAPI::BUFFER_SIZE = 32 * 1024;
 
 DownloadFileTransferAPI::DownloadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
 	FileTransferAPI(sourceUri, targetUri, callback) {
-	FBLOG_DEBUG("DownloadFileTransferAPI::DownloadFileTransferAPI()", "this=" << this);
+	FBLOG_DEBUG("DownloadFileTransferAPI::DownloadFileTransferAPI", "this=" << this);
 }
 
 DownloadFileTransferAPI::~DownloadFileTransferAPI() {
-	FBLOG_DEBUG("DownloadFileTransferAPI::~DownloadFileTransferAPI()", "this=" << this);
+	FBLOG_DEBUG("DownloadFileTransferAPI::~DownloadFileTransferAPI", "this=" << this);
 }
 
 void DownloadFileTransferAPI::start() {
-	FBLOG_DEBUG("DownloadFileTransferAPI::start()", "this=" << this);
+	FBLOG_DEBUG("DownloadFileTransferAPI::start", "this=" << this);
 	mFileStr = mFactory->getFileManager()->uriToFile(mTargetUri);
 	if(mFileStr.empty()) {
-		FBLOG_DEBUG("DownloadFileTransferAPI::start()", "Invalid target path");
+		FBLOG_DEBUG("DownloadFileTransferAPI::start", "Invalid target path");
 		onError("Invalid target path");
 		return;
 	}
-	FBLOG_DEBUG("DownloadFileTransferAPI::start()", "targetFile=" << mFileStr);
+	FBLOG_DEBUG("DownloadFileTransferAPI::start", "targetFile=" << mFileStr);
 	
 	mFilePath = boost::filesystem::path(mFileStr);
 	if(boost::filesystem::exists(mFilePath)) {
-		FBLOG_DEBUG("DownloadFileTransferAPI::start()", "The path target \"" << mFileStr << "\" already exists");
+		FBLOG_DEBUG("DownloadFileTransferAPI::start", "The path target \"" << mFileStr << "\" already exists");
 		onError("The target path already exist");
 		return;
 	}
@@ -58,16 +58,16 @@ void DownloadFileTransferAPI::start() {
 	try {
 		mHelper = FileStreamHelper::AsyncRequest(host, req);
 	} catch(std::runtime_error&) {
-		FBLOG_DEBUG("DownloadFileTransferAPI::start()", "Internal error");
+		FBLOG_DEBUG("DownloadFileTransferAPI::start", "Internal error");
 		onError("Internal error");
 	}
 }
 
 void DownloadFileTransferAPI::callbackFct(bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size) {
-	FBLOG_DEBUG("UploadFileTransferAPI::callbackFct()", "this=" << this);
+	FBLOG_DEBUG("UploadFileTransferAPI::callbackFct", "this=" << this);
 	if(!success) {
 		mFileStream.close();
-		FBLOG_DEBUG("UploadFileTransferAPI::callbackFct()", "HTTP error");
+		FBLOG_DEBUG("UploadFileTransferAPI::callbackFct", "HTTP error");
 		onError("HTTP error");
 		return;
 	}
@@ -82,11 +82,11 @@ void DownloadFileTransferAPI::threadFctHolder(DownloadFileTransferAPIPtr &self, 
 }
 
 void DownloadFileTransferAPI::threadFct(const boost::shared_array<uint8_t> &adata, size_t &size) {
-	FBLOG_DEBUG("DownloadFileTransferAPI::threadFct()", "this=" << this);
+	FBLOG_DEBUG("DownloadFileTransferAPI::threadFct", "this=" << this);
 	
 	mFileStream.open(mFileStr.c_str(), std::ios_base::out | std::ios_base::binary);
 	if(mFileStream.fail()) {
-		FBLOG_DEBUG("UploadFileTransferAPI::start()", "Can't open the target file: " << mFileStr);
+		FBLOG_DEBUG("UploadFileTransferAPI::start", "Can't open the target file: " << mFileStr);
 		onError("Can't open the target file");
 		return;
 	}
@@ -100,7 +100,7 @@ void DownloadFileTransferAPI::threadFct(const boost::shared_array<uint8_t> &adat
 			if(writeSize > BUFFER_SIZE) writeSize = BUFFER_SIZE;
 			mFileStream.write(data, writeSize);
 			if(mFileStream.fail()) {
-				FBLOG_DEBUG("DownloadFileTransferAPI::threadFct()", "File write error");
+				FBLOG_DEBUG("DownloadFileTransferAPI::threadFct", "File write error");
 				onError("File write error");
 				throw std::runtime_error("File write error");
 			}
@@ -120,7 +120,7 @@ void DownloadFileTransferAPI::threadFct(const boost::shared_array<uint8_t> &adat
 }
 
 void DownloadFileTransferAPI::cancel() {
-	FBLOG_DEBUG("DownloadFileTransferAPI::cancel()", "this=" << this);
+	FBLOG_DEBUG("DownloadFileTransferAPI::cancel", "this=" << this);
 	if(mHelper) {
 		mHelper->cancel();
 	}
@@ -130,7 +130,7 @@ void DownloadFileTransferAPI::cancel() {
 }
 
 int DownloadFileTransferAPI::getTransferedBytes() {
-	FBLOG_DEBUG("DownloadFileTransferAPI::getTransferedBytes()", "this=" << this);
+	FBLOG_DEBUG("DownloadFileTransferAPI::getTransferedBytes", "this=" << this);
 	if(mHelper) {
 		mHelper->getReceived();
 	}
@@ -138,7 +138,7 @@ int DownloadFileTransferAPI::getTransferedBytes() {
 }
 
 int DownloadFileTransferAPI::getTotalBytes() {
-	FBLOG_DEBUG("DownloadFileTransferAPI::getTotalBytes()", "this=" << this);
+	FBLOG_DEBUG("DownloadFileTransferAPI::getTotalBytes", "this=" << this);
 	if(mHelper) {
 		mHelper->getStream()->getLength();
 	}

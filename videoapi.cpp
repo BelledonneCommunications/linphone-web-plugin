@@ -36,7 +36,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 VideoAPI::VideoAPI(const VideoPluginWeakPtr& plugin) :
 		JSAPIAuto(APIDescription(this)), mPlugin(plugin) {
-	FBLOG_DEBUG("videoAPI::videoAPI()", "this=" << this);
+	FBLOG_DEBUG("videoAPI::videoAPI", "this=" << this);
 
 	mWindow = VideoWindow::create();
 
@@ -54,7 +54,7 @@ VideoAPI::VideoAPI(const VideoPluginWeakPtr& plugin) :
 ///         the plugin is released.
 ///////////////////////////////////////////////////////////////////////////////
 VideoAPI::~VideoAPI() {
-	FBLOG_DEBUG("videoAPI::~videoAPI()", "this=" << this);
+	FBLOG_DEBUG("videoAPI::~videoAPI", "this=" << this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -74,31 +74,31 @@ VideoPluginPtr VideoAPI::getPlugin() {
 }
 
 void VideoAPI::setWindow(FB::PluginWindow *window) {
-	FBLOG_DEBUG("videoAPI::setWindow()", "this=" << this << "\t" << "window=" << window);
+	FBLOG_DEBUG("videoAPI::setWindow", "this=" << this << "\t" << "window=" << window);
 	mWindow->setWindow(window);
 }
 
 const std::string &VideoAPI::getMagic() {
-	FBLOG_DEBUG("VideoAPI::getMagic()", "this=" << this);
+	FBLOG_DEBUG("VideoAPI::getMagic", "this=" << this);
 	return mMagic;
 }
 
 void VideoAPI::setMagic(const std::string &magic) {
-	FBLOG_DEBUG("VideoAPI::setMagic()", "this=" << this << "\t" << "magic=" << magic);
+	FBLOG_DEBUG("VideoAPI::setMagic", "this=" << this << "\t" << "magic=" << magic);
 	mMagic = magic;
 }
 
 unsigned long VideoAPI::getWindow() {
-	FBLOG_DEBUG("VideoAPI::getWindow()", "this=" << this);
+	FBLOG_DEBUG("VideoAPI::getWindow", "this=" << this);
 	return mWindow->getId();
 }
 
 void VideoAPI::setBackgroundColor(int r, int g, int b) {
-	FBLOG_DEBUG("VideoAPI::setBackgroundColor()", "this=" << this << "\t" << "r=" << r << "\tg=" << g << "\tb=" << g);
+	FBLOG_DEBUG("VideoAPI::setBackgroundColor", "this=" << this << "\t" << "r=" << r << "\tg=" << g << "\tb=" << g);
 	mWindow->setBackgroundColor(r, g, b);
 }
 
 bool VideoAPI::draw() {
-	// FBLOG_DEBUG("VideoAPI::draw()", "this=" << this); // TOO VERBOSE
+	// FBLOG_DEBUG("VideoAPI::draw", "this=" << this); // TOO VERBOSE
 	return mWindow->draw();
 }

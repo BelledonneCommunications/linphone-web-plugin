@@ -91,7 +91,7 @@ public:
 	///         If mimetype is empty, returns the default plugin
 	///////////////////////////////////////////////////////////////////////////////
 	FB::PluginCorePtr createPlugin(const std::string& mimetype) {
-		FBLOG_DEBUG("createPlugin()", mimetype);
+		FBLOG_DEBUG("createPlugin", mimetype);
 		if (mimetype == "application/x-linphone-web-video")
 			return boost::make_shared<VideoPlugin>();
 		return boost::make_shared<CorePlugin>();

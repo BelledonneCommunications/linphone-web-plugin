@@ -78,171 +78,171 @@ CallAPI::~CallAPI() {
 }
 
 CallStatsAPIPtr CallAPI::getAudioStats() const {
-	FBLOG_DEBUG("CallAPI::getAudioStats()", "this=" << this);
-	return mFactory->get(linphone_call_get_audio_stats(mCall));
+	FBLOG_DEBUG("CallAPI::getAudioStats", "this=" << this);
+	return mFactory->getCallStats(linphone_call_get_audio_stats(mCall));
 }
 
 std::string CallAPI::getAuthenticationToken() const {
-	FBLOG_DEBUG("CallAPI::getAuthenticationToken()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getAuthenticationToken", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_call_get_authentication_token(mCall));
 }
 
 bool CallAPI::getAuthenticationTokenVerified() const {
-	FBLOG_DEBUG("CallAPI::getAuthenticationTokenVerified()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getAuthenticationTokenVerified", "this=" << this);
 	return linphone_call_get_authentication_token_verified(mCall) == TRUE? true : false;
 }
 
 float CallAPI::getAverageQuality() const {
-	FBLOG_DEBUG("CallAPI::getCurrentQuality()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getCurrentQuality", "this=" << this);
 	return linphone_call_get_average_quality(mCall);
 }
 
 CallLogAPIPtr CallAPI::getCallLog() const {
-	FBLOG_DEBUG("CallAPI::getCallLog()", "this=" << this);
-	return mFactory->get(linphone_call_get_call_log(mCall));
+	FBLOG_DEBUG("CallAPI::getCallLog", "this=" << this);
+	return mFactory->getCallLog(linphone_call_get_call_log(mCall));
 }
 
 CoreAPIPtr CallAPI::getCore() const {
-	FBLOG_DEBUG("CallAPI::getCurrentQuality()", "this=" << this);
-	return mFactory->get(linphone_call_get_core(mCall));
+	FBLOG_DEBUG("CallAPI::getCurrentQuality", "this=" << this);
+	return mFactory->getCore(linphone_call_get_core(mCall));
 }
 
 CallParamsAPIPtr CallAPI::getCurrentParams() const {
-	FBLOG_DEBUG("CallAPI::getCurrentParams()", "this=" << this);
-	return mFactory->get(linphone_call_get_current_params(mCall));
+	FBLOG_DEBUG("CallAPI::getCurrentParams", "this=" << this);
+	return mFactory->getCallParams(linphone_call_get_current_params(mCall));
 }
 
 float CallAPI::getCurrentQuality() const {
-	FBLOG_DEBUG("CallAPI::getCurrentQuality()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getCurrentQuality", "this=" << this);
 	return linphone_call_get_current_quality(mCall);
 }
 
 int CallAPI::getDir() const {
-	FBLOG_DEBUG("CallAPI::getDir()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getDir", "this=" << this);
 	return linphone_call_get_dir(mCall);
 }
 
 int CallAPI::getDuration() const {
-	FBLOG_DEBUG("CallAPI::getDir()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getDir", "this=" << this);
 	return linphone_call_get_duration(mCall);
 }
 
 float CallAPI::getPlayVolume() const {
-	FBLOG_DEBUG("CallAPI::getPlayVolume()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getPlayVolume", "this=" << this);
 	return linphone_call_get_play_volume(mCall);
 }
 
 int CallAPI::getReason() const {
-	FBLOG_DEBUG("CallAPI::getReason()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getReason", "this=" << this);
 	return linphone_call_get_reason(mCall);
 }
 
 float CallAPI::getRecordVolume() const {
-	FBLOG_DEBUG("CallAPI::getReason()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getReason", "this=" << this);
 	return linphone_call_get_record_volume(mCall);
 }
 
 std::string CallAPI::getReferTo() const {
-	FBLOG_DEBUG("CallAPI::getReason()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getReason", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_call_get_refer_to(mCall));
 }
 
 AddressAPIPtr CallAPI::getRemoteAddress() const {
-	FBLOG_DEBUG("CallAPI::getRemoteAddress()", "this=" << this);
-	return mFactory->get(linphone_call_get_remote_address(mCall));
+	FBLOG_DEBUG("CallAPI::getRemoteAddress", "this=" << this);
+	return mFactory->getAddress(linphone_call_get_remote_address(mCall));
 }
 
 std::string CallAPI::getRemoteAddressAsString() const {
-	FBLOG_DEBUG("CallAPI::getRemoteAddressAsString()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getRemoteAddressAsString", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_call_get_remote_address_as_string(mCall));
 }
 
 CallParamsAPIPtr CallAPI::getRemoteParams() const {
-	FBLOG_DEBUG("CallAPI::getRemoteParams()", "this=" << this);
-	return mFactory->get(linphone_call_get_remote_params(mCall));
+	FBLOG_DEBUG("CallAPI::getRemoteParams", "this=" << this);
+	return mFactory->getCallParams(linphone_call_get_remote_params(mCall));
 }
 
 std::string CallAPI::getRemoteUserAgent() const {
-	FBLOG_DEBUG("CallAPI::getRemoteUserAgent()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getRemoteUserAgent", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_call_get_remote_user_agent(mCall));
 }
 
 CallAPIPtr CallAPI::getReplacedCall() const {
-	FBLOG_DEBUG("CallAPI::getReplacedCall()", "this=" << this);
-	return mFactory->get(linphone_call_get_replaced_call(mCall));
+	FBLOG_DEBUG("CallAPI::getReplacedCall", "this=" << this);
+	return mFactory->getCall(linphone_call_get_replaced_call(mCall));
 }
 
 int CallAPI::getState() const {
-	FBLOG_DEBUG("CallAPI::getState()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getState", "this=" << this);
 	return linphone_call_get_state(mCall);
 }
 
 int CallAPI::getTransferState() const {
-	FBLOG_DEBUG("CallAPI::getTransferState()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::getTransferState", "this=" << this);
 	return linphone_call_get_transfer_state(mCall);
 }
 
 CallStatsAPIPtr CallAPI::getVideoStats() const {
-	FBLOG_DEBUG("CallAPI::getVideoStats()", "this=" << this);
-	return mFactory->get(linphone_call_get_video_stats(mCall));
+	FBLOG_DEBUG("CallAPI::getVideoStats", "this=" << this);
+	return mFactory->getCallStats(linphone_call_get_video_stats(mCall));
 }
 
 bool CallAPI::inConference() const {
-	FBLOG_DEBUG("CallAPI::inConference()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::inConference", "this=" << this);
 	return linphone_call_is_in_conference(mCall) == TRUE ? true : false;
 }
 
 bool CallAPI::cameraEnabled() const {
-	FBLOG_DEBUG("CallAPI::cameraEnabled()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::cameraEnabled", "this=" << this);
 	return linphone_call_camera_enabled(mCall) == TRUE ? true : false;
 }
 
 void CallAPI::enableCamera(bool enabled) {
-	FBLOG_DEBUG("CallAPI::enableCamera()", "this=" << this << "\t" << "enabled=" << enabled);
+	FBLOG_DEBUG("CallAPI::enableCamera", "this=" << this << "\t" << "enabled=" << enabled);
 	linphone_call_enable_camera(mCall, enabled ? TRUE : FALSE);
 }
 
 bool CallAPI::echoCancellationEnabled() const {
-	FBLOG_DEBUG("CallAPI::echoCancellationEnabled()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::echoCancellationEnabled", "this=" << this);
 	return linphone_call_echo_cancellation_enabled(mCall) == TRUE ? true : false;
 }
 
 void CallAPI::enableEchoCancellation(bool enabled) {
-	FBLOG_DEBUG("CallAPI::enableEchoCancellation()", "this=" << this << "\t" << "enabled=" << enabled);
+	FBLOG_DEBUG("CallAPI::enableEchoCancellation", "this=" << this << "\t" << "enabled=" << enabled);
 	linphone_call_enable_echo_cancellation(mCall, enabled ? TRUE : FALSE);
 }
 
 bool CallAPI::echoLimiterEnabled() const {
-	FBLOG_DEBUG("CallAPI::echoLimiterEnabled()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::echoLimiterEnabled", "this=" << this);
 	return linphone_call_echo_limiter_enabled(mCall) == TRUE ? true : false;
 }
 
 void CallAPI::enableEchoLimiter(bool enabled) {
-	FBLOG_DEBUG("CallAPI::enableEchoLimiter()", "this=" << this << "\t" << "enabled=" << enabled);
+	FBLOG_DEBUG("CallAPI::enableEchoLimiter", "this=" << this << "\t" << "enabled=" << enabled);
 	linphone_call_enable_echo_limiter(mCall, enabled ? TRUE : FALSE);
 }
 
 bool CallAPI::askedToAutoanswer() const {
-	FBLOG_DEBUG("CallAPI::askedToAutoanswer()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::askedToAutoanswer", "this=" << this);
 	return linphone_call_asked_to_autoanswer(mCall) == TRUE ? true : false;
 }
 
 bool CallAPI::hasTransferPending() const {
-	FBLOG_DEBUG("CallAPI::hasTransferPending()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::hasTransferPending", "this=" << this);
 	return linphone_call_has_transfer_pending(mCall) == TRUE ? true : false;
 }
 
 void CallAPI::sendVfuRequest() {
-	FBLOG_DEBUG("CallAPI::sendVfuRequest()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::sendVfuRequest", "this=" << this);
 	linphone_call_send_vfu_request(mCall);
 }
 
 void CallAPI::setAuthenticationTokenVerified(bool verified) {
-	FBLOG_DEBUG("CallAPI::setAuthenticationTokenVerified()", "this=" << this);
+	FBLOG_DEBUG("CallAPI::setAuthenticationTokenVerified", "this=" << this);
 	linphone_call_set_authentication_token_verified(mCall, verified);
 }
 
 void CallAPI::zoomVideo(float zoom, float cx, float cy) {
-	FBLOG_DEBUG("CallAPI::zoomVideo()", "this=" << this << "\t" << "zoom=" << zoom << ", cx=" << cx << ", cy=" << cy);
+	FBLOG_DEBUG("CallAPI::zoomVideo", "this=" << this << "\t" << "zoom=" << zoom << ", cx=" << cx << ", cy=" << cy);
 	linphone_call_zoom_video(mCall, zoom, &cx, &cy);
 }

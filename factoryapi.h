@@ -33,6 +33,7 @@
 #include "coreapi.h"
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
+#include "siptransportsapi.h"
 
 #include "filemanagerapi.h"
 #include "Transfers/filetransferapi.h"
@@ -57,35 +58,38 @@ public:
 	CorePluginPtr getPlugin();
 	
 	// Address
-	AddressAPIPtr get(LinphoneAddress *address);
-	AddressAPIPtr get(const LinphoneAddress *address);
+	AddressAPIPtr getAddress(LinphoneAddress *address);
+	AddressAPIPtr getAddress(const LinphoneAddress *address);
 	
 	// AuthInfo
-	AuthInfoAPIPtr get(LinphoneAuthInfo *authInfo);
-	AuthInfoAPIPtr get(const LinphoneAuthInfo *authInfo);
+	AuthInfoAPIPtr getAuthInfo(LinphoneAuthInfo *authInfo);
+	AuthInfoAPIPtr getAuthInfo(const LinphoneAuthInfo *authInfo);
 	
 	// Call
-	CallAPIPtr get(LinphoneCall *call);
+	CallAPIPtr getCall(LinphoneCall *call);
 	
 	// CallLog
-	CallLogAPIPtr get(LinphoneCallLog *callLog);
+	CallLogAPIPtr getCallLog(LinphoneCallLog *callLog);
 	
 	// CallParams
-	CallParamsAPIPtr get(LinphoneCallParams *callParams);
-	CallParamsAPIPtr get(const LinphoneCallParams *callParams);
+	CallParamsAPIPtr getCallParams(LinphoneCallParams *callParams);
+	CallParamsAPIPtr getCallParams(const LinphoneCallParams *callParams);
 	
 	// CallStats
-	CallStatsAPIPtr get(const LinphoneCallStats *callStats);
+	CallStatsAPIPtr getCallStats(const LinphoneCallStats *callStats);
 	
 	// Core
-	CoreAPIPtr get(LinphoneCore *core);
+	CoreAPIPtr getCore(LinphoneCore *core);
 	
 	// PayloadType
-	PayloadTypeAPIPtr get(PayloadType *payloadType);
-	PayloadTypeAPIPtr get(const PayloadType *payloadType);
+	PayloadTypeAPIPtr getPayloadType(PayloadType *payloadType);
+	PayloadTypeAPIPtr getPayloadType(const PayloadType *payloadType);
 	
 	// ProxyConfig
-	ProxyConfigAPIPtr get(LinphoneProxyConfig *proxyConfig);
+	ProxyConfigAPIPtr getProxyConfig(LinphoneProxyConfig *proxyConfig);
+	
+	// SipTransports
+	SipTransportsAPIPtr getSipTransports();
 	
 	// File
 	FileManagerAPIPtr getFileManager();

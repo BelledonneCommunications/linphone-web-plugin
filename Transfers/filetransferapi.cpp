@@ -36,7 +36,7 @@ void FileTransferAPI::initProxy() {
 }
 
 void FileTransferAPI::onSuccess(bool done) {
-	FBLOG_DEBUG("FileManagerAPI::onSuccess()", "this=" << this << "\t" << "done=" << done);
+	FBLOG_DEBUG("FileManagerAPI::onSuccess", "this=" << this << "\t" << "done=" << done);
 	mDone = done;
 	mError.clear();
 
@@ -44,7 +44,7 @@ void FileTransferAPI::onSuccess(bool done) {
 }
 
 void FileTransferAPI::onError(const std::string &error) {
-	FBLOG_DEBUG("FileManagerAPI::onError()", "this=" << this << "\t" << "error=" << error);
+	FBLOG_DEBUG("FileManagerAPI::onError", "this=" << this << "\t" << "error=" << error);
 	mDone = false;
 	mError = error;
 	
@@ -52,21 +52,21 @@ void FileTransferAPI::onError(const std::string &error) {
 }
 
 std::string FileTransferAPI::getError() {
-	FBLOG_DEBUG("FileTransferAPI::getError()", "this=" << this);
+	FBLOG_DEBUG("FileTransferAPI::getError", "this=" << this);
 	return mError;
 }
 
 bool FileTransferAPI::isDone() {
-	FBLOG_DEBUG("FileTransferAPI::isDone()", "this=" << this);
+	FBLOG_DEBUG("FileTransferAPI::isDone", "this=" << this);
 	return mDone;
 }
 
 std::string FileTransferAPI::getSourceUrl() {
-	FBLOG_DEBUG("FileTransferAPI::getSourceUrl()", "this=" << this);
+	FBLOG_DEBUG("FileTransferAPI::getSourceUrl", "this=" << this);
 	return mSourceUri.toString();
 }
 
 std::string FileTransferAPI::getTargetUrl() {
-	FBLOG_DEBUG("FileTransferAPI::getTargetUrl()", "this=" << this);
+	FBLOG_DEBUG("FileTransferAPI::getTargetUrl", "this=" << this);
 	return mTargetUri.toString();
 }

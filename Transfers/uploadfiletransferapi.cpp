@@ -26,38 +26,38 @@ const unsigned int UploadFileTransferAPI::BUFFER_SIZE = 32 * 1024;
 
 UploadFileTransferAPI::UploadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
 	FileTransferAPI(sourceUri, targetUri, callback) {
-	FBLOG_DEBUG("UploadFileTransferAPI::UploadFileTransferAPI()", "this=" << this);
+	FBLOG_DEBUG("UploadFileTransferAPI::UploadFileTransferAPI", "this=" << this);
 }
 
 UploadFileTransferAPI::~UploadFileTransferAPI() {
-	FBLOG_DEBUG("UploadFileTransferAPI::~UploadFileTransferAPI()", "this=" << this);
+	FBLOG_DEBUG("UploadFileTransferAPI::~UploadFileTransferAPI", "this=" << this);
 }
 
 void UploadFileTransferAPI::start() {
-	FBLOG_DEBUG("UploadFileTransferAPI::start()", "this=" << this);
+	FBLOG_DEBUG("UploadFileTransferAPI::start", "this=" << this);
 	mFileStr = mFactory->getFileManager()->uriToFile(mSourceUri);
 	if(mFileStr.empty()) {
-		FBLOG_DEBUG("UploadFileTransferAPI::start()", "Invalid source path");
+		FBLOG_DEBUG("UploadFileTransferAPI::start", "Invalid source path");
 		onError("Invalid source path");
 		return;
 	}
-	FBLOG_DEBUG("UploadFileTransferAPI::start()", "sourceFile=" << mFileStr);
+	FBLOG_DEBUG("UploadFileTransferAPI::start", "sourceFile=" << mFileStr);
 	
 	mFilePath = boost::filesystem::path(mFileStr);
 	if(!boost::filesystem::exists(mFilePath)) {
-		FBLOG_DEBUG("UploadFileTransferAPI::start()", "The path source \"" << mFileStr << "\" doesn't exist");
+		FBLOG_DEBUG("UploadFileTransferAPI::start", "The path source \"" << mFileStr << "\" doesn't exist");
 		onError("The source path doesn't exist");
 		return;
 	}
 	if(boost::filesystem::is_directory(mFilePath)) {
-		FBLOG_DEBUG("UploadFileTransferAPI::start()", "Can't upload a directory");
+		FBLOG_DEBUG("UploadFileTransferAPI::start", "Can't upload a directory");
 		onError("Can't transfer a directory");
 		return;
 	}
 	
 	mFileStream.open(mFileStr.c_str(), std::ios_base::in | std::ios_base::binary);
 	if(mFileStream.fail()) {
-		FBLOG_DEBUG("UploadFileTransferAPI::start()", "Can't open the source file: " << mFileStr);
+		FBLOG_DEBUG("UploadFileTransferAPI::start", "Can't open the source file: " << mFileStr);
 		onError("Can't open the source file");
 		return;
 	}
@@ -73,7 +73,7 @@ void UploadFileTransferAPI::threadFctHolder(UploadFileTransferAPIPtr &self) {
 
 
 void UploadFileTransferAPI::threadFct() {
-	FBLOG_DEBUG("UploadFileTransferAPI::threadFct()", "this=" << this);
+	FBLOG_DEBUG("UploadFileTransferAPI::threadFct", "this=" << this);
 	try {
 		// Read the file by chunk
 		char buffer[BUFFER_SIZE];
@@ -83,7 +83,7 @@ void UploadFileTransferAPI::threadFct() {
 			readSize = mFileStream.readsome(buffer, BUFFER_SIZE);
 			if(mFileStream.fail()) {
 				mFileStream.close();
-				FBLOG_DEBUG("UploadFileTransferAPI::threadFct()", "File read error");
+				FBLOG_DEBUG("UploadFileTransferAPI::threadFct", "File read error");
 				onError("File read error");
 				throw std::runtime_error("File read error");
 			}
@@ -101,7 +101,7 @@ void UploadFileTransferAPI::threadFct() {
 		postData += "&data=";
 		postData += base64Data;
 		
-		FBLOG_DEBUG("UploadFileTransferAPI::threadFct()", mFileStr << "(" << binaryData.length() << "->" << base64Data.length() <<")");
+		FBLOG_DEBUG("UploadFileTransferAPI::threadFct", mFileStr << "(" << binaryData.length() << "->" << base64Data.length() <<")");
 		
 		// Create the request
 		FB::BrowserStreamRequest req(mTargetUri, "POST");
@@ -113,7 +113,7 @@ void UploadFileTransferAPI::threadFct() {
 		try {
 			mHelper = FileStreamHelper::AsyncRequest(host, req);
 		} catch(std::runtime_error&) {
-			FBLOG_DEBUG("UploadFileTransferAPI::threadFct()", "Internal error");
+			FBLOG_DEBUG("UploadFileTransferAPI::threadFct", "Internal error");
 			onError("Internal error");
 		}
 	} catch(std::runtime_error&) {
@@ -124,9 +124,9 @@ void UploadFileTransferAPI::threadFct() {
 }
 
 void UploadFileTransferAPI::callbackFct(bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size) {
-	FBLOG_DEBUG("UploadFileTransferAPI::callbackFct()", "this=" << this);
+	FBLOG_DEBUG("UploadFileTransferAPI::callbackFct", "this=" << this);
 	if(!success) {
-		FBLOG_DEBUG("UploadFileTransferAPI::callbackFct()", "HTTP error");
+		FBLOG_DEBUG("UploadFileTransferAPI::callbackFct", "HTTP error");
 		onError("HTTP error");
 		return;
 	}
@@ -134,7 +134,7 @@ void UploadFileTransferAPI::callbackFct(bool success, const FB::HeaderMap& heade
 }
 
 void UploadFileTransferAPI::cancel() {
-	FBLOG_DEBUG("UploadFileTransferAPI::cancel()", "this=" << this);
+	FBLOG_DEBUG("UploadFileTransferAPI::cancel", "this=" << this);
 	if(mHelper) {
 		mHelper->cancel();
 	}
@@ -144,7 +144,7 @@ void UploadFileTransferAPI::cancel() {
 }
 
 int UploadFileTransferAPI::getTransferedBytes() {
-	FBLOG_DEBUG("UploadFileTransferAPI::getTransferedBytes()", "this=" << this);
+	FBLOG_DEBUG("UploadFileTransferAPI::getTransferedBytes", "this=" << this);
 	if(mHelper) {
 		mHelper->getReceived();
 	}
@@ -152,7 +152,7 @@ int UploadFileTransferAPI::getTransferedBytes() {
 }
 
 int UploadFileTransferAPI::getTotalBytes() {
-	FBLOG_DEBUG("UploadFileTransferAPI::getTotalBytes()", "this=" << this);
+	FBLOG_DEBUG("UploadFileTransferAPI::getTotalBytes", "this=" << this);
 	if(mHelper) {
 		mHelper->getStream()->getLength();
 	}

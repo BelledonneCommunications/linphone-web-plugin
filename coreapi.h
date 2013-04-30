@@ -41,6 +41,7 @@ FB_FORWARD_PTR(CallStatsParamsAPI)
 FB_FORWARD_PTR(CoreAPI)
 FB_FORWARD_PTR(PayloadTypeAPI)
 FB_FORWARD_PTR(ProxyConfigAPI)
+FB_FORWARD_PTR(SipTransportsAPI)
 
 FB_FORWARD_PTR(FileManagerAPI)
 
@@ -198,6 +199,8 @@ public:
 	int getVideoDscp() const;
 	int getSipPort() const;
 	void setSipPort(int port);
+	void setSipTransports(const SipTransportsAPIPtr &sipTransports);
+	SipTransportsAPIPtr getSipTransports() const;
 	bool adaptiveRateControlEnabled() const;
 	void enableAdaptiveRateControl(bool enable);
 	bool isNetworkReachable() const;

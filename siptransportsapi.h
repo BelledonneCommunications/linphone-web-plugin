@@ -17,27 +17,42 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#ifndef H_SIPTRANSPORTSAPI
+#define H_SIPTRANSPORTSAPI
+
+#include <linphonecore.h>
 #include "wrapperapi.h"
 
-WrapperAPI::WrapperAPI(const std::string& description): FB::JSAPIAuto(description) {
+FB_FORWARD_PTR(SipTransportsAPI)
+class SipTransportsAPI: public WrapperAPI {
+	friend class FactoryAPI;
+private:
+	LCSipTransports mSipTransports;
 	
-}
+	SipTransportsAPI();
+	
+protected:
+	void initProxy();
+	
+public:
+	~SipTransportsAPI();
+	
+	inline const LCSipTransports *getRef() const {
+		return &mSipTransports;
+	}
+	
+	inline LCSipTransports *getRef() {
+		return &mSipTransports;
+	}
+	
+	void setUdpPort(int port);
+	int getUdpPort() const;
+	void setTcpPort(int port);
+	int getTcpPort() const;
+	void setDtlsPort(int port);
+	int getDtlsPort() const;
+	void setTlsPort(int port);
+	int getTlsPort() const;
+};
 
-void WrapperAPI::setFactory(FactoryAPIPtr factory) {
-	mFactory = factory;
-}
-
-void WrapperAPI::shutdown() {
-	FBLOG_DEBUG("WrapperAPI::shutdown", "this=" << this);
-	mThreads.interruptAll();
-}
-
-void WrapperAPI::attachThread(const boost::shared_ptr<boost::thread> &thread) {
-	FBLOG_DEBUG("WrapperAPI::attachThread", "this=" << this  << "\t" << "id=" << thread->get_id());
-	mThreads.addThread(thread);
-}
-
-void WrapperAPI::detachThread(boost::thread::id id) {
-	FBLOG_DEBUG("WrapperAPI::detachThread", "this=" << this << "\t" << "id=" << id);
-	mThreads.removeThread(id);
-}
+#endif //H_SIPTRANSPORTSAPI
