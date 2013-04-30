@@ -47,7 +47,7 @@ set(MOZILLA_PLUGINID "belledonne-communications.com/linphone/web")
 # strings
 set(FBSTRING_CompanyDomain "com.belledonne-communication")
 set(FBSTRING_CompanyName "Belledonne Communications")
-set(FBSTRING_PLUGIN_VERSION "1.0.0.0")
+set(FBSTRING_PLUGIN_VERSION "0.0.1.0")
 set(FBSTRING_LegalCopyright "Copyright 2012 Belledonne Communications")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}")
 
