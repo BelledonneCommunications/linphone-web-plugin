@@ -44,18 +44,21 @@ FB_FORWARD_PTR(FactoryAPI)
 class FactoryAPI: public boost::enable_shared_from_this<FactoryAPI> {
 private:
 	CorePluginWeakPtr mPlugin;
-	FileManagerAPIPtr mFileManager;
+	FileManagerAPIWeakPtr mFileManager;
 	template<typename TypePtr>
 	TypePtr get(TypePtr ptr) {
 		ptr->setFactory(shared_from_this());
 		return ptr;
 	}
-	
+#ifdef CORE_THREADED
+	mutable boost::mutex mCoreMutex;
+#endif
 public:
 	FactoryAPI(const CorePluginWeakPtr &plugin);
 	~FactoryAPI();
 	
 	CorePluginPtr getPlugin();
+	boost::mutex &getCoreMutex();
 	
 	// Address
 	AddressAPIPtr getAddress(LinphoneAddress *address);

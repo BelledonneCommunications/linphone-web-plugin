@@ -18,7 +18,9 @@
  */
 
 #include "authinfoapi.h"
+
 #include "utils.h"
+#include "factoryapi.h"
 
 AuthInfoAPI::AuthInfoAPI(LinphoneAuthInfo *authInfo) :
 		WrapperAPI(APIDescription(this)), mAuthInfo(authInfo) {
@@ -61,31 +63,43 @@ AuthInfoAPI::~AuthInfoAPI() {
 }
 
 std::string AuthInfoAPI::getUserid() const {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AuthInfoAPI::getUserid", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_auth_info_get_userid(mAuthInfo));
 }
 
 void AuthInfoAPI::setUserid(const std::string &userid) {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AuthInfoAPI::setUserid", "this=" << this << "\t" << "userid=" << userid);
 	linphone_auth_info_set_userid(mAuthInfo, userid.c_str());
 }
 
 std::string AuthInfoAPI::getUsername() const {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AuthInfoAPI::getUsername", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_auth_info_get_username(mAuthInfo));
 }
 
 void AuthInfoAPI::setUsername(const std::string &username) {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AuthInfoAPI::setUsername", "this=" << this << "\t" << "username=" << username);
 	linphone_auth_info_set_username(mAuthInfo, username.c_str());
 }
 
 std::string AuthInfoAPI::getPasswd() const {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AuthInfoAPI::getPasswd", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_auth_info_get_passwd(mAuthInfo));
 }
 
 void AuthInfoAPI::setPasswd(const std::string &passwd) {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AuthInfoAPI::setPasswd", "this=" << this << "\t" << "passwd=" << passwd);
 	linphone_auth_info_set_passwd(mAuthInfo, passwd.c_str());
 }

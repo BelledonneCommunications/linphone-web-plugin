@@ -18,7 +18,9 @@
  */
 
 #include "callparamsapi.h"
+
 #include "utils.h"
+#include "factoryapi.h"
 
 CallParamsAPI::CallParamsAPI(LinphoneCallParams *callParams) :
 		WrapperAPI(APIDescription(this)), mCallParams(callParams) {
@@ -51,21 +53,29 @@ void CallParamsAPI::initProxy() {
 }
 
 void CallParamsAPI::setAudioBandwidthLimit(int bw) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallParamsAPI::setAudioBandwidthLimit", "this=" << this << "\t" << "bw=" << bw);
 	linphone_call_params_set_audio_bandwidth_limit(mCallParams, bw);
 }
 
 bool CallParamsAPI::earlyMediaSendingEnabled() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallParamsAPI::earlyMediaSendingEnabled", "this=" << this);
 	return linphone_call_params_early_media_sending_enabled(mCallParams) == TRUE ? true : false;
 }
 
 void CallParamsAPI::enableEarlyMediaSending(bool enable) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallParamsAPI::enableEarlyMediaSending", "this=" << this << "\t" << "enable=" << enable);
 	return linphone_call_params_enable_early_media_sending(mCallParams, enable ? TRUE : FALSE);
 }
 
 bool CallParamsAPI::localConferenceMode() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallParamsAPI::localConferenceMode", "this=" << this);
 	return linphone_call_params_local_conference_mode(mCallParams) == TRUE ? true : false;
 }
@@ -75,18 +85,24 @@ bool CallParamsAPI::localConferenceMode() const {
 //getUsedAudioCodec	usedAudioCodec
 //getUsedVideoCodec	usedVideoCodec
 void CallParamsAPI::enableVideo(bool enable) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallParamsAPI::enableVideo", "this=" << this << "\t" << "enable=" << enable);
 	return linphone_call_params_enable_video(mCallParams, enable ? TRUE : FALSE);
 
 }
 
 bool CallParamsAPI::videoEnabled() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallParamsAPI::videoEnabled", "this=" << this);
 	return linphone_call_params_video_enabled(mCallParams) == TRUE ? true : false;
 
 }
 
 CallParamsAPIPtr CallParamsAPI::copy() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallParamsAPI::getRefKey", "this=" << this);
 	CallParamsAPIPtr ret(new CallParamsAPI(linphone_call_params_copy(mCallParams)));
 	ret->mUsed = false;

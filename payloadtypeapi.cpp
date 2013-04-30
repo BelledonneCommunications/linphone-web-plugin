@@ -19,6 +19,7 @@
 
 #include "payloadtypeapi.h"
 #include "coreapi.h"
+
 #include "utils.h"
 #include "factoryapi.h"
 
@@ -77,37 +78,53 @@ PayloadTypeAPI::~PayloadTypeAPI() {
 }
 
 int PayloadTypeAPI::getType() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::getType", "this=" << this);
 	return mPayloadType->type;
 }
 void PayloadTypeAPI::setType(int type) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::setType", "this=" << this << "\t" << "type=" << type);
 	mPayloadType->type = type;
 }
 
 int PayloadTypeAPI::getClockRate() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::getClockRate", "this=" << this);
 	return mPayloadType->clock_rate;
 }
 void PayloadTypeAPI::setClockRate(int rate) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::setClockRate", "this=" << this << "\t" << "rate=" << rate);
 	mPayloadType->clock_rate = rate;
 }
 
 int PayloadTypeAPI::getBitsPerSample() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::getBitsPerSample", "this=" << this);
 	return mPayloadType->bits_per_sample;
 }
 void PayloadTypeAPI::setBitsPerSample(int bps) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::setBitsPerSample", "this=" << this << "\t" << "bps=" << bps);
 	mPayloadType->bits_per_sample = bps;
 }
 
 std::string PayloadTypeAPI::getZeroPattern() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::getZeroPattern", "this=" << this);
 	return CHARPTR_TO_STRING(mPayloadType->zero_pattern);
 }
 void PayloadTypeAPI::setZeroPattern(const std::string &pattern) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::setZeroPattern", "this=" << this << "\t" << "pattern=" << pattern);
 	if (mPayloadType->zero_pattern != NULL)
 		free(mPayloadType->zero_pattern);
@@ -115,28 +132,40 @@ void PayloadTypeAPI::setZeroPattern(const std::string &pattern) {
 }
 
 int PayloadTypeAPI::getPatternLength() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::getPatternLength", "this=" << this);
 	return mPayloadType->pattern_length;
 }
 void PayloadTypeAPI::setPatternLength(int length) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::setPatternLength", "this=" << this << "\t" << "length=" << length);
 	mPayloadType->pattern_length = length;
 }
 
 int PayloadTypeAPI::getNormalBitrate() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::getNormalBitrate", "this=" << this);
 	return mPayloadType->normal_bitrate;
 }
 void PayloadTypeAPI::setNormalBitrate(int rate) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::setNormalBitrate", "this=" << this << "\t" << "rate=" << rate);
 	mPayloadType->normal_bitrate = rate;
 }
 
 std::string PayloadTypeAPI::getMimeType() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::getMimeType", "this=" << this);
 	return CHARPTR_TO_STRING(mPayloadType->mime_type);
 }
 void PayloadTypeAPI::setMimeType(const std::string &mime) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::setMimeType", "this=" << this << "\t" << "mime=" << mime);
 	if (mPayloadType->mime_type != NULL)
 		free(mPayloadType->mime_type);
@@ -144,19 +173,28 @@ void PayloadTypeAPI::setMimeType(const std::string &mime) {
 }
 
 int PayloadTypeAPI::getChannels() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::getChannels", "this=" << this);
 	return mPayloadType->channels;
 }
 void PayloadTypeAPI::setChannels(int channels) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::setNormalBitrate", "this=" << this << "\t" << "channels=" << channels);
 	mPayloadType->channels = channels;
 }
 
 std::string PayloadTypeAPI::getRecvFmtp() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::getRecvFmtp", "this=" << this);
 	return CHARPTR_TO_STRING(mPayloadType->recv_fmtp);
 }
+
 void PayloadTypeAPI::setRecvFmtp(const std::string &rfmtp) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::setRecvFmtp", "this=" << this << "\t" << "rfmtp=" << rfmtp);
 	if (mPayloadType->recv_fmtp != NULL)
 		free(mPayloadType->recv_fmtp);
@@ -164,10 +202,14 @@ void PayloadTypeAPI::setRecvFmtp(const std::string &rfmtp) {
 }
 
 std::string PayloadTypeAPI::getSendFmtp() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::getSendFmtp", "this=" << this);
 	return CHARPTR_TO_STRING(mPayloadType->send_fmtp);
 }
 void PayloadTypeAPI::setSendFmtp(const std::string &sfmtp) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::setSendFmtp", "this=" << this << "\t" << "sfmtp=" << sfmtp);
 	if (mPayloadType->send_fmtp != NULL)
 		free(mPayloadType->send_fmtp);
@@ -175,18 +217,26 @@ void PayloadTypeAPI::setSendFmtp(const std::string &sfmtp) {
 }
 
 int PayloadTypeAPI::getFlags() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::getFlags", "this=" << this);
 	return mPayloadType->flags;
 }
 void PayloadTypeAPI::setFlags(int flags) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("PayloadTypeAPI::setFlags", "this=" << this << "\t" << "flags=" << flags);
 	mPayloadType->flags = flags;
 }
 
 PayloadTypeAPIPtr PayloadTypeAPI::clone() const {
+	CORE_MUTEX
+
 	return mFactory->getPayloadType(payload_type_clone(mPayloadType));
 }
 
 std::string PayloadTypeAPI::getRtpmap() const {
+	CORE_MUTEX
+
 	return CHARPTR_TO_STRING(payload_type_get_rtpmap(mPayloadType));
 }

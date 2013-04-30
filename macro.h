@@ -169,4 +169,13 @@
 	IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)   \
 	IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)   \
 
+
+#ifdef CORE_THREADED
+#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(mFactory->getCoreMutex(), boost::defer_lock); \
+	if(mUsed) scopedLock.lock();
+#else
+#define CORE_MUTEX
+#endif //CORE_THREADED
+
 #endif // H_MACRO
+

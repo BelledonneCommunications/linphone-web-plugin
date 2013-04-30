@@ -18,7 +18,9 @@
  */
 
 #include "calllogapi.h"
+
 #include "utils.h"
+#include "factoryapi.h"
 
 CallLogAPI::CallLogAPI(LinphoneCallLog *callLog) :
 		WrapperAPI(APIDescription(this)), mCallLog(callLog) {
@@ -40,16 +42,22 @@ CallLogAPI::~CallLogAPI() {
 }
 
 std::string CallLogAPI::getRefKey() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallLogAPI::getRefKey", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_call_log_get_ref_key(mCallLog));
 }
 
 void CallLogAPI::setRefKey(const std::string &refKey) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallLogAPI::setRefKey", "this=" << this << "\t" << "refKey=" << refKey);
 	linphone_call_log_set_ref_key(mCallLog, refKey.c_str());
 }
 
 std::string CallLogAPI::toStr() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallLogAPI::toStr", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_call_log_to_str(mCallLog));
 }

@@ -22,6 +22,7 @@
 
 #include <JSAPIAuto.h>
 #include "utils.h"
+#include "macro.h"
 
 FB_FORWARD_PTR(FactoryAPI)
 
@@ -32,7 +33,7 @@ private:
 	ThreadGroup mThreads;
 	
 protected:
-	FactoryAPIPtr mFactory;
+	mutable FactoryAPIPtr mFactory;
 	virtual void setFactory(FactoryAPIPtr factory);
 	
 	bool mUsed;

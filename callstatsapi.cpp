@@ -18,7 +18,9 @@
  */
 
 #include "callstatsapi.h"
+
 #include "utils.h"
+#include "factoryapi.h"
 
 CallStatsAPI::CallStatsAPI(const LinphoneCallStats *callStats) :
 		WrapperAPI(APIDescription(this)), mCallStats(const_cast<LinphoneCallStats *>(callStats)) {
@@ -43,21 +45,29 @@ CallStatsAPI::~CallStatsAPI() {
 }
 
 int CallStatsAPI::getType() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallStatsAPI::getType", "this=" << this);
 	return mCallStats->type;
 }
 
 void CallStatsAPI::setType(int type) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallStatsAPI::setType", "this=" << this << "\t" << "type=" << type);
 	mCallStats->type = type;
 }
 
 float CallStatsAPI::getRoundTripDelay() const {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallStatsAPI::getRoundTripDelay", "this=" << this);
 	return mCallStats->round_trip_delay;
 }
 
 void CallStatsAPI::setRoundTripDelay(float delay) {
+	CORE_MUTEX
+
 	FBLOG_DEBUG("CallStatsAPI::setRoundTripDelay", "this=" << this << "\t" << "delay=" << delay);
 	mCallStats->round_trip_delay = delay;
 }

@@ -38,6 +38,10 @@ CorePluginPtr FactoryAPI::getPlugin() {
 	return plugin;
 }
 
+boost::mutex &FactoryAPI::getCoreMutex() {
+	return mCoreMutex;
+}
+
 AddressAPIPtr FactoryAPI::getAddress(LinphoneAddress *address) {
 	FBLOG_DEBUG("FactoryAPI::getAddress", "this=" << this << "\t" << "address=" << address);
 	if (address == NULL)
@@ -204,10 +208,12 @@ SipTransportsAPIPtr FactoryAPI::getSipTransports() {
 
 FileManagerAPIPtr FactoryAPI::getFileManager() {
 	FBLOG_DEBUG("FactoryAPI::getFileManager", "this=" << this);
-	if(!mFileManager) {
-		mFileManager = get(FileManagerAPIPtr(new FileManagerAPI()));
+	FileManagerAPIPtr fileManager = mFileManager.lock();
+	if(!fileManager) {
+		fileManager = get(FileManagerAPIPtr(new FileManagerAPI()));
+		mFileManager = fileManager;
 	}
-	return mFileManager;
+	return fileManager;
 }
 
 FileTransferAPIPtr FactoryAPI::getFileTransfer(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr &callback) {

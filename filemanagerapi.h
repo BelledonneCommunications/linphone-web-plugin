@@ -20,6 +20,7 @@
 #ifndef H_FILEMANAGERAPI
 #define H_FILEMANAGERAPI
 
+#include "macro.h"
 #include <linphonecore.h>
 #include "wrapperapi.h"
 

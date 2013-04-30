@@ -28,8 +28,6 @@
 #include <variant_list.h>
 #include <boost/optional/optional.hpp>
 
-#include "utils.h"
-#include "macro.h"
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
@@ -282,7 +280,6 @@ private:
 	LinphoneCoreVTable mVtable;// Linphone callback methods table
 
 #ifdef CORE_THREADED
-	mutable boost::mutex mCoreMutex;
 	boost::shared_ptr<boost::thread> mCoreThread;
 #else
 	FB::TimerPtr mTimer;
@@ -296,10 +293,7 @@ private:
 #ifdef CORE_THREADED
 	static void destroyThread(LinphoneCore *core);
 	static void iterateThread(CoreAPIPtr &core);
-	void iterateWithMutex() {
-		boost::mutex::scoped_lock scopedLock(mCoreMutex);
-		iterate();
-	}
+	void iterateWithMutex();
 #endif
 
 protected:

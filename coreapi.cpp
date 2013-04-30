@@ -50,12 +50,6 @@ void usleep(int waitTime) {
 }
 #endif
 
-#ifdef CORE_THREADED
-#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(mCoreMutex);
-#else
-#define CORE_MUTEX
-#endif //CORE_THREADED
-
 static boost::mutex sInstanceMutex;
 static int sInstanceCount = 0;
 
@@ -85,6 +79,12 @@ void CoreAPI::iterateThread(CoreAPIPtr &core) {
 	FBLOG_DEBUG("CoreAPI::iterateThread", "end" << "\t" << "core=" << core);
 }
 
+void CoreAPI::iterateWithMutex() {
+	CORE_MUTEX
+	
+	iterate();
+}
+
 #endif //CORE_THREADED
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ void CoreAPI::iterateThread(CoreAPIPtr &core) {
 ///////////////////////////////////////////////////////////////////////////////
 CoreAPI::CoreAPI() :
 		WrapperAPI(APIDescription(this)), mCore(NULL) {
-	mUsed = false;
+	mUsed = true;
 	mConst = false;
 	FBLOG_DEBUG("CoreAPI::CoreAPI", "this=" << this);
 #ifndef CORE_THREADED

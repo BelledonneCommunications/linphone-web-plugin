@@ -18,7 +18,9 @@
  */
 
 #include "addressapi.h"
+
 #include "utils.h"
+#include "factoryapi.h"
 
 AddressAPI::AddressAPI(LinphoneAddress *address) :
 		WrapperAPI(APIDescription(this)), mAddress(address) {
@@ -74,21 +76,29 @@ AddressAPI::~AddressAPI() {
 }
 
 std::string AddressAPI::asString() const {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::asString", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_as_string(mAddress));
 }
 
 std::string AddressAPI::asStringUriOnly() const {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::asStringUriOnly", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_as_string_uri_only(mAddress));
 }
 
 void AddressAPI::clean() {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::clean", "this=" << this);
 	linphone_address_clean(mAddress);
 }
 
 AddressAPIPtr AddressAPI::clone() const {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::clone", "this=" << this);
 	AddressAPIPtr ret(new AddressAPI(linphone_address_clone(mAddress)));
 	ret->mUsed = false;
@@ -96,56 +106,78 @@ AddressAPIPtr AddressAPI::clone() const {
 }
 
 std::string AddressAPI::getDisplayName() const {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::getDisplayName", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_get_display_name(mAddress));
 }
 
 void AddressAPI::setDisplayName(const std::string &displayname) {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::setDisplayName", "this=" << this << "\t" << "displayname=" << displayname);
 	linphone_address_set_display_name(mAddress, displayname.c_str());
 }
 
 std::string AddressAPI::getDomain() const {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::getDomain", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_get_domain(mAddress));
 }
 
 void AddressAPI::setDomain(const std::string &domain) {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::setDomain", "this=" << this << "\t" << "domain=" << domain);
 	linphone_address_set_domain(mAddress, domain.c_str());
 }
 
 std::string AddressAPI::getPort() const {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::getPort", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_get_port(mAddress));
 }
 
 void AddressAPI::setPort(const std::string &port) {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::setPort", "this=" << this << "\t" << "port=" << port);
 	linphone_address_set_port(mAddress, port.c_str());
 }
 
 int AddressAPI::getPortInt() const {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::getPortInt", "this=" << this);
 	return linphone_address_get_port_int(mAddress);
 }
 
 void AddressAPI::setPortInt(int port) {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::setPortInt", "this=" << this << "\t" << "port=" << port);
 	linphone_address_set_port_int(mAddress, port);
 }
 
 std::string AddressAPI::getScheme() const {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::getScheme", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_get_scheme(mAddress));
 }
 
 std::string AddressAPI::getUsername() const {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::getUsername", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_get_username(mAddress));
 }
 
 void AddressAPI::setUsername(const std::string &username) {
+	CORE_MUTEX
+	
 	FBLOG_DEBUG("AddressAPI::setUsername", "this=" << this << "\t" << "username=" << username);
 	linphone_address_set_username(mAddress, username.c_str());
 }
