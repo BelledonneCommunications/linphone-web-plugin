@@ -129,7 +129,7 @@ void DownloadFileTransferAPI::cancel() {
 	}
 }
 
-int DownloadFileTransferAPI::getTransferedBytes() {
+long long DownloadFileTransferAPI::getTransferedBytes() {
 	FBLOG_DEBUG("DownloadFileTransferAPI::getTransferedBytes", "this=" << this);
 	if(mHelper) {
 		mHelper->getReceived();
@@ -137,7 +137,7 @@ int DownloadFileTransferAPI::getTransferedBytes() {
 	return -1;
 }
 
-int DownloadFileTransferAPI::getTotalBytes() {
+long long DownloadFileTransferAPI::getTotalBytes() {
 	FBLOG_DEBUG("DownloadFileTransferAPI::getTotalBytes", "this=" << this);
 	if(mHelper) {
 		mHelper->getStream()->getLength();

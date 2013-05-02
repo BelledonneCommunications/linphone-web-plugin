@@ -50,9 +50,9 @@ void GenerateDump(EXCEPTION_POINTERS* pExceptionPointers) {
 
 	GetLocalTime(&stLocalTime);
 
-	//GetTempPath(dwBufferSize, szPath);
-	ExpandEnvironmentStringsA("%SYSTEMDRIVE%", szPath, MAX_PATH);
-	StringCchCatA(szPath, MAX_PATH, "\\TEMP\\");
+	GetTempPathA(dwBufferSize, szPath);
+	//ExpandEnvironmentStringsA("%SYSTEMDRIVE%", szPath, MAX_PATH);
+	//StringCchCatA(szPath, MAX_PATH, "\\TEMP\\");
 
 	StringCchPrintfA(szFileName, MAX_PATH, "%s%s-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.dmp", 
 			   szPath, szAppName, szVersion, 
@@ -134,11 +134,11 @@ public:
 		SYSTEMTIME stLocalTime;
 
 		GetLocalTime(&stLocalTime);
-		//GetTempPath(dwBufferSize, szPath);
-		ExpandEnvironmentStringsA("%SYSTEMDRIVE%", szPath, MAX_PATH);
-		StringCchCatA(szPath, MAX_PATH, "\\TEMP\\");
+		GetTempPathA(dwBufferSize, szPath);
+		//ExpandEnvironmentStringsA("%SYSTEMDRIVE%", szPath, MAX_PATH);
+		//StringCchCatA(szPath, MAX_PATH, "/TEMP/");
 
-		StringCchPrintfA(szFileName, MAX_PATH, "%s\\%s-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld_FB.log", 
+		StringCchPrintfA(szFileName, MAX_PATH, "%s%s-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld_FB.log", 
 			szPath, szAppName, szVersion, 
 			stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay,
 			stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond,

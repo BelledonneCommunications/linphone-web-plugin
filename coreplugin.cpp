@@ -67,9 +67,9 @@ void CorePlugin::enableLog() {
 	SYSTEMTIME stLocalTime;
 
 	GetLocalTime(&stLocalTime);
-	//GetTempPath(dwBufferSize, szPath);
-	ExpandEnvironmentStrings(L"%SYSTEMDRIVE%", szPath, MAX_PATH);
-	StringCchCat(szPath, MAX_PATH, L"\\TEMP\\");
+	GetTempPath(dwBufferSize, szPath);
+	//ExpandEnvironmentStrings(L"%SYSTEMDRIVE%", szPath, MAX_PATH);
+	//StringCchCat(szPath, MAX_PATH, L"\\TEMP\\");
 
 	StringCchPrintf(szFileName, MAX_PATH, L"%s\\%s-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.log", 
 		szPath, szAppName, szVersion, 

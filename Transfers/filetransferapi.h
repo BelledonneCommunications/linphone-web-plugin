@@ -46,8 +46,8 @@ public:
 	virtual void cancel() = 0;
 	std::string getError();
 	bool isDone();
-	virtual int getTransferedBytes() = 0;
-	virtual int getTotalBytes() = 0;
+	virtual long long getTransferedBytes() = 0;
+	virtual long long getTotalBytes() = 0;
 	std::string getSourceUrl();
 	std::string getTargetUrl();
 };

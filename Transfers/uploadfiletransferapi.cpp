@@ -80,7 +80,7 @@ void UploadFileTransferAPI::threadFct() {
 		size_t readSize = 1;
 		std::string binaryData;
 		while(!boost::this_thread::interruption_requested() && readSize > 0) {
-			readSize = mFileStream.readsome(buffer, BUFFER_SIZE);
+			readSize = (size_t)mFileStream.readsome(buffer, BUFFER_SIZE);
 			if(mFileStream.fail()) {
 				mFileStream.close();
 				FBLOG_DEBUG("UploadFileTransferAPI::threadFct", "File read error");
@@ -143,7 +143,7 @@ void UploadFileTransferAPI::cancel() {
 	}
 }
 
-int UploadFileTransferAPI::getTransferedBytes() {
+long long UploadFileTransferAPI::getTransferedBytes() {
 	FBLOG_DEBUG("UploadFileTransferAPI::getTransferedBytes", "this=" << this);
 	if(mHelper) {
 		mHelper->getReceived();
@@ -151,7 +151,7 @@ int UploadFileTransferAPI::getTransferedBytes() {
 	return -1;
 }
 
-int UploadFileTransferAPI::getTotalBytes() {
+long long UploadFileTransferAPI::getTotalBytes() {
 	FBLOG_DEBUG("UploadFileTransferAPI::getTotalBytes", "this=" << this);
 	if(mHelper) {
 		mHelper->getStream()->getLength();

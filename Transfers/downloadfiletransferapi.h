@@ -48,8 +48,8 @@ public:
 	~DownloadFileTransferAPI();
 	virtual void start();
 	virtual void cancel();
-	virtual int getTransferedBytes();
-	virtual int getTotalBytes();
+	virtual long long getTransferedBytes();
+	virtual long long getTotalBytes();
 };
 
 #endif //H_DOWNLOADFILETRANSFERAPI

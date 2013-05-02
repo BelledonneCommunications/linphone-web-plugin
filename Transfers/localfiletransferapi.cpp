@@ -153,12 +153,12 @@ void LocalFileTransferAPI::cancel() {
 	}
 }
 
-int LocalFileTransferAPI::getTransferedBytes() {
+long long LocalFileTransferAPI::getTransferedBytes() {
 	FBLOG_DEBUG("LocalFileTransferAPI::getTransferedBytes", "this=" << this);
 	return mTransferedBytes;
 }
 
-int LocalFileTransferAPI::getTotalBytes() {
+long long LocalFileTransferAPI::getTotalBytes() {
 	FBLOG_DEBUG("LocalFileTransferAPI::getTotalBytes", "this=" << this);
 	return mTotalBytes;
 }

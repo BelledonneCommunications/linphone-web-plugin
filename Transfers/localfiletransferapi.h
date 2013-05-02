@@ -37,8 +37,8 @@ private:
 	std::string mSourceFileStr;
 	boost::filesystem::path mSourceFilePath;
 	std::ifstream mSourceFileStream;
-	int mTotalBytes;
-	int mTransferedBytes;
+	long long mTotalBytes;
+	long long mTransferedBytes;
 	boost::shared_ptr<boost::thread> mThread;
 	
 	LocalFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
@@ -53,8 +53,8 @@ public:
 	~LocalFileTransferAPI();
 	virtual void start();
 	virtual void cancel();
-	virtual int getTransferedBytes();
-	virtual int getTotalBytes();
+	virtual long long getTransferedBytes();
+	virtual long long getTotalBytes();
 };
 
 #endif //H_LOCALFILETRANSFERAPI
