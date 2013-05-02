@@ -121,10 +121,11 @@ public:
 	}
 
 	void getLoggingMethods(FB::Log::LogMethodList& outMethods) {
+#ifdef DEBUG
 #ifndef WIN32
 		// The next line will enable logging to the console (think: printf).
 		outMethods.push_back(std::make_pair(FB::Log::LogMethod_Console, std::string()));
-#else
+#else //WIN32
 		CHAR szPath[MAX_PATH]; 
 		CHAR szFileName[MAX_PATH]; 
 		CHAR* szAppName = FBSTRING_PluginFileName;
@@ -143,13 +144,14 @@ public:
 			stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond,
 			GetCurrentProcessId(), GetCurrentThreadId());
 		outMethods.push_back(std::make_pair(FB::Log::LogMethod_File, std::string(szFileName)));
-#endif
+#endif //WIN32
+#endif //DEBUG
 	}
 
 	FB::Log::LogLevel getLogLevel() {
 #ifdef DEBUG
 		return FB::Log::LogLevel_Debug; // Now Debug and above is logged.
-#else
+#else //DEBUG
 		return FB::Log::LogLevel_Error;
 #endif //DEBUG
 	}
