@@ -43,17 +43,51 @@
 #include "siptransportsapi.h"
 
 #ifndef WIN32
-#else
+#else //WIN32
 #include <windows.h>
 void usleep(int waitTime) {
 	Sleep(waitTime/1000);
 }
-#endif
+#endif //WIN32
 
 static boost::mutex sInstanceMutex;
 static int sInstanceCount = 0;
 
 #ifdef CORE_THREADED
+
+void * CoreAPI::libHandle = NULL;
+
+// Increment reference counter on this lib to avoid a early unload
+void CoreAPI::refLib() {
+#ifdef WIN32
+	HMODULE module;
+	char name[MAX_PATH + 1];
+	if(GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast<LPCTSTR>(refLib), &module)) {
+		if(GetModuleFileNameA(module, name, MAX_PATH)) {
+			name[MAX_PATH] = '\0';
+			libHandle = (void*)LoadLibraryA(name);
+		}
+	}
+#else //WIN32
+	Dl_info info;
+	if(dladdr(refLib, &info)) {
+		libHandle = dlopen(info.dli_fname, RTLD_LAZY);
+	}
+#endif //WIN32
+}
+
+// Decrement reference counter on this lib
+void CoreAPI::unrefLib() {
+#ifdef WIN32
+	if(libHandle != NULL) {
+		FreeLibrary((HMODULE)libHandle);
+	}
+#else //WIN32
+	if(libHandle != NULL) {
+		dlClose(libHandle);
+	}
+#endif //WIN32
+}
 
 void CoreAPI::destroyThread(LinphoneCore *core) {
 	FBLOG_DEBUG("CoreAPI::destroyThread", "start" << "\t" << "core=" << core);
@@ -62,6 +96,7 @@ void CoreAPI::destroyThread(LinphoneCore *core) {
 	--sInstanceCount;
 	sInstanceMutex.unlock();
 	FBLOG_DEBUG("CoreAPI::destroyThread", "end" << "\t" << "core=" << core);
+	boost::this_thread::at_thread_exit(unrefLib);
 }
 
 void CoreAPI::iterateThread(CoreAPIPtr &core) {
@@ -343,6 +378,7 @@ CoreAPI::~CoreAPI() {
 
 #ifdef CORE_THREADED
 		// TODO find a better way to do that
+		refLib();
 		boost::thread t(boost::bind(CoreAPI::destroyThread, mCore));
 #else
 		mTimer->stop();

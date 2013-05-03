@@ -64,15 +64,15 @@ void GenerateDump(EXCEPTION_POINTERS* pExceptionPointers) {
 
 	hDumpFile = CreateFileA(szFileName, GENERIC_READ|GENERIC_WRITE, 
 				FILE_SHARE_WRITE|FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
+	if(hDumpFile != NULL) {
+		ExpParam.ThreadId = GetCurrentThreadId();
+		ExpParam.ExceptionPointers = pExceptionPointers;
+		ExpParam.ClientPointers = TRUE;
 
-	ExpParam.ThreadId = GetCurrentThreadId();
-	ExpParam.ExceptionPointers = pExceptionPointers;
-	ExpParam.ClientPointers = TRUE;
-
-	bMiniDumpSuccessful = pMiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), 
-					hDumpFile, MiniDumpWithDataSegs, &ExpParam, NULL, NULL);
-
-	CloseHandle(hDumpFile);
+		bMiniDumpSuccessful = pMiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), 
+						hDumpFile, MiniDumpWithDataSegs, &ExpParam, NULL, NULL);
+		CloseHandle(hDumpFile);
+	}
 }
 
 LONG CALLBACK unhandled_handler(EXCEPTION_POINTERS* e) {
@@ -118,6 +118,12 @@ public:
 	void globalPluginDeinitialize() {
 		CorePlugin::StaticDeinitialize();
 		VideoPlugin::StaticDeinitialize();
+
+#ifdef DEBUG
+#ifdef WIN32
+		RemoveVectoredExceptionHandler(unhandled_handler);
+#endif //WIN32
+#endif //DEBUG
 	}
 
 	void getLoggingMethods(FB::Log::LogMethodList& outMethods) {

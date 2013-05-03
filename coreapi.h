@@ -291,6 +291,9 @@ private:
 	}
 
 #ifdef CORE_THREADED
+	static void *libHandle;
+	static void refLib();
+	static void unrefLib();
 	static void destroyThread(LinphoneCore *core);
 	static void iterateThread(CoreAPIPtr &core);
 	void iterateWithMutex();
