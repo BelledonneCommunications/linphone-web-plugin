@@ -61,12 +61,8 @@ void * CoreAPI::libHandle = NULL;
 void CoreAPI::refLib() {
 #ifdef WIN32
 	HMODULE module;
-	char name[MAX_PATH + 1];
-	if(GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast<LPCTSTR>(refLib), &module)) {
-		if(GetModuleFileNameA(module, name, MAX_PATH)) {
-			name[MAX_PATH] = '\0';
-			libHandle = (void*)LoadLibraryA(name);
-		}
+	if(GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast<LPCTSTR>(&refLib), &module)) {
+		libHandle = module;
 	}
 #else //WIN32
 	Dl_info info;
@@ -80,7 +76,7 @@ void CoreAPI::refLib() {
 void CoreAPI::unrefLib() {
 #ifdef WIN32
 	if(libHandle != NULL) {
-		FreeLibrary((HMODULE)libHandle);
+		FreeLibraryAndExitThread((HMODULE)libHandle, 0);
 	}
 #else //WIN32
 	if(libHandle != NULL) {
@@ -96,7 +92,7 @@ void CoreAPI::destroyThread(LinphoneCore *core) {
 	--sInstanceCount;
 	sInstanceMutex.unlock();
 	FBLOG_DEBUG("CoreAPI::destroyThread", "end" << "\t" << "core=" << core);
-	boost::this_thread::at_thread_exit(unrefLib);
+	unrefLib();
 }
 
 void CoreAPI::iterateThread(CoreAPIPtr &core) {
