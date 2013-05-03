@@ -24,7 +24,7 @@
     <em:version>${FBSTRING_PLUGIN_VERSION}</em:version>
     <!-- <em:bootstrap>true</em:bootstrap> !-->
     <em:id>{29623621-22e0-bf87-16ee-1c3b683582e1}</em:id>
-    <em:description>${FBSTRING_PluginDescription}</em:description>
+    <em:description>${FBSTRING_FileDescription}</em:description>
 
 	<em:icon64URL>chrome://linphoneweb/skin/icon64.png</em:icon64URL>
 	<em:iconURL>chrome://linphoneweb/skin/icon48.png</em:iconURL>

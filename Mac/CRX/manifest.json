@@ -1,7 +1,7 @@
 {
   "name" : "${FBSTRING_PluginName}",
   "version" : "${FBSTRING_PLUGIN_VERSION}",
-  "description" : "${FBSTRING_PluginDescription}",
+  "description" : "${FBSTRING_FileDescription}",
   "icons": { "16": "icon16.png", "48": "icon48.png" },
   "plugins": [
      { "path": "${PLUGIN_NAME}.${PLUGIN_EXT}", "public": true }
