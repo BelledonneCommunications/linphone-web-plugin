@@ -54,7 +54,10 @@ static boost::mutex sInstanceMutex;
 static int sInstanceCount = 0;
 
 #ifdef CORE_THREADED
-
+#ifndef WIN32
+#include <dlfcn.h>
+#include <pthread.h>
+#endif //WIN32
 void * CoreAPI::libHandle = NULL;
 
 // Increment reference counter on this lib to avoid a early unload
@@ -66,7 +69,7 @@ void CoreAPI::refLib() {
 	}
 #else //WIN32
 	Dl_info info;
-	if(dladdr(refLib, &info)) {
+	if(dladdr((void*)refLib, &info)) {
 		libHandle = dlopen(info.dli_fname, RTLD_LAZY);
 	}
 #endif //WIN32
@@ -80,7 +83,9 @@ void CoreAPI::unrefLib() {
 	}
 #else //WIN32
 	if(libHandle != NULL) {
-		dlClose(libHandle);
+		pthread_cleanup_push((void(*)(void*))dlclose, (void*)libHandle);
+		pthread_exit(0);
+		pthread_cleanup_pop(0);
 	}
 #endif //WIN32
 }
