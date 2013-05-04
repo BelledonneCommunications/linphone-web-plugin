@@ -261,7 +261,7 @@ SET(FB_WIX_DEST ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PAC
 add_wix_installer(${PLUGIN_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/linphoneInstaller.wxs
     PluginDLLGroup
-    ${FB_ROOTFS_DIR}/
+    ${FB_OUT_DIR}/
     ${FB_ROOTFS_DIR}/${FBSTRING_PluginFileName}.dll
     ${PLUGIN_NAME}_RootFS
     )
