@@ -48,6 +48,7 @@ SET(STRINGS "Mac/bundle_template/InfoPlist.strings")
 SET(LOCALIZED "Mac/bundle_template/Localized.r")
 
 add_mac_plugin(${PROJECT_NAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
+SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER ${FBSTRING_ProductName})
 
 FIND_LIBRARY(OPENGL_FRAMEWORK OpenGL)
 FIND_LIBRARY(QUARTZ_CORE_FRAMEWORK QuartzCore)
@@ -127,6 +128,10 @@ ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
 
 ###############################################################################
 # XPI Package
+if (NOT FB_XPI_PACKAGE_SUFFIX)
+	SET(FB_XPI_PACKAGE_SUFFIX _XPI)
+endif()
+	
 function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	SET(XPI_SOURCES
 		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
@@ -137,16 +142,13 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png
 	)
 	
-	if (NOT FB_XPI_PACKAGE_SUFFIX)
-		SET(FB_XPI_PACKAGE_SUFFIX _XPI)
-	endif()
-	
 	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Mac/XPI/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
 	
 	SET(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
 	GET_TARGET_PROPERTY(ONAME ${PROJNAME} OUTPUT_NAME)
 	
 	ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi)
+	SET_TARGET_PROPERTIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
 				 DEPENDS ${XPI_SOURCES}
 				 COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
@@ -169,10 +171,25 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
 	MESSAGE("-- Successfully added XPI package step")
 endfunction(create_xpi_package)
+
+create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME})
+
+create_signed_xpi(${PLUGIN_NAME} 
+	"${FB_OUT_DIR}/XPI/"
+	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.xpi"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	${PLUGIN_NAME}${FB_XPI_PACKAGE_SUFFIX}
+)
+SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_XPI_SIGNED_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 ###############################################################################
 
 ###############################################################################
 # CRX Package
+if (NOT FB_CRX_PACKAGE_SUFFIX)
+	SET(FB_CRX_PACKAGE_SUFFIX _CRX)
+endif()
+	
 function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	SET(CRX_SOURCES
 		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
@@ -181,15 +198,12 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
 	)
 	
-	if (NOT FB_CRX_PACKAGE_SUFFIX)
-		SET(FB_CRX_PACKAGE_SUFFIX _CRX)
-	endif()
-	
 	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Mac/CRX/manifest.json ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
 	
 	SET(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
 	
 	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx)
+	SET_TARGET_PROPERTIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
 				 DEPENDS ${CRX_SOURCES}
 				 COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
@@ -205,17 +219,28 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJDEP})
 	MESSAGE("-- Successfully added CRX package step")
 endfunction(create_crx_package)
+
+create_crx_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME})
+
+create_signed_crx(${PLUGIN_NAME} 
+	"${FB_OUT_DIR}/CRX/"
+	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.crx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	${PLUGIN_NAME}${FB_CRX_PACKAGE_SUFFIX}
+)
+SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_CRX_SIGNED_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 ###############################################################################
 
 
 ###############################################################################
 # PKG Package
+if (NOT FB_PKG_PACKAGE_SUFFIX)
+	SET(FB_PKG_PACKAGE_SUFFIX _PKG)
+endif()
+
 function (create_pkg_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	SET(PKG_SOURCES ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT})
-	
-	if (NOT FB_PKG_PACKAGE_SUFFIX)
-		SET(FB_PKG_PACKAGE_SUFFIX _PKG)
-	endif()
 	
 	FILE(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/move.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/)
 	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/index.xml ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/index.xml)
@@ -224,6 +249,7 @@ function (create_pkg_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/move.sh ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/move.sh @ONLY)
 	
 	ADD_CUSTOM_TARGET(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}.pkg)
+	SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_PKG_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}.pkg
 				 DEPENDS ${PKG_SOURCES}
 				 COMMAND ${CMAKE_COMMAND} -E remove_directory ${OUTDIR}/PKG.pmdoc
@@ -233,24 +259,6 @@ function (create_pkg_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} ${PROJDEP})
 	MESSAGE("-- Successfully added PKG package step")
 endfunction(create_pkg_package)
-###############################################################################
 
 create_pkg_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME})
-create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME})
-create_crx_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME})
-
-create_signed_xpi(${PLUGIN_NAME} 
-	"${FB_OUT_DIR}/XPI/"
-	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.xpi"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	${PLUGIN_NAME}${FB_XPI_PACKAGE_SUFFIX}
-)
-
-create_signed_crx(${PLUGIN_NAME} 
-	"${FB_OUT_DIR}/CRX/"
-	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.crx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	${PLUGIN_NAME}${FB_CRX_PACKAGE_SUFFIX}
-)
+###############################################################################

@@ -52,6 +52,7 @@ INCLUDE_DIRECTORIES(Rootfs/include/linphone)
 INCLUDE_DIRECTORIES(Rootfs/include)
 
 add_windows_plugin(${PROJECT_NAME} SOURCES)
+SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER ${FBSTRING_ProductName})
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} 
@@ -74,6 +75,10 @@ SET(WIX_LINK_FLAGS -dConfiguration=${CMAKE_CFG_INTDIR})
 
 ###############################################################################
 # Create Rootfs
+if (NOT FB_ROOTFS_SUFFIX)
+	SET(FB_ROOTFS_SUFFIX _RootFS)
+endif()
+
 function (create_rootfs PROJNAME)
 	SET(ROOTFS_SOURCES
 		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll
@@ -101,16 +106,13 @@ function (create_rootfs PROJNAME)
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/toy-mono.wav
 	)
 	
-	if (NOT FB_ROOTFS_SUFFIX)
-		SET(FB_ROOTFS_SUFFIX _RootFS)
-	endif()
-	
 	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_ROOTFS_DIR})
+	SET_TARGET_PROPERTIES(${PROJNAME}${FB_ROOTFS_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 	ADD_CUSTOM_COMMAND(OUTPUT ${FB_ROOTFS_DIR}
 		DEPENDS ${ROOTFS_SOURCES}
 		COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_ROOTFS_DIR}
 		COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}
-		COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.pdb ${FB_ROOTFS_DIR}/ | ${CMAKE_COMMAND} -E echo "No pdb"
+		COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.pdb ${FB_ROOTFS_DIR}/ || ${CMAKE_COMMAND} -E echo "No pdb"
 		COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.dll ${FB_ROOTFS_DIR}/
 		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avcodec-53.dll ${FB_ROOTFS_DIR}/
 		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avutil-51.dll ${FB_ROOTFS_DIR}/
@@ -267,40 +269,83 @@ firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
+
+
+###############################################################################
+# MSI & EXE Package	
+if(WIX_FOUND)
+	SET(WIX_HEAT_FLAGS
+		-gg				    # Generate GUIDs
+		-srd				# Suppress Root Dir
+		-cg PluginDLLGroup  # Set the Component group name
+		-dr INSTALLDIR	    # Set the directory ID to put the files in
+	)
+	if (NOT FB_WIX_SUFFIX)
+		set (FB_WIX_SUFFIX _MSI)
+	endif()
+	if (NOT FB_WIX_EXE_SUFFIX)
+		set (FB_WIX_EXE_SUFFIX _EXE)
+	endif()
+
+	SET(FB_WIX_DEST ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.msi)
+	SET(FB_WIX_EXEDEST ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe)
+	add_wix_installer(${PLUGIN_NAME}
+		"${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/linphoneInstaller.wxs"
+		PluginDLLGroup
+		${FB_ROOTFS_DIR}/
+		"${FB_ROOTFS_DIR}/${FBSTRING_PluginFileName}.dll"
+		${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	)
+	SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_WIX_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
+	SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_WIX_EXE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 	
-SET(WIX_HEAT_FLAGS
-	-gg				    # Generate GUIDs
-	-srd				# Suppress Root Dir
-	-cg PluginDLLGroup  # Set the Component group name
-	-dr INSTALLDIR	    # Set the directory ID to put the files in
-)
+	firebreath_sign_file(${PLUGIN_NAME}${FB_WIX_SUFFIX}
+		"${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.msi"
+		"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+		"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+		"http://timestamp.verisign.com/scripts/timestamp.dll"
+	)
 
-SET(FB_WIX_DEST ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.msi)
-SET(FB_WIX_EXEDEST ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe)
-add_wix_installer(${PLUGIN_NAME}
-	"${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/linphoneInstaller.wxs"
-	PluginDLLGroup
-	${FB_OUT_DIR}/
-	"${FB_ROOTFS_DIR}/${FBSTRING_PluginFileName}.dll"
-	${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-)
-SET(FB_CAB_DEST ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab)
-create_cab(${PLUGIN_NAME} 
-	"${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.ddf" 
-	"${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.inf"
-	${FB_OUT_DIR}/
-	${PLUGIN_NAME}${FB_WIX_EXE_SUFFIX}
-)
+	firebreath_sign_file(${PLUGIN_NAME}${FB_WIX_EXE_SUFFIX}
+		"${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe"
+		"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+		"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+		"http://timestamp.verisign.com/scripts/timestamp.dll"
+	)
+endif()
+###############################################################################
 
-firebreath_sign_file(${PLUGIN_NAME}${FB_WIX_SUFFIX}
-	"${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.msi"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
+###############################################################################
+# CAB Package
+if(WIX_FOUND)
+	SET(FB_CAB_DEST ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab)
+	if (NOT FB_CAB_SUFFIX)
+		set (FB_CAB_SUFFIX _CAB)
+	endif()
+	
+	create_cab(${PLUGIN_NAME} 
+		"${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.ddf" 
+		"${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/linphone-web.inf"
+		${FB_OUT_DIR}/
+		${PLUGIN_NAME}${FB_WIX_EXE_SUFFIX}
+	)
+	SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_CAB_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
+
+	firebreath_sign_file(${PLUGIN_NAME}${FB_CAB_SUFFIX}
+		"${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab"
+		"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+		"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+		"http://timestamp.verisign.com/scripts/timestamp.dll"
+	)
+endif()
+###############################################################################
 
 ###############################################################################
 # XPI Package
+if (NOT FB_XPI_PACKAGE_SUFFIX)
+	SET(FB_XPI_PACKAGE_SUFFIX _XPI)
+endif()
+
 function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	SET(XPI_SOURCES
 		${FB_OUT_DIR}/Rootfs.updated
@@ -311,15 +356,12 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png
 	)
 	
-	if (NOT FB_XPI_PACKAGE_SUFFIX)
-		SET(FB_XPI_PACKAGE_SUFFIX _XPI)
-	endif()
-	
 	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
 	
 	SET(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
 	
 	ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi)
+	SET_TARGET_PROPERTIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
 				 DEPENDS ${XPI_SOURCES}
 				 COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
@@ -342,10 +384,29 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
 	MESSAGE("-- Successfully added XPI package step")
 endfunction(create_xpi_package)
+
+create_xpi_package(${PLUGIN_NAME}
+	${FBSTRING_PLUGIN_VERSION}
+	${FB_OUT_DIR}
+	${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+)
+
+create_signed_xpi(${PLUGIN_NAME} 
+	"${FB_OUT_DIR}/XPI/"
+	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.xpi"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	${PLUGIN_NAME}${FB_XPI_PACKAGE_SUFFIX}
+)
+SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_XPI_SIGNED_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 ###############################################################################
 
 ###############################################################################
 # CRX Package
+if (NOT FB_CRX_PACKAGE_SUFFIX)
+	SET(FB_CRX_PACKAGE_SUFFIX _CRX)
+endif()
+	
 function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	SET(CRX_SOURCES
 		${FB_OUT_DIR}/Rootfs.updated
@@ -354,15 +415,12 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
 	)
 	
-	if (NOT FB_CRX_PACKAGE_SUFFIX)
-		SET(FB_CRX_PACKAGE_SUFFIX _CRX)
-	endif()
-	
 	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Win/CRX/manifest.json ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
 	
 	SET(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
 	
 	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx)
+	SET_TARGET_PROPERTIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
 				 DEPENDS ${CRX_SOURCES}
 				 COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
@@ -379,39 +437,11 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJDEP})
 	MESSAGE("-- Successfully added CRX package step")
 endfunction(create_crx_package)
-###############################################################################
-
-firebreath_sign_file(${PLUGIN_NAME}${FB_WIX_EXE_SUFFIX}
-	"${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-
-firebreath_sign_file(${PLUGIN_NAME}${FB_CAB_SUFFIX}
-	"${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
 
 create_crx_package(${PLUGIN_NAME} 
 	${FBSTRING_PLUGIN_VERSION} 
 	${FB_OUT_DIR} 
 	${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-)
-create_xpi_package(${PLUGIN_NAME}
-	${FBSTRING_PLUGIN_VERSION}
-	${FB_OUT_DIR}
-	${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-)
-
-create_signed_xpi(${PLUGIN_NAME} 
-	"${FB_OUT_DIR}/XPI/"
-	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.xpi"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	${PLUGIN_NAME}${FB_XPI_PACKAGE_SUFFIX}
 )
 
 create_signed_crx(${PLUGIN_NAME} 
@@ -421,3 +451,5 @@ create_signed_crx(${PLUGIN_NAME}
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	${PLUGIN_NAME}${FB_CRX_PACKAGE_SUFFIX}
 )
+SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_CRX_SIGNED_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
+###############################################################################
