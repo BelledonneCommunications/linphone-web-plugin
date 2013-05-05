@@ -75,11 +75,11 @@ ENDIF(NOT DEFINED CMAKE_CHRPATH)
 
 ###############################################################################
 # Create Rootfs
+if (NOT FB_ROOTFS_SUFFIX)
+	SET(FB_ROOTFS_SUFFIX _RootFS)
+endif()
+
 function (create_rootfs PROJNAME)
-	if (NOT FB_ROOTFS_SUFFIX)
-		SET(FB_ROOTFS_SUFFIX _RootFS)
-	endif()
-	
 	SET(ROOTFS_SOURCES
 		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.so
 		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavcodec.so.53
