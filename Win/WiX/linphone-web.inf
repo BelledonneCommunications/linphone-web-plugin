@@ -2,8 +2,12 @@
 Signature="$CHICAGO$"
 AdvancedINF=2.0
 
-[Setup Hooks]
-hook1=hook1
+[Add.Code]
+${FBSTRING_PluginFileName}.dll=${FBSTRING_PluginFileName}.dll
 
-[hook1]
+[${FBSTRING_PluginFileName}.dll]
+FileVersion=${FBSTRING_PLUGIN_VERSION_ACTIVEX}
+hook=pluginInstaller
+
+[pluginInstaller]
 run="%EXTRACT_DIR%\${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe"

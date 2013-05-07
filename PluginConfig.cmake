@@ -48,6 +48,7 @@ set(MOZILLA_PLUGINID "belledonne-communications.com/linphone/web")
 set(FBSTRING_CompanyDomain "com.belledonne-communication")
 set(FBSTRING_CompanyName "Belledonne Communications")
 set(FBSTRING_PLUGIN_VERSION "0.0.1.1")
+set(FBSTRING_PLUGIN_VERSION_ACTIVEX "0,0,1,1")
 set(FBSTRING_LegalCopyright "Copyright 2012 Belledonne Communications")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}")
 
