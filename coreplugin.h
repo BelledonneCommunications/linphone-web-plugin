@@ -33,9 +33,10 @@ class CorePlugin: public FB::PluginCore {
 private:
 #ifdef DEBUG
 	static FILE *s_log_file;
+	static CorePluginWeakPtr s_log_plugin;
+#endif
 	static void log(OrtpLogLevel lev, const char *fmt, va_list args);
 	static void enableLog();
-#endif
 	static void disableLog();
 public:
 	static void StaticInitialize();

@@ -293,6 +293,9 @@ void CoreAPI::initProxy() {
 	registerProperty("echoCancellationEnabled", make_property(this, &CoreAPI::echoCancellationEnabled, &CoreAPI::enableEchoCancellation));
 	registerProperty("echoLimiterEnabled", make_property(this, &CoreAPI::echoLimiterEnabled, &CoreAPI::enableEchoLimiter));
 	registerProperty("staticPictureFps", make_property(this, &CoreAPI::getStaticPictureFps, &CoreAPI::setStaticPictureFps));
+	
+	// Log
+	registerProperty("logHandler", make_property(this, &CoreAPI::getLogHandler, &CoreAPI::setLogHandler));
 }
 
 int CoreAPI::init(const boost::optional<std::string> &config, const boost::optional<std::string> &factory) {
@@ -1786,6 +1789,25 @@ void CoreAPI::setZrtpSecretsFile(const std::string &secretsFile) {
 
 	FBLOG_DEBUG("CoreAPI::setZrtpSecretsFile", "this=" << this << "\t" << "secretsFile=" << secretsFile);
 	linphone_core_set_zrtp_secrets_file(mCore, secretsFile.c_str());
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Logs
+///////////////////////////////////////////////////////////////////////////////
+
+void CoreAPI::setLogHandler(const FB::JSObjectPtr &handler) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setLogHandler", "this=" << this << "\t" << "handler=" << handler);
+	mLogHandler = handler;
+}
+
+FB::JSObjectPtr CoreAPI::getLogHandler() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getLogHandler", "this=" << this);
+	return mLogHandler;
 }
 
 

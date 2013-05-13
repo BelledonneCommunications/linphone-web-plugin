@@ -26,12 +26,12 @@
 #include <Strsafe.h>
 #endif //WIN32
 
-#ifdef DEBUG
 FILE * CorePlugin::s_log_file = NULL;
+CorePluginWeakPtr CorePlugin::s_log_plugin;
+
 void CorePlugin::log(OrtpLogLevel lev, const char *fmt, va_list args) {
 	const char *lname="undef";
 	char *msg;
-	if (s_log_file==NULL) s_log_file = stderr;
 	switch(lev){
 		case ORTP_DEBUG:
 			lname="debug";
@@ -52,12 +52,27 @@ void CorePlugin::log(OrtpLogLevel lev, const char *fmt, va_list args) {
 			ortp_fatal("Bad level !");
 	}
 	msg = ortp_strdup_vprintf(fmt, args);
+#ifdef DEBUG
+#ifdef WIN32
 	fprintf(s_log_file, FBSTRING_PluginFileName"-%s-%s\r\n", lname, msg);
 	fflush(s_log_file);
+#else //WIN32
+	fprintf(stdout, FBSTRING_PluginFileName"-%s-%s\r\n", lname, msg);
+	fflush(stdout);
+#endif //WIN32
+#endif //DEBUG
+	CorePluginPtr plugin = s_log_plugin.lock();
+	if(plugin) {
+		CoreAPIPtr core = FB::ptr_cast<CoreAPI>(plugin->getRootJSAPI());
+		if(core) {
+			core->log(lname, msg);
+		}
+	}
 	ortp_free(msg);
 }
 
 void CorePlugin::enableLog() {
+#ifdef DEBUG
 #ifdef WIN32
 	WCHAR szPath[MAX_PATH]; 
 	WCHAR szFileName[MAX_PATH]; 
@@ -77,13 +92,10 @@ void CorePlugin::enableLog() {
 		stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond,
 		GetCurrentProcessId(), GetCurrentThreadId());
 	s_log_file = _wfopen(szFileName, L"w+");
-
-	linphone_core_enable_logs_with_cb(CorePlugin::log);
-#else
-	linphone_core_enable_logs(stdout);
 #endif //WIN32
-}
 #endif //DEBUG
+	linphone_core_enable_logs_with_cb(CorePlugin::log);
+}
 
 void CorePlugin::disableLog() {
 	linphone_core_disable_logs();
@@ -106,11 +118,7 @@ void CorePlugin::disableLog() {
 void CorePlugin::StaticInitialize() {
 	// Place one-time initialization stuff here; As of FireBreath 1.4 this should only
 	// be called once per process
-#ifndef DEBUG
-	disableLog();
-#else //DEBUG
 	enableLog();
-#endif //DEBUG
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -146,11 +154,19 @@ CorePlugin::~CorePlugin() {
 	// unless you are holding another shared_ptr reference to your JSAPI object
 	// they will be released here.
 	FBLOG_DEBUG("CorePlugin::~CorePlugin", "this=" << this);
+	
+	// Clean
 	releaseRootJSAPI();
 	m_host->freeRetainedObjects();
 }
 
 void CorePlugin::onPluginReady() {
+	// Log
+	CorePluginPtr plugin = s_log_plugin.lock();
+	if(!plugin) {
+		s_log_plugin = FB::ptr_cast<CorePlugin>(shared_from_this());
+	}
+	
 	FB::VariantMap::iterator fnd = m_params.find("magic");
 	if (fnd != m_params.end()) {
 		if (fnd->second.is_of_type<std::string>()) {
@@ -166,6 +182,12 @@ void CorePlugin::shutdown() {
 	// destroyed. This is the last point that shared_from_this and weak_ptr
 	// references to this object will be valid
 	FBLOG_DEBUG("CorePlugin::shutdown", "this=" << this);
+	
+	// Log
+	CorePluginPtr plugin = s_log_plugin.lock();
+	if(plugin == FB::ptr_cast<CorePlugin>(shared_from_this())) {
+		s_log_plugin.reset();
+	}
 	
 	// Sometimes the object is release before shutdown
 	getRootJSAPI()->shutdown();

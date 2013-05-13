@@ -252,9 +252,12 @@ public:
 	DECLARE_PROPERTY_FILE(CoreAPI, getRootCa, setRootCa);
 	DECLARE_PROPERTY_FILE(CoreAPI, getStaticPicture, setStaticPicture);
 	DECLARE_PROPERTY_FILE(CoreAPI, getZrtpSecretsFile, setZrtpSecretsFile);
+	
+	// Log
+	void setLogHandler(const FB::JSObjectPtr &handler);
+	FB::JSObjectPtr getLogHandler() const;
 
-public:
-	// Event helpers
+public: // Event helpers
 	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const std::string&));
 	FB_JSAPI_EVENT(callStateChanged, 4, (CoreAPIPtr, CallAPIPtr, const int&, const std::string&));
 	FB_JSAPI_EVENT(registrationStateChanged, 4, (CoreAPIPtr, ProxyConfigAPIPtr, const int&, const std::string&));
@@ -266,14 +269,24 @@ public:
 	FB_JSAPI_EVENT(displayUrl, 3, (CoreAPIPtr, const std::string&, const std::string&));
 	FB_JSAPI_EVENT(show, 1, (CoreAPIPtr));
 
+
+public: // Internal Use
 	inline LinphoneCore *getRef() const {
 		return mCore;
 	}
+	
+	inline void log(const std::string &level, const std::string &msg) {
+		if(mLogHandler) {
+			mLogHandler->InvokeAsync("", FB::variant_list_of(level)(msg));
+		}
+	}
+	
 
 protected:
 	void initProxy();
 	
 private:
+	FB::JSObjectPtr mLogHandler;
 	std::string mMagic;
 
 	LinphoneCore *mCore; // Linphone core object
@@ -285,9 +298,10 @@ private:
 	FB::TimerPtr mTimer;
 #endif //CORE_THREADED
 
-	void iterate() {
-		if (mCore != NULL)
+	inline void iterate() {
+		if (mCore != NULL) {
 			linphone_core_iterate(mCore);
+		}
 	}
 
 #ifdef CORE_THREADED
