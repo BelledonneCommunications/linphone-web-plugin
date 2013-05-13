@@ -56,6 +56,7 @@ void CallAPI::initProxy() {
 	registerProperty("referTo", FB::make_property(this, &CallAPI::getReferTo));
 	registerProperty("remoteAddress", FB::make_property(this, &CallAPI::getRemoteAddress));
 	registerProperty("remoteAddressAsString", FB::make_property(this, &CallAPI::getRemoteAddressAsString));
+	registerProperty("remoteContact", FB::make_property(this, &CallAPI::getRemoteContact));
 	registerProperty("remoteParams", FB::make_property(this, &CallAPI::getRemoteParams));
 	registerProperty("remoteUserAgent", FB::make_property(this, &CallAPI::getRemoteUserAgent));
 	registerProperty("replacedCall", FB::make_property(this, &CallAPI::getReplacedCall));
@@ -69,6 +70,9 @@ void CallAPI::initProxy() {
 	registerMethod("sendVfuRequest", make_method(this, &CallAPI::sendVfuRequest));
 	registerMethod("setAuthenticationTokenVerified", make_method(this, &CallAPI::setAuthenticationTokenVerified));
 	registerMethod("zoomVideo", make_method(this, &CallAPI::zoomVideo));
+	
+	registerMethod("startRecording", make_method(this, &CallAPI::startRecording));
+	registerMethod("stopRecording", make_method(this, &CallAPI::stopRecording));
 }
 
 CallAPI::~CallAPI() {
@@ -189,6 +193,13 @@ std::string CallAPI::getRemoteAddressAsString() const {
 	return CHARPTR_TO_STRING(linphone_call_get_remote_address_as_string(mCall));
 }
 
+std::string CallAPI::getRemoteContact() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallAPI::getRemoteContact", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_call_get_remote_contact(mCall));
+}
+
 CallParamsAPIPtr CallAPI::getRemoteParams() const {
 	CORE_MUTEX
 
@@ -210,14 +221,14 @@ CallAPIPtr CallAPI::getReplacedCall() const {
 	return mFactory->getCall(linphone_call_get_replaced_call(mCall));
 }
 
-int CallAPI::getState() const {
+LinphoneCallState CallAPI::getState() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getState", "this=" << this);
 	return linphone_call_get_state(mCall);
 }
 
-int CallAPI::getTransferState() const {
+LinphoneCallState CallAPI::getTransferState() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getTransferState", "this=" << this);
@@ -311,4 +322,19 @@ void CallAPI::zoomVideo(float zoom, float cx, float cy) {
 
 	FBLOG_DEBUG("CallAPI::zoomVideo", "this=" << this << "\t" << "zoom=" << zoom << ", cx=" << cx << ", cy=" << cy);
 	linphone_call_zoom_video(mCall, zoom, &cx, &cy);
+}
+
+void CallAPI::startRecording() {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallAPI::startRecording", "this=" << this);
+	linphone_call_start_recording(mCall);
+
+}
+
+void CallAPI::stopRecording() {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallAPI::stopRecording", "this=" << this);
+	linphone_call_stop_recording(mCall);
 }

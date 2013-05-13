@@ -42,15 +42,28 @@ void CallParamsAPI::initProxy() {
 	registerMethod("copy", make_method(this, &CallParamsAPI::copy));
 	registerProperty("localConferenceMode", make_property(this, &CallParamsAPI::localConferenceMode));
 
-	if (mConst) {
-		registerMethod("setAudioBandwidthLimit", make_method(this, &CallParamsAPI::setAudioBandwidthLimit));
+	if (!mConst) {
+		registerProperty("audioBandwidthLimit", make_property(this, &CallParamsAPI::getAudioBandwidthLimit, &CallParamsAPI::setAudioBandwidthLimit));
 		registerProperty("earlyMediaSendingEnabled", make_property(this, &CallParamsAPI::earlyMediaSendingEnabled, &CallParamsAPI::enableEarlyMediaSending));
+		registerProperty("lowBandwidthEnabled", make_property(this, &CallParamsAPI::lowBandwidthEnabled, &CallParamsAPI::enableLowBandwidth));
 		registerProperty("videoEnabled", make_property(this, &CallParamsAPI::videoEnabled, &CallParamsAPI::enableVideo));
 	} else {
+		registerProperty("audioBandwidthLimit", make_property(this, &CallParamsAPI::getAudioBandwidthLimit));
 		registerProperty("earlyMediaSendingEnabled", make_property(this, &CallParamsAPI::earlyMediaSendingEnabled));
+		registerProperty("lowBandwidthEnabled", make_property(this, &CallParamsAPI::lowBandwidthEnabled));
 		registerProperty("videoEnabled", make_property(this, &CallParamsAPI::videoEnabled));
 	}
 }
+
+int CallParamsAPI::getAudioBandwidthLimit() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallParamsAPI::getAudioBandwidthLimit", "this=" << this);
+	// TODO Stub
+	//return linphone_call_params_get_audio_bandwidth_limit(mCallParams);
+	return -1;
+}
+
 
 void CallParamsAPI::setAudioBandwidthLimit(int bw) {
 	CORE_MUTEX
@@ -78,6 +91,20 @@ bool CallParamsAPI::localConferenceMode() const {
 
 	FBLOG_DEBUG("CallParamsAPI::localConferenceMode", "this=" << this);
 	return linphone_call_params_local_conference_mode(mCallParams) == TRUE ? true : false;
+}
+
+bool CallParamsAPI::lowBandwidthEnabled() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallParamsAPI::lowBandwidthEnabled", "this=" << this);
+	return linphone_call_params_low_bandwidth_enabled(mCallParams) == TRUE ? true : false;
+}
+
+void CallParamsAPI::enableLowBandwidth(bool enable) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallParamsAPI::enableLowBandwidth", "this=" << this << "\t" << "enable=" << enable);
+	linphone_call_params_enable_low_bandwidth(mCallParams, enable ? TRUE : FALSE);
 }
 
 //getMediaEncryption	mediaEncryption

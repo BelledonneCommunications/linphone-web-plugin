@@ -38,10 +38,13 @@ protected:
 public:
 	~CallParamsAPI();
 
+	int getAudioBandwidthLimit() const;
 	void setAudioBandwidthLimit(int bw);
 	bool earlyMediaSendingEnabled() const;
 	void enableEarlyMediaSending(bool enable);
 	bool localConferenceMode() const;
+	bool lowBandwidthEnabled() const;
+	void enableLowBandwidth(bool enable);
 	//getMediaEncryption	mediaEncryption
 	//setMediaEncryption	mediaEncryption
 	//getUsedAudioCodec	usedAudioCodec

@@ -1,8 +1,12 @@
 #!/bin/bash
 
+MODDIR=$(pwd)/mod/
 DESTDIR=$(pwd)/tmp/
+BOOST=$(pwd)/../../../src/3rdParty/boost/
 echo $DESTDIR
 rm result.txt
+rm -rf $MODDIR
+mkdir -p $MODDIR
 rm -rf $DESTDIR
 mkdir -p $DESTDIR
 
@@ -14,7 +18,19 @@ for file in $headers ; do
    cat $file | \
    sed "s/#include/\/\/#include/g" | \
    sed "s/\/\/#include \"macro.h\"/#include \"macro.h\"/g" | \
-   c++ -x c++ -E - > $DESTDIR/$file
+   sed "s/\/\/#include \"wrapperapi.h\"/#include \"wrapperapi.h\"/g" \
+   > $MODDIR/$file 
+done
+
+popd
+
+pushd $MODDIR
+
+headers=$(find . -maxdepth 1 -type f -name '*.h')
+for file in $headers ; do
+   echo $file
+   cat $file | \
+   c++ -I$BOOST -x c++ -E - > $DESTDIR/$file
 done
 
 popd

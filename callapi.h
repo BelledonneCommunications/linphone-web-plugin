@@ -58,11 +58,12 @@ public:
 	std::string getReferTo() const;
 	AddressAPIPtr getRemoteAddress() const;
 	std::string getRemoteAddressAsString() const;
+	std::string getRemoteContact() const;
 	CallParamsAPIPtr getRemoteParams() const;
 	std::string getRemoteUserAgent() const;
 	CallAPIPtr getReplacedCall() const;
-	int getState() const;
-	int getTransferState() const;
+	LinphoneCallState getState() const;
+	LinphoneCallState getTransferState() const;
 	CallStatsAPIPtr getVideoStats() const;
 	bool inConference() const;
 
@@ -78,6 +79,9 @@ public:
 	void sendVfuRequest();
 	void setAuthenticationTokenVerified(bool verified);
 	void zoomVideo(float zoom, float cx, float cy);
+	
+	void startRecording();
+	void stopRecording();
 
 	inline LinphoneCall *getRef() const {
 		return mCall;

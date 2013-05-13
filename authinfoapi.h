@@ -40,6 +40,12 @@ public:
 			const std::string &passwd, const std::string &ha1, const std::string &realm);
 	~AuthInfoAPI();
 
+	std::string getHa1() const;
+	void setHa1(const std::string &ha1);
+	
+	std::string getRealm() const;
+	void setRealm(const std::string &realm);
+	
 	std::string getUserid() const;
 	void setUserid(const std::string &userid);
 

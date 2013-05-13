@@ -50,6 +50,8 @@ AuthInfoAPI::AuthInfoAPI(const std::string &username, const std::string &userid,
 }
 
 void AuthInfoAPI::initProxy() {
+	registerProperty("ha1", make_property(this, &AuthInfoAPI::getHa1, &AuthInfoAPI::setHa1));
+	registerProperty("realm", make_property(this, &AuthInfoAPI::getRealm, &AuthInfoAPI::setRealm));
 	registerProperty("userid", make_property(this, &AuthInfoAPI::getUserid, &AuthInfoAPI::setUserid));
 	registerProperty("username", make_property(this, &AuthInfoAPI::getUsername, &AuthInfoAPI::setUsername));
 	registerProperty("passwd", make_property(this, &AuthInfoAPI::getPasswd, &AuthInfoAPI::setPasswd));
@@ -60,6 +62,34 @@ AuthInfoAPI::~AuthInfoAPI() {
 	if (!mUsed) {
 		linphone_auth_info_destroy(mAuthInfo);
 	}
+}
+
+std::string AuthInfoAPI::getHa1() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("AuthInfoAPI::getHa1", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_auth_info_get_ha1(mAuthInfo));
+}
+
+void AuthInfoAPI::setHa1(const std::string &ha1) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("AuthInfoAPI::setHa1", "this=" << this << "\t" << "ha1=" << ha1);
+	linphone_auth_info_set_ha1(mAuthInfo, ha1.c_str());
+}
+
+std::string AuthInfoAPI::getRealm() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("AuthInfoAPI::getRealm", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_auth_info_get_realm(mAuthInfo));
+}
+
+void AuthInfoAPI::setRealm(const std::string &realm) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("AuthInfoAPI::setRealm", "this=" << this << "\t" << "realm=" << realm);
+	linphone_auth_info_set_realm(mAuthInfo, realm.c_str());
 }
 
 std::string AuthInfoAPI::getUserid() const {

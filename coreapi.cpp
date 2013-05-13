@@ -26,7 +26,10 @@
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 #include <fstream>
+#include <sstream>
 
 #include "factoryapi.h"
 #include "coreplugin.h"
@@ -236,7 +239,9 @@ void CoreAPI::initProxy() {
 
 	// Network bindings
 	registerProperty("audioPort", make_property(this, &CoreAPI::getAudioPort, &CoreAPI::setAudioPort));
+	registerProperty("audioPortRange", make_property(this, &CoreAPI::getAudioPortRange, &CoreAPI::setAudioPortRange));
 	registerProperty("videoPort", make_property(this, &CoreAPI::getVideoPort, &CoreAPI::setVideoPort));
+	registerProperty("videoPortRange", make_property(this, &CoreAPI::getVideoPortRange, &CoreAPI::setVideoPortRange));
 	registerProperty("downloadBandwidth", make_property(this, &CoreAPI::getDownloadBandwidth, &CoreAPI::setDownloadBandwidth));
 	registerProperty("uploadBandwidth", make_property(this, &CoreAPI::getUploadBandwidth, &CoreAPI::setUploadBandwidth));
 	registerProperty("downloadPtime", make_property(this, &CoreAPI::getDownloadPtime, &CoreAPI::setDownloadPtime));
@@ -293,9 +298,19 @@ void CoreAPI::initProxy() {
 	registerProperty("echoCancellationEnabled", make_property(this, &CoreAPI::echoCancellationEnabled, &CoreAPI::enableEchoCancellation));
 	registerProperty("echoLimiterEnabled", make_property(this, &CoreAPI::echoLimiterEnabled, &CoreAPI::enableEchoLimiter));
 	registerProperty("staticPictureFps", make_property(this, &CoreAPI::getStaticPictureFps, &CoreAPI::setStaticPictureFps));
+	registerProperty("userAgentName", make_property(this, &CoreAPI::getUserAgentName, &CoreAPI::setUserAgentName));
+	registerProperty("userAgentVersion", make_property(this, &CoreAPI::getUserAgentVersion, &CoreAPI::setUserAgentVersion));
 	
 	// Log
 	registerProperty("logHandler", make_property(this, &CoreAPI::getLogHandler, &CoreAPI::setLogHandler));
+	
+	// uPnP
+	registerProperty("upnpAvailable", make_property(this, &CoreAPI::upnpAvailable));
+	registerProperty("upnpExternalIpaddress", make_property(this, &CoreAPI::getUpnpExternalIpaddress));
+	registerProperty("upnpState", make_property(this, &CoreAPI::getUpnpState));
+	
+	// Tunnel
+	registerProperty("tunnelAvailable", make_property(this, &CoreAPI::tunnelAvailable));
 }
 
 int CoreAPI::init(const boost::optional<std::string> &config, const boost::optional<std::string> &factory) {
@@ -1132,6 +1147,42 @@ void CoreAPI::refreshRegisters() {
  *
  */
 
+static std::string printRange(int min, int max) {
+	std::stringstream ss;
+	ss << min  << ":" << max;
+	return ss.str();
+}
+
+static bool parseRange(const std::string &str, int &min, int &max) {
+	std::vector<std::string> tokens;
+	boost::split(tokens, str, boost::is_any_of(":"));
+	if(tokens.size() != 2) {
+		return false;
+	}
+	
+	try {
+		min = boost::lexical_cast<int>(tokens[0]);
+		max = boost::lexical_cast<int>(tokens[1]);
+	} catch(boost::bad_lexical_cast &) {
+		return false;
+	}
+	
+	if(max < min) {
+		return false;
+	}
+	return true;
+}
+
+static bool validPort(int port) {
+	if(port < 0) {
+        return false;
+    }
+    if(port > 65535) {
+        return false;
+    }
+	return true;
+}
+
 void CoreAPI::setAudioPort(int port) {
 	CORE_MUTEX
 
@@ -1146,6 +1197,28 @@ int CoreAPI::getAudioPort() const {
 	return linphone_core_get_audio_port(mCore);
 }
 
+void CoreAPI::setAudioPortRange(const std::string &range) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setAudioPortRange", "this=" << this << "\t" << "range=" << range);
+	int min, max;
+	if(parseRange(range, min, max) && validPort(min) && validPort(max)) {
+		linphone_core_set_audio_port_range(mCore, min, max);
+	} else {
+		FBLOG_WARN("CoreAPI::setAudioPortRange", "Invalid port range: " << range); 
+		throw FB::script_error("Invalid port range: " + range);
+	}
+}
+
+std::string CoreAPI::getAudioPortRange() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getAudioPortRange", "this=" << this);
+	int min, max;
+	linphone_core_get_audio_port_range(mCore, &min, &max);
+	return printRange(min, max);
+}
+
 void CoreAPI::setVideoPort(int port) {
 	CORE_MUTEX
 
@@ -1158,6 +1231,28 @@ int CoreAPI::getVideoPort() const {
 
 	FBLOG_DEBUG("CoreAPI::getVideoPort", "this=" << this);
 	return linphone_core_get_video_port(mCore);
+}
+
+void CoreAPI::setVideoPortRange(const std::string &range) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setVideoPortRange", "this=" << this << "\t" << "range=" << range);
+	int min, max;
+	if(parseRange(range, min, max) && validPort(min) && validPort(max)) {
+		linphone_core_set_video_port_range(mCore, min, max);
+	} else {
+		FBLOG_WARN("CoreAPI::setVideoPortRange", "Invalid port range: " << range);
+		throw FB::script_error("Invalid port range: " + range);
+	}
+}
+
+std::string CoreAPI::getVideoPortRange() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getVideoPortRange", "this=" << this);
+	int min, max;
+	linphone_core_get_video_port_range(mCore, &min, &max);
+	return printRange(min, max);
 }
 
 void CoreAPI::setDownloadBandwidth(int bandwidth) {
@@ -1671,6 +1766,43 @@ float CoreAPI::getStaticPictureFps() const {
 	return linphone_core_get_static_picture_fps(mCore);
 }
 
+std::string CoreAPI::getUserAgentName() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getUserAgentName", "this=" << this);
+	//TODO
+	//return CHARPTR_TO_STRING(linphone_core_get_user_agent_name(mCore));
+	return std::string();
+}
+
+void CoreAPI::setUserAgentName(const std::string &name) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setUserAgentName", "this=" << this << "\t" << "name=" << name);
+	//TODO
+	//linphone_core_set_user_agent_name(mCore, name);
+	return;
+}
+
+std::string CoreAPI::getUserAgentVersion() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getUserAgentVersion", "this=" << this);
+	//TODO
+	//return CHARPTR_TO_STRING(linphone_core_get_user_agent_version(mCore));
+	return std::string();
+}
+
+void CoreAPI::setUserAgentVersion(const std::string &version) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setUserAgentVersion", "this=" << this << "\t" << "version=" << version);
+	//TODO
+	//linphone_core_set_user_agent_version(mCore, name);
+	return;
+}
+
+
 /*
  *
  * File functions
@@ -1808,6 +1940,44 @@ FB::JSObjectPtr CoreAPI::getLogHandler() const {
 	
 	FBLOG_DEBUG("CoreAPI::getLogHandler", "this=" << this);
 	return mLogHandler;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// uPnP
+///////////////////////////////////////////////////////////////////////////////
+
+bool CoreAPI::upnpAvailable() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::upnpAvailable", "this=" << this);
+	return linphone_core_upnp_available() == TRUE ? true : false;
+}
+
+std::string CoreAPI::getUpnpExternalIpaddress() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getUpnpExternalIpaddress", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_core_get_upnp_external_ipaddress(mCore));
+}
+
+LinphoneUpnpState CoreAPI::getUpnpState() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getUpnpState", "this=" << this);
+	return linphone_core_get_upnp_state(mCore);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Tunnel
+///////////////////////////////////////////////////////////////////////////////
+
+bool CoreAPI::tunnelAvailable() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::tunnelAvailable", "this=" << this);
+	return linphone_core_tunnel_available() == TRUE ? true : false;
 }
 
 

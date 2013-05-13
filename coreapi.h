@@ -165,8 +165,12 @@ public:
 	// Network functions
 	void setAudioPort(int port);
 	int getAudioPort() const;
+	void setAudioPortRange(const std::string &range);
+	std::string getAudioPortRange() const;
 	void setVideoPort(int port);
 	int getVideoPort() const;
+	void setVideoPortRange(const std::string &range);
+	std::string getVideoPortRange() const;
 	void setDownloadBandwidth(int bandwidth);
 	int getDownloadBandwidth() const;
 	void setUploadBandwidth(int bandwidth);
@@ -243,6 +247,10 @@ public:
 	bool echoLimiterEnabled() const;
 	void setStaticPictureFps(float fps);
 	float getStaticPictureFps() const;
+	std::string getUserAgentName() const;
+	void setUserAgentName(const std::string &name);
+	std::string getUserAgentVersion() const;
+	void setUserAgentVersion(const std::string &version);
 
 	// File
 	DECLARE_PROPERTY_FILE(CoreAPI, getRing, setRing);
@@ -256,6 +264,15 @@ public:
 	// Log
 	void setLogHandler(const FB::JSObjectPtr &handler);
 	FB::JSObjectPtr getLogHandler() const;
+	
+	// uPnP
+	bool upnpAvailable() const;
+	std::string getUpnpExternalIpaddress() const;
+	LinphoneUpnpState getUpnpState() const;
+
+	
+	// Tunnel
+	bool tunnelAvailable() const;
 
 public: // Event helpers
 	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const std::string&));
