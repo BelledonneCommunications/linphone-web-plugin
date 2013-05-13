@@ -148,7 +148,8 @@
 		if(!file.empty()) {                                                     \
 			setter(file);                                                       \
 		} else {                                                                \
-			FBLOG_DEBUG(#class "::" #setter "_file", "Invalid file:" << arg);   \
+			FBLOG_WARN(#class "::" #setter "_file", "Invalid URL: " << arg);    \
+			throw FB::script_error("Invalid URL: " + arg);                      \
 		}                                                                       \
 	}                                                                           \
 
@@ -159,7 +160,7 @@
 		if(FileManagerAPI::isFile(uri)) {                                       \
 			return uri.toString();                                              \
 		} else {                                                                \
-			FBLOG_DEBUG(#class "::" #getter "_file", "Invalid file:" << ret);   \
+			FBLOG_WARN(#class "::" #getter "_file", "Invalid file: " << ret);   \
 		}                                                                       \
 		return std::string();                                                   \
 	}                                                                           \
