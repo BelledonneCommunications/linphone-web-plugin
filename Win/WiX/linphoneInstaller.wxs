@@ -189,6 +189,7 @@
 			<ComponentRef Id="MainLibraries"/>
 			<ComponentRef Id="LinphoneWebDirComp"/>
 			<ComponentRef Id="ShareDirComp"/>
+			<ComponentRef Id="ShareLinphoneDirComp"/>
 			<ComponentRef Id="ShareImagesDirComp"/>
 			<ComponentRef Id="ShareSoundsDirComp"/>
 			<ComponentRef Id="ShareSoundsLinphoneDirComp"/>
