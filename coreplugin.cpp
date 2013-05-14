@@ -26,7 +26,12 @@
 #include <Strsafe.h>
 #endif //WIN32
 
+#ifdef DEBUG
+#ifdef WIN32
 FILE * CorePlugin::s_log_file = NULL;
+#endif //WIN32
+#endif //DEBUG
+
 CorePluginWeakPtr CorePlugin::s_log_plugin;
 
 void CorePlugin::log(OrtpLogLevel lev, const char *fmt, va_list args) {

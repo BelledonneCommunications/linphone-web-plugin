@@ -32,9 +32,11 @@ FB_FORWARD_PTR(CorePlugin)
 class CorePlugin: public FB::PluginCore {
 private:
 #ifdef DEBUG
+#ifdef WIN32
 	static FILE *s_log_file;
+#endif //WIN32
+#endif //DEBUG
 	static CorePluginWeakPtr s_log_plugin;
-#endif
 	static void log(OrtpLogLevel lev, const char *fmt, va_list args);
 	static void enableLog();
 	static void disableLog();
