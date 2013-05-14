@@ -169,6 +169,7 @@ void CorePlugin::onPluginReady() {
 	// Log
 	CorePluginPtr plugin = s_log_plugin.lock();
 	if(!plugin) {
+		FBLOG_DEBUG("CorePlugin::onPluginReady", "Set as log plugin");
 		s_log_plugin = FB::ptr_cast<CorePlugin>(shared_from_this());
 	}
 	
