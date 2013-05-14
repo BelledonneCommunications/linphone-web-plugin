@@ -303,6 +303,7 @@ protected:
 	void initProxy();
 	
 private:
+	mutable FileManagerAPIPtr mFileManager;
 	FB::JSObjectPtr mLogHandler;
 	std::string mMagic;
 

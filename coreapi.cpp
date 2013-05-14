@@ -346,7 +346,7 @@ int CoreAPI::init(const boost::optional<std::string> &config, const boost::optio
 		std::string configStr;
 		if(config) {
 			FB::URI configURI = FB::URI(config.get());
-			configStr = mFactory->getFileManager()->uriToFile(configURI);
+			configStr = getFileManager()->uriToFile(configURI);
 			if(!configStr.empty()) {
 				configCStr = configStr.c_str();
 			}
@@ -357,7 +357,7 @@ int CoreAPI::init(const boost::optional<std::string> &config, const boost::optio
 		std::string factoryStr;
 		if(factory) {
 			FB::URI factoryURI = FB::URI(factory.get());
-			factoryStr = mFactory->getFileManager()->uriToFile(factoryURI);
+			factoryStr = getFileManager()->uriToFile(factoryURI);
 			if(!factoryStr.empty()) {
 				factoryCStr = factoryStr.c_str();
 			}
@@ -1629,7 +1629,10 @@ FileManagerAPIPtr CoreAPI::getFileManager() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::newProxyConfig", "this=" << this);
-	return mFactory->getFileManager();
+	if(!mFileManager) {
+		mFileManager = mFactory->getFileManager();
+	}
+	return mFileManager;
 }
 
 ProxyConfigAPIPtr CoreAPI::newProxyConfig() const {

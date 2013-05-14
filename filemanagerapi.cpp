@@ -109,7 +109,12 @@ const boost::filesystem::path &FileManagerAPI::Protocol::getPath() {
 
 FileManagerAPI::FileManagerAPI():
 	WrapperAPI(APIDescription(this)) {
+	FBLOG_DEBUG("FileManagerAPI::FileManagerAPI", "this=" << this);
 	initProxy();
+}
+
+FileManagerAPI::~FileManagerAPI() {
+	FBLOG_DEBUG("FileManagerAPI::~FileManagerAPI", "this=" << this);
 }
 
 void FileManagerAPI::setFactory(FactoryAPIPtr factory) {
