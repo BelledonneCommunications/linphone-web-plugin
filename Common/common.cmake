@@ -17,7 +17,7 @@ function (create_signed_xpi PROJNAME DIRECTORY OUT_FILE PEMFILE PASSFILE PROJDEP
 		ADD_CUSTOM_COMMAND(OUTPUT ${OUT_FILE}
 					DEPENDS ${XPI_SOURCES}
 					COMMAND ${CMAKE_COMMAND} -E remove ${OUT_FILE}
-					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/xpisign.py ${DIRECTORY} ${PEMFILE} ${PASSFILE} ${OUT_FILE}
+					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/xpisign.py ${DIRECTORY} ${OUT_FILE} ${PEMFILE} ${PASSFILE}
 		)
 		message("-- Successfully added Sign XPI step")
 	else()
@@ -43,7 +43,7 @@ function (create_signed_crx PROJNAME DIRECTORY OUT_FILE PEMFILE PASSFILE PROJDEP
 		ADD_CUSTOM_COMMAND(OUTPUT ${OUT_FILE}
 					DEPENDS ${CRX_SOURCES}
 					COMMAND ${CMAKE_COMMAND} -E remove ${OUT_FILE}
-					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/crxmake.py ${DIRECTORY} ${PEMFILE} ${PASSFILE} ${OUT_FILE}
+					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/crxmake.py ${DIRECTORY} ${OUT_FILE} ${PEMFILE} ${PASSFILE}
 		)
 		message("-- Successfully added Sign CRX step")
 	else()

@@ -4,7 +4,7 @@
   "description" : "${FBSTRING_FileDescription}",
   "icons": { "16": "icon16.png", "48": "icon48.png" },
   "plugins": [
-     { "path": "${PLUGIN_NAME}.${PLUGIN_EXT}", "public": true }
+     { "path": "${FBSTRING_PluginFileName}.${PLUGIN_EXT}", "public": true }
   ],
   "manifest_version": 2
 }

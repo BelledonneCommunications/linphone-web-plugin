@@ -55,7 +55,14 @@ def signDir(source_dir, key_file, pass_file, output_file):
     certstack.push(M2Crypto.X509.load_cert_string(match.group(0)))
  
   mime = M2Crypto.SMIME.SMIME()
-  mime.load_key(key_file, callback=PassFile(pass_file).password)
+  if key_file is not None:
+    mime.load_key(key_file, callback=PassFile(pass_file).password)
+  else:
+    key = M2Crypto.RSA.gen_key(2048, 65537)
+    bio = M2Crypto.BIO.MemoryBuffer()
+    key.save_key_bio(bio, None)
+    mime.load_key_bio(bio)
+
   mime.set_x509_stack(certstack)
   pkcs7 = mime.sign(M2Crypto.BIO.MemoryBuffer(signature),
                     M2Crypto.SMIME.PKCS7_DETACHED | M2Crypto.SMIME.PKCS7_BINARY)
@@ -71,7 +78,10 @@ def signDir(source_dir, key_file, pass_file, output_file):
     zip.writestr(relpath, data)
  
 if __name__ == '__main__':
-  if len(sys.argv) < 5:
+  if len(sys.argv) != 5 and len(sys.argv) != 3:
     print 'Usage: %s source_dir key_file pass_file output_file' % sys.argv[0]
     sys.exit(2)
-  signDir(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+  if len(sys.argv) == 5:
+    signDir(sys.argv[1], sys.argv[3], sys.argv[4], sys.argv[2])
+  elif len(sys.argv) == 3:
+    signDir(sys.argv[1], None, None, sys.argv[2])

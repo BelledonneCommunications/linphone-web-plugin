@@ -45,23 +45,33 @@ def crxmake(dirname, pem_name, pass_file, crx_name):
     zip_data = zip_memory.getvalue()
 
     # load or make private key PEM
-    key = M2Crypto.RSA.load_key(pem_name, callback=PassFile(pass_file).password)
+    if pem_name is not None:
+        key = M2Crypto.RSA.load_key(pem_name, callback=PassFile(pass_file).password)
+    else:
+        pem_name = "tmp_pem"
+        pass_file = "tmp_pass"
+        f = open(pass_file, 'w')
+        f.write("dummy")
+        f.close()
+        key = M2Crypto.RSA.gen_key(2048, 65537)
+        key.save_key(pem_name, callback=PassFile(pass_file).password)
 
     # make sign for zip_data with private key
     sign = key.sign(hashlib.sha1(zip_data).digest(), "sha1")
 
-    # generate public key DER 
-    if hasattr(key, "save_pub_key_der_bio"):
-        mem_bio = M2Crypto.BIO.MemoryBuffer()
-        key.save_pub_key_der_bio(mem_bio) # missing API on M2Crypto <= 0.20.2
-        der_key = mem_bio.getvalue()
-        pass
-    else:
-        der_key = subprocess.Popen(
-            ["openssl", "rsa", "-pubout", "-outform", "DER",
-             "-inform", "PEM", "-in", pem_name, "-passin", "file:"+pass_file],
-            stdout=subprocess.PIPE).stdout.read()
-        pass
+    # generate public key DER
+    if key is not None: 
+        if hasattr(key, "save_pub_key_der_bio"):
+            mem_bio = M2Crypto.BIO.MemoryBuffer()
+            key.save_pub_key_der_bio(mem_bio) # missing API on M2Crypto <= 0.20.2
+            der_key = mem_bio.getvalue()
+            pass
+        else:
+            der_key = subprocess.Popen(
+                ["openssl", "rsa", "-pubout", "-outform", "DER",
+                 "-inform", "PEM", "-in", pem_name, "-passin", "file:"+pass_file],
+                stdout=subprocess.PIPE).stdout.read()
+            pass
 
     # make crx
     magic = "Cr24"
@@ -81,7 +91,10 @@ def crxmake(dirname, pem_name, pass_file, crx_name):
     print("update package: %s" % crx_name)
 
 if __name__ == '__main__':
-  if len(sys.argv) < 5:
+  if len(sys.argv) != 5 and len(sys.argv) != 3:
     print 'Usage: %s source_dir key_file pass_file output_file' % sys.argv[0]
     sys.exit(2)
-  crxmake(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+  if len(sys.argv) == 5:
+    crxmake(sys.argv[1], sys.argv[3], sys.argv[4], sys.argv[2])
+  elif len(sys.argv) == 3:
+    crxmake(sys.argv[1], None, None, sys.argv[2])
