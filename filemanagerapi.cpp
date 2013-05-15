@@ -143,7 +143,7 @@ void FileManagerAPI::initializePaths() {
 	CorePluginPtr plugin = mFactory->getPlugin();
 	FB::URI loc = FB::URI::fromString(plugin->getHost()->getDOMWindow()->getLocation());
 	if(!loc.domain.empty()) {
-		std::string localPathString = FB::System::getAppDataPath(FBSTRING_ProductName);
+		std::string localPathString = FB::System::getLocalAppDataPath(FBSTRING_ProductName);
 		if(!localPathString.empty()) {
 			localPath = boost::filesystem::path(localPathString);
 			localPath /= std::string(loc.domain);
