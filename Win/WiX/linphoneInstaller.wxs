@@ -21,23 +21,23 @@
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="${FB_WIX_INSTALL_LOCATION}">
-				<Directory Id="CompanyDir" Name="${COMPANY_NAME}">
+				<Directory Id="CompanyDir" Name="${FBSTRING_CompanyDomain}">
 					<Component Id="CompanyDirComp" Guid="*">
 						<RemoveFolder Id="RemoveCompanyDir" On="uninstall" />
 						<RegistryValue
 							Root="HKCU"
-							Key="SOFTWARE\${COMPANY_NAME}"
+							Key="SOFTWARE\${FBSTRING_CompanyDomain}"
 							Name="Uninstall"
 							Type="string"
 							Value="${FBSTRING_PLUGIN_VERSION}"
 							KeyPath="yes" />
 					</Component>
-					<Directory Id="PluginNameDir" Name="${PLUGIN_NAME}">
+					<Directory Id="PluginNameDir" Name="${FBSTRING_PluginDomain}">
 						<Component Id="PluginNameDirComp" Guid="*">
 							<RemoveFolder Id="RemovePluginNameDir" On="uninstall" />
 							<RegistryValue
 								Root="HKCU"
-								Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}"
+								Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}"
 								Name="Uninstall"
 								Type="string"
 								Value="${FBSTRING_PLUGIN_VERSION}"
@@ -48,7 +48,7 @@
 								<RemoveFolder Id="RemoveInstallDir" On="uninstall" />
 								<RegistryValue
 									Root="HKCU"
-									Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}"
+									Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}"
 									Name="Uninstall"
 									Type="string"
 									Value="${FBSTRING_PLUGIN_VERSION}"
@@ -80,7 +80,7 @@
 								<File Id="ssleay32" Source="$(var.BINSRC)/ssleay32.dll" />
 								<RegistryValue
 									Root="HKCU"
-									Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"
+									Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"
 									Name="Uninstall"
 									Type="string"
 									Value="${FBSTRING_PLUGIN_VERSION}"
@@ -91,7 +91,7 @@
 									<RemoveFolder Id="RemoveLinphoneWebDir" On="uninstall" />
 									<RegistryValue
 										Root="HKCU"
-										Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\LinphoneWebDirComp"
+										Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\LinphoneWebDirComp"
 										Name="Uninstall"
 										Type="string"
 										Value="${FBSTRING_PLUGIN_VERSION}"
@@ -102,7 +102,7 @@
 										<RemoveFolder Id="RemoveShareDir" On="uninstall" />
 										<RegistryValue
 											Root="HKCU"
-											Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\ShareDirComp"
+											Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareDirComp"
 											Name="Uninstall"
 											Type="string"
 											Value="${FBSTRING_PLUGIN_VERSION}"
@@ -114,7 +114,7 @@
 											<File Id="rootca" Source="$(var.BINSRC)/linphoneweb/share/linphone/rootca.pem" />
 											<RegistryValue
 												Root="HKCU"
-												Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\ShareLinphoneDirComp"
+												Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareLinphoneDirComp"
 												Name="Uninstall"
 												Type="string"
 												Value="${FBSTRING_PLUGIN_VERSION}"
@@ -127,7 +127,7 @@
 											<File Id="nowebcamCIF" Source="$(var.BINSRC)/linphoneweb/share/images/nowebcamCIF.jpg" />
 											<RegistryValue
 												Root="HKCU"
-												Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\ShareImagesDirComp"
+												Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareImagesDirComp"
 												Name="Uninstall"
 												Type="string"
 												Value="${FBSTRING_PLUGIN_VERSION}"
@@ -139,7 +139,7 @@
 											<RemoveFolder Id="RemoveShareSoundsDir" On="uninstall" />
 											<RegistryValue
 												Root="HKCU"
-												Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsDirComp"
+												Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsDirComp"
 												Name="Uninstall"
 												Type="string"
 												Value="${FBSTRING_PLUGIN_VERSION}"
@@ -151,7 +151,7 @@
 												<File Id="ringback" Source="$(var.BINSRC)/linphoneweb/share/sounds/linphone/ringback.wav" />
 												<RegistryValue
 													Root="HKCU"
-													Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsLinphoneDirComp"
+													Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsLinphoneDirComp"
 													Name="Uninstall"
 													Type="string"
 													Value="${FBSTRING_PLUGIN_VERSION}"
@@ -164,7 +164,7 @@
 													<File Id="toymono" Source="$(var.BINSRC)/linphoneweb/share/sounds/linphone/rings/toy-mono.wav" />
 													<RegistryValue
 														Root="HKCU"
-														Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsLinphoneRingsDirComp"
+														Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsLinphoneRingsDirComp"
 														Name="Uninstall"
 														Type="string"
 														Value="${FBSTRING_PLUGIN_VERSION}"

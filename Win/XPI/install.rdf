@@ -23,7 +23,7 @@
     <em:name>${FBSTRING_PluginName}</em:name>
     <em:version>${FBSTRING_PLUGIN_VERSION}</em:version>
     <!-- <em:bootstrap>true</em:bootstrap> -->
-    <em:id>{29623621-22e0-bf87-16ee-1c3b683582e1}</em:id>
+    <em:id>${FBControl_XPI_GUID}</em:id>
     <em:description>${FBSTRING_FileDescription}</em:description>
 
 	<em:icon64URL>chrome://linphoneweb/skin/icon64.png</em:icon64URL>
@@ -37,6 +37,7 @@
        <em:maxVersion>*</em:maxVersion>
       </Description>
     </em:targetApplication>
+    <em:targetPlatform>WINNT</em:targetPlatform>
 
     <em:creator>${FBSTRING_CompanyName}</em:creator>
     <em:developer>Yann Diorcet</em:developer>

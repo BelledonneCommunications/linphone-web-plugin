@@ -17,12 +17,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
 
+# Project build properties
 set(PLUGIN_NAME "linphone-web")
 set(PLUGIN_PREFIX "LINWEB")
 set(COMPANY_NAME "belledonne-communications")
-
-# WiX
-set(FBControl_WixUpgradeCode_GUID d04684cd-332b-540f-beca-53826c14d6cf)
 
 # ActiveX constants:
 set(FBTYPELIB_NAME "LinphoneWeb")
@@ -44,22 +42,29 @@ set(IFBComEventSource_GUID 898a611e-b63b-58c7-bc64-0c0fa0c0cded)
 # these are the pieces that are relevant to using it from Javascript
 set(MOZILLA_PLUGINID "belledonne-communications.com/linphone/web")
 
-# strings
-set(FBSTRING_CompanyDomain "com.belledonne-communication")
+# Company name
 set(FBSTRING_CompanyName "Belledonne Communications")
+
+# Company id
+set(FBSTRING_CompanyDomain "com.belledonne-communication")
+
 set(FBSTRING_PLUGIN_VERSION "0.0.1.2")
 set(FBSTRING_PLUGIN_VERSION_ACTIVEX "0,0,1,2")
 set(FBSTRING_LegalCopyright "Copyright 2012 Belledonne Communications")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}")
 
-# Internal settings name
+# Internal settings name (common between all version of plugin)
 set(FBSTRING_ProductName "Linphone Web")
-set(FBSTRING_FileExtents "")
 
 # Shown name
 set(FBSTRING_PluginName "Linphone Web")
+
+# Plugin id
+set(FBSTRING_PluginDomain "linphone-web")
+
 set(FBSTRING_FileDescription "Web plugin of Linphone")
 
+set(FBSTRING_FileExtents "")
 set(FBSTRING_MIMEType 
 	"application/x-linphone-web"
 	"application/x-linphone-web-video")
@@ -72,6 +77,65 @@ set(FBControl_GUID
 set(FBSTRING_PluginDescription 
 	"Linphone Web Plugin"
 	"Linphone Web Video Plugin")
+
+# Version variable
+set(FBSTRING_V_TXT_WIN "Windows")
+#set(FBSTRING_V_WIN "win")
+set(FBSTRING_V_TXT_MAC "Mac")
+#set(FBSTRING_V_MAC "mac")
+set(FBSTRING_V_TXT_X11 "Linux")
+#set(FBSTRING_V_X11 "lin")
+set(FBSTRING_V_TXT_X86 "")
+set(FBSTRING_V_X86 "")
+set(FBSTRING_V_TXT_X86_64 "64 bits")
+set(FBSTRING_V_X86_64 "64")
+
+# Compose using os and arch
+if(FB_PLATFORM_NAME STREQUAL "Win")
+	if(NOT ${FBSTRING_V_TXT_WIN} STREQUAL "")
+		set(FBSTRING_PluginName "${FBSTRING_PluginName} ${FBSTRING_V_TXT_WIN}")	
+	endif(NOT ${FBSTRING_V_TXT_WIN} STREQUAL "")
+endif(FB_PLATFORM_NAME STREQUAL "Win") 
+if(FB_PLATFORM_NAME STREQUAL "Mac")
+	if(NOT ${FBSTRING_V_TXT_MAC} STREQUAL "")
+		set(FBSTRING_PluginName "${FBSTRING_PluginName} ${FBSTRING_V_TXT_MAC}")	
+	endif(NOT ${FBSTRING_V_TXT_MAC} STREQUAL "")
+endif(FB_PLATFORM_NAME STREQUAL "Mac") 
+if(FB_PLATFORM_NAME STREQUAL "X11")
+	if(NOT ${FBSTRING_V_TXT_X11} STREQUAL "")
+		set(FBSTRING_PluginName "${FBSTRING_PluginName} ${FBSTRING_V_TXT_X11}")	
+	endif(NOT ${FBSTRING_V_TXT_X11} STREQUAL "")
+endif(FB_PLATFORM_NAME STREQUAL "X11") 
+if(FB_PLATFORM_ARCH_32)
+	if(NOT ${FBSTRING_V_TXT_X86} STREQUAL "")
+		set(FBSTRING_PluginName "${FBSTRING_PluginName} ${FBSTRING_V_TXT_X86}")
+	endif(NOT ${FBSTRING_V_TXT_X86} STREQUAL "")
+	if(NOT ${FBSTRING_V_X86} STREQUAL "")
+		set(FBSTRING_PluginDomain "${FBSTRING_PluginDomain}-${FBSTRING_V_X86}")
+		set(FBSTRING_PluginFileName "${FBSTRING_PluginFileName}${FBSTRING_V_X86}")
+	endif(NOT ${FBSTRING_V_X86} STREQUAL "")
+endif(FB_PLATFORM_ARCH_32)
+if(FB_PLATFORM_ARCH_64)
+	if(NOT ${FBSTRING_V_TXT_X86_64} STREQUAL "")
+		set(FBSTRING_PluginName "${FBSTRING_PluginName} ${FBSTRING_V_TXT_X86_64}")
+	endif(NOT ${FBSTRING_V_TXT_X86_64} STREQUAL "")
+	if(NOT ${FBSTRING_V_X86_64} STREQUAL "")
+		set(FBSTRING_PluginDomain "${FBSTRING_PluginDomain}-${FBSTRING_V_X86_64}")
+		set(FBSTRING_PluginFileName "${FBSTRING_PluginFileName}${FBSTRING_V_X86_64}")
+	endif(NOT ${FBSTRING_V_X86_64} STREQUAL "")
+endif(FB_PLATFORM_ARCH_64)
+
+### PACKAGES ###
+# WiX
+if(FB_PLATFORM_ARCH_32)
+	set(FBControl_WixUpgradeCode_GUID d04684cd-332b-540f-beca-53826c14d6cf)
+else(FB_PLATFORM_ARCH_32)
+	set(FBControl_WixUpgradeCode_GUID d04684cd-332b-540f-beca-53826c14d6df)
+endif(FB_PLATFORM_ARCH_32)
+
+# XPI
+set(FBControl_XPI_GUID "{29623621-22e0-bf87-16ee-1c3b683582e1}")
+### PACKAGES ###
 
 # Uncomment this next line if you're not planning on your plugin doing
 # any drawing:

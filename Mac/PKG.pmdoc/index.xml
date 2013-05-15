@@ -11,9 +11,9 @@
 		<scripts/>
 	</distribution>
 	<contents>
-		<choice title="${FBSTRING_PluginName}" id="${PLUGIN_NAME}" starts_selected="true" starts_enabled="true" starts_hidden="true">
+		<choice title="${FBSTRING_PluginName}" id="${FBSTRING_PluginDomain}" starts_selected="true" starts_enabled="true" starts_hidden="true">
 			<customLoc>/tmp</customLoc>
-			<pkgref id="${FBSTRING_CompanyDomain}.${PLUGIN_NAME}"/>
+			<pkgref id="${FBSTRING_CompanyDomain}.${FBSTRING_PluginDomain}"/>
 		</choice>
 	</contents>
 	<resources bg-scale="none" bg-align="topleft">

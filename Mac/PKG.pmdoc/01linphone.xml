@@ -1,6 +1,6 @@
 <pkgref spec="1.12" uuid="701505A1-0C7E-4FE0-9E3A-643384E34C18">
 	<config>
-		<identifier>${FBSTRING_CompanyDomain}.${PLUGIN_NAME}</identifier>
+		<identifier>${FBSTRING_CompanyDomain}.${FBSTRING_PluginDomain}</identifier>
 		<version>1.0</version>
 		<description/>
 		<post-install type="none"/>
