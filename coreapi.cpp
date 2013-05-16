@@ -161,6 +161,7 @@ void CoreAPI::initProxy() {
 	
 	// Core helpers
 	registerMethod("init", make_method(this, &CoreAPI::init));
+	registerMethod("uninit", make_method(this, &CoreAPI::uninit));
 	registerProperty("iterateEnabled", make_property(this, &CoreAPI::iterateEnabled, &CoreAPI::enableIterate));
 	registerProperty("iterateInterval", make_property(this, &CoreAPI::getIterateInterval, &CoreAPI::setIterateInterval));
 
@@ -323,6 +324,18 @@ void CoreAPI::initProxy() {
 int CoreAPI::init(const boost::optional<std::string> &config, const boost::optional<std::string> &factory) {
 	FBLOG_DEBUG("CoreAPI::init", "this=" << this << "\t" << "config=" << (config?config.get():"(NULL)") << "\t" << "factory=" << (factory?factory.get():"(NULL)"));
 	boost::mutex::scoped_lock scoped_instance_count_lock(sInstanceMutex);
+	
+#ifdef CORE_THREADED
+	if(!mCoreThread) {
+		mCoreThread = boost::make_shared<boost::thread>(CoreAPI::iterateThread, boost::static_pointer_cast<CoreAPI>(shared_from_this()));
+		attachThread(mCoreThread);
+	}
+#else //CORE_THREADED
+#endif //CORE_THREADED
+	
+	if(mCore != NULL) {
+		return -1;
+	}
 
 	if (sInstanceCount == 0) {
 		++sInstanceCount;
@@ -381,10 +394,6 @@ int CoreAPI::init(const boost::optional<std::string> &config, const boost::optio
 		linphone_core_enable_video_preview(mCore, false); // MUST be disabled, we can't allow a detached window
 		linphone_core_use_preview_window(mCore, false); // MUST be disabled, we can't allow a detached window
 
-#ifdef CORE_THREADED
-		mCoreThread = boost::make_shared<boost::thread>(CoreAPI::iterateThread, boost::static_pointer_cast<CoreAPI>(shared_from_this()));
-		attachThread(mCoreThread);
-#endif //CORE_THREADED
 		return 0;
 	} else {
 		FBLOG_ERROR("CoreAPI::init", "Already started linphone instance");
@@ -392,6 +401,30 @@ int CoreAPI::init(const boost::optional<std::string> &config, const boost::optio
 	}
 }
 
+
+int CoreAPI::uninit() {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::uninit", "this=" << this);
+	if (mCore != NULL) {
+		linphone_core_set_user_data(mCore, NULL);
+		
+#ifdef CORE_THREADED
+		// TODO find a better way to do that
+		refLib();
+		boost::thread t(boost::bind(CoreAPI::destroyThread, mCore));
+#else  //CORE_THREADED
+		mTimer->stop();
+		linphone_core_destroy(mCore);
+		sInstanceMutex.lock();
+		--sInstanceCount;
+		sInstanceMutex.unlock();
+#endif //CORE_THREADED
+		mCore = NULL;
+		return 0;
+	}
+	return -1;
+}
 
 void CoreAPI::enableIterate(bool enable) {
 	FB_ASSERT_CORE
@@ -456,22 +489,7 @@ int CoreAPI::getIterateInterval() const {
 ///////////////////////////////////////////////////////////////////////////////
 CoreAPI::~CoreAPI() {
 	FBLOG_DEBUG("CoreAPI::~CoreAPI", "this=" << this);
-	if (mCore != NULL) {
-		linphone_core_set_user_data(mCore, NULL);
-
-#ifdef CORE_THREADED
-		// TODO find a better way to do that
-		refLib();
-		boost::thread t(boost::bind(CoreAPI::destroyThread, mCore));
-#else  //CORE_THREADED
-		mTimer->stop();
-		linphone_core_destroy(mCore);
-		sInstanceMutex.lock();
-		--sInstanceCount;
-		sInstanceMutex.unlock();
-#endif //CORE_THREADED
-		mCore = NULL;
-	}
+	uninit();
 }
 
 const std::string &CoreAPI::getMagic() const {

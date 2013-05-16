@@ -242,6 +242,7 @@ public:
 
 	// Core helpers
 	int init(const boost::optional<std::string> &config, const boost::optional<std::string> &factory);
+	int uninit();
 	void setIterateInterval(int ms);
 	int getIterateInterval() const;
 	void enableIterate(bool enable);
