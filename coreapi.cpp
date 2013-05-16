@@ -110,7 +110,7 @@ void CoreAPI::iterateThread(CoreAPIPtr &core) {
 
 	while (!boost::this_thread::interruption_requested()) {
 		core->iterateWithMutex();
-		usleep(20000);
+		usleep(core->mIterateInterval * 1000);
 		//FBLOG_DEBUG("linphone_iterate_thread", "it" << "\t" << "core=" << core);
 	}
 	core->detachThread(boost::this_thread::get_id());
@@ -141,9 +141,13 @@ CoreAPI::CoreAPI() :
 	mUsed = true;
 	mConst = false;
 	FBLOG_DEBUG("CoreAPI::CoreAPI", "this=" << this);
-#ifndef CORE_THREADED
-	mTimer = FB::Timer::getTimer(20, true, boost::bind(&CoreAPI::iterate, this));
-#endif
+	
+	mIterateInterval = 20;
+	mIterate = false;
+#ifdef CORE_THREADED
+#else //CORE_THREADED
+	mTimer = FB::Timer::getTimer(mIterateInterval, true, boost::bind(&CoreAPI::iterate, this));
+#endif //CORE_THREADED
 	initProxy();
 }
 
@@ -155,7 +159,10 @@ void CoreAPI::initProxy() {
 	// Propery
 	registerProperty("magic", make_property(this, &CoreAPI::getMagic, &CoreAPI::setMagic));
 	
+	// Core helpers
 	registerMethod("init", make_method(this, &CoreAPI::init));
+	registerProperty("iterateEnabled", make_property(this, &CoreAPI::iterateEnabled, &CoreAPI::enableIterate));
+	registerProperty("iterateInterval", make_property(this, &CoreAPI::getIterateInterval, &CoreAPI::setIterateInterval));
 
 	// Call bindings
 	REGISTER_SYNC_N_ASYNC(CoreAPI, "invite", invite);
@@ -369,18 +376,75 @@ int CoreAPI::init(const boost::optional<std::string> &config, const boost::optio
 			--sInstanceCount;
 			return 1;
 		}
+		
+		// Specific Linphone Web behaviour
+		linphone_core_enable_video_preview(mCore, false); // MUST be disabled, we can't allow a detached window
+		linphone_core_use_preview_window(mCore, false); // MUST be disabled, we can't allow a detached window
 
 #ifdef CORE_THREADED
 		mCoreThread = boost::make_shared<boost::thread>(CoreAPI::iterateThread, boost::static_pointer_cast<CoreAPI>(shared_from_this()));
 		attachThread(mCoreThread);
-#else
-		mTimer->start();
-#endif
+#endif //CORE_THREADED
 		return 0;
 	} else {
 		FBLOG_ERROR("CoreAPI::init", "Already started linphone instance");
 		return 2;
 	}
+}
+
+
+void CoreAPI::enableIterate(bool enable) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::start", "this=" << this << "\t" << "enable=" << enable);
+	
+	if(enable == mIterate)
+		return;
+	
+	if(enable) {
+#ifdef CORE_THREADED
+#else //CORE_THREADED
+		mTimer->start();
+#endif //CORE_THREADED
+		mIterate = true;
+	} else {
+#ifdef CORE_THREADED
+#else //CORE_THREADED
+		mTimer->stop();
+#endif //CORE_THREADED
+		mIterate = false;
+	}
+}
+
+bool CoreAPI::iterateEnabled() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::iterateEnabled", "this=" << this);
+	return mIterate;
+}
+
+void CoreAPI::setIterateInterval(int ms) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setIterateInterval", "this=" << this << "\t" << "ms=" << ms);
+	mIterateInterval = ms;
+#ifdef CORE_THREADED
+#else //CORE_THREADED
+	mTimer->stop();
+	mTimer = FB::Timer::getTimer(mIterateInterval, true, boost::bind(&CoreAPI::iterate, this));
+	mTimer->start();
+#endif //CORE_THREADED
+}
+
+int CoreAPI::getIterateInterval() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getIterateInterval", "this=" << this);
+	return mIterateInterval;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -399,7 +463,7 @@ CoreAPI::~CoreAPI() {
 		// TODO find a better way to do that
 		refLib();
 		boost::thread t(boost::bind(CoreAPI::destroyThread, mCore));
-#else
+#else  //CORE_THREADED
 		mTimer->stop();
 		linphone_core_destroy(mCore);
 		sInstanceMutex.lock();
@@ -429,6 +493,7 @@ void CoreAPI::setMagic(const std::string &magic) {
 IMPLEMENT_SYNC_N_ASYNC(CoreAPI, invite, 1, (const std::string &), CallAPIPtr);
 
 CallAPIPtr CoreAPI::invite(const std::string &url) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::invite", "this=" << this << "\t" << "url=" << url);
@@ -440,6 +505,7 @@ CallAPIPtr CoreAPI::invite(const std::string &url) {
 IMPLEMENT_SYNC_N_ASYNC(CoreAPI, inviteAddress, 1, (const AddressAPIPtr &), CallAPIPtr);
 
 CallAPIPtr CoreAPI::inviteAddress(const AddressAPIPtr &address) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::inviteAddress", "this=" << this << "\t" << "address=" << address);
@@ -451,6 +517,7 @@ CallAPIPtr CoreAPI::inviteAddress(const AddressAPIPtr &address) {
 IMPLEMENT_SYNC_N_ASYNC(CoreAPI, inviteWithParams, 2, (const std::string &, const CallParamsAPIPtr &), CallAPIPtr);
 
 CallAPIPtr CoreAPI::inviteWithParams(const std::string &url, const CallParamsAPIPtr &params) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::invite", "this=" << this << "\t" << "url=" << url << "\t" << "params=" << params);
@@ -462,6 +529,7 @@ CallAPIPtr CoreAPI::inviteWithParams(const std::string &url, const CallParamsAPI
 IMPLEMENT_SYNC_N_ASYNC(CoreAPI, inviteAddressWithParams, 2, (const AddressAPIPtr &, const CallParamsAPIPtr &), CallAPIPtr);
 
 CallAPIPtr CoreAPI::inviteAddressWithParams(const AddressAPIPtr &address, const CallParamsAPIPtr &params) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::inviteAddress", "this=" << this << "\t" << "address=" << address << "\t" << "params=" << params);
@@ -471,6 +539,7 @@ CallAPIPtr CoreAPI::inviteAddressWithParams(const AddressAPIPtr &address, const 
 }
 
 int CoreAPI::acceptCall(const CallAPIPtr &call) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::acceptCall", "this=" << this << "\t" << "call=" << call);
@@ -478,6 +547,7 @@ int CoreAPI::acceptCall(const CallAPIPtr &call) {
 }
 
 int CoreAPI::acceptCallWithParams(const CallAPIPtr &call, const CallParamsAPIPtr &params) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::acceptCallWithParams", "this=" << this << "\t" << "call=" << call << "\t" << "params=" << params);
@@ -485,6 +555,7 @@ int CoreAPI::acceptCallWithParams(const CallAPIPtr &call, const CallParamsAPIPtr
 }
 
 CallAPIPtr CoreAPI::getCurrentCall() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getCurrentCall", "this=" << this);
@@ -492,6 +563,7 @@ CallAPIPtr CoreAPI::getCurrentCall() {
 }
 
 int CoreAPI::terminateCall(const CallAPIPtr &call) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::terminateCall", "this=" << this << "\t" << "call=" << call);
@@ -499,6 +571,7 @@ int CoreAPI::terminateCall(const CallAPIPtr &call) {
 }
 
 int CoreAPI::terminateAllCalls() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::terminateAllCalls", "this=" << this);
@@ -506,6 +579,7 @@ int CoreAPI::terminateAllCalls() {
 }
 
 int CoreAPI::redirectCall(const CallAPIPtr &call, const std::string &uri) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::redirectCall", "this=" << this << "\t" << "call=" << call << "\t" << "uri=" << uri);
@@ -513,6 +587,7 @@ int CoreAPI::redirectCall(const CallAPIPtr &call, const std::string &uri) {
 }
 
 int CoreAPI::declineCall(const CallAPIPtr &call, int reason) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::declineCall", "this=" << this << "\t" << "call=" << call << "\t" << "reason=" << reason);
@@ -520,6 +595,7 @@ int CoreAPI::declineCall(const CallAPIPtr &call, int reason) {
 }
 
 int CoreAPI::transferCall(const CallAPIPtr &call, const std::string &uri) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::transferCall", "this=" << this << "\t" << "call=" << call << "\t" << "uri=" << uri);
@@ -527,6 +603,7 @@ int CoreAPI::transferCall(const CallAPIPtr &call, const std::string &uri) {
 }
 
 int CoreAPI::transferCallToAnother(const CallAPIPtr &call, const CallAPIPtr &dest) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::transferCallToAnother", "this=" << this << "\t" << "call=" << call << "\t" << "dest=" << dest);
@@ -534,6 +611,7 @@ int CoreAPI::transferCallToAnother(const CallAPIPtr &call, const CallAPIPtr &des
 }
 
 int CoreAPI::resumeCall(const CallAPIPtr &call) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::resumeCall", "this=" << this << "\t" << "call=" << call);
@@ -541,6 +619,7 @@ int CoreAPI::resumeCall(const CallAPIPtr &call) {
 }
 
 int CoreAPI::pauseCall(const CallAPIPtr &call) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::pauseCall", "this=" << this << "\t" << "call=" << call);
@@ -548,6 +627,7 @@ int CoreAPI::pauseCall(const CallAPIPtr &call) {
 }
 
 int CoreAPI::pauseAllCalls() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::pauseAllCalls", "this=" << this);
@@ -555,6 +635,7 @@ int CoreAPI::pauseAllCalls() {
 }
 
 int CoreAPI::updateCall(const CallAPIPtr &call, const CallParamsAPIPtr &params) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::updateCall", "this=" << this << "\t" << "call=" << call << "\t" << "params=" << params);
@@ -562,6 +643,7 @@ int CoreAPI::updateCall(const CallAPIPtr &call, const CallParamsAPIPtr &params) 
 }
 
 int CoreAPI::deferCallUpdate(const CallAPIPtr &call) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::deferCallUpdate", "this=" << this << "\t" << "call=" << call);
@@ -569,6 +651,7 @@ int CoreAPI::deferCallUpdate(const CallAPIPtr &call) {
 }
 
 int CoreAPI::acceptCallUpdate(const CallAPIPtr &call, const CallParamsAPIPtr &params) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::acceptCallUpdate", "this=" << this << "\t" << "call=" << call << "\t" << "params=" << params);
@@ -576,6 +659,7 @@ int CoreAPI::acceptCallUpdate(const CallAPIPtr &call, const CallParamsAPIPtr &pa
 }
 
 CallParamsAPIPtr CoreAPI::createDefaultCallParameters() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::createDefaultCallParameters", "this=" << this);
@@ -583,6 +667,7 @@ CallParamsAPIPtr CoreAPI::createDefaultCallParameters() {
 }
 
 void CoreAPI::setIncTimeout(int timeout) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setIncTimeout", "this=" << this << "\t" << "timeout=" << timeout);
@@ -590,6 +675,7 @@ void CoreAPI::setIncTimeout(int timeout) {
 }
 
 int CoreAPI::getIncTimeout() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getIncTimeout", "this=" << this);
@@ -597,6 +683,7 @@ int CoreAPI::getIncTimeout() const {
 }
 
 void CoreAPI::setInCallTimeout(int timeout) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setInCallTimeout", "this=" << this << "\t" << "timeout=" << timeout);
@@ -604,6 +691,7 @@ void CoreAPI::setInCallTimeout(int timeout) {
 }
 
 int CoreAPI::getInCallTimeout() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getInCallTimeout", "this=" << this);
@@ -611,6 +699,7 @@ int CoreAPI::getInCallTimeout() const {
 }
 
 int CoreAPI::getMaxCalls() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getMaxCalls", "this=" << this);
@@ -618,6 +707,7 @@ int CoreAPI::getMaxCalls() const {
 }
 
 void CoreAPI::setMaxCalls(int max) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setMaxCalls", "this=" << this << "\t" << "max=" << max);
@@ -631,6 +721,7 @@ void CoreAPI::setMaxCalls(int max) {
  */
 
 int CoreAPI::addAllToConference() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::addAllToConference", "this=" << this);
@@ -638,6 +729,7 @@ int CoreAPI::addAllToConference() {
 }
 
 int CoreAPI::addToConference(const CallAPIPtr &call) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::addToConference", "this=" << this << "\t" << "call=" << call);
@@ -645,6 +737,7 @@ int CoreAPI::addToConference(const CallAPIPtr &call) {
 }
 
 int CoreAPI::enterConference() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::enterConference", "this=" << this);
@@ -652,6 +745,7 @@ int CoreAPI::enterConference() {
 }
 
 int CoreAPI::getConferenceSize() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getConferenceSize", "this=" << this);
@@ -659,6 +753,7 @@ int CoreAPI::getConferenceSize() const {
 }
 
 bool CoreAPI::isInConference() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::isInConference", "this=" << this);
@@ -666,6 +761,7 @@ bool CoreAPI::isInConference() const {
 }
 
 int CoreAPI::leaveConference() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::leaveConference", "this=" << this);
@@ -673,6 +769,7 @@ int CoreAPI::leaveConference() {
 }
 
 int CoreAPI::removeFromConference(const CallAPIPtr &call) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::removeFromConference", "this=" << this << "\t" << "call=" << call);
@@ -680,6 +777,7 @@ int CoreAPI::removeFromConference(const CallAPIPtr &call) {
 }
 
 int CoreAPI::terminateConference() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::terminateConference", "this=" << this);
@@ -693,6 +791,7 @@ int CoreAPI::terminateConference() {
  */
 
 void CoreAPI::setPlayLevel(int level) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setPlayLevel", "this=" << this << "\t" << "level=" << level);
@@ -700,6 +799,7 @@ void CoreAPI::setPlayLevel(int level) {
 }
 
 int CoreAPI::getPlayLevel() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getPlayLevel", "this=" << this);
@@ -707,6 +807,7 @@ int CoreAPI::getPlayLevel() const {
 }
 
 void CoreAPI::setRecLevel(int level) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRecLevel", "this=" << this << "\t" << "level=" << level);
@@ -714,6 +815,7 @@ void CoreAPI::setRecLevel(int level) {
 }
 
 int CoreAPI::getRecLevel() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRecLevel", "this=" << this);
@@ -721,6 +823,7 @@ int CoreAPI::getRecLevel() const {
 }
 
 void CoreAPI::setRingLevel(int level) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRingLevel", "this=" << this << "\t" << "level=" << level);
@@ -728,6 +831,7 @@ void CoreAPI::setRingLevel(int level) {
 }
 
 int CoreAPI::getRingLevel() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRingLevel", "this=" << this);
@@ -735,6 +839,7 @@ int CoreAPI::getRingLevel() const {
 }
 
 void CoreAPI::muteMic(bool muted) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::muteMic", "this=" << this << "\t" << "muted=" << muted);
@@ -742,6 +847,7 @@ void CoreAPI::muteMic(bool muted) {
 }
 
 bool CoreAPI::isMicMuted() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::isMicMuted", "this=" << this);
@@ -749,6 +855,7 @@ bool CoreAPI::isMicMuted() const {
 }
 
 float CoreAPI::getMicGainDb() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getMicGainDb", "this=" << this);
@@ -756,6 +863,7 @@ float CoreAPI::getMicGainDb() const {
 }
 
 void CoreAPI::setMicGainDb(float gain) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setMicGainDb", "this=" << this << "\t" << "gain=" << gain);
@@ -763,6 +871,7 @@ void CoreAPI::setMicGainDb(float gain) {
 }
 
 float CoreAPI::getPlaybackGainDb() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getPlaybackGainDb", "this=" << this);
@@ -770,6 +879,7 @@ float CoreAPI::getPlaybackGainDb() const {
 }
 
 void CoreAPI::setPlaybackGainDb(float gain) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setPlaybackGainDb", "this=" << this << "\t" << "gain=" << gain);
@@ -783,12 +893,14 @@ void CoreAPI::setPlaybackGainDb(float gain) {
  */
 
 bool CoreAPI::videoSupported() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::videoSupported", "this=" << this);
 	return linphone_core_video_supported(mCore) == TRUE ? true : false;
 }
 void CoreAPI::enableVideo(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::enableVideo", "this=" << this << "\t" << "enable=" << enable);
@@ -796,6 +908,7 @@ void CoreAPI::enableVideo(bool enable) {
 }
 
 bool CoreAPI::videoEnabled() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::videoEnabled", "this=" << this);
@@ -803,6 +916,7 @@ bool CoreAPI::videoEnabled() const {
 }
 
 void CoreAPI::enableVideoPreview(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::enableVideoPreview", "this=" << this << "\t" << "enable=" << enable);
@@ -810,6 +924,7 @@ void CoreAPI::enableVideoPreview(bool enable) {
 }
 
 bool CoreAPI::videoPreviewEnabled() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::videoPreviewEnabled", "this=" << this);
@@ -817,6 +932,7 @@ bool CoreAPI::videoPreviewEnabled() const {
 }
 
 void CoreAPI::enableSelfView(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::enableSelfView", "this=" << this << "\t" << "enable=" << enable);
@@ -824,6 +940,7 @@ void CoreAPI::enableSelfView(bool enable) {
 }
 
 bool CoreAPI::selfViewEnabled() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::selfViewEnabled", "this=" << this);
@@ -831,6 +948,7 @@ bool CoreAPI::selfViewEnabled() const {
 }
 
 void CoreAPI::setNativeVideoWindowId(unsigned long id) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setNativeVideoWindowId", "this=" << this << "\t" << "id=" << id);
@@ -838,6 +956,7 @@ void CoreAPI::setNativeVideoWindowId(unsigned long id) {
 }
 
 unsigned long CoreAPI::getNativeVideoWindowId() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getNativeVideoWindowId", "this=" << this);
@@ -845,6 +964,7 @@ unsigned long CoreAPI::getNativeVideoWindowId() const {
 }
 
 void CoreAPI::setNativePreviewWindowId(unsigned long id) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setNativePreviewWindowId", "this=" << this << "\t" << "id=" << id);
@@ -852,6 +972,7 @@ void CoreAPI::setNativePreviewWindowId(unsigned long id) {
 }
 
 unsigned long CoreAPI::getNativePreviewWindowId() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getNativePreviewWindowId", "this=" << this);
@@ -859,13 +980,15 @@ unsigned long CoreAPI::getNativePreviewWindowId() const {
 }
 
 bool CoreAPI::getUsePreviewWindow() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getUsePreviewWindow", "this=" << this);
-	return FALSE; // Don't have API yet
+	return FALSE; // TODO Don't have API yet
 }
 
 void CoreAPI::setUsePreviewWindow(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setUsePreviewWindow", "this=" << this << "\t" << "enable=" << enable);
@@ -879,6 +1002,7 @@ void CoreAPI::setUsePreviewWindow(bool enable) {
  */
 
 void CoreAPI::reloadSoundDevices() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::reloadSoundDevices", "this=" << this);
@@ -887,6 +1011,7 @@ void CoreAPI::reloadSoundDevices() {
 }
 
 std::vector<std::string> CoreAPI::getSoundDevices() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getSoundDevices", "this=" << this);
@@ -900,6 +1025,7 @@ std::vector<std::string> CoreAPI::getSoundDevices() const {
 }
 
 bool CoreAPI::soundDeviceCanCapture(const std::string &devid) const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::soundDeviceCanCapture", "this=" << this << "\t" << "devid=" << devid);
@@ -907,6 +1033,7 @@ bool CoreAPI::soundDeviceCanCapture(const std::string &devid) const {
 }
 
 bool CoreAPI::soundDeviceCanPlayback(const std::string &devid) const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::soundDeviceCanPlayback", "this=" << this << "\t" << "devid=" << devid);
@@ -914,6 +1041,7 @@ bool CoreAPI::soundDeviceCanPlayback(const std::string &devid) const {
 }
 
 void CoreAPI::setRingerDevice(const std::string &devid) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRingerDevice", "this=" << this << "\t" << "devid=" << devid);
@@ -921,6 +1049,7 @@ void CoreAPI::setRingerDevice(const std::string &devid) {
 }
 
 void CoreAPI::setPlaybackDevice(const std::string &devid) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setPlaybackDevice", "this=" << this << "\t" << "devid=" << devid);
@@ -928,6 +1057,7 @@ void CoreAPI::setPlaybackDevice(const std::string &devid) {
 }
 
 void CoreAPI::setCaptureDevice(const std::string &devid) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setCaptureDevice", "this=" << this << "\t" << "devid=" << devid);
@@ -935,6 +1065,7 @@ void CoreAPI::setCaptureDevice(const std::string &devid) {
 }
 
 std::string CoreAPI::getRingerDevice() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRingerDevice", "this=" << this);
@@ -942,6 +1073,7 @@ std::string CoreAPI::getRingerDevice() const {
 }
 
 std::string CoreAPI::getPlaybackDevice() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getPlaybackDevice", "this=" << this);
@@ -949,6 +1081,7 @@ std::string CoreAPI::getPlaybackDevice() const {
 }
 
 std::string CoreAPI::getCaptureDevice() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getPlaybackDevice", "this=" << this);
@@ -962,6 +1095,7 @@ std::string CoreAPI::getCaptureDevice() const {
  */
 
 void CoreAPI::reloadVideoDevices() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::reloadVideoDevices", "this=" << this);
@@ -970,6 +1104,7 @@ void CoreAPI::reloadVideoDevices() {
 }
 
 std::vector<std::string> CoreAPI::getVideoDevices() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVideoDevices", "this=" << this);
@@ -984,6 +1119,7 @@ std::vector<std::string> CoreAPI::getVideoDevices() const {
 }
 
 void CoreAPI::setVideoDevice(const std::string &devid) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setVideoDevice", "this=" << this << "\t" << "devid=" << devid);
@@ -991,6 +1127,7 @@ void CoreAPI::setVideoDevice(const std::string &devid) {
 }
 
 std::string CoreAPI::getVideoDevice() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVideoDevice", "this=" << this);
@@ -1005,6 +1142,7 @@ std::string CoreAPI::getVideoDevice() const {
  */
 
 std::vector<PayloadTypeAPIPtr> CoreAPI::getAudioCodecs() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getAudioCodecs", "this=" << this);
@@ -1016,6 +1154,7 @@ std::vector<PayloadTypeAPIPtr> CoreAPI::getAudioCodecs() const {
 }
 
 std::vector<PayloadTypeAPIPtr> CoreAPI::getVideoCodecs() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVideoCodecs", "this=" << this);
@@ -1027,6 +1166,7 @@ std::vector<PayloadTypeAPIPtr> CoreAPI::getVideoCodecs() const {
 }
 
 void CoreAPI::setAudioCodecs(const std::vector<PayloadTypeAPIPtr> &list) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::set_audio_codecs", "this=" << this << "\t" << "list.size()=" << list.size());
@@ -1039,6 +1179,7 @@ void CoreAPI::setAudioCodecs(const std::vector<PayloadTypeAPIPtr> &list) {
 }
 
 void CoreAPI::setVideoCodecs(const std::vector<PayloadTypeAPIPtr> &list) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setVideoCodecs", "this=" << this << "\t" << "list.size()=" << list.size());
@@ -1051,6 +1192,7 @@ void CoreAPI::setVideoCodecs(const std::vector<PayloadTypeAPIPtr> &list) {
 }
 
 bool CoreAPI::payloadTypeEnabled(const PayloadTypeAPIPtr &payloadType) const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::payloadTypeEnabled", "this=" << this << "\t" << "payloadType=" << payloadType);
@@ -1058,6 +1200,7 @@ bool CoreAPI::payloadTypeEnabled(const PayloadTypeAPIPtr &payloadType) const {
 }
 
 void CoreAPI::enablePayloadType(const PayloadTypeAPIPtr &payloadType, bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::enablePayloadType", "this=" << this << "\t" << "payloadType=" << payloadType << "\t" << "enable=" << enable);
@@ -1071,6 +1214,7 @@ void CoreAPI::enablePayloadType(const PayloadTypeAPIPtr &payloadType, bool enabl
  */
 
 int CoreAPI::addProxyConfig(const ProxyConfigAPIPtr &config) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::addProxyConfig", "this=" << this << "\t" << "config=" << config);
@@ -1078,6 +1222,7 @@ int CoreAPI::addProxyConfig(const ProxyConfigAPIPtr &config) {
 }
 
 void CoreAPI::clearProxyConfig() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::clearProxyConfig", "this=" << this);
@@ -1085,6 +1230,7 @@ void CoreAPI::clearProxyConfig() {
 }
 
 void CoreAPI::removeProxyConfig(const ProxyConfigAPIPtr &config) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::removeProxyConfig", "this=" << this << "\t" << "config=" << config);
@@ -1092,6 +1238,7 @@ void CoreAPI::removeProxyConfig(const ProxyConfigAPIPtr &config) {
 }
 
 std::vector<ProxyConfigAPIPtr> CoreAPI::getProxyConfigList() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getProxyConfigList", "this=" << this);
@@ -1103,6 +1250,7 @@ std::vector<ProxyConfigAPIPtr> CoreAPI::getProxyConfigList() const {
 }
 
 void CoreAPI::setDefaultProxy(const ProxyConfigAPIPtr &config) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setDefaultProxy", "this=" << this << "\t" << "config=" << config);
@@ -1110,6 +1258,7 @@ void CoreAPI::setDefaultProxy(const ProxyConfigAPIPtr &config) {
 }
 
 ProxyConfigAPIPtr CoreAPI::getDefaultProxy() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getDefaultProxy", "this=" << this);
@@ -1121,6 +1270,7 @@ ProxyConfigAPIPtr CoreAPI::getDefaultProxy() const {
 }
 
 void CoreAPI::setPrimaryContact(const std::string &contact) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setPrimaryContact", "this=" << this << "\t" << "contact=" << contact);
@@ -1128,6 +1278,7 @@ void CoreAPI::setPrimaryContact(const std::string &contact) {
 }
 
 std::string CoreAPI::getPrimaryContact() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getPrimaryContact", "this=" << this);
@@ -1135,6 +1286,7 @@ std::string CoreAPI::getPrimaryContact() const {
 }
 
 void CoreAPI::refreshRegisters() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::refreshRegisters", "this=" << this);
@@ -1184,6 +1336,7 @@ static bool validPort(int port) {
 }
 
 void CoreAPI::setAudioPort(int port) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setAudioPort", "this=" << this << "\t" << "port=" << port);
@@ -1191,6 +1344,7 @@ void CoreAPI::setAudioPort(int port) {
 }
 
 int CoreAPI::getAudioPort() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getAudioPort", "this=" << this);
@@ -1198,6 +1352,7 @@ int CoreAPI::getAudioPort() const {
 }
 
 void CoreAPI::setAudioPortRange(const std::string &range) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setAudioPortRange", "this=" << this << "\t" << "range=" << range);
@@ -1211,6 +1366,7 @@ void CoreAPI::setAudioPortRange(const std::string &range) {
 }
 
 std::string CoreAPI::getAudioPortRange() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getAudioPortRange", "this=" << this);
@@ -1220,6 +1376,7 @@ std::string CoreAPI::getAudioPortRange() const {
 }
 
 void CoreAPI::setVideoPort(int port) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setVideoPort", "this=" << this << "\t" << "port=" << port);
@@ -1227,6 +1384,7 @@ void CoreAPI::setVideoPort(int port) {
 }
 
 int CoreAPI::getVideoPort() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVideoPort", "this=" << this);
@@ -1234,6 +1392,7 @@ int CoreAPI::getVideoPort() const {
 }
 
 void CoreAPI::setVideoPortRange(const std::string &range) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setVideoPortRange", "this=" << this << "\t" << "range=" << range);
@@ -1247,6 +1406,7 @@ void CoreAPI::setVideoPortRange(const std::string &range) {
 }
 
 std::string CoreAPI::getVideoPortRange() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getVideoPortRange", "this=" << this);
@@ -1256,6 +1416,7 @@ std::string CoreAPI::getVideoPortRange() const {
 }
 
 void CoreAPI::setDownloadBandwidth(int bandwidth) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setDownloadBandwidth", "this=" << this << "\t" << "bandwidth=" << bandwidth);
@@ -1263,6 +1424,7 @@ void CoreAPI::setDownloadBandwidth(int bandwidth) {
 }
 
 int CoreAPI::getDownloadBandwidth() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getDownloadBandwidth", "this=" << this);
@@ -1270,6 +1432,7 @@ int CoreAPI::getDownloadBandwidth() const {
 }
 
 void CoreAPI::setUploadBandwidth(int bandwidth) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setUploadBandwidth", "this=" << this << "\t" << "bandwidth=" << bandwidth);
@@ -1277,6 +1440,7 @@ void CoreAPI::setUploadBandwidth(int bandwidth) {
 }
 
 int CoreAPI::getUploadBandwidth() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getUploadBandwidth", "this=" << this);
@@ -1284,6 +1448,7 @@ int CoreAPI::getUploadBandwidth() const {
 }
 
 void CoreAPI::setDownloadPtime(int ptime) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setDownloadPtime", "this=" << this << "\t" << "ptime=" << ptime);
@@ -1291,6 +1456,7 @@ void CoreAPI::setDownloadPtime(int ptime) {
 }
 
 int CoreAPI::getDownloadPtime() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getDownloadPtime", "this=" << this);
@@ -1298,6 +1464,7 @@ int CoreAPI::getDownloadPtime() const {
 }
 
 void CoreAPI::setUploadPtime(int ptime) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setUploadPtime", "this=" << this << "\t" << "ptime=" << ptime);
@@ -1305,6 +1472,7 @@ void CoreAPI::setUploadPtime(int ptime) {
 }
 
 int CoreAPI::getUploadPtime() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getUploadPtime", "this=" << this);
@@ -1312,6 +1480,7 @@ int CoreAPI::getUploadPtime() const {
 }
 
 void CoreAPI::setMtu(int mtu) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setMtu", "this=" << this << "\t" << "mtu=" << mtu);
@@ -1319,6 +1488,7 @@ void CoreAPI::setMtu(int mtu) {
 }
 
 int CoreAPI::getMtu() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getMtu", "this=" << this);
@@ -1326,6 +1496,7 @@ int CoreAPI::getMtu() const {
 }
 
 void CoreAPI::setStunServer(const std::string &server) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setStunServer", "this=" << this << "\t" << "server=" << server);
@@ -1333,6 +1504,7 @@ void CoreAPI::setStunServer(const std::string &server) {
 }
 
 std::string CoreAPI::getStunServer() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getStunServer", "this=" << this);
@@ -1340,6 +1512,7 @@ std::string CoreAPI::getStunServer() const {
 }
 
 void CoreAPI::setRelayAddr(const std::string &addr) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRelayAddr", "this=" << this << "\t" << "addr=" << addr);
@@ -1347,6 +1520,7 @@ void CoreAPI::setRelayAddr(const std::string &addr) {
 }
 
 std::string CoreAPI::getRelayAddr() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRelayAddr", "this=" << this);
@@ -1354,6 +1528,7 @@ std::string CoreAPI::getRelayAddr() const {
 }
 
 void CoreAPI::setNatAddress(const std::string &address) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setNatAddress", "this=" << this << "\t" << "address=" << address);
@@ -1361,6 +1536,7 @@ void CoreAPI::setNatAddress(const std::string &address) {
 }
 
 std::string CoreAPI::getNatAddress() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getNatAddress", "this=" << this);
@@ -1368,6 +1544,7 @@ std::string CoreAPI::getNatAddress() const {
 }
 
 void CoreAPI::setGuessHostname(bool guess) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setGuessHostname", "this=" << this << "\t" << "guess=" << guess);
@@ -1375,6 +1552,7 @@ void CoreAPI::setGuessHostname(bool guess) {
 }
 
 bool CoreAPI::getGuessHostname() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getGuessHostname", "this=" << this);
@@ -1382,6 +1560,7 @@ bool CoreAPI::getGuessHostname() const {
 }
 
 void CoreAPI::enableIpv6(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::enableIpv6", "this=" << this << "\t" << "enable=" << enable);
@@ -1389,6 +1568,7 @@ void CoreAPI::enableIpv6(bool enable) {
 }
 
 bool CoreAPI::ipv6Enabled() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::ipv6Enabled", "this=" << this);
@@ -1396,6 +1576,7 @@ bool CoreAPI::ipv6Enabled() const {
 }
 
 void CoreAPI::enableKeepAlive(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::enableKeepAlive", "this=" << this << "\t" << "enable=" << enable);
@@ -1403,6 +1584,7 @@ void CoreAPI::enableKeepAlive(bool enable) {
 }
 
 bool CoreAPI::keepAliveEnabled() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::keepAliveEnabled", "this=" << this);
@@ -1410,6 +1592,7 @@ bool CoreAPI::keepAliveEnabled() const {
 }
 
 void CoreAPI::setAudioDscp(int dscp) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setAudioDscp", "this=" << this << "\t" << "dscp=" << dscp);
@@ -1417,6 +1600,7 @@ void CoreAPI::setAudioDscp(int dscp) {
 }
 
 int CoreAPI::getAudioDscp() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getAudioDscp", "this=" << this);
@@ -1424,6 +1608,7 @@ int CoreAPI::getAudioDscp() const {
 }
 
 void CoreAPI::setSipDscp(int dscp) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setSipDscp", "this=" << this << "\t" << "dscp=" << dscp);
@@ -1431,6 +1616,7 @@ void CoreAPI::setSipDscp(int dscp) {
 }
 
 int CoreAPI::getSipDscp() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getSipDscp", "this=" << this);
@@ -1438,6 +1624,7 @@ int CoreAPI::getSipDscp() const {
 }
 
 void CoreAPI::setVideoDscp(int dscp) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setVideoDscp", "this=" << this << "\t" << "dscp=" << dscp);
@@ -1445,6 +1632,7 @@ void CoreAPI::setVideoDscp(int dscp) {
 }
 
 int CoreAPI::getVideoDscp() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVideoDscp", "this=" << this);
@@ -1452,6 +1640,7 @@ int CoreAPI::getVideoDscp() const {
 }
 
 void CoreAPI::setSipPort(int port) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setSipPort", "this=" << this << "\t" << "port=" << port);
@@ -1459,6 +1648,7 @@ void CoreAPI::setSipPort(int port) {
 }
 
 int CoreAPI::getSipPort() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getSipPort", "this=" << this);
@@ -1466,6 +1656,7 @@ int CoreAPI::getSipPort() const {
 }
 
 void CoreAPI::setSipTransports(const SipTransportsAPIPtr &sipTransports) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setSipTransports", "this=" << this << "\t" << "sipTransports=" << sipTransports);
@@ -1473,6 +1664,7 @@ void CoreAPI::setSipTransports(const SipTransportsAPIPtr &sipTransports) {
 }
 
 SipTransportsAPIPtr CoreAPI::getSipTransports() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getSipTransports", "this=" << this);
@@ -1482,6 +1674,7 @@ SipTransportsAPIPtr CoreAPI::getSipTransports() const {
 }
 
 bool CoreAPI::adaptiveRateControlEnabled() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::adaptiveRateControlEnabled", "this=" << this);
@@ -1489,6 +1682,7 @@ bool CoreAPI::adaptiveRateControlEnabled() const {
 }
 
 void CoreAPI::enableAdaptiveRateControl(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::enableAdaptiveRateControl", "this=" << this << "\t" << "enable=" << enable);
@@ -1496,6 +1690,7 @@ void CoreAPI::enableAdaptiveRateControl(bool enable) {
 }
 
 bool CoreAPI::isNetworkReachable() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::isNetworkReachable", "this=" << this);
@@ -1503,6 +1698,7 @@ bool CoreAPI::isNetworkReachable() const {
 }
 
 void CoreAPI::setNetworkReachable(bool reachable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setNetworkReachable", "this=" << this << "\t" << "reachable=" << reachable);
@@ -1510,6 +1706,7 @@ void CoreAPI::setNetworkReachable(bool reachable) {
 }
 
 bool CoreAPI::audioAdaptiveJittcompEnabled() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::audioAdaptiveJittcompEnabled", "this=" << this);
@@ -1517,6 +1714,7 @@ bool CoreAPI::audioAdaptiveJittcompEnabled() const {
 }
 
 void CoreAPI::enableAudioAdaptiveJittcomp(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::enableAudioAdaptiveJittcomp", "this=" << this << "\t" << "enable=" << enable);
@@ -1524,6 +1722,7 @@ void CoreAPI::enableAudioAdaptiveJittcomp(bool enable) {
 }
 
 bool CoreAPI::videoAdaptiveJittcompEnabled() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::videoAdaptiveJittcompEnabled", "this=" << this);
@@ -1531,6 +1730,7 @@ bool CoreAPI::videoAdaptiveJittcompEnabled() const {
 }
 
 void CoreAPI::enableVideoAdaptiveJittcomp(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::enableVideoAdaptiveJittcomp", "this=" << this << "\t" << "enable=" << enable);
@@ -1538,6 +1738,7 @@ void CoreAPI::enableVideoAdaptiveJittcomp(bool enable) {
 }
 
 int CoreAPI::getAudioJittcomp() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getAudioJittcomp", "this=" << this);
@@ -1545,6 +1746,7 @@ int CoreAPI::getAudioJittcomp() const {
 }
 
 void CoreAPI::setAudioJittcomp(int comp) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setAudioJittcomp", "this=" << this << "\t" << "comp=" << comp);
@@ -1552,6 +1754,7 @@ void CoreAPI::setAudioJittcomp(int comp) {
 }
 
 int CoreAPI::getVideoJittcomp() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getVideoJittcomp", "this=" << this);
@@ -1559,6 +1762,7 @@ int CoreAPI::getVideoJittcomp() const {
 }
 
 void CoreAPI::setVideoJittcomp(int comp) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setVideoJittcomp", "this=" << this << "\t" << "comp=" << comp);
@@ -1572,6 +1776,7 @@ void CoreAPI::setVideoJittcomp(int comp) {
  */
 
 void CoreAPI::addAuthInfo(const AuthInfoAPIPtr &authInfo) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::addAuthInfo", "this=" << this << "\t" << "authInfo=" << authInfo);
@@ -1579,6 +1784,7 @@ void CoreAPI::addAuthInfo(const AuthInfoAPIPtr &authInfo) {
 }
 
 void CoreAPI::abortAuthentication(const AuthInfoAPIPtr &authInfo) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::abortAuthentication", "this=" << this << "\t" << "authInfo=" << authInfo);
@@ -1586,6 +1792,7 @@ void CoreAPI::abortAuthentication(const AuthInfoAPIPtr &authInfo) {
 }
 
 void CoreAPI::removeAuthInfo(const AuthInfoAPIPtr &authInfo) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::removeAuthInfo", "this=" << this << "\t" << "authInfo=" << authInfo);
@@ -1593,6 +1800,7 @@ void CoreAPI::removeAuthInfo(const AuthInfoAPIPtr &authInfo) {
 }
 
 AuthInfoAPIPtr CoreAPI::findAuthInfo(const std::string &realm, const std::string &username) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::findAuthInfo", "this=" << this << "\t" << "realm=" << realm << "\t" << "username=" << username);
@@ -1601,6 +1809,7 @@ AuthInfoAPIPtr CoreAPI::findAuthInfo(const std::string &realm, const std::string
 }
 
 std::vector<AuthInfoAPIPtr> CoreAPI::getAuthInfoList() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getAuthInfoList", "this=" << this);
@@ -1612,6 +1821,7 @@ std::vector<AuthInfoAPIPtr> CoreAPI::getAuthInfoList() const {
 }
 
 void CoreAPI::clearAllAuthInfo() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::clearAllAuthInfo", "this=" << this);
@@ -1626,7 +1836,6 @@ void CoreAPI::clearAllAuthInfo() {
  */
 
 FileManagerAPIPtr CoreAPI::getFileManager() const {
-	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::newProxyConfig", "this=" << this);
 	if(!mFileManager) {
@@ -1636,7 +1845,6 @@ FileManagerAPIPtr CoreAPI::getFileManager() const {
 }
 
 ProxyConfigAPIPtr CoreAPI::newProxyConfig() const {
-	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::newProxyConfig", "this=" << this);
 	return boost::make_shared<ProxyConfigAPI>();
@@ -1644,7 +1852,6 @@ ProxyConfigAPIPtr CoreAPI::newProxyConfig() const {
 
 AuthInfoAPIPtr CoreAPI::newAuthInfo(const std::string &username, const std::string &userid, const std::string &passwd, const std::string &ha1,
 		const std::string &realm) const {
-	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::newAuthInfo", "this=" << this);
 	return boost::make_shared<AuthInfoAPI>(username, userid, passwd, ha1, realm);
@@ -1658,6 +1865,7 @@ AuthInfoAPIPtr CoreAPI::newAuthInfo(const std::string &username, const std::stri
  */
 
 void CoreAPI::sendDtmf(const std::string &dtmf) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::sendDtmf", "this=" << this << "\t" << "dtmf=" << dtmf);
@@ -1666,6 +1874,7 @@ void CoreAPI::sendDtmf(const std::string &dtmf) {
 }
 
 void CoreAPI::stopDtmf() {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::playDtmf", "this=" << this);
@@ -1673,6 +1882,7 @@ void CoreAPI::stopDtmf() {
 }
 
 void CoreAPI::playDtmf(const std::string &dtmf, int duration_ms) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::playDtmf", "this=" << this << "\t" << "dtmf="<< dtmf << ", duration_ms=" << duration_ms);
@@ -1681,6 +1891,7 @@ void CoreAPI::playDtmf(const std::string &dtmf, int duration_ms) {
 }
 
 bool CoreAPI::getUseInfoForDtmf() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getUseInfoForDtmf", "this=" << this);
@@ -1688,6 +1899,7 @@ bool CoreAPI::getUseInfoForDtmf() const {
 }
 
 void CoreAPI::setUseInfoForDtmf(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setUseInfoForDtmf", "this=" << this << "\t" << "enable="<< enable);
@@ -1695,6 +1907,7 @@ void CoreAPI::setUseInfoForDtmf(bool enable) {
 }
 
 bool CoreAPI::getUseRfc2833ForDtmf() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getUseRfc2833ForDtmf", "this=" << this);
@@ -1703,6 +1916,7 @@ bool CoreAPI::getUseRfc2833ForDtmf() const {
 }
 
 void CoreAPI::setUseRfc2833ForDtmf(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setUseRfc2833ForDtmf", "this=" << this << "\t" << "enable="<< enable);
@@ -1716,18 +1930,17 @@ void CoreAPI::setUseRfc2833ForDtmf(bool enable) {
  */
 
 std::string CoreAPI::getVersion() const {
-	CORE_MUTEX
-
 	FBLOG_DEBUG("CoreAPI::getVersion", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_core_get_version());
 }
 
 std::string CoreAPI::getPluginVersion() const {
-	FBLOG_DEBUG("CoreAPI::getPluginVersion", "this=" << this << FBSTRING_PLUGIN_VERSION);
+	FBLOG_DEBUG("CoreAPI::getPluginVersion", "this=" << this);
 	return FBSTRING_PLUGIN_VERSION;
 }
 
 void CoreAPI::enableEchoCancellation(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::enableEchoCancellation", "this=" << this << "\t" << "enable="<< enable);
@@ -1735,6 +1948,7 @@ void CoreAPI::enableEchoCancellation(bool enable) {
 	linphone_core_enable_echo_cancellation(mCore, enable ? TRUE : FALSE);
 }
 bool CoreAPI::echoCancellationEnabled() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::echoCancellationEnabled", "this=" << this);
@@ -1742,6 +1956,7 @@ bool CoreAPI::echoCancellationEnabled() const {
 }
 
 void CoreAPI::enableEchoLimiter(bool enable) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::enableEchoLimiter", "this=" << this << "\t" << "enable=" << enable);
@@ -1749,6 +1964,7 @@ void CoreAPI::enableEchoLimiter(bool enable) {
 }
 
 bool CoreAPI::echoLimiterEnabled() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::echoLimiterEnabled", "this=" << this);
@@ -1756,6 +1972,7 @@ bool CoreAPI::echoLimiterEnabled() const {
 }
 
 void CoreAPI::setStaticPictureFps(float fps) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setStaticPictureFps", "this=" << this << "\t" << "fps=" << fps);
@@ -1763,6 +1980,7 @@ void CoreAPI::setStaticPictureFps(float fps) {
 }
 
 float CoreAPI::getStaticPictureFps() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getStaticPictureFps", "this=" << this);
@@ -1770,6 +1988,7 @@ float CoreAPI::getStaticPictureFps() const {
 }
 
 std::string CoreAPI::getUserAgentName() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getUserAgentName", "this=" << this);
@@ -1779,6 +1998,7 @@ std::string CoreAPI::getUserAgentName() const {
 }
 
 void CoreAPI::setUserAgentName(const std::string &name) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setUserAgentName", "this=" << this << "\t" << "name=" << name);
@@ -1788,6 +2008,7 @@ void CoreAPI::setUserAgentName(const std::string &name) {
 }
 
 std::string CoreAPI::getUserAgentVersion() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getUserAgentVersion", "this=" << this);
@@ -1797,6 +2018,7 @@ std::string CoreAPI::getUserAgentVersion() const {
 }
 
 void CoreAPI::setUserAgentVersion(const std::string &version) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setUserAgentVersion", "this=" << this << "\t" << "version=" << version);
@@ -1815,6 +2037,7 @@ void CoreAPI::setUserAgentVersion(const std::string &version) {
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getRing, setRing);
 
 std::string CoreAPI::getRing() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRing", "this=" << this);
@@ -1822,6 +2045,7 @@ std::string CoreAPI::getRing() const {
 }
 
 void CoreAPI::setRing(const std::string &ring) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRing", "this=" << this << "\t" << "ring=" << ring);
@@ -1831,6 +2055,7 @@ void CoreAPI::setRing(const std::string &ring) {
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getRingback, setRingback);
 
 std::string CoreAPI::getRingback() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRingback", "this=" << this);
@@ -1838,6 +2063,7 @@ std::string CoreAPI::getRingback() const {
 }
 
 void CoreAPI::setRingback(const std::string &ringback) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRingback", "this=" << this << "\t" << "ringback=" << ringback);
@@ -1847,6 +2073,7 @@ void CoreAPI::setRingback(const std::string &ringback) {
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getPlayFile, setPlayFile);
 
 std::string CoreAPI::getPlayFile() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getPlayFile", "this=" << this);
@@ -1855,6 +2082,7 @@ std::string CoreAPI::getPlayFile() const {
 }
 
 void CoreAPI::setPlayFile(const std::string &playFile) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setPlayFile", "this=" << this << "\t" << "playFile=" << playFile);
@@ -1864,6 +2092,7 @@ void CoreAPI::setPlayFile(const std::string &playFile) {
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getRecordFile, setRecordFile);
 
 std::string CoreAPI::getRecordFile() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getRecordFile", "this=" << this);
@@ -1872,6 +2101,7 @@ std::string CoreAPI::getRecordFile() const {
 }
 
 void CoreAPI::setRecordFile(const std::string &recordFile) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setRecordFile", "this=" << this << "\t" << "recordFile=" << recordFile);
@@ -1881,6 +2111,7 @@ void CoreAPI::setRecordFile(const std::string &recordFile) {
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getRootCa, setRootCa);
 
 std::string CoreAPI::getRootCa() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRootCa", "this=" << this);
@@ -1888,6 +2119,7 @@ std::string CoreAPI::getRootCa() const {
 }
 
 void CoreAPI::setRootCa(const std::string &rootCa) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRootCa", "this=" << this << "\t" << "rootCa=" << rootCa);
@@ -1897,6 +2129,7 @@ void CoreAPI::setRootCa(const std::string &rootCa) {
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getStaticPicture, setStaticPicture);
 
 std::string CoreAPI::getStaticPicture() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getStaticPicture", "this=" << this);
@@ -1904,6 +2137,7 @@ std::string CoreAPI::getStaticPicture() const {
 }
 
 void CoreAPI::setStaticPicture(const std::string &staticPicture) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setStaticPicture", "this=" << this << "\t" << "staticPicture=" << staticPicture);
@@ -1913,6 +2147,7 @@ void CoreAPI::setStaticPicture(const std::string &staticPicture) {
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getZrtpSecretsFile, setZrtpSecretsFile);
 
 std::string CoreAPI::getZrtpSecretsFile() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getZrtpSecretsFile", "this=" << this);
@@ -1920,6 +2155,7 @@ std::string CoreAPI::getZrtpSecretsFile() const {
 }
 
 void CoreAPI::setZrtpSecretsFile(const std::string &secretsFile) {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setZrtpSecretsFile", "this=" << this << "\t" << "secretsFile=" << secretsFile);
@@ -1931,16 +2167,12 @@ void CoreAPI::setZrtpSecretsFile(const std::string &secretsFile) {
 // Logs
 ///////////////////////////////////////////////////////////////////////////////
 
-void CoreAPI::setLogHandler(const FB::JSObjectPtr &handler) {
-	CORE_MUTEX
-	
+void CoreAPI::setLogHandler(const FB::JSObjectPtr &handler) {	
 	FBLOG_DEBUG("CoreAPI::setLogHandler", "this=" << this << "\t" << "handler=" << handler);
 	mLogHandler = handler;
 }
 
 FB::JSObjectPtr CoreAPI::getLogHandler() const {
-	CORE_MUTEX
-	
 	FBLOG_DEBUG("CoreAPI::getLogHandler", "this=" << this);
 	return mLogHandler;
 }
@@ -1951,13 +2183,12 @@ FB::JSObjectPtr CoreAPI::getLogHandler() const {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool CoreAPI::upnpAvailable() const {
-	CORE_MUTEX
-	
 	FBLOG_DEBUG("CoreAPI::upnpAvailable", "this=" << this);
 	return linphone_core_upnp_available() == TRUE ? true : false;
 }
 
 std::string CoreAPI::getUpnpExternalIpaddress() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getUpnpExternalIpaddress", "this=" << this);
@@ -1965,6 +2196,7 @@ std::string CoreAPI::getUpnpExternalIpaddress() const {
 }
 
 LinphoneUpnpState CoreAPI::getUpnpState() const {
+	FB_ASSERT_CORE
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getUpnpState", "this=" << this);
@@ -1977,8 +2209,6 @@ LinphoneUpnpState CoreAPI::getUpnpState() const {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool CoreAPI::tunnelAvailable() const {
-	CORE_MUTEX
-	
 	FBLOG_DEBUG("CoreAPI::tunnelAvailable", "this=" << this);
 	return linphone_core_tunnel_available() == TRUE ? true : false;
 }

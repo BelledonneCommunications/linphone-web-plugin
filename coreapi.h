@@ -239,8 +239,15 @@ public:
 	bool getUseRfc2833ForDtmf() const;
 	void setUseRfc2833ForDtmf(bool enable);
 
-	// Miscs
+
+	// Core helpers
 	int init(const boost::optional<std::string> &config, const boost::optional<std::string> &factory);
+	void setIterateInterval(int ms);
+	int getIterateInterval() const;
+	void enableIterate(bool enable);
+	bool iterateEnabled() const;
+	
+	// Miscs
 	void enableEchoCancellation(bool enable);
 	bool echoCancellationEnabled() const;
 	void enableEchoLimiter(bool enable);
@@ -310,8 +317,10 @@ private:
 	LinphoneCore *mCore; // Linphone core object
 	LinphoneCoreVTable mVtable;// Linphone callback methods table
 
+	int mIterateInterval;
 #ifdef CORE_THREADED
 	boost::shared_ptr<boost::thread> mCoreThread;
+	bool mIterate;
 #else
 	FB::TimerPtr mTimer;
 #endif //CORE_THREADED

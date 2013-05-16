@@ -25,6 +25,7 @@
 #include <boost/preprocessor/repetition/enum.hpp>
 #include <boost/preprocessor/debug/assert.hpp>
 #include <boost/preprocessor/comparison/equal.hpp>
+#include <boost/preprocessor/stringize.hpp>
 #include <boost/mpl/aux_/preprocessor/token_equal.hpp>
 
 #define __DECLARE_SYNC_N_ASYNC_PARAMMACRO(z, n, data) BOOST_PP_ARRAY_ELEM(n, data) paramater_##n
@@ -170,6 +171,10 @@
 	IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)   \
 	IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)   \
 
+
+#define FB_ASSERT_MSG(x, msg) {if(!(x)) throw FB::script_error("ASSERT ERROR: "msg);}
+#define FB_ASSERT(x) FB_ASSERT_MSG(x,BOOST_PP_STRINGIZE(x))
+#define FB_ASSERT_CORE FB_ASSERT_MSG(mCore!=NULL, "Core not initialized")
 
 #ifdef CORE_THREADED
 #define CORE_MUTEX boost::mutex::scoped_lock scopedLock(mFactory->getCoreMutex(), boost::defer_lock); \
