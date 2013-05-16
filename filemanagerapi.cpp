@@ -189,6 +189,33 @@ void FileManagerAPI::initializePaths() {
 	}
 }
 
+bool FileManagerAPI::isSameHost(const FB::URI &uri) {
+	CorePluginPtr plugin = mFactory->getPlugin();
+	FB::URI hostUri = plugin->getHost()->getDOMWindow()->getLocation();
+	bool ret = boost::iequals(hostUri.protocol, uri.protocol) &&
+		boost::iequals(hostUri.domain, uri.domain);
+	if(ret) {
+		int port = uri.port;
+		int hostPort = hostUri.port;
+		if(port == 0) {
+			if(boost::iequals(hostUri.protocol, Protocol::https)) {
+				port = 443;
+			} else if(boost::iequals(uri.protocol, Protocol::http)) {
+				port = 80;
+			}
+		}
+		if(hostPort == 0) {
+			if(boost::iequals(hostUri.protocol, Protocol::https)) {
+				hostPort = 443;
+			} else if(boost::iequals(hostUri.protocol, Protocol::http)) {
+				hostPort = 80;
+			}
+		}
+		ret = (port == hostPort);
+	}
+	return ret;
+}
+
 bool FileManagerAPI::isHttp(const FB::URI &uri) {
 	return boost::iequals(uri.protocol, Protocol::http) ||
 	boost::iequals(uri.protocol, Protocol::https);
@@ -263,8 +290,18 @@ FileTransferAPIPtr FileManagerAPI::copy(const std::string &sourceUrl, const std:
 		return FileTransferAPIPtr();
 	}
 	if(FileManagerAPI::isInternal(targetUri)) {
-		FBLOG_DEBUG("FileManagerAPI::mkdir", "Can't copy file into Internal resources");
+		FBLOG_DEBUG("FileManagerAPI::copy", "Can't copy file into Internal resources");
 		callback->InvokeAsync("", FB::variant_list_of(false)("Can't copy file into Internal resources"));
+		return FileTransferAPIPtr();
+	}
+	if(FileManagerAPI::isHttp(sourceUri) && !isSameHost(sourceUri)) {
+		FBLOG_DEBUG("FileManagerAPI::copy", "Can't use different host with remote resource (XSS)");
+		callback->InvokeAsync("", FB::variant_list_of(false)("Can't use different host with remote resource (XSS)"));
+		return FileTransferAPIPtr();
+	}
+	if(FileManagerAPI::isHttp(targetUri) && !isSameHost(targetUri)) {
+		FBLOG_DEBUG("FileManagerAPI::copy", "Can't use different host with remote resource (XSS)");
+		callback->InvokeAsync("", FB::variant_list_of(false)("Can't use different host with remote resource (XSS)"));
 		return FileTransferAPIPtr();
 	}
 	FileTransferAPIPtr fileTransfer = mFactory->getFileTransfer(sourceUri, targetUri, callback);

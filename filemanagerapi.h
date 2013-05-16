@@ -68,6 +68,7 @@ protected:
 	virtual void setFactory(FactoryAPIPtr factory);
 	
 public:
+	bool isSameHost(const FB::URI &uri);
 	static bool isInternal(const FB::URI &uri);
 	static bool isFile(const FB::URI &uri);
 	static bool isHttp(const FB::URI &uri);
