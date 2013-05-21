@@ -45,7 +45,7 @@ AuthInfoAPI::AuthInfoAPI(const std::string &username, const std::string &userid,
 	mConst = false;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI",
 			"this=" << this << "username=" << username << ", userid=" << userid << ", passwd=" << passwd << ", ha1" << ha1 << ", realm=" << realm);
-	mAuthInfo = linphone_auth_info_new(username.c_str(), userid.c_str(), passwd.c_str(), ha1.c_str(), realm.c_str());
+	mAuthInfo = linphone_auth_info_new(STRING_TO_CHARPTR(username), STRING_TO_CHARPTR(userid), STRING_TO_CHARPTR(passwd), STRING_TO_CHARPTR(ha1), STRING_TO_CHARPTR(realm));
 	initProxy();
 }
 
@@ -75,7 +75,7 @@ void AuthInfoAPI::setHa1(const std::string &ha1) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AuthInfoAPI::setHa1", "this=" << this << "\t" << "ha1=" << ha1);
-	linphone_auth_info_set_ha1(mAuthInfo, ha1.c_str());
+	linphone_auth_info_set_ha1(mAuthInfo, STRING_TO_CHARPTR(ha1));
 }
 
 std::string AuthInfoAPI::getRealm() const {
@@ -89,7 +89,7 @@ void AuthInfoAPI::setRealm(const std::string &realm) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AuthInfoAPI::setRealm", "this=" << this << "\t" << "realm=" << realm);
-	linphone_auth_info_set_realm(mAuthInfo, realm.c_str());
+	linphone_auth_info_set_realm(mAuthInfo, STRING_TO_CHARPTR(realm));
 }
 
 std::string AuthInfoAPI::getUserid() const {
@@ -103,7 +103,7 @@ void AuthInfoAPI::setUserid(const std::string &userid) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AuthInfoAPI::setUserid", "this=" << this << "\t" << "userid=" << userid);
-	linphone_auth_info_set_userid(mAuthInfo, userid.c_str());
+	linphone_auth_info_set_userid(mAuthInfo, STRING_TO_CHARPTR(userid));
 }
 
 std::string AuthInfoAPI::getUsername() const {
@@ -117,7 +117,7 @@ void AuthInfoAPI::setUsername(const std::string &username) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AuthInfoAPI::setUsername", "this=" << this << "\t" << "username=" << username);
-	linphone_auth_info_set_username(mAuthInfo, username.c_str());
+	linphone_auth_info_set_username(mAuthInfo, STRING_TO_CHARPTR(username));
 }
 
 std::string AuthInfoAPI::getPasswd() const {
@@ -131,5 +131,5 @@ void AuthInfoAPI::setPasswd(const std::string &passwd) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AuthInfoAPI::setPasswd", "this=" << this << "\t" << "passwd=" << passwd);
-	linphone_auth_info_set_passwd(mAuthInfo, passwd.c_str());
+	linphone_auth_info_set_passwd(mAuthInfo, STRING_TO_CHARPTR(passwd));
 }

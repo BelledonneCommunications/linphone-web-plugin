@@ -368,7 +368,7 @@ int CoreAPI::init(const boost::optional<std::string> &config, const boost::optio
 			FB::URI configURI = FB::URI(config.get());
 			configStr = getFileManager()->uriToFile(configURI);
 			if(!configStr.empty()) {
-				configCStr = configStr.c_str();
+				configCStr = STRING_TO_CHARPTR(configStr);
 			}
 		}
 		
@@ -379,7 +379,7 @@ int CoreAPI::init(const boost::optional<std::string> &config, const boost::optio
 			FB::URI factoryURI = FB::URI(factory.get());
 			factoryStr = getFileManager()->uriToFile(factoryURI);
 			if(!factoryStr.empty()) {
-				factoryCStr = factoryStr.c_str();
+				factoryCStr = STRING_TO_CHARPTR(factoryStr);
 			}
 		}
 		
@@ -515,7 +515,7 @@ CallAPIPtr CoreAPI::invite(const std::string &url) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::invite", "this=" << this << "\t" << "url=" << url);
-	LinphoneCall *call = linphone_core_invite(mCore, url.c_str());
+	LinphoneCall *call = linphone_core_invite(mCore, STRING_TO_CHARPTR(url));
 	CallAPIPtr shared_call = mFactory->getCall(call);
 	return shared_call;
 }
@@ -539,7 +539,7 @@ CallAPIPtr CoreAPI::inviteWithParams(const std::string &url, const CallParamsAPI
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::invite", "this=" << this << "\t" << "url=" << url << "\t" << "params=" << params);
-	LinphoneCall *call = linphone_core_invite_with_params(mCore, url.c_str(), params->getRef());
+	LinphoneCall *call = linphone_core_invite_with_params(mCore, STRING_TO_CHARPTR(url), params->getRef());
 	CallAPIPtr shared_call = mFactory->getCall(call);
 	return shared_call;
 }
@@ -601,7 +601,7 @@ int CoreAPI::redirectCall(const CallAPIPtr &call, const std::string &uri) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::redirectCall", "this=" << this << "\t" << "call=" << call << "\t" << "uri=" << uri);
-	return linphone_core_redirect_call(mCore, call->getRef(), uri.c_str());
+	return linphone_core_redirect_call(mCore, call->getRef(), STRING_TO_CHARPTR(uri));
 }
 
 int CoreAPI::declineCall(const CallAPIPtr &call, int reason) {
@@ -617,7 +617,7 @@ int CoreAPI::transferCall(const CallAPIPtr &call, const std::string &uri) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::transferCall", "this=" << this << "\t" << "call=" << call << "\t" << "uri=" << uri);
-	return linphone_core_transfer_call(mCore, call->getRef(), uri.c_str());
+	return linphone_core_transfer_call(mCore, call->getRef(), STRING_TO_CHARPTR(uri));
 }
 
 int CoreAPI::transferCallToAnother(const CallAPIPtr &call, const CallAPIPtr &dest) {
@@ -1047,7 +1047,7 @@ bool CoreAPI::soundDeviceCanCapture(const std::string &devid) const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::soundDeviceCanCapture", "this=" << this << "\t" << "devid=" << devid);
-	return linphone_core_sound_device_can_capture(mCore, devid.c_str()) == TRUE ? true : false;
+	return linphone_core_sound_device_can_capture(mCore, STRING_TO_CHARPTR(devid)) == TRUE ? true : false;
 }
 
 bool CoreAPI::soundDeviceCanPlayback(const std::string &devid) const {
@@ -1055,7 +1055,7 @@ bool CoreAPI::soundDeviceCanPlayback(const std::string &devid) const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::soundDeviceCanPlayback", "this=" << this << "\t" << "devid=" << devid);
-	return linphone_core_sound_device_can_playback(mCore, devid.c_str()) == TRUE ? true : false;
+	return linphone_core_sound_device_can_playback(mCore, STRING_TO_CHARPTR(devid)) == TRUE ? true : false;
 }
 
 void CoreAPI::setRingerDevice(const std::string &devid) {
@@ -1063,7 +1063,7 @@ void CoreAPI::setRingerDevice(const std::string &devid) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRingerDevice", "this=" << this << "\t" << "devid=" << devid);
-	linphone_core_set_ringer_device(mCore, devid.c_str());
+	linphone_core_set_ringer_device(mCore, STRING_TO_CHARPTR(devid));
 }
 
 void CoreAPI::setPlaybackDevice(const std::string &devid) {
@@ -1071,7 +1071,7 @@ void CoreAPI::setPlaybackDevice(const std::string &devid) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setPlaybackDevice", "this=" << this << "\t" << "devid=" << devid);
-	linphone_core_set_playback_device(mCore, devid.c_str());
+	linphone_core_set_playback_device(mCore, STRING_TO_CHARPTR(devid));
 }
 
 void CoreAPI::setCaptureDevice(const std::string &devid) {
@@ -1079,7 +1079,7 @@ void CoreAPI::setCaptureDevice(const std::string &devid) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setCaptureDevice", "this=" << this << "\t" << "devid=" << devid);
-	linphone_core_set_capture_device(mCore, devid.c_str());
+	linphone_core_set_capture_device(mCore, STRING_TO_CHARPTR(devid));
 }
 
 std::string CoreAPI::getRingerDevice() const {
@@ -1141,7 +1141,7 @@ void CoreAPI::setVideoDevice(const std::string &devid) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setVideoDevice", "this=" << this << "\t" << "devid=" << devid);
-	linphone_core_set_video_device(mCore, devid.c_str());
+	linphone_core_set_video_device(mCore, STRING_TO_CHARPTR(devid));
 }
 
 std::string CoreAPI::getVideoDevice() const {
@@ -1292,7 +1292,7 @@ void CoreAPI::setPrimaryContact(const std::string &contact) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setPrimaryContact", "this=" << this << "\t" << "contact=" << contact);
-	linphone_core_set_primary_contact(mCore, contact.c_str());
+	linphone_core_set_primary_contact(mCore, STRING_TO_CHARPTR(contact));
 }
 
 std::string CoreAPI::getPrimaryContact() const {
@@ -1518,7 +1518,7 @@ void CoreAPI::setStunServer(const std::string &server) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setStunServer", "this=" << this << "\t" << "server=" << server);
-	return linphone_core_set_stun_server(mCore, server.c_str());
+	return linphone_core_set_stun_server(mCore, STRING_TO_CHARPTR(server));
 }
 
 std::string CoreAPI::getStunServer() const {
@@ -1534,7 +1534,7 @@ void CoreAPI::setRelayAddr(const std::string &addr) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRelayAddr", "this=" << this << "\t" << "addr=" << addr);
-	linphone_core_set_relay_addr(mCore, addr.c_str());
+	linphone_core_set_relay_addr(mCore, STRING_TO_CHARPTR(addr));
 }
 
 std::string CoreAPI::getRelayAddr() const {
@@ -1550,7 +1550,7 @@ void CoreAPI::setNatAddress(const std::string &address) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setNatAddress", "this=" << this << "\t" << "address=" << address);
-	return linphone_core_set_nat_address(mCore, address.c_str());
+	return linphone_core_set_nat_address(mCore, STRING_TO_CHARPTR(address));
 }
 
 std::string CoreAPI::getNatAddress() const {
@@ -1822,7 +1822,7 @@ AuthInfoAPIPtr CoreAPI::findAuthInfo(const std::string &realm, const std::string
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::findAuthInfo", "this=" << this << "\t" << "realm=" << realm << "\t" << "username=" << username);
-	const LinphoneAuthInfo* authInfo = linphone_core_find_auth_info(mCore, realm.c_str(), username.c_str());
+	const LinphoneAuthInfo* authInfo = linphone_core_find_auth_info(mCore, STRING_TO_CHARPTR(realm), STRING_TO_CHARPTR(username));
 	return mFactory->getAuthInfo(authInfo);
 }
 
@@ -2067,7 +2067,7 @@ void CoreAPI::setRing(const std::string &ring) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRing", "this=" << this << "\t" << "ring=" << ring);
-	linphone_core_set_ring(mCore, ring.c_str());
+	linphone_core_set_ring(mCore, STRING_TO_CHARPTR(ring));
 }
 
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getRingback, setRingback);
@@ -2085,7 +2085,7 @@ void CoreAPI::setRingback(const std::string &ringback) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRingback", "this=" << this << "\t" << "ringback=" << ringback);
-	linphone_core_set_ringback(mCore, ringback.c_str());
+	linphone_core_set_ringback(mCore, STRING_TO_CHARPTR(ringback));
 }
 
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getPlayFile, setPlayFile);
@@ -2104,7 +2104,7 @@ void CoreAPI::setPlayFile(const std::string &playFile) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setPlayFile", "this=" << this << "\t" << "playFile=" << playFile);
-	linphone_core_set_play_file(mCore, playFile.c_str());
+	linphone_core_set_play_file(mCore, STRING_TO_CHARPTR(playFile));
 }
 
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getRecordFile, setRecordFile);
@@ -2123,7 +2123,7 @@ void CoreAPI::setRecordFile(const std::string &recordFile) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setRecordFile", "this=" << this << "\t" << "recordFile=" << recordFile);
-	linphone_core_set_record_file(mCore, recordFile.c_str());
+	linphone_core_set_record_file(mCore, STRING_TO_CHARPTR(recordFile));
 }
 
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getRootCa, setRootCa);
@@ -2141,7 +2141,7 @@ void CoreAPI::setRootCa(const std::string &rootCa) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRootCa", "this=" << this << "\t" << "rootCa=" << rootCa);
-	linphone_core_set_root_ca(mCore, rootCa.c_str());
+	linphone_core_set_root_ca(mCore, STRING_TO_CHARPTR(rootCa));
 }
 
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getStaticPicture, setStaticPicture);
@@ -2159,7 +2159,7 @@ void CoreAPI::setStaticPicture(const std::string &staticPicture) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setStaticPicture", "this=" << this << "\t" << "staticPicture=" << staticPicture);
-	linphone_core_set_static_picture(mCore, staticPicture.c_str());
+	linphone_core_set_static_picture(mCore, STRING_TO_CHARPTR(staticPicture));
 }
 
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getZrtpSecretsFile, setZrtpSecretsFile);
@@ -2177,7 +2177,7 @@ void CoreAPI::setZrtpSecretsFile(const std::string &secretsFile) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setZrtpSecretsFile", "this=" << this << "\t" << "secretsFile=" << secretsFile);
-	linphone_core_set_zrtp_secrets_file(mCore, secretsFile.c_str());
+	linphone_core_set_zrtp_secrets_file(mCore, STRING_TO_CHARPTR(secretsFile));
 }
 
 

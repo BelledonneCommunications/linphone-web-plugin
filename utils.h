@@ -105,6 +105,7 @@ std::string APIDescription(T *ptr) {
 }
 
 std::string CHARPTR_TO_STRING(const char *str);
+const char *STRING_TO_CHARPTR(const std::string &str);
 
 #endif // H_UTILS
 

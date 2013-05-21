@@ -64,7 +64,7 @@ void CallLogAPI::setRefKey(const std::string &refKey) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallLogAPI::setRefKey", "this=" << this << "\t" << "refKey=" << refKey);
-	linphone_call_log_set_ref_key(mCallLog, refKey.c_str());
+	linphone_call_log_set_ref_key(mCallLog, STRING_TO_CHARPTR(refKey));
 }
 
 std::string CallLogAPI::getCallId() const {

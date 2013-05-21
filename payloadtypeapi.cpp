@@ -128,7 +128,7 @@ void PayloadTypeAPI::setZeroPattern(const std::string &pattern) {
 	FBLOG_DEBUG("PayloadTypeAPI::setZeroPattern", "this=" << this << "\t" << "pattern=" << pattern);
 	if (mPayloadType->zero_pattern != NULL)
 		free(mPayloadType->zero_pattern);
-	mPayloadType->zero_pattern = strdup(pattern.c_str());
+	mPayloadType->zero_pattern = strdup(STRING_TO_CHARPTR(pattern));
 }
 
 int PayloadTypeAPI::getPatternLength() const {
@@ -169,7 +169,7 @@ void PayloadTypeAPI::setMimeType(const std::string &mime) {
 	FBLOG_DEBUG("PayloadTypeAPI::setMimeType", "this=" << this << "\t" << "mime=" << mime);
 	if (mPayloadType->mime_type != NULL)
 		free(mPayloadType->mime_type);
-	mPayloadType->mime_type = strdup(mime.c_str());
+	mPayloadType->mime_type = strdup(STRING_TO_CHARPTR(mime));
 }
 
 int PayloadTypeAPI::getChannels() const {
@@ -198,7 +198,7 @@ void PayloadTypeAPI::setRecvFmtp(const std::string &rfmtp) {
 	FBLOG_DEBUG("PayloadTypeAPI::setRecvFmtp", "this=" << this << "\t" << "rfmtp=" << rfmtp);
 	if (mPayloadType->recv_fmtp != NULL)
 		free(mPayloadType->recv_fmtp);
-	mPayloadType->recv_fmtp = strdup(rfmtp.c_str());
+	mPayloadType->recv_fmtp = strdup(STRING_TO_CHARPTR(rfmtp));
 }
 
 std::string PayloadTypeAPI::getSendFmtp() const {
@@ -213,7 +213,7 @@ void PayloadTypeAPI::setSendFmtp(const std::string &sfmtp) {
 	FBLOG_DEBUG("PayloadTypeAPI::setSendFmtp", "this=" << this << "\t" << "sfmtp=" << sfmtp);
 	if (mPayloadType->send_fmtp != NULL)
 		free(mPayloadType->send_fmtp);
-	mPayloadType->send_fmtp = strdup(sfmtp.c_str());
+	mPayloadType->send_fmtp = strdup(STRING_TO_CHARPTR(sfmtp));
 }
 
 int PayloadTypeAPI::getFlags() const {

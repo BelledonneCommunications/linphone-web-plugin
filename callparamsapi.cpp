@@ -46,11 +46,13 @@ void CallParamsAPI::initProxy() {
 		registerProperty("audioBandwidthLimit", make_property(this, &CallParamsAPI::getAudioBandwidthLimit, &CallParamsAPI::setAudioBandwidthLimit));
 		registerProperty("earlyMediaSendingEnabled", make_property(this, &CallParamsAPI::earlyMediaSendingEnabled, &CallParamsAPI::enableEarlyMediaSending));
 		registerProperty("lowBandwidthEnabled", make_property(this, &CallParamsAPI::lowBandwidthEnabled, &CallParamsAPI::enableLowBandwidth));
+		registerProperty("recordFile", make_property(this, &CallParamsAPI::getRecordFile, &CallParamsAPI::setRecordFile));
 		registerProperty("videoEnabled", make_property(this, &CallParamsAPI::videoEnabled, &CallParamsAPI::enableVideo));
 	} else {
 		registerProperty("audioBandwidthLimit", make_property(this, &CallParamsAPI::getAudioBandwidthLimit));
 		registerProperty("earlyMediaSendingEnabled", make_property(this, &CallParamsAPI::earlyMediaSendingEnabled));
 		registerProperty("lowBandwidthEnabled", make_property(this, &CallParamsAPI::lowBandwidthEnabled));
+		registerProperty("recordFile", make_property(this, &CallParamsAPI::getRecordFile));
 		registerProperty("videoEnabled", make_property(this, &CallParamsAPI::videoEnabled));
 	}
 }
@@ -111,6 +113,21 @@ void CallParamsAPI::enableLowBandwidth(bool enable) {
 //setMediaEncryption	mediaEncryption
 //getUsedAudioCodec	usedAudioCodec
 //getUsedVideoCodec	usedVideoCodec
+
+std::string CallParamsAPI::getRecordFile() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallParamsAPI::getRecordFile", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_call_params_get_record_file(mCallParams));
+}
+
+void CallParamsAPI::setRecordFile(const std::string &file) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallParamsAPI::setRecordFile", "this=" << this << "\t" << "file=" << file);
+	linphone_call_params_set_record_file(mCallParams, STRING_TO_CHARPTR(file));
+}
+
 void CallParamsAPI::enableVideo(bool enable) {
 	CORE_MUTEX
 

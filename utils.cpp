@@ -26,3 +26,7 @@
 std::string CHARPTR_TO_STRING(const char *str) {
 	return (str != NULL) ? std::string(str) : std::string();
 }
+
+const char *STRING_TO_CHARPTR(const std::string &str) {
+	return str.c_str();
+}

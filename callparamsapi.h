@@ -49,6 +49,8 @@ public:
 	//setMediaEncryption	mediaEncryption
 	//getUsedAudioCodec	usedAudioCodec
 	//getUsedVideoCodec	usedVideoCodec
+	std::string getRecordFile() const;
+	void setRecordFile(const std::string &file);
 	void enableVideo(bool enable);
 	bool videoEnabled() const;
 	CallParamsAPIPtr copy() const;

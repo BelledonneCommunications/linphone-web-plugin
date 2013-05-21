@@ -41,7 +41,7 @@ AddressAPI::AddressAPI(const LinphoneAddress *address) :
 AddressAPI::AddressAPI(const std::string &uri) :
 		WrapperAPI(APIDescription(this)) {
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this);
-	mAddress = linphone_address_new(uri.c_str());
+	mAddress = linphone_address_new(STRING_TO_CHARPTR(uri));
 	mUsed = false;
 	mConst = false;
 	initProxy();
@@ -116,7 +116,7 @@ void AddressAPI::setDisplayName(const std::string &displayname) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AddressAPI::setDisplayName", "this=" << this << "\t" << "displayname=" << displayname);
-	linphone_address_set_display_name(mAddress, displayname.c_str());
+	linphone_address_set_display_name(mAddress, STRING_TO_CHARPTR(displayname));
 }
 
 std::string AddressAPI::getDomain() const {
@@ -130,7 +130,7 @@ void AddressAPI::setDomain(const std::string &domain) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AddressAPI::setDomain", "this=" << this << "\t" << "domain=" << domain);
-	linphone_address_set_domain(mAddress, domain.c_str());
+	linphone_address_set_domain(mAddress, STRING_TO_CHARPTR(domain));
 }
 
 std::string AddressAPI::getPort() const {
@@ -144,7 +144,7 @@ void AddressAPI::setPort(const std::string &port) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AddressAPI::setPort", "this=" << this << "\t" << "port=" << port);
-	linphone_address_set_port(mAddress, port.c_str());
+	linphone_address_set_port(mAddress, STRING_TO_CHARPTR(port));
 }
 
 int AddressAPI::getPortInt() const {
@@ -179,5 +179,5 @@ void AddressAPI::setUsername(const std::string &username) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AddressAPI::setUsername", "this=" << this << "\t" << "username=" << username);
-	linphone_address_set_username(mAddress, username.c_str());
+	linphone_address_set_username(mAddress, STRING_TO_CHARPTR(username));
 }
