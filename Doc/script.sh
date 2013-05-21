@@ -3,6 +3,19 @@
 MODDIR=$(pwd)/mod/
 DESTDIR=$(pwd)/tmp/
 BOOST=$(pwd)/../../../src/3rdParty/boost/
+BOOST_FILES="boost/preprocessor/control/if.hpp \
+boost/preprocessor/array/elem.hpp \
+boost/preprocessor/repetition/enum.hpp \
+boost/preprocessor/debug/assert.hpp \
+boost/preprocessor/comparison/equal.hpp \
+boost/preprocessor/stringize.hpp \
+boost/mpl/aux_/preprocessor/token_equal.hpp"
+CPP_EXTRA=
+for f in $BOOST_FILES ; do
+	CPP_EXTRA="$CPP_EXTRA -imacros $BOOST/$f"
+done
+echo $CPP_EXTRA
+
 echo $DESTDIR
 rm result.txt
 rm -rf $MODDIR
@@ -30,7 +43,9 @@ headers=$(find . -maxdepth 1 -type f -name '*.h')
 for file in $headers ; do
    echo $file
    cat $file | \
-   c++ -I$BOOST -x c++ -E - > $DESTDIR/$file
+   c++ -I$BOOST $CPP_EXTRA -x c++ -E - | \
+   sed 's/;/;\'$'\n/g' \
+   > $DESTDIR/$file
 done
 
 popd
