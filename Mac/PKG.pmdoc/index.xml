@@ -4,7 +4,7 @@
 		<organization>${FBSTRING_CompanyName}</organization>
 		<userSees ui="easy"/>
 		<min-target os="3"/>
-		<domain user="true"/>
+		<domain user="true" system="true"/>
 	</properties>
 	<distribution>
 		<versions min-spec="1.000000"/>
@@ -12,7 +12,6 @@
 	</distribution>
 	<contents>
 		<choice title="${FBSTRING_PluginName}" id="${FBSTRING_PluginDomain}" starts_selected="true" starts_enabled="true" starts_hidden="true">
-			<customLoc>/tmp</customLoc>
 			<pkgref id="${FBSTRING_CompanyDomain}.${FBSTRING_PluginDomain}"/>
 		</choice>
 	</contents>

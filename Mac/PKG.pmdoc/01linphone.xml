@@ -5,7 +5,7 @@
 		<description/>
 		<post-install type="none"/>
 		<installFrom relative="true" includeRoot="true">${FBSTRING_PluginFileName}.${PLUGIN_EXT}</installFrom>
-		<installTo>/</installTo>
+		<installTo>/Library/Internet Plug-Ins/</installTo>
 		<flags>
 			<followSymbolicLinks/>
 		</flags>
@@ -16,9 +16,6 @@
 		<mod>parent</mod>
 		<mod>installFrom.isRelativeType</mod>
 	</config>
-	<scripts>
-		<postinstall relative="true" mod="true">PKG.pmdoc/move.sh</postinstall>
-	></scripts>
 	<contents>
 		<file-list>01linphone-contents.xml</file-list>
 	</contents>
