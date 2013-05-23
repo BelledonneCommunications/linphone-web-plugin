@@ -27,6 +27,9 @@
 						<f n="images" p="16877">
 							<f n="nowebcamCIF.jpg" p="33188"/>
 						</f>
+						<f n="linphone" p="16877">
+							<f n="rootca.pem" p="33188"/>
+						</f>
 						<f n="sounds" p="16877">
 							<f n="linphone" p="16877">
 								<f n="ringback.wav" p="33188"/>
