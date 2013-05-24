@@ -26,6 +26,8 @@
 #include <Strsafe.h>
 #endif //WIN32
 
+namespace LinphoneWeb {
+
 #ifdef DEBUG
 #ifdef WIN32
 FILE * CorePlugin::s_log_file = NULL;
@@ -245,3 +247,4 @@ bool CorePlugin::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *) {
 	return false;
 }
 
+} // LinphoneWeb

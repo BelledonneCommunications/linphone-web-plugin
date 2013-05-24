@@ -26,6 +26,8 @@
 #include "../videowindow.h"
 #include <WinDef.h>
 
+namespace LinphoneWeb {
+
 class VideoWindowWin: public VideoWindow {
 public:
 	VideoWindowWin();
@@ -40,5 +42,7 @@ private:
 	FB::PluginWindowWin *mWin;
 	HBRUSH mBrush;
 };
+	
+} // LinphoneWeb
 
 #endif // H_VIDEOWINDOWWIN

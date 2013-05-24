@@ -24,6 +24,8 @@
 #include "utils.h"
 #include "macro.h"
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(FactoryAPI)
 
 FB_FORWARD_PTR(WrapperAPI)
@@ -48,5 +50,7 @@ protected:
 public:
 	virtual void shutdown();
 };
+
+} // LinphoneWeb
 
 #endif // H_WRAPPERAPI

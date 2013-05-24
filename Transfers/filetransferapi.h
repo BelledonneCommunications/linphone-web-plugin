@@ -25,6 +25,8 @@
 
 #include <URI.h>
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(FileTransferAPI)
 class FileTransferAPI: public WrapperAPI {
 	friend class FactoryAPI;
@@ -51,5 +53,7 @@ public:
 	std::string getSourceUrl();
 	std::string getTargetUrl();
 };
+	
+} // LinphoneWeb
 
 #endif //H_FILETRANSFERAPI

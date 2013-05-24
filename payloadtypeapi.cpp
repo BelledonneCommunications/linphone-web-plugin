@@ -23,6 +23,8 @@
 #include "utils.h"
 #include "factoryapi.h"
 
+namespace LinphoneWeb {
+
 PayloadTypeAPI::PayloadTypeAPI(PayloadType *payloadType) :
 		WrapperAPI(APIDescription(this)), mPayloadType(payloadType) {
 	mUsed = true;
@@ -116,13 +118,13 @@ void PayloadTypeAPI::setBitsPerSample(int bps) {
 	mPayloadType->bits_per_sample = bps;
 }
 
-std::string PayloadTypeAPI::getZeroPattern() const {
+StringPtr PayloadTypeAPI::getZeroPattern() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PayloadTypeAPI::getZeroPattern", "this=" << this);
 	return CHARPTR_TO_STRING(mPayloadType->zero_pattern);
 }
-void PayloadTypeAPI::setZeroPattern(const std::string &pattern) {
+void PayloadTypeAPI::setZeroPattern(const StringPtr &pattern) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PayloadTypeAPI::setZeroPattern", "this=" << this << "\t" << "pattern=" << pattern);
@@ -157,13 +159,13 @@ void PayloadTypeAPI::setNormalBitrate(int rate) {
 	mPayloadType->normal_bitrate = rate;
 }
 
-std::string PayloadTypeAPI::getMimeType() const {
+StringPtr PayloadTypeAPI::getMimeType() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PayloadTypeAPI::getMimeType", "this=" << this);
 	return CHARPTR_TO_STRING(mPayloadType->mime_type);
 }
-void PayloadTypeAPI::setMimeType(const std::string &mime) {
+void PayloadTypeAPI::setMimeType(const StringPtr &mime) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PayloadTypeAPI::setMimeType", "this=" << this << "\t" << "mime=" << mime);
@@ -185,14 +187,14 @@ void PayloadTypeAPI::setChannels(int channels) {
 	mPayloadType->channels = channels;
 }
 
-std::string PayloadTypeAPI::getRecvFmtp() const {
+StringPtr PayloadTypeAPI::getRecvFmtp() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PayloadTypeAPI::getRecvFmtp", "this=" << this);
 	return CHARPTR_TO_STRING(mPayloadType->recv_fmtp);
 }
 
-void PayloadTypeAPI::setRecvFmtp(const std::string &rfmtp) {
+void PayloadTypeAPI::setRecvFmtp(const StringPtr &rfmtp) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PayloadTypeAPI::setRecvFmtp", "this=" << this << "\t" << "rfmtp=" << rfmtp);
@@ -201,13 +203,13 @@ void PayloadTypeAPI::setRecvFmtp(const std::string &rfmtp) {
 	mPayloadType->recv_fmtp = strdup(STRING_TO_CHARPTR(rfmtp));
 }
 
-std::string PayloadTypeAPI::getSendFmtp() const {
+StringPtr PayloadTypeAPI::getSendFmtp() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PayloadTypeAPI::getSendFmtp", "this=" << this);
 	return CHARPTR_TO_STRING(mPayloadType->send_fmtp);
 }
-void PayloadTypeAPI::setSendFmtp(const std::string &sfmtp) {
+void PayloadTypeAPI::setSendFmtp(const StringPtr &sfmtp) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PayloadTypeAPI::setSendFmtp", "this=" << this << "\t" << "sfmtp=" << sfmtp);
@@ -235,8 +237,10 @@ PayloadTypeAPIPtr PayloadTypeAPI::clone() const {
 	return mFactory->getPayloadType(payload_type_clone(mPayloadType));
 }
 
-std::string PayloadTypeAPI::getRtpmap() const {
+StringPtr PayloadTypeAPI::getRtpmap() const {
 	CORE_MUTEX
 
 	return CHARPTR_TO_STRING(payload_type_get_rtpmap(mPayloadType));
 }
+
+} // LinphoneWeb

@@ -26,10 +26,11 @@
 #include <map>
 #include <Timer.h>
 #include <variant_list.h>
-#include <boost/optional/optional.hpp>
 
 #include <linphonecore.h>
 #include "wrapperapi.h"
+
+namespace LinphoneWeb {
 
 FB_FORWARD_PTR(AddressAPI)
 FB_FORWARD_PTR(AuthInfoAPI)
@@ -51,26 +52,26 @@ public:
 	~CoreAPI();
 
 	// Read-only property
-	std::string getVersion() const;
-	std::string getPluginVersion() const;
+	StringPtr getVersion() const;
+	StringPtr getPluginVersion() const;
 
 	// Property
-	const std::string &getMagic() const;
-	void setMagic(const std::string &magic);
+	const StringPtr &getMagic() const;
+	void setMagic(const StringPtr &magic);
 
 	// Call functions
-	DECLARE_SYNC_N_ASYNC(CoreAPI, invite, 1, (const std::string &), CallAPIPtr);
+	DECLARE_SYNC_N_ASYNC(CoreAPI, invite, 1, (const StringPtr &), CallAPIPtr);
 	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteAddress, 1, (const AddressAPIPtr &), CallAPIPtr);
-	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteWithParams, 2, (const std::string &, const CallParamsAPIPtr &), CallAPIPtr);
+	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteWithParams, 2, (const StringPtr &, const CallParamsAPIPtr &), CallAPIPtr);
 	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteAddressWithParams, 2, (const AddressAPIPtr &, const CallParamsAPIPtr &), CallAPIPtr);
 	int acceptCall(const CallAPIPtr &call);
 	int acceptCallWithParams(const CallAPIPtr &call, const CallParamsAPIPtr &params);
 	CallAPIPtr getCurrentCall();
 	int terminateCall(const CallAPIPtr &call);
 	int terminateAllCalls();
-	int redirectCall(const CallAPIPtr &call, const std::string &uri);
+	int redirectCall(const CallAPIPtr &call, const StringPtr &uri);
 	int declineCall(const CallAPIPtr &call, int reason);
-	int transferCall(const CallAPIPtr &call, const std::string &uri);
+	int transferCall(const CallAPIPtr &call, const StringPtr &uri);
 	int transferCallToAnother(const CallAPIPtr &call, const CallAPIPtr &dest);
 	int resumeCall(const CallAPIPtr &call);
 	int pauseCall(const CallAPIPtr &call);
@@ -127,21 +128,21 @@ public:
 
 	// Sound device functions
 	void reloadSoundDevices();
-	std::vector<std::string> getSoundDevices() const;
-	bool soundDeviceCanCapture(const std::string &devid) const;
-	bool soundDeviceCanPlayback(const std::string &devid) const;
-	void setRingerDevice(const std::string &devid);
-	void setPlaybackDevice(const std::string &devid);
-	void setCaptureDevice(const std::string &devid);
-	std::string getRingerDevice() const;
-	std::string getPlaybackDevice() const;
-	std::string getCaptureDevice() const;
+	std::vector<StringPtr> getSoundDevices() const;
+	bool soundDeviceCanCapture(const StringPtr &devid) const;
+	bool soundDeviceCanPlayback(const StringPtr &devid) const;
+	void setRingerDevice(const StringPtr &devid);
+	void setPlaybackDevice(const StringPtr &devid);
+	void setCaptureDevice(const StringPtr &devid);
+	StringPtr getRingerDevice() const;
+	StringPtr getPlaybackDevice() const;
+	StringPtr getCaptureDevice() const;
 
 	// Video device functions
 	void reloadVideoDevices();
-	std::vector<std::string> getVideoDevices() const;
-	void setVideoDevice(const std::string &devid);
-	std::string getVideoDevice() const;
+	std::vector<StringPtr> getVideoDevices() const;
+	void setVideoDevice(const StringPtr &devid);
+	StringPtr getVideoDevice() const;
 
 	// Codecs functions
 	std::vector<PayloadTypeAPIPtr> getAudioCodecs() const;
@@ -158,19 +159,19 @@ public:
 	std::vector<ProxyConfigAPIPtr> getProxyConfigList() const;
 	void setDefaultProxy(const ProxyConfigAPIPtr &config);
 	ProxyConfigAPIPtr getDefaultProxy() const;
-	void setPrimaryContact(const std::string &contact);
-	std::string getPrimaryContact() const;
+	void setPrimaryContact(const StringPtr &contact);
+	StringPtr getPrimaryContact() const;
 	void refreshRegisters();
 
 	// Network functions
 	void setAudioPort(int port);
 	int getAudioPort() const;
-	void setAudioPortRange(const std::string &range);
-	std::string getAudioPortRange() const;
+	void setAudioPortRange(const StringPtr &range);
+	StringPtr getAudioPortRange() const;
 	void setVideoPort(int port);
 	int getVideoPort() const;
-	void setVideoPortRange(const std::string &range);
-	std::string getVideoPortRange() const;
+	void setVideoPortRange(const StringPtr &range);
+	StringPtr getVideoPortRange() const;
 	void setDownloadBandwidth(int bandwidth);
 	int getDownloadBandwidth() const;
 	void setUploadBandwidth(int bandwidth);
@@ -181,12 +182,12 @@ public:
 	int getUploadPtime() const;
 	void setMtu(int mtu);
 	int getMtu() const;
-	void setStunServer(const std::string &server);
-	std::string getStunServer() const;
-	void setRelayAddr(const std::string &addr);
-	std::string getRelayAddr() const;
-	void setNatAddress(const std::string &address);
-	std::string getNatAddress() const;
+	void setStunServer(const StringPtr &server);
+	StringPtr getStunServer() const;
+	void setRelayAddr(const StringPtr &addr);
+	StringPtr getRelayAddr() const;
+	void setNatAddress(const StringPtr &address);
+	StringPtr getNatAddress() const;
 	void setGuessHostname(bool guess);
 	bool getGuessHostname() const;
 	void enableIpv6(bool enable);
@@ -220,15 +221,15 @@ public:
 	void addAuthInfo(const AuthInfoAPIPtr &authInfo);
 	void abortAuthentication(const AuthInfoAPIPtr &authInfo);
 	void removeAuthInfo(const AuthInfoAPIPtr &authInfo);
-	AuthInfoAPIPtr findAuthInfo(const std::string &realm, const std::string &username);
+	AuthInfoAPIPtr findAuthInfo(const StringPtr &realm, const StringPtr &username);
 	std::vector<AuthInfoAPIPtr> getAuthInfoList() const;
 	void clearAllAuthInfo();
 
 	// Instantiator functions
 	FileManagerAPIPtr getFileManager() const;
 	ProxyConfigAPIPtr newProxyConfig() const;
-	AuthInfoAPIPtr newAuthInfo(const std::string &username, const std::string &userid,
-			const std::string &passwd, const std::string &ha1, const std::string &realm) const;
+	AuthInfoAPIPtr newAuthInfo(const StringPtr &username, const StringPtr &userid,
+			const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm) const;
 
 	// Dtmf
 	void sendDtmf(const std::string &dtmf);
@@ -241,7 +242,7 @@ public:
 
 
 	// Core helpers
-	int init(const boost::optional<std::string> &config, const boost::optional<std::string> &factory);
+	int init(const StringPtr &config, const StringPtr &factory);
 	int uninit();
 	void setIterateInterval(int ms);
 	int getIterateInterval() const;
@@ -255,10 +256,10 @@ public:
 	bool echoLimiterEnabled() const;
 	void setStaticPictureFps(float fps);
 	float getStaticPictureFps() const;
-	std::string getUserAgentName() const;
-	void setUserAgentName(const std::string &name);
-	std::string getUserAgentVersion() const;
-	void setUserAgentVersion(const std::string &version);
+	StringPtr getUserAgentName() const;
+	void setUserAgentName(const StringPtr &name);
+	StringPtr getUserAgentVersion() const;
+	void setUserAgentVersion(const StringPtr &version);
 
 	// File
 	DECLARE_PROPERTY_FILE(CoreAPI, getRing, setRing);
@@ -275,7 +276,7 @@ public:
 	
 	// uPnP
 	bool upnpAvailable() const;
-	std::string getUpnpExternalIpaddress() const;
+	StringPtr getUpnpExternalIpaddress() const;
 	LinphoneUpnpState getUpnpState() const;
 
 	
@@ -283,15 +284,15 @@ public:
 	bool tunnelAvailable() const;
 
 public: // Event helpers
-	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const std::string&));
-	FB_JSAPI_EVENT(callStateChanged, 4, (CoreAPIPtr, CallAPIPtr, const int&, const std::string&));
-	FB_JSAPI_EVENT(registrationStateChanged, 4, (CoreAPIPtr, ProxyConfigAPIPtr, const int&, const std::string&));
-	FB_JSAPI_EVENT(authInfoRequested, 3, (CoreAPIPtr, const std::string&, const std::string&));
-	FB_JSAPI_EVENT(referReceived, 2, (CoreAPIPtr, const std::string&));
-	FB_JSAPI_EVENT(displayStatus, 2, (CoreAPIPtr, const std::string&));
-	FB_JSAPI_EVENT(displayMessage, 2, (CoreAPIPtr, const std::string&));
-	FB_JSAPI_EVENT(displayWarning, 2, (CoreAPIPtr, const std::string&));
-	FB_JSAPI_EVENT(displayUrl, 3, (CoreAPIPtr, const std::string&, const std::string&));
+	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const StringPtr&));
+	FB_JSAPI_EVENT(callStateChanged, 4, (CoreAPIPtr, CallAPIPtr, const int&, const StringPtr&));
+	FB_JSAPI_EVENT(registrationStateChanged, 4, (CoreAPIPtr, ProxyConfigAPIPtr, const int&, const StringPtr&));
+	FB_JSAPI_EVENT(authInfoRequested, 3, (CoreAPIPtr, const StringPtr&, const StringPtr&));
+	FB_JSAPI_EVENT(referReceived, 2, (CoreAPIPtr, const StringPtr&));
+	FB_JSAPI_EVENT(displayStatus, 2, (CoreAPIPtr, const StringPtr&));
+	FB_JSAPI_EVENT(displayMessage, 2, (CoreAPIPtr, const StringPtr&));
+	FB_JSAPI_EVENT(displayWarning, 2, (CoreAPIPtr, const StringPtr&));
+	FB_JSAPI_EVENT(displayUrl, 3, (CoreAPIPtr, const StringPtr&, const StringPtr&));
 	FB_JSAPI_EVENT(show, 1, (CoreAPIPtr));
 
 
@@ -313,7 +314,7 @@ protected:
 private:
 	mutable FileManagerAPIPtr mFileManager;
 	FB::JSObjectPtr mLogHandler;
-	std::string mMagic;
+	StringPtr mMagic;
 
 	LinphoneCore *mCore; // Linphone core object
 	LinphoneCoreVTable mVtable;// Linphone callback methods table
@@ -382,5 +383,7 @@ private:
 	static void wrapper_show(LinphoneCore *lc);
 	static void wrapper_call_encryption_changed(LinphoneCore *lc, LinphoneCall *call, bool_t on, const char *authentication_token);
 };
+	
+} // LinphoneWeb
 
 #endif // H_COREAPI

@@ -38,6 +38,8 @@
 #include "filemanagerapi.h"
 #include "Transfers/filetransferapi.h"
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(CorePlugin)
 
 FB_FORWARD_PTR(FactoryAPI)
@@ -98,5 +100,7 @@ public:
 	FileManagerAPIPtr getFileManager();
 	FileTransferAPIPtr getFileTransfer(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr &callback);
 };
+
+} // LinphoneWeb
 
 #endif // H_FACTORYAPI

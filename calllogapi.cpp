@@ -22,6 +22,8 @@
 #include "utils.h"
 #include "factoryapi.h"
 
+namespace LinphoneWeb {
+
 CallLogAPI::CallLogAPI(LinphoneCallLog *callLog) :
 		WrapperAPI(APIDescription(this)), mCallLog(callLog) {
 	mUsed = true;
@@ -53,21 +55,21 @@ CallLogAPI::~CallLogAPI() {
 	linphone_call_log_set_user_pointer(mCallLog, NULL);
 }
 
-std::string CallLogAPI::getRefKey() const {
+StringPtr CallLogAPI::getRefKey() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallLogAPI::getRefKey", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_call_log_get_ref_key(mCallLog));
 }
 
-void CallLogAPI::setRefKey(const std::string &refKey) {
+void CallLogAPI::setRefKey(const StringPtr &refKey) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallLogAPI::setRefKey", "this=" << this << "\t" << "refKey=" << refKey);
 	linphone_call_log_set_ref_key(mCallLog, STRING_TO_CHARPTR(refKey));
 }
 
-std::string CallLogAPI::getCallId() const {
+StringPtr CallLogAPI::getCallId() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CallLogAPI::getCallId", "this=" << this);
@@ -137,10 +139,11 @@ bool CallLogAPI::videoEnabled() const {
 	return linphone_call_log_video_enabled(mCallLog) == TRUE? true:false;
 }
 
-
-std::string CallLogAPI::toStr() const {
+StringPtr CallLogAPI::toStr() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallLogAPI::toStr", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_call_log_to_str(mCallLog));
 }
+	
+} // LinphoneWeb

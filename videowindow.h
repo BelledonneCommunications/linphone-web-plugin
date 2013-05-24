@@ -23,6 +23,8 @@
 #include <PluginWindow.h>
 #include <boost/shared_ptr.hpp>
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(VideoWindow)
 class VideoWindow {
 public:
@@ -35,5 +37,7 @@ public:
 	virtual void setWindow(FB::PluginWindow *window) = 0;
 	virtual bool draw() = 0;
 };
+	
+} // LinphoneWeb
 
 #endif // H_VIDEOWINDOW

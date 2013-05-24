@@ -23,6 +23,8 @@
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(AuthInfoAPI)
 class AuthInfoAPI: public WrapperAPI {
 	friend class FactoryAPI;
@@ -36,24 +38,24 @@ protected:
 	void initProxy();
 	
 public:
-	AuthInfoAPI(const std::string &username, const std::string &userid,
-			const std::string &passwd, const std::string &ha1, const std::string &realm);
+	AuthInfoAPI(const StringPtr &username, const StringPtr &userid,
+			const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm);
 	~AuthInfoAPI();
 
-	std::string getHa1() const;
-	void setHa1(const std::string &ha1);
+	StringPtr getHa1() const;
+	void setHa1(const StringPtr &ha1);
 	
-	std::string getRealm() const;
-	void setRealm(const std::string &realm);
+	StringPtr getRealm() const;
+	void setRealm(const StringPtr &realm);
 	
-	std::string getUserid() const;
-	void setUserid(const std::string &userid);
+	StringPtr getUserid() const;
+	void setUserid(const StringPtr &userid);
 
-	std::string getUsername() const;
-	void setUsername(const std::string &username);
+	StringPtr getUsername() const;
+	void setUsername(const StringPtr &username);
 
-	std::string getPasswd() const;
-	void setPasswd(const std::string &passwd);
+	StringPtr getPasswd() const;
+	void setPasswd(const StringPtr &passwd);
 
 	inline LinphoneAuthInfo *getRef() {
 		mUsed = true;
@@ -61,5 +63,7 @@ public:
 	}
 
 };
+	
+} // LinphoneWeb
 
 #endif //H_AUTHINFOAPI

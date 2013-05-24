@@ -23,10 +23,18 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
-std::string CHARPTR_TO_STRING(const char *str) {
-	return (str != NULL) ? std::string(str) : std::string();
+namespace LinphoneWeb {
+
+StringPtr CHARPTR_TO_STRING(const char *str) {
+	return (str != NULL) ? StringPtr(str) : StringPtr();
 }
 
-const char *STRING_TO_CHARPTR(const std::string &str) {
-	return str.c_str();
+const char *STRING_TO_CHARPTR(const StringPtr &str) {
+	return (str)? str->c_str() : NULL;
 }
+	
+std::string PRINT_STRING(const StringPtr &str) {
+	return (str)? str->c_str() : "(NULL)";
+}
+	
+} // LinphoneWeb

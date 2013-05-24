@@ -23,6 +23,8 @@
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(AddressAPI)
 class AddressAPI: public WrapperAPI {
 	friend class FactoryAPI;
@@ -31,7 +33,7 @@ private:
 
 	AddressAPI(LinphoneAddress *address);
 	AddressAPI(const LinphoneAddress *address);
-	AddressAPI(const std::string &uri);
+	AddressAPI(const StringPtr &uri);
 
 protected:
 	void initProxy();
@@ -39,26 +41,28 @@ protected:
 public:
 	~AddressAPI();
 
-	std::string asString() const;
-	std::string asStringUriOnly() const;
+	StringPtr asString() const;
+	StringPtr asStringUriOnly() const;
 	void clean();
 	AddressAPIPtr clone() const;
-	std::string getDisplayName() const;
-	std::string getDomain() const;
-	std::string getPort() const;
+	StringPtr getDisplayName() const;
+	StringPtr getDomain() const;
+	StringPtr getPort() const;
 	int getPortInt() const;
-	std::string getScheme() const;
-	std::string getUsername() const;
-	void setDisplayName(const std::string &displayname);
-	void setDomain(const std::string &domain);
-	void setPort(const std::string &port);
+	StringPtr getScheme() const;
+	StringPtr getUsername() const;
+	void setDisplayName(const StringPtr &displayname);
+	void setDomain(const StringPtr &domain);
+	void setPort(const StringPtr &port);
 	void setPortInt(int port);
-	void setUsername(const std::string &username);
+	void setUsername(const StringPtr &username);
 
 	inline LinphoneAddress *getRef() {
 		mUsed = true;
 		return mAddress;
 	}
 };
+	
+} // LinphoneWeb
 
 #endif //H_ADDRESSAPI

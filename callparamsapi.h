@@ -23,6 +23,8 @@
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(CallParamsAPI)
 class CallParamsAPI: public WrapperAPI {
 	friend class FactoryAPI;
@@ -49,8 +51,8 @@ public:
 	//setMediaEncryption	mediaEncryption
 	//getUsedAudioCodec	usedAudioCodec
 	//getUsedVideoCodec	usedVideoCodec
-	std::string getRecordFile() const;
-	void setRecordFile(const std::string &file);
+	StringPtr getRecordFile() const;
+	void setRecordFile(const StringPtr &file);
 	void enableVideo(bool enable);
 	bool videoEnabled() const;
 	CallParamsAPIPtr copy() const;
@@ -61,5 +63,7 @@ public:
 		return mCallParams;
 	}
 };
+
+} // LinphoneWeb
 
 #endif //H_CALLPARAMSAPI

@@ -25,6 +25,8 @@
 #include <fstream>
 #include <boost/filesystem.hpp>
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(UploadFileTransferAPI)
 class UploadFileTransferAPI: public FileTransferAPI {
 	friend class FactoryAPI;
@@ -51,5 +53,7 @@ public:
 	virtual long long getTransferedBytes();
 	virtual long long getTotalBytes();
 };
+	
+} // LinphoneWeb
 
 #endif //H_UPLOADFILETRANSFERAPI

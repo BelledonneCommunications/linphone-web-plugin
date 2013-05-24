@@ -23,6 +23,8 @@
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(CoreAPI)
 
 FB_FORWARD_PTR(PayloadTypeAPI)
@@ -41,7 +43,7 @@ public:
 	~PayloadTypeAPI();
 
 	PayloadTypeAPIPtr clone() const;
-	std::string getRtpmap() const;
+	StringPtr getRtpmap() const;
 
 	int getType() const;
 	void setType(int type);
@@ -52,8 +54,8 @@ public:
 	int getBitsPerSample() const;
 	void setBitsPerSample(int bps);
 
-	std::string getZeroPattern() const;
-	void setZeroPattern(const std::string &pattern);
+	StringPtr getZeroPattern() const;
+	void setZeroPattern(const StringPtr &pattern);
 
 	int getPatternLength() const;
 	void setPatternLength(int length);
@@ -61,17 +63,17 @@ public:
 	int getNormalBitrate() const;
 	void setNormalBitrate(int bitrate);
 
-	std::string getMimeType() const;
-	void setMimeType(const std::string &mime);
+	StringPtr getMimeType() const;
+	void setMimeType(const StringPtr &mime);
 
 	int getChannels() const;
 	void setChannels(int channels);
 
-	std::string getRecvFmtp() const;
-	void setRecvFmtp(const std::string &rfmtp);
+	StringPtr getRecvFmtp() const;
+	void setRecvFmtp(const StringPtr &rfmtp);
 
-	std::string getSendFmtp() const;
-	void setSendFmtp(const std::string &sfmtp);
+	StringPtr getSendFmtp() const;
+	void setSendFmtp(const StringPtr &sfmtp);
 
 	int getFlags() const;
 	void setFlags(int flags);
@@ -80,5 +82,7 @@ public:
 		return mPayloadType;
 	}
 };
+	
+} // LinphoneWeb
 
 #endif //H_PAYLOADTYPEAPI

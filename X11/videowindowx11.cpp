@@ -22,6 +22,8 @@
 #include "videowindowx11.h"
 #include <gdk/gdkx.h>
 
+namespace LinphoneWeb {
+
 VideoWindowPtr VideoWindow::create() {
 	return boost::make_shared<VideoWindowX11>();
 }
@@ -86,3 +88,5 @@ unsigned long VideoWindowX11::getId() {
 bool VideoWindowX11::draw() {
 	return false;
 }
+
+} // LinphoneWeb

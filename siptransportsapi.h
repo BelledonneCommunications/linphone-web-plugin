@@ -23,6 +23,8 @@
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(SipTransportsAPI)
 class SipTransportsAPI: public WrapperAPI {
 	friend class FactoryAPI;
@@ -54,5 +56,7 @@ public:
 	void setTlsPort(int port);
 	int getTlsPort() const;
 };
+
+} // LinphoneWeb
 
 #endif //H_SIPTRANSPORTSAPI

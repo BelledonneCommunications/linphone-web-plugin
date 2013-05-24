@@ -20,6 +20,8 @@
 #include <logging.h>
 #include "videowindowwin.h"
 
+namespace LinphoneWeb {
+
 VideoWindowPtr VideoWindow::create() {
 	return boost::make_shared<VideoWindowWin>();
 }
@@ -64,3 +66,5 @@ unsigned long VideoWindowWin::getId() {
 	FBLOG_DEBUG("VideoWindowWin::getId()", "this=" << this);
 	return (unsigned long) mWin->getHWND();
 }
+	
+} // LinphoneWeb

@@ -22,6 +22,8 @@
 #include "../factoryapi.h"
 #include <boost/thread/thread.hpp>
 
+namespace LinphoneWeb {
+
 const unsigned int LocalFileTransferAPI::BUFFER_SIZE = 32 * 1024;
 
 LocalFileTransferAPI::LocalFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
@@ -162,3 +164,5 @@ long long LocalFileTransferAPI::getTotalBytes() {
 	FBLOG_DEBUG("LocalFileTransferAPI::getTotalBytes", "this=" << this);
 	return mTotalBytes;
 }
+	
+} // LinphoneWeb

@@ -27,6 +27,8 @@
 #include "videoplugin.h"
 #include "videowindow.h"
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(VideoAPI)
 class VideoAPI: public FB::JSAPIAuto {
 public:
@@ -49,5 +51,7 @@ private:
 	VideoPluginWeakPtr mPlugin;
 	VideoWindowPtr mWindow;
 };
+	
+} // LinphoneWeb
 
 #endif // H_VIDEOAPI

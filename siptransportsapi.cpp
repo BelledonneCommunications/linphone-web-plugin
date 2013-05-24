@@ -19,6 +19,8 @@
 
 #include "siptransportsapi.h"
 
+namespace LinphoneWeb {
+
 SipTransportsAPI::SipTransportsAPI():
 	WrapperAPI(APIDescription(this)) {
 	mUsed = false;
@@ -81,3 +83,5 @@ int SipTransportsAPI::getTlsPort() const {
 	FBLOG_DEBUG("SipTransportsAPI::getUdpPort", "this=" << this);
 	return mSipTransports.tls_port;
 }
+
+} // LinphoneWeb

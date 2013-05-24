@@ -22,6 +22,8 @@
 #include "Transfers/uploadfiletransferapi.h"
 #include "Transfers/localfiletransferapi.h"
 
+namespace LinphoneWeb {
+
 FactoryAPI::FactoryAPI(const CorePluginWeakPtr &plugin): mPlugin(plugin) {
 	FBLOG_DEBUG("FactoryAPI::FactoryAPI", "this=" << this);
 }
@@ -230,3 +232,5 @@ FileTransferAPIPtr FactoryAPI::getFileTransfer(const FB::URI &sourceUri, const F
 	}
 	return FileTransferAPIPtr();
 }
+
+} // LinphoneWeb

@@ -25,6 +25,8 @@
 #include <gdk/gdk.h>
 #include "../videowindow.h"
 
+namespace LinphoneWeb {
+
 class VideoWindowX11: public VideoWindow {
 public:
 	VideoWindowX11();
@@ -44,5 +46,7 @@ private:
 	int mExposeEventId;
 	int ConfigureEventId;
 };
+	
+} // LinphoneWeb
 
 #endif // H_VIDEOWINDOWX11

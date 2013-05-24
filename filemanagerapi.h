@@ -29,6 +29,8 @@
 #include <list>
 #include <boost/filesystem.hpp>
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(FileTransferAPI)
 
 FB_FORWARD_PTR(FileManagerAPI)
@@ -85,5 +87,7 @@ public:
 	void remove(const std::string &url, const FB::JSObjectPtr& callback);
 	void mkdir(const std::string &url, const FB::JSObjectPtr& callback);
 };
+	
+} // LinphoneWeb
 
 #endif // H_FILEMANAGERAPI

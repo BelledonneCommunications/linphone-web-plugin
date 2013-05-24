@@ -24,6 +24,8 @@
 #include <boost/shared_ptr.hpp>
 #include "../videowindow.h"
 
+namespace LinphoneWeb {
+
 class VideoWindowMac: public VideoWindow {
 public:
 	VideoWindowMac();
@@ -37,5 +39,7 @@ public:
 private:
 	void *mWindow;
 };
+	
+} // LinphoneWeb
 
 #endif // H_VIDEOWINDOWMAC

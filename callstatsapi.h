@@ -23,6 +23,8 @@
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(CallStatsAPI)
 class CallStatsAPI: public WrapperAPI {
 	friend class FactoryAPI;
@@ -48,4 +50,6 @@ public:
 	}
 };
 
+} // LinphoneWeb
+	
 #endif //H_CALLSTATSAPI

@@ -24,6 +24,8 @@
 #include "videoapi.h"
 #include "utils.h"
 
+namespace LinphoneWeb {
+
 ///////////////////////////////////////////////////////////////////////////////
 /// @fn videoAPI::videoAPI(const videoPtr& plugin, const FB::BrowserHostPtr host)
 ///
@@ -102,3 +104,6 @@ bool VideoAPI::draw() {
 	// FBLOG_DEBUG("VideoAPI::draw", "this=" << this); // TOO VERBOSE
 	return mWindow->draw();
 }
+
+
+} // LinphoneWeb

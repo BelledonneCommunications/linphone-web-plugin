@@ -22,6 +22,8 @@
 #include "utils.h"
 #include "factoryapi.h"
 
+namespace LinphoneWeb {
+
 CallStatsAPI::CallStatsAPI(const LinphoneCallStats *callStats) :
 		WrapperAPI(APIDescription(this)), mCallStats(const_cast<LinphoneCallStats *>(callStats)) {
 	mUsed = true;
@@ -71,3 +73,5 @@ void CallStatsAPI::setRoundTripDelay(float delay) {
 	FBLOG_DEBUG("CallStatsAPI::setRoundTripDelay", "this=" << this << "\t" << "delay=" << delay);
 	mCallStats->round_trip_delay = delay;
 }
+	
+} // LinphoneWeb

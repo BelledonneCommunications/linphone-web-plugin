@@ -20,6 +20,8 @@
 #include "videoplugin.h"
 #include "videoapi.h"
 
+namespace LinphoneWeb {
+
 ///////////////////////////////////////////////////////////////////////////////
 /// @fn VideoPlugin::StaticInitialize()
 ///
@@ -141,4 +143,6 @@ bool VideoPlugin::onDraw(FB::RefreshEvent *evt, FB::PluginWindow* win) {
 	}
 	return false;
 }
+	
+} // LinphoneWeb
 

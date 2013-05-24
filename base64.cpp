@@ -7,6 +7,8 @@
 #include "base64.h"
 #include <string.h>
 
+namespace LinphoneWeb {
+
 static const unsigned char* base64_charset = (const unsigned char *)"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 std::string base64_encode(const std::string& indata) {
@@ -73,4 +75,6 @@ std::string base64_decode(const std::string& indata) {
   }
   return outdata;
 }
+
+} // LinphoneWeb
 

@@ -23,6 +23,8 @@
 #include "coreplugin.h"
 #include "videoplugin.h"
 
+namespace LinphoneWeb {
+
 #ifdef DEBUG
 #ifdef WIN32
 #include <Windows.h>
@@ -163,13 +165,16 @@ public:
 	}
 };
 
+	
+} // LinphoneWeb
+	
 ///////////////////////////////////////////////////////////////////////////////
 /// @fn getFactoryInstance()
 ///
 /// @brief  Returns the factory instance for this plugin module
 ///////////////////////////////////////////////////////////////////////////////
 FB::FactoryBasePtr getFactoryInstance() {
-	static boost::shared_ptr<PluginFactory> factory = boost::make_shared<PluginFactory>();
+	static boost::shared_ptr<LinphoneWeb::PluginFactory> factory = boost::make_shared<LinphoneWeb::PluginFactory>();
 	return factory;
 }
 

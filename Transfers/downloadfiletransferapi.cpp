@@ -21,6 +21,8 @@
 #include "../coreplugin.h"
 #include "../factoryapi.h"
 
+namespace LinphoneWeb {
+
 const unsigned int DownloadFileTransferAPI::BUFFER_SIZE = 32 * 1024;
 
 DownloadFileTransferAPI::DownloadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
@@ -144,3 +146,5 @@ long long DownloadFileTransferAPI::getTotalBytes() {
 	}
 	return -1;
 }
+	
+} // LinphoneWeb

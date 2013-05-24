@@ -23,6 +23,8 @@
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(CoreAPI)
 
 FB_FORWARD_PTR(ProxyConfigAPI)
@@ -42,35 +44,35 @@ public:
 
 	CoreAPIPtr getCore() const;
 
-	std::string getContactParameters() const;
-	void setContactParameters(const std::string &parameter);
+	StringPtr getContactParameters() const;
+	void setContactParameters(const StringPtr &parameter);
 
 	bool getDialEscapePlus() const;
 	void setDialEscapePlus(bool escape);
 
-	std::string getDialPrefix() const;
-	void setDialPrefix(const std::string &prefix);
+	StringPtr getDialPrefix() const;
+	void setDialPrefix(const StringPtr &prefix);
 
-	std::string getDomain() const;
+	StringPtr getDomain() const;
 	int getError() const;
 
 	bool publishEnabled() const;
 	void enablePublish(bool enable);
 
-	std::string getSipSetup() const;
-	void setSipSetup(const std::string &sip_setup);
+	StringPtr getSipSetup() const;
+	void setSipSetup(const StringPtr &sip_setup);
 
 	bool isRegistered() const;
 	//getSipSetupContext
 
-	void setServerAddr(const std::string &server_addr);
-	std::string getServerAddr() const;
+	void setServerAddr(const StringPtr &server_addr);
+	StringPtr getServerAddr() const;
 
-	void setIdentity(const std::string &identity);
-	std::string getIdentity() const;
+	void setIdentity(const StringPtr &identity);
+	StringPtr getIdentity() const;
 
-	void setRoute(const std::string &route);
-	std::string getRoute() const;
+	void setRoute(const StringPtr &route);
+	StringPtr getRoute() const;
 
 	void setExpires(int expires);
 	int getExpires() const;
@@ -83,7 +85,7 @@ public:
 	void edit();
 	int done();
 
-	std::string normalizeNumber(const std::string &username) const;
+	StringPtr normalizeNumber(const StringPtr &username) const;
 	void refreshRegister();
 
 	inline LinphoneProxyConfig *getRef() {
@@ -91,5 +93,7 @@ public:
 		return mProxyConfig;
 	}
 };
+	
+} // LinphoneWeb
 
 #endif //H_PROXYCONFIGAPI

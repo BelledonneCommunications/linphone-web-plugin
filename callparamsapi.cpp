@@ -22,6 +22,8 @@
 #include "utils.h"
 #include "factoryapi.h"
 
+namespace LinphoneWeb {
+
 CallParamsAPI::CallParamsAPI(LinphoneCallParams *callParams) :
 		WrapperAPI(APIDescription(this)), mCallParams(callParams) {
 	mUsed = true;
@@ -114,14 +116,14 @@ void CallParamsAPI::enableLowBandwidth(bool enable) {
 //getUsedAudioCodec	usedAudioCodec
 //getUsedVideoCodec	usedVideoCodec
 
-std::string CallParamsAPI::getRecordFile() const {
+StringPtr CallParamsAPI::getRecordFile() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CallParamsAPI::getRecordFile", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_call_params_get_record_file(mCallParams));
 }
 
-void CallParamsAPI::setRecordFile(const std::string &file) {
+void CallParamsAPI::setRecordFile(const StringPtr &file) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CallParamsAPI::setRecordFile", "this=" << this << "\t" << "file=" << file);
@@ -156,3 +158,5 @@ CallParamsAPIPtr CallParamsAPI::copy() const {
 CallParamsAPI::~CallParamsAPI() {
 	FBLOG_DEBUG("CallParamsAPI::~CallParamsAPI", "this=" << this);
 }
+	
+} // LinphoneWeb

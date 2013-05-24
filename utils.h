@@ -25,6 +25,12 @@
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/optional/optional.hpp>
+
+namespace LinphoneWeb {
+
+typedef boost::optional<std::string> StringPtr;
+typedef boost::optional<const std::string> StringConstPtr;
 
 class ThreadGroup {
 private:
@@ -104,8 +110,11 @@ std::string APIDescription(T *ptr) {
 	return ss.str();
 }
 
-std::string CHARPTR_TO_STRING(const char *str);
-const char *STRING_TO_CHARPTR(const std::string &str);
+StringPtr CHARPTR_TO_STRING(const char *str);
+const char *STRING_TO_CHARPTR(const StringPtr &str);
+std::string PRINT_STRING(const StringPtr &str);
+	
+} // LinphoneWeb
 
 #endif // H_UTILS
 

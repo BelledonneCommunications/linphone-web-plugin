@@ -19,6 +19,8 @@
 
 #include "wrapperapi.h"
 
+namespace LinphoneWeb {
+
 WrapperAPI::WrapperAPI(const std::string& description): FB::JSAPIAuto(description) {
 	
 }
@@ -41,3 +43,5 @@ void WrapperAPI::detachThread(boost::thread::id id) {
 	FBLOG_DEBUG("WrapperAPI::detachThread", "this=" << this << "\t" << "id=" << id);
 	mThreads.removeThread(id);
 }
+
+} // LinphoneWeb

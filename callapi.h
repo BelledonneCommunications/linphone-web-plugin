@@ -23,6 +23,8 @@
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(CallLogAPI)
 FB_FORWARD_PTR(CallParamsAPI)
 FB_FORWARD_PTR(CallStatsAPI)
@@ -43,7 +45,7 @@ protected:
 public:
 	~CallAPI();
 	CallStatsAPIPtr getAudioStats() const;
-	std::string getAuthenticationToken() const;
+	StringPtr getAuthenticationToken() const;
 	bool getAuthenticationTokenVerified() const;
 	float getAverageQuality() const;
 	CallLogAPIPtr getCallLog() const;
@@ -55,12 +57,12 @@ public:
 	float getPlayVolume() const;
 	int getReason() const;
 	float getRecordVolume() const;
-	std::string getReferTo() const;
+	StringPtr getReferTo() const;
 	AddressAPIPtr getRemoteAddress() const;
-	std::string getRemoteAddressAsString() const;
-	std::string getRemoteContact() const;
+	StringPtr getRemoteAddressAsString() const;
+	StringPtr getRemoteContact() const;
 	CallParamsAPIPtr getRemoteParams() const;
-	std::string getRemoteUserAgent() const;
+	StringPtr getRemoteUserAgent() const;
 	CallAPIPtr getReplacedCall() const;
 	LinphoneCallState getState() const;
 	LinphoneCallState getTransferState() const;
@@ -87,5 +89,7 @@ public:
 		return mCall;
 	}
 };
+	
+} // LinphoneWeb
 
 #endif //H_CALLAPI

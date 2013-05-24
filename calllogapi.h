@@ -23,6 +23,8 @@
 #include <linphonecore.h>
 #include "wrapperapi.h"
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(AddressAPI)
 
 FB_FORWARD_PTR(CallLogAPI)
@@ -39,10 +41,10 @@ protected:
 public:
 	~CallLogAPI();
 
-	std::string getRefKey() const;
-	void setRefKey(const std::string &refKey);
+	StringPtr getRefKey() const;
+	void setRefKey(const StringPtr &refKey);
 	
-	std::string getCallId() const;
+	StringPtr getCallId() const;
 	LinphoneCallDir getDir() const;
 	int getDuration() const;
 	AddressAPIPtr getFrom() const;
@@ -53,12 +55,14 @@ public:
 	AddressAPIPtr getTo() const;
 	bool videoEnabled() const;
 	
-	std::string toStr() const;
+	StringPtr toStr() const;
 
 	inline LinphoneCallLog *getRef() {
 		mUsed = true;
 		return mCallLog;
 	}
 };
+	
+} // LinphoneWeb
 
 #endif //H_CALLLOGAPI

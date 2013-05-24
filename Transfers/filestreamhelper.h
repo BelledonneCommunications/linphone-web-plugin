@@ -23,6 +23,8 @@
 #include <BrowserStreamRequest.h>
 #include <SimpleStreamHelper.h>
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(FileStreamHelper);
 class FileStreamHelper: public FB::SimpleStreamHelper {
 public:
@@ -75,5 +77,7 @@ private:
 	}
 	FileStreamHelperPtr self;
 };
+	
+} // LinphoneWeb
 
 #endif //H_FILESTREAMHELPER

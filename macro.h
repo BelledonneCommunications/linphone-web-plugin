@@ -126,45 +126,49 @@
 // PROPERTY FILE
 //
 #define DECLARE_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)                  \
-	void BOOST_PP_CAT(setter, _file)(const std::string &arg);                   \
+	void BOOST_PP_CAT(setter, _file)(const StringPtr &arg);                     \
 
 #define DECLARE_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)                  \
-	std::string BOOST_PP_CAT(getter, _file)() const;                            \
+	StringPtr BOOST_PP_CAT(getter, _file)() const;                              \
 
 #define REGISTER_PROPERTY_FILE(class, name, getter, setter)                                                                \
 	registerProperty(name, make_property(this, &class::BOOST_PP_CAT(getter, _file), &class::BOOST_PP_CAT(setter, _file))); \
 
 
 #define DECLARE_PROPERTY_FILE(class, getter, setter)           \
-	std::string getter() const;                                \
-	void setter(const std::string &arg);                       \
+	StringPtr getter() const;                                  \
+	void setter(const StringPtr &arg);                         \
 	DECLARE_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)     \
 	DECLARE_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)     \
 
 
-#define IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)                \
-	void class::BOOST_PP_CAT(setter, _file)(const std::string &arg) {           \
-		FB::URI uri(arg);                                                       \
-		std::string file = mFactory->getFileManager()->uriToFile(uri);          \
-		if(!file.empty()) {                                                     \
-			setter(file);                                                       \
-		} else {                                                                \
-			FBLOG_WARN(#class "::" #setter "_file", "Invalid URL: " << arg);    \
-			throw FB::script_error("Invalid URL: " + arg);                      \
-		}                                                                       \
-	}                                                                           \
+#define IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)                          \
+	void class::BOOST_PP_CAT(setter, _file)(const StringPtr &arg) {                       \
+		StringPtr file;                                                                   \
+		if(arg) {                                                                         \
+			FB::URI uri(*arg);                                                            \
+			file = mFactory->getFileManager()->uriToFile(uri);                            \
+			if(file->empty()) {                                                           \
+				FBLOG_WARN(#class "::" #setter "_file", "Invalid URL: " << arg);          \
+				throw FB::script_error(std::string("Invalid URL: ") + PRINT_STRING(arg)); \
+			}                                                                             \
+		}                                                                                 \
+		setter(file);                                                                     \
+	}                                                                                     \
 
-#define IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)                \
-	std::string class::BOOST_PP_CAT(getter, _file)() const {                    \
-		std::string ret = getter();                                             \
-		FB::URI uri = mFactory->getFileManager()->fileToUri(ret);               \
-		if(FileManagerAPI::isFile(uri)) {                                       \
-			return uri.toString();                                              \
-		} else {                                                                \
-			FBLOG_WARN(#class "::" #getter "_file", "Invalid file: " << ret);   \
-		}                                                                       \
-		return std::string();                                                   \
-	}                                                                           \
+#define IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)                  \
+	StringPtr class::BOOST_PP_CAT(getter, _file)() const {                        \
+		StringPtr ret = getter();                                                 \
+		if(ret) {                                                                 \
+			FB::URI uri = mFactory->getFileManager()->fileToUri(*ret);            \
+			if(FileManagerAPI::isFile(uri)) {                                     \
+				ret = uri.toString();                                             \
+			} else {                                                              \
+				FBLOG_WARN(#class "::" #getter "_file", "Invalid file: " << ret); \
+			}                                                                     \
+		}                                                                         \
+		return ret;                                                               \
+	}                                                                             \
 
 
 #define IMPLEMENT_PROPERTY_FILE(class, getter, setter)         \

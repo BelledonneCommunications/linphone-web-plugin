@@ -27,6 +27,8 @@
 #include <PluginEvents/DrawingEvents.h>
 #include <PluginCore.h>
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(VideoAPI)
 
 FB_FORWARD_PTR(VideoPlugin)
@@ -74,5 +76,7 @@ private:
 	VideoAPIPtr mVideo;
 	FB::PluginWindow* mWindow;
 };
+	
+} // LinphoneWeb
 
 #endif //H_VIDEOPLUGIN

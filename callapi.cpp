@@ -27,6 +27,8 @@
 #include "utils.h"
 #include "factoryapi.h"
 
+namespace LinphoneWeb {
+
 CallAPI::CallAPI(LinphoneCall *call) :
 		WrapperAPI(APIDescription(this)), mCall(call) {
 	mUsed = true;
@@ -88,7 +90,7 @@ CallStatsAPIPtr CallAPI::getAudioStats() const {
 	return mFactory->getCallStats(linphone_call_get_audio_stats(mCall));
 }
 
-std::string CallAPI::getAuthenticationToken() const {
+StringPtr CallAPI::getAuthenticationToken() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getAuthenticationToken", "this=" << this);
@@ -172,7 +174,7 @@ float CallAPI::getRecordVolume() const {
 	return linphone_call_get_record_volume(mCall);
 }
 
-std::string CallAPI::getReferTo() const {
+StringPtr CallAPI::getReferTo() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getReason", "this=" << this);
@@ -186,14 +188,14 @@ AddressAPIPtr CallAPI::getRemoteAddress() const {
 	return mFactory->getAddress(linphone_call_get_remote_address(mCall));
 }
 
-std::string CallAPI::getRemoteAddressAsString() const {
+StringPtr CallAPI::getRemoteAddressAsString() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getRemoteAddressAsString", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_call_get_remote_address_as_string(mCall));
 }
 
-std::string CallAPI::getRemoteContact() const {
+StringPtr CallAPI::getRemoteContact() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CallAPI::getRemoteContact", "this=" << this);
@@ -207,7 +209,7 @@ CallParamsAPIPtr CallAPI::getRemoteParams() const {
 	return mFactory->getCallParams(linphone_call_get_remote_params(mCall));
 }
 
-std::string CallAPI::getRemoteUserAgent() const {
+StringPtr CallAPI::getRemoteUserAgent() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getRemoteUserAgent", "this=" << this);
@@ -338,3 +340,5 @@ void CallAPI::stopRecording() {
 	FBLOG_DEBUG("CallAPI::stopRecording", "this=" << this);
 	linphone_call_stop_recording(mCall);
 }
+	
+} // LinphoneWeb

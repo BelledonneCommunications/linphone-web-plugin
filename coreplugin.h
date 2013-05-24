@@ -28,6 +28,8 @@
 #include "factoryapi.h"
 #include <ortp/logging.h>
 
+namespace LinphoneWeb {
+
 FB_FORWARD_PTR(CorePlugin)
 class CorePlugin: public FB::PluginCore {
 private:
@@ -77,5 +79,7 @@ public:
 	virtual bool onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *);
 	/** END EVENTDEF -- DON'T CHANGE THIS LINE **/
 };
+	
+} // LinphoneWeb
 
 #endif //H_COREPLUGIN

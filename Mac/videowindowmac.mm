@@ -22,6 +22,8 @@
 #include <logging.h>
 #include "videowindowmac.h"
 
+namespace LinphoneWeb {
+
 VideoWindowPtr VideoWindow::create() {
 	return boost::make_shared<VideoWindowMac>();
 }
@@ -65,3 +67,5 @@ unsigned long VideoWindowMac::getId() {
 bool VideoWindowMac::draw() {
 	return false;
 }
+
+} // LinphoneWeb

@@ -73,6 +73,7 @@ namespace  boost {
 	}
 }
 
+namespace LinphoneWeb {
 
 /*
  * Protocol
@@ -406,4 +407,6 @@ void FileManagerAPI::remove(const std::string &url, const FB::JSObjectPtr& callb
 		callback->InvokeAsync("", FB::variant_list_of(false)("Internal error"));
 	}
 }
+	
+} // LinphoneWeb
 
