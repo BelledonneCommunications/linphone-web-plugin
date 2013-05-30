@@ -89,7 +89,6 @@ public:
 	void refreshRegister();
 
 	inline LinphoneProxyConfig *getRef() {
-		mUsed = true;
 		return mProxyConfig;
 	}
 };

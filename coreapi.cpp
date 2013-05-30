@@ -1216,6 +1216,7 @@ int CoreAPI::addProxyConfig(const ProxyConfigAPIPtr &config) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::addProxyConfig", "this=" << this << "\t" << "config=" << config);
+	config->mUsed = true;
 	return linphone_core_add_proxy_config(mCore, config->getRef());
 }
 
@@ -1232,6 +1233,7 @@ void CoreAPI::removeProxyConfig(const ProxyConfigAPIPtr &config) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::removeProxyConfig", "this=" << this << "\t" << "config=" << config);
+	config->mUsed = true;
 	linphone_core_remove_proxy_config(mCore, config->getRef());
 }
 
@@ -1252,6 +1254,7 @@ void CoreAPI::setDefaultProxy(const ProxyConfigAPIPtr &config) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setDefaultProxy", "this=" << this << "\t" << "config=" << config);
+	config->mUsed = true;
 	linphone_core_set_default_proxy(mCore, config->getRef());
 }
 

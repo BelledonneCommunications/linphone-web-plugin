@@ -59,7 +59,6 @@ public:
 
 
 	inline LinphoneCallParams *getRef() {
-		mUsed = true;
 		return mCallParams;
 	}
 };

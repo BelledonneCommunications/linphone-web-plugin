@@ -58,7 +58,6 @@ public:
 	void setPasswd(const StringPtr &passwd);
 
 	inline LinphoneAuthInfo *getRef() {
-		mUsed = true;
 		return mAuthInfo;
 	}
 

@@ -58,7 +58,6 @@ public:
 	void setUsername(const StringPtr &username);
 
 	inline LinphoneAddress *getRef() {
-		mUsed = true;
 		return mAddress;
 	}
 };

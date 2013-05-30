@@ -58,7 +58,6 @@ public:
 	StringPtr toStr() const;
 
 	inline LinphoneCallLog *getRef() {
-		mUsed = true;
 		return mCallLog;
 	}
 };

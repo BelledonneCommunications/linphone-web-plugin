@@ -233,8 +233,10 @@ void PayloadTypeAPI::setFlags(int flags) {
 
 PayloadTypeAPIPtr PayloadTypeAPI::clone() const {
 	CORE_MUTEX
-
-	return mFactory->getPayloadType(payload_type_clone(mPayloadType));
+	
+	PayloadTypeAPIPtr ret = mFactory->getPayloadType(payload_type_clone(mPayloadType));
+	ret->mUsed = false;
+	return ret;
 }
 
 StringPtr PayloadTypeAPI::getRtpmap() const {
