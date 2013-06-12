@@ -21,12 +21,36 @@
 
 namespace LinphoneWeb {
 
-WrapperAPI::WrapperAPI(const std::string& description): FB::JSAPIAuto(description) {
+WrapperAPI::WrapperAPI(const std::string& description): FB::JSAPIAuto(description), mOwned(false), mConst(false) {
+	
+}
+	
+WrapperAPI::~WrapperAPI() {
 	
 }
 
 void WrapperAPI::setFactory(FactoryAPIPtr factory) {
 	mFactory = factory;
+}
+
+FactoryAPIPtr WrapperAPI::getFactory() const {
+	return mFactory;
+}
+	
+void WrapperAPI::disOwn() {
+	mOwned = false;
+}
+	
+void WrapperAPI::own() {
+	mOwned = true;
+}
+	
+bool WrapperAPI::isOwned() const {
+	return mOwned;
+}
+	
+bool WrapperAPI::isConst() const {
+	return mConst;
 }
 
 void WrapperAPI::shutdown() {

@@ -26,11 +26,8 @@ namespace LinphoneWeb {
 
 CallLogAPI::CallLogAPI(LinphoneCallLog *callLog) :
 		WrapperAPI(APIDescription(this)), mCallLog(callLog) {
-	mUsed = true;
-	mConst = false;
 	FBLOG_DEBUG("CallLogAPI::CallLogAPI", "this=" << this << "\t" << "callLog=" << callLog);
 	linphone_call_log_set_user_pointer(mCallLog, this);
-	initProxy();
 }
 
 void CallLogAPI::initProxy() {
@@ -94,7 +91,7 @@ AddressAPIPtr CallLogAPI::getFrom() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CallLogAPI::getFrom", "this=" << this);
-	return mFactory->getAddress(linphone_call_log_get_from(mCallLog));
+	return getFactory()->getAddress(linphone_call_log_get_from(mCallLog));
 }
 
 float CallLogAPI::getQuality() const {
@@ -108,7 +105,7 @@ AddressAPIPtr CallLogAPI::getRemoteAddress() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CallLogAPI::getRemoteAddress", "this=" << this);
-	return mFactory->getAddress(linphone_call_log_get_remote_address(mCallLog));
+	return getFactory()->getAddress(linphone_call_log_get_remote_address(mCallLog));
 }
 
 time_t CallLogAPI::getStartDate() const {
@@ -129,7 +126,7 @@ AddressAPIPtr CallLogAPI::getTo() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CallLogAPI::getTo", "this=" << this);
-	return mFactory->getAddress(linphone_call_log_get_to(mCallLog));
+	return getFactory()->getAddress(linphone_call_log_get_to(mCallLog));
 }
 
 bool CallLogAPI::videoEnabled() const {

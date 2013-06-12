@@ -35,10 +35,10 @@ private:
 	CallParamsAPI(const LinphoneCallParams *callParams);
 	
 protected:
-	void initProxy();
+	virtual void initProxy();
 	
 public:
-	~CallParamsAPI();
+	virtual ~CallParamsAPI();
 
 	int getAudioBandwidthLimit() const;
 	void setAudioBandwidthLimit(int bw);

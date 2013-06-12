@@ -47,7 +47,8 @@ private:
 	void threadFct();
 	
 public:
-	~UploadFileTransferAPI();
+	virtual ~UploadFileTransferAPI();
+	
 	virtual void start();
 	virtual void cancel();
 	virtual long long getTransferedBytes();

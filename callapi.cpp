@@ -31,12 +31,9 @@ namespace LinphoneWeb {
 
 CallAPI::CallAPI(LinphoneCall *call) :
 		WrapperAPI(APIDescription(this)), mCall(call) {
-	mUsed = true;
-	mUsed = true;
 	FBLOG_DEBUG("CallAPI::CallAPI", "this=" << this << "\t" << "call=" << call);
 	linphone_call_ref(mCall);
 	linphone_call_set_user_pointer(mCall, this);
-	initProxy();
 }
 
 void CallAPI::initProxy() {
@@ -79,15 +76,17 @@ void CallAPI::initProxy() {
 
 CallAPI::~CallAPI() {
 	FBLOG_DEBUG("CallAPI::~CallAPI", "this=" << this);
-	linphone_call_set_user_pointer(mCall, NULL);
-	linphone_call_unref(mCall);
+	if(!mCall) {
+		linphone_call_set_user_pointer(mCall, NULL);
+		linphone_call_unref(mCall);
+	}
 }
 
 CallStatsAPIPtr CallAPI::getAudioStats() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CallAPI::getAudioStats", "this=" << this);
-	return mFactory->getCallStats(linphone_call_get_audio_stats(mCall));
+	return getFactory()->getCallStats(linphone_call_get_audio_stats(mCall));
 }
 
 StringPtr CallAPI::getAuthenticationToken() const {
@@ -115,21 +114,21 @@ CallLogAPIPtr CallAPI::getCallLog() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getCallLog", "this=" << this);
-	return mFactory->getCallLog(linphone_call_get_call_log(mCall));
+	return getFactory()->getCallLog(linphone_call_get_call_log(mCall));
 }
 
 CoreAPIPtr CallAPI::getCore() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getCurrentQuality", "this=" << this);
-	return mFactory->getCore(linphone_call_get_core(mCall));
+	return getFactory()->getCore(linphone_call_get_core(mCall));
 }
 
 CallParamsAPIPtr CallAPI::getCurrentParams() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getCurrentParams", "this=" << this);
-	return mFactory->getCallParams(linphone_call_get_current_params(mCall));
+	return getFactory()->getCallParams(linphone_call_get_current_params(mCall));
 }
 
 float CallAPI::getCurrentQuality() const {
@@ -185,7 +184,7 @@ AddressAPIPtr CallAPI::getRemoteAddress() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getRemoteAddress", "this=" << this);
-	return mFactory->getAddress(linphone_call_get_remote_address(mCall));
+	return getFactory()->getAddress(linphone_call_get_remote_address(mCall));
 }
 
 StringPtr CallAPI::getRemoteAddressAsString() const {
@@ -206,7 +205,7 @@ CallParamsAPIPtr CallAPI::getRemoteParams() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getRemoteParams", "this=" << this);
-	return mFactory->getCallParams(linphone_call_get_remote_params(mCall));
+	return getFactory()->getCallParams(linphone_call_get_remote_params(mCall));
 }
 
 StringPtr CallAPI::getRemoteUserAgent() const {
@@ -220,7 +219,7 @@ CallAPIPtr CallAPI::getReplacedCall() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getReplacedCall", "this=" << this);
-	return mFactory->getCall(linphone_call_get_replaced_call(mCall));
+	return getFactory()->getCall(linphone_call_get_replaced_call(mCall));
 }
 
 LinphoneCallState CallAPI::getState() const {
@@ -241,7 +240,7 @@ CallStatsAPIPtr CallAPI::getVideoStats() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getVideoStats", "this=" << this);
-	return mFactory->getCallStats(linphone_call_get_video_stats(mCall));
+	return getFactory()->getCallStats(linphone_call_get_video_stats(mCall));
 }
 
 bool CallAPI::inConference() const {

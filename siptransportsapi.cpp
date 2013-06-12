@@ -23,14 +23,11 @@ namespace LinphoneWeb {
 
 SipTransportsAPI::SipTransportsAPI():
 	WrapperAPI(APIDescription(this)) {
-	mUsed = false;
-	mConst = false;
 	FBLOG_DEBUG("SipTransportsAPI::SipTransportsAPI", "this=" << this);
 	mSipTransports.udp_port = -1;
 	mSipTransports.tcp_port = -1;
 	mSipTransports.dtls_port = -1;
 	mSipTransports.tls_port = -1;
-	initProxy();
 }
 
 void SipTransportsAPI::initProxy() {

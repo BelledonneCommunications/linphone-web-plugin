@@ -26,29 +26,20 @@ namespace LinphoneWeb {
 
 AuthInfoAPI::AuthInfoAPI(LinphoneAuthInfo *authInfo) :
 		WrapperAPI(APIDescription(this)), mAuthInfo(authInfo) {
-	mUsed = true;
-	mConst = false;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI", "this=" << this << "\t" << "authInfo=" << authInfo);
-	initProxy();
 }
 
 AuthInfoAPI::AuthInfoAPI(const LinphoneAuthInfo *authInfo) :
 		WrapperAPI(APIDescription(this)), mAuthInfo(const_cast<LinphoneAuthInfo *>(authInfo)) {
-	mUsed = true;
-	mConst = true;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI", "this=" << this << "\t" << "authInfo=" << authInfo);
-	initProxy();
 }
 
 
 AuthInfoAPI::AuthInfoAPI(const StringPtr &username, const StringPtr &userid, const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm) :
 		WrapperAPI(APIDescription(this)) {
-	mUsed = false;
-	mConst = false;
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI",
 			"this=" << this << "username=" << username << ", userid=" << userid << ", passwd=" << passwd << ", ha1" << ha1 << ", realm=" << realm);
 	mAuthInfo = linphone_auth_info_new(STRING_TO_CHARPTR(username), STRING_TO_CHARPTR(userid), STRING_TO_CHARPTR(passwd), STRING_TO_CHARPTR(ha1), STRING_TO_CHARPTR(realm));
-	initProxy();
 }
 
 void AuthInfoAPI::initProxy() {
@@ -61,8 +52,10 @@ void AuthInfoAPI::initProxy() {
 
 AuthInfoAPI::~AuthInfoAPI() {
 	FBLOG_DEBUG("AuthInfoAPI::~AuthInfoAPI", "this=" << this);
-	if (!mUsed) {
-		linphone_auth_info_destroy(mAuthInfo);
+	if(isOwned()) {
+		if(mAuthInfo != NULL) {
+			linphone_auth_info_destroy(mAuthInfo);
+		}
 	}
 }
 

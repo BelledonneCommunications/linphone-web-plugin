@@ -142,25 +142,25 @@
 	DECLARE_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)     \
 
 
-#define IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)                          \
-	void class::BOOST_PP_CAT(setter, _file)(const StringPtr &arg) {                       \
-		StringPtr file;                                                                   \
-		if(arg) {                                                                         \
-			FB::URI uri(*arg);                                                            \
-			file = mFactory->getFileManager()->uriToFile(uri);                            \
-			if(file->empty()) {                                                           \
-				FBLOG_WARN(#class "::" #setter "_file", "Invalid URL: " << arg);          \
-				throw FB::script_error(std::string("Invalid URL: ") + PRINT_STRING(arg)); \
-			}                                                                             \
-		}                                                                                 \
-		setter(file);                                                                     \
-	}                                                                                     \
+#define IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)                               \
+	void class::BOOST_PP_CAT(setter, _file)(const StringPtr &arg) {                            \
+		StringPtr file;                                                                        \
+		if(arg) {                                                                              \
+			FB::URI uri(*arg);                                                                 \
+			file = getFactory()->getFileManager()->uriToFile(uri);                             \
+			if(file->empty()) {                                                                \
+				FBLOG_WARN(#class "::" #setter "_file", "Invalid file URL: " << arg);          \
+				throw FB::script_error(std::string("Invalid file URL: ") + PRINT_STRING(arg)); \
+			}                                                                                  \
+		}                                                                                      \
+		setter(file);                                                                          \
+	}                                                                                          \
 
 #define IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)                  \
 	StringPtr class::BOOST_PP_CAT(getter, _file)() const {                        \
 		StringPtr ret = getter();                                                 \
 		if(ret) {                                                                 \
-			FB::URI uri = mFactory->getFileManager()->fileToUri(*ret);            \
+			FB::URI uri = getFactory()->getFileManager()->fileToUri(*ret);        \
 			if(FileManagerAPI::isFile(uri)) {                                     \
 				ret = uri.toString();                                             \
 			} else {                                                              \
@@ -170,6 +170,15 @@
 		return ret;                                                               \
 	}                                                                             \
 
+#define GET_FILE(function, arg)                                                             \
+	if(arg) {                                                                               \
+		FB::URI uri(*arg);                                                                  \
+		arg = getFactory()->getFileManager()->uriToFile(uri);                               \
+		if(arg->empty()) {                                                                  \
+			FBLOG_WARN(function, "Invalid file URL: " << arg);                              \
+			throw FB::script_error(std::string("Invalid file URL: ") + PRINT_STRING(arg));  \
+		}                                                                                   \
+	}                                                                                       \
 
 #define IMPLEMENT_PROPERTY_FILE(class, getter, setter)         \
 	IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)   \
@@ -181,8 +190,8 @@
 #define FB_ASSERT_CORE FB_ASSERT_MSG(mCore!=NULL, "Core not initialized")
 
 #ifdef CORE_THREADED
-#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(mFactory->getCoreMutex(), boost::defer_lock); \
-	if(mUsed) scopedLock.lock();
+#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(getFactory()->getCoreMutex(), boost::defer_lock); \
+	if(!isOwned()) scopedLock.lock();
 #else
 #define CORE_MUTEX
 #endif //CORE_THREADED

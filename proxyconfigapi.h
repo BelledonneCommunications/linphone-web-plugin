@@ -34,13 +34,13 @@ private:
 	LinphoneProxyConfig *mProxyConfig;
 
 	ProxyConfigAPI(LinphoneProxyConfig *proxyConfig);
+	ProxyConfigAPI();
 	
 protected:
-	void initProxy();
+	virtual void initProxy();
 	
 public:
-	ProxyConfigAPI();
-	~ProxyConfigAPI();
+	virtual ~ProxyConfigAPI();
 
 	CoreAPIPtr getCore() const;
 

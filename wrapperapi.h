@@ -34,20 +34,26 @@ class WrapperAPI: public FB::JSAPIAuto {
 private:
 	ThreadGroup mThreads;
 	
-protected:
 	mutable FactoryAPIPtr mFactory;
-	virtual void setFactory(FactoryAPIPtr factory);
-	
-	bool mUsed;
+	bool mOwned;
 	bool mConst;
+protected:
+	virtual void setFactory(FactoryAPIPtr factory);
+	virtual void initProxy() = 0;
 	
 	WrapperAPI(const std::string& description = "<JSAPI-Auto Javascript Object>");
+	virtual ~WrapperAPI() = 0;
 	
 	// Thread
 	void attachThread(const boost::shared_ptr<boost::thread> &thread);
 	void detachThread(boost::thread::id id);
 	
 public:
+	virtual FactoryAPIPtr getFactory() const;
+	void disOwn();
+	void own();
+	bool isOwned() const;
+	bool isConst() const;
 	virtual void shutdown();
 };
 

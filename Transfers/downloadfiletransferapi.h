@@ -47,7 +47,8 @@ private:
 	static void threadFctHolder(DownloadFileTransferAPIPtr &self, const boost::shared_array<uint8_t> &data, size_t &size);
 	
 public:
-	~DownloadFileTransferAPI();
+	virtual ~DownloadFileTransferAPI();
+	
 	virtual void start();
 	virtual void cancel();
 	virtual long long getTransferedBytes();

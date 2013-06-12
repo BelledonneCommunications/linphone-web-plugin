@@ -88,13 +88,6 @@ const std::string FileManagerAPI::Protocol::local("local");
 FileManagerAPI::Protocol::Protocol(const std::string &protocol, const boost::filesystem::path& path): mProtocol(protocol), mPath(path) {
 }
 
-void FileManagerAPI::initProxy() {
-	registerMethod("copy", make_method(this, &FileManagerAPI::copy));
-	registerMethod("exists", make_method(this, &FileManagerAPI::exists));
-	registerMethod("mkdir", make_method(this, &FileManagerAPI::mkdir));
-	registerMethod("remove", make_method(this, &FileManagerAPI::remove));
-}
-
 const std::string &FileManagerAPI::Protocol::getProtocol() {
 	return mProtocol;
 }
@@ -111,9 +104,15 @@ const boost::filesystem::path &FileManagerAPI::Protocol::getPath() {
 FileManagerAPI::FileManagerAPI():
 	WrapperAPI(APIDescription(this)) {
 	FBLOG_DEBUG("FileManagerAPI::FileManagerAPI", "this=" << this);
-	initProxy();
 }
 
+void FileManagerAPI::initProxy() {
+	registerMethod("copy", make_method(this, &FileManagerAPI::copy));
+	registerMethod("exists", make_method(this, &FileManagerAPI::exists));
+	registerMethod("mkdir", make_method(this, &FileManagerAPI::mkdir));
+	registerMethod("remove", make_method(this, &FileManagerAPI::remove));
+}
+	
 FileManagerAPI::~FileManagerAPI() {
 	FBLOG_DEBUG("FileManagerAPI::~FileManagerAPI", "this=" << this);
 }
@@ -141,7 +140,7 @@ void FileManagerAPI::initializePaths() {
 	
 	// Local
 	boost::filesystem::path localPath = tempPath; // fallback
-	CorePluginPtr plugin = mFactory->getPlugin();
+	CorePluginPtr plugin = getFactory()->getPlugin();
 	FB::URI loc = FB::URI::fromString(plugin->getHost()->getDOMWindow()->getLocation());
 	if(!loc.domain.empty()) {
 		std::string localPathString = FB::System::getLocalAppDataPath(FBSTRING_ProductName);
@@ -191,7 +190,7 @@ void FileManagerAPI::initializePaths() {
 }
 
 bool FileManagerAPI::isSameHost(const FB::URI &uri) {
-	CorePluginPtr plugin = mFactory->getPlugin();
+	CorePluginPtr plugin = getFactory()->getPlugin();
 	FB::URI hostUri = plugin->getHost()->getDOMWindow()->getLocation();
 	bool ret = boost::iequals(hostUri.protocol, uri.protocol) &&
 		boost::iequals(hostUri.domain, uri.domain);
@@ -305,7 +304,7 @@ FileTransferAPIPtr FileManagerAPI::copy(const std::string &sourceUrl, const std:
 		callback->InvokeAsync("", FB::variant_list_of(false)("Can't use different host with remote resource (XSS)"));
 		return FileTransferAPIPtr();
 	}
-	FileTransferAPIPtr fileTransfer = mFactory->getFileTransfer(sourceUri, targetUri, callback);
+	FileTransferAPIPtr fileTransfer = getFactory()->getFileTransfer(sourceUri, targetUri, callback);
 	return fileTransfer;
 }
 

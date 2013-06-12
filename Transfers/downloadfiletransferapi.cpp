@@ -36,7 +36,7 @@ DownloadFileTransferAPI::~DownloadFileTransferAPI() {
 
 void DownloadFileTransferAPI::start() {
 	FBLOG_DEBUG("DownloadFileTransferAPI::start", "this=" << this);
-	mFileStr = mFactory->getFileManager()->uriToFile(mTargetUri);
+	mFileStr = getFactory()->getFileManager()->uriToFile(mTargetUri);
 	if(mFileStr.empty()) {
 		FBLOG_DEBUG("DownloadFileTransferAPI::start", "Invalid target path");
 		onError("Invalid target path");
@@ -56,7 +56,7 @@ void DownloadFileTransferAPI::start() {
 	req.setCallback(boost::bind(&DownloadFileTransferAPI::callbackFct, this, _1, _2, _3, _4));
 	
 	// Start transfer
-	FB::BrowserHostPtr host = mFactory->getPlugin()->getHost();
+	FB::BrowserHostPtr host = getFactory()->getPlugin()->getHost();
 	try {
 		mHelper = FileStreamHelper::AsyncRequest(host, req);
 	} catch(std::runtime_error&) {

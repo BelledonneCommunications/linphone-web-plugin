@@ -26,25 +26,23 @@ namespace LinphoneWeb {
 
 CallParamsAPI::CallParamsAPI(LinphoneCallParams *callParams) :
 		WrapperAPI(APIDescription(this)), mCallParams(callParams) {
-	mUsed = true;
-	mConst = false;
 	FBLOG_DEBUG("CallParamsAPI::CallParamsAPI", "this=" << this << "\t" << "callParams=" << callParams);
-	initProxy();
 }
 
 CallParamsAPI::CallParamsAPI(const LinphoneCallParams *callParams) :
 		WrapperAPI(APIDescription(this)), mCallParams(const_cast<LinphoneCallParams *>(callParams)) {
-	mUsed = true;
-	mConst = true;
 	FBLOG_DEBUG("CallParamsAPI::CallParamsAPI", "this=" << this << "\t" << "callParams=" << callParams);
-	initProxy();
 }
 
+CallParamsAPI::~CallParamsAPI() {
+	FBLOG_DEBUG("CallParamsAPI::~CallParamsAPI", "this=" << this);
+}
+	
 void CallParamsAPI::initProxy() {
 	registerMethod("copy", make_method(this, &CallParamsAPI::copy));
 	registerProperty("localConferenceMode", make_property(this, &CallParamsAPI::localConferenceMode));
 
-	if (!mConst) {
+	if (!isConst()) {
 		registerProperty("audioBandwidthLimit", make_property(this, &CallParamsAPI::getAudioBandwidthLimit, &CallParamsAPI::setAudioBandwidthLimit));
 		registerProperty("earlyMediaSendingEnabled", make_property(this, &CallParamsAPI::earlyMediaSendingEnabled, &CallParamsAPI::enableEarlyMediaSending));
 		registerProperty("lowBandwidthEnabled", make_property(this, &CallParamsAPI::lowBandwidthEnabled, &CallParamsAPI::enableLowBandwidth));
@@ -151,12 +149,8 @@ CallParamsAPIPtr CallParamsAPI::copy() const {
 
 	FBLOG_DEBUG("CallParamsAPI::getRefKey", "this=" << this);
 	CallParamsAPIPtr ret(new CallParamsAPI(linphone_call_params_copy(mCallParams)));
-	ret->mUsed = false;
+	ret->own();
 	return ret;
-}
-
-CallParamsAPI::~CallParamsAPI() {
-	FBLOG_DEBUG("CallParamsAPI::~CallParamsAPI", "this=" << this);
 }
 	
 } // LinphoneWeb

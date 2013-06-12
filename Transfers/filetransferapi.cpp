@@ -23,7 +23,6 @@ namespace LinphoneWeb {
 
 FileTransferAPI::FileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
 	WrapperAPI(APIDescription(this)), mSourceUri(sourceUri), mTargetUri(targetUri), mCallback(callback), mDone(false) {
-	initProxy();
 }
 
 void FileTransferAPI::initProxy() {

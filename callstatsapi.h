@@ -34,10 +34,10 @@ private:
 	CallStatsAPI(const LinphoneCallStats *callStats);
 
 protected:
-	void initProxy();
+	virtual void initProxy();
 	
 public:
-	~CallStatsAPI();
+	virtual ~CallStatsAPI();
 
 	int getType() const;
 	void setType(int type);

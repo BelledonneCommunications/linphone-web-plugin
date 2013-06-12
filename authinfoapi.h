@@ -33,14 +33,14 @@ private:
 
 	AuthInfoAPI(LinphoneAuthInfo *authInfo);
 	AuthInfoAPI(const LinphoneAuthInfo *authInfo);
+	AuthInfoAPI(const StringPtr &username, const StringPtr &userid,
+				const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm);
 	
 protected:
-	void initProxy();
+	virtual void initProxy();
 	
 public:
-	AuthInfoAPI(const StringPtr &username, const StringPtr &userid,
-			const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm);
-	~AuthInfoAPI();
+	virtual ~AuthInfoAPI();
 
 	StringPtr getHa1() const;
 	void setHa1(const StringPtr &ha1);

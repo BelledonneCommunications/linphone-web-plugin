@@ -37,7 +37,7 @@ UploadFileTransferAPI::~UploadFileTransferAPI() {
 
 void UploadFileTransferAPI::start() {
 	FBLOG_DEBUG("UploadFileTransferAPI::start", "this=" << this);
-	mFileStr = mFactory->getFileManager()->uriToFile(mSourceUri);
+	mFileStr = getFactory()->getFileManager()->uriToFile(mSourceUri);
 	if(mFileStr.empty()) {
 		FBLOG_DEBUG("UploadFileTransferAPI::start", "Invalid source path");
 		onError("Invalid source path");
@@ -111,7 +111,7 @@ void UploadFileTransferAPI::threadFct() {
 		req.setCallback(boost::bind(&UploadFileTransferAPI::callbackFct, this, _1, _2, _3, _4));
 		
 		// Start transfer
-		FB::BrowserHostPtr host = mFactory->getPlugin()->getHost();
+		FB::BrowserHostPtr host = getFactory()->getPlugin()->getHost();
 		try {
 			mHelper = FileStreamHelper::AsyncRequest(host, req);
 		} catch(std::runtime_error&) {

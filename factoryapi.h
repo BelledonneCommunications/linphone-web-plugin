@@ -48,8 +48,11 @@ private:
 	CorePluginWeakPtr mPlugin;
 	FileManagerAPIWeakPtr mFileManager;
 	template<typename TypePtr>
-	TypePtr get(TypePtr ptr) {
+	TypePtr get(TypePtr ptr, bool owned, bool constant) {
+		ptr->mOwned = owned;
+		ptr->mConst = constant;
 		ptr->setFactory(shared_from_this());
+		ptr->initProxy();
 		return ptr;
 	}
 #ifdef CORE_THREADED
@@ -69,6 +72,8 @@ public:
 	// AuthInfo
 	AuthInfoAPIPtr getAuthInfo(LinphoneAuthInfo *authInfo);
 	AuthInfoAPIPtr getAuthInfo(const LinphoneAuthInfo *authInfo);
+	AuthInfoAPIPtr getAuthInfo(const StringPtr &username, const StringPtr &userid,
+				const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm);
 	
 	// Call
 	CallAPIPtr getCall(LinphoneCall *call);
@@ -92,6 +97,7 @@ public:
 	
 	// ProxyConfig
 	ProxyConfigAPIPtr getProxyConfig(LinphoneProxyConfig *proxyConfig);
+	ProxyConfigAPIPtr getProxyConfig();
 	
 	// SipTransports
 	SipTransportsAPIPtr getSipTransports();

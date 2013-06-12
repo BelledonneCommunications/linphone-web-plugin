@@ -27,24 +27,18 @@ namespace LinphoneWeb {
 
 PayloadTypeAPI::PayloadTypeAPI(PayloadType *payloadType) :
 		WrapperAPI(APIDescription(this)), mPayloadType(payloadType) {
-	mUsed = true;
-	mConst = false;
 	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << ", payloadType=" << payloadType);
 	//mPayloadType->user_data = this;
-	initProxy();
 }
 
 PayloadTypeAPI::PayloadTypeAPI(const PayloadType *payloadType) :
 		WrapperAPI(APIDescription(this)), mPayloadType(const_cast<PayloadType *>(payloadType)) {
-	mUsed = true;
-	mConst = true;
 	FBLOG_DEBUG("PayloadTypeAPI::PayloadTypeAPI", "this=" << this << ", payloadType=" << payloadType);
 	//mPayloadType->user_data = this;
-	initProxy();
 }
 
 void PayloadTypeAPI::initProxy() {
-	if (mConst) {
+	if (isConst()) {
 		registerProperty("type", make_property(this, &PayloadTypeAPI::getType));
 		registerProperty("clockRate", make_property(this, &PayloadTypeAPI::getClockRate));
 		registerProperty("bitsPerSample", make_property(this, &PayloadTypeAPI::getBitsPerSample));
@@ -234,8 +228,8 @@ void PayloadTypeAPI::setFlags(int flags) {
 PayloadTypeAPIPtr PayloadTypeAPI::clone() const {
 	CORE_MUTEX
 	
-	PayloadTypeAPIPtr ret = mFactory->getPayloadType(payload_type_clone(mPayloadType));
-	ret->mUsed = false;
+	PayloadTypeAPIPtr ret = getFactory()->getPayloadType(payload_type_clone(mPayloadType));
+	ret->own();
 	return ret;
 }
 

@@ -34,10 +34,10 @@ private:
 	SipTransportsAPI();
 	
 protected:
-	void initProxy();
+	virtual void initProxy();
 	
 public:
-	~SipTransportsAPI();
+	virtual ~SipTransportsAPI();
 	
 	inline const LCSipTransports *getRef() const {
 		return &mSipTransports;

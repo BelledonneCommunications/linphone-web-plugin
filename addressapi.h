@@ -36,10 +36,10 @@ private:
 	AddressAPI(const StringPtr &uri);
 
 protected:
-	void initProxy();
+	virtual void initProxy();
 	
 public:
-	~AddressAPI();
+	virtual ~AddressAPI();
 
 	StringPtr asString() const;
 	StringPtr asStringUriOnly() const;

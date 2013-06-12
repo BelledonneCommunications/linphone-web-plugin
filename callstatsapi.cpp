@@ -26,14 +26,11 @@ namespace LinphoneWeb {
 
 CallStatsAPI::CallStatsAPI(const LinphoneCallStats *callStats) :
 		WrapperAPI(APIDescription(this)), mCallStats(const_cast<LinphoneCallStats *>(callStats)) {
-	mUsed = true;
-	mConst = true;
 	FBLOG_DEBUG("CallStatsAPI::CallStatsAPI", "this=" << this << "\t" << "callStats=" << callStats);
-	initProxy();
 }
 
 void CallStatsAPI::initProxy() {
-	if (mConst) {
+	if (isConst()) {
 		registerProperty("type", make_property(this, &CallStatsAPI::getType));
 		registerProperty("roundTripDelay", make_property(this, &CallStatsAPI::getRoundTripDelay));
 	} else {

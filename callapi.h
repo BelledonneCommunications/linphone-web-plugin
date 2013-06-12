@@ -40,10 +40,11 @@ private:
 	CallAPI(LinphoneCall *call);
 	
 protected:
-	void initProxy();
+	virtual void initProxy();
 	
 public:
-	~CallAPI();
+	virtual ~CallAPI();
+	
 	CallStatsAPIPtr getAudioStats() const;
 	StringPtr getAuthenticationToken() const;
 	bool getAuthenticationTokenVerified() const;

@@ -36,10 +36,10 @@ private:
 	CallLogAPI(LinphoneCallLog *callLog);
 	
 protected:
-	void initProxy();
+	virtual void initProxy();
 	
 public:
-	~CallLogAPI();
+	virtual ~CallLogAPI();
 
 	StringPtr getRefKey() const;
 	void setRefKey(const StringPtr &refKey);

@@ -38,7 +38,7 @@ LocalFileTransferAPI::~LocalFileTransferAPI() {
 void LocalFileTransferAPI::start() {
 	FBLOG_DEBUG("LocalFileTransferAPI::start", "this=" << this);
 	
-	mSourceFileStr = mFactory->getFileManager()->uriToFile(mSourceUri);
+	mSourceFileStr = getFactory()->getFileManager()->uriToFile(mSourceUri);
 	if(mSourceFileStr.empty()) {
 		FBLOG_DEBUG("LocalFileTransferAPI::start", "Invalid source path");
 		onError("Invalid source path");
@@ -46,7 +46,7 @@ void LocalFileTransferAPI::start() {
 	}
 	FBLOG_DEBUG("LocalFileTransferAPI::start", "sourceFile=" << mSourceFileStr);
 	
-	mTargetFileStr = mFactory->getFileManager()->uriToFile(mTargetUri);
+	mTargetFileStr = getFactory()->getFileManager()->uriToFile(mTargetUri);
 	if(mTargetFileStr.empty()) {
 		FBLOG_DEBUG("LocalFileTransferAPI::start", "Invalid target path");
 		onError("Invalid target path");

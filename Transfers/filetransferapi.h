@@ -41,7 +41,7 @@ protected:
 	FileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
 	virtual void onSuccess(bool done);
 	virtual void onError(const std::string &error);
-	void initProxy();
+	virtual void initProxy();
 	
 public:
 	virtual void start() = 0;

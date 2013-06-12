@@ -27,21 +27,15 @@ namespace LinphoneWeb {
 
 ProxyConfigAPI::ProxyConfigAPI(LinphoneProxyConfig *proxyConfig):
 		WrapperAPI(APIDescription(this)), mProxyConfig(proxyConfig) {
-	mUsed = true;
-	mConst = false;
 	FBLOG_DEBUG("ProxyConfigAPI::ProxyConfigAPI", "this=" << this << "\t" << "proxyConfig=" << proxyConfig);
 	linphone_proxy_config_set_user_data(mProxyConfig, this);
-	initProxy();
 }
 
 ProxyConfigAPI::ProxyConfigAPI():
 		WrapperAPI(APIDescription(this)) {
-	mUsed = false;
-	mConst = false;
 	FBLOG_DEBUG("ProxyConfigAPI::ProxyConfigAPI", "this=" << this);
 	mProxyConfig = linphone_proxy_config_new();
 	linphone_proxy_config_set_user_data(mProxyConfig, this);
-	initProxy();
 }
 
 void ProxyConfigAPI::initProxy() {
@@ -72,8 +66,10 @@ void ProxyConfigAPI::initProxy() {
 ProxyConfigAPI::~ProxyConfigAPI() {
 	FBLOG_DEBUG("ProxyConfigAPI::~ProxyConfigAPI", "this=" << this);
 	linphone_proxy_config_set_user_data(mProxyConfig, NULL);
-	if (!mUsed) {
-		linphone_proxy_config_destroy(mProxyConfig);
+	if (isOwned()) {
+		if(mProxyConfig) {
+			linphone_proxy_config_destroy(mProxyConfig);
+		}
 	}
 }
 
@@ -88,7 +84,7 @@ CoreAPIPtr ProxyConfigAPI::getCore() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("ProxyConfigAPI::getCore", "this=" << this);
-	return mFactory->getCore(linphone_proxy_config_get_core(mProxyConfig));
+	return getFactory()->getCore(linphone_proxy_config_get_core(mProxyConfig));
 }
 
 StringPtr ProxyConfigAPI::getContactParameters() const {

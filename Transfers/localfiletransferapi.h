@@ -52,7 +52,8 @@ protected:
 	virtual void onError(const std::string &error);
 	
 public:
-	~LocalFileTransferAPI();
+	virtual ~LocalFileTransferAPI();
+	
 	virtual void start();
 	virtual void cancel();
 	virtual long long getTransferedBytes();

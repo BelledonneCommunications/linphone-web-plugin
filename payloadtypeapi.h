@@ -37,10 +37,10 @@ private:
 	PayloadTypeAPI(const PayloadType *payloadType);
 	
 protected:
-	void initProxy();
+	virtual void initProxy();
 
 public:
-	~PayloadTypeAPI();
+	virtual ~PayloadTypeAPI();
 
 	PayloadTypeAPIPtr clone() const;
 	StringPtr getRtpmap() const;

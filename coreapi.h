@@ -49,7 +49,7 @@ class CoreAPI: public WrapperAPI {
 	friend class FactoryAPI;
 public:
 	CoreAPI();
-	~CoreAPI();
+	virtual ~CoreAPI();
 
 	// Read-only property
 	StringPtr getVersion() const;
@@ -309,7 +309,7 @@ public: // Internal Use
 	
 
 protected:
-	void initProxy();
+	virtual void initProxy();
 	
 private:
 	mutable FileManagerAPIPtr mFileManager;

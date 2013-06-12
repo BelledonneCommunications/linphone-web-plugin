@@ -78,10 +78,11 @@ public:
 	FB::URI fileToUri(const std::string &file);
 	
 protected:
-	void initProxy();
+	virtual void initProxy();
 	
 public:
-	~FileManagerAPI();
+	virtual ~FileManagerAPI();
+	
 	FileTransferAPIPtr copy(const std::string &sourceUrl, const std::string &targetUrl, const FB::JSObjectPtr& callback);
 	void exists(const std::string &url, const FB::JSObjectPtr& callback);
 	void remove(const std::string &url, const FB::JSObjectPtr& callback);

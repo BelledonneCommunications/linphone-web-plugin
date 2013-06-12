@@ -140,8 +140,6 @@ void CoreAPI::iterateWithMutex() {
 ///////////////////////////////////////////////////////////////////////////////
 CoreAPI::CoreAPI() :
 		WrapperAPI(APIDescription(this)), mCore(NULL) {
-	mUsed = true;
-	mConst = false;
 	FBLOG_DEBUG("CoreAPI::CoreAPI", "this=" << this);
 	
 	mIterateInterval = 20;
@@ -150,7 +148,6 @@ CoreAPI::CoreAPI() :
 #else //CORE_THREADED
 	mTimer = FB::Timer::getTimer(mIterateInterval, true, boost::bind(&CoreAPI::iterate, this));
 #endif //CORE_THREADED
-	initProxy();
 }
 
 void CoreAPI::initProxy() {
@@ -325,7 +322,13 @@ void CoreAPI::initProxy() {
 
 int CoreAPI::init(const StringPtr &config, const StringPtr &factory) {
 	FBLOG_DEBUG("CoreAPI::init", "this=" << this << "\t" << "config=" << (config?config.get():"(NULL)") << "\t" << "factory=" << (factory?factory.get():"(NULL)"));
+	StringPtr realConfig = config;
+	StringPtr realFactory = factory;
+	GET_FILE("CoreAPI::init", realConfig);
+	GET_FILE("CoreAPI::init", realFactory);
+	
 	boost::mutex::scoped_lock scoped_instance_count_lock(sInstanceMutex);
+	
 	
 #ifdef CORE_THREADED
 	if(!mCoreThread) {
@@ -363,7 +366,7 @@ int CoreAPI::init(const StringPtr &config, const StringPtr &factory) {
 		mVtable.show = CoreAPI::wrapper_show;
 		mVtable.call_encryption_changed = CoreAPI::wrapper_call_encryption_changed;
 		
-		mCore = linphone_core_new(&mVtable, STRING_TO_CHARPTR(config), STRING_TO_CHARPTR(factory), (void *) this);
+		mCore = linphone_core_new(&mVtable, STRING_TO_CHARPTR(realConfig), STRING_TO_CHARPTR(realFactory), (void *) this);
 		if (linphone_core_get_user_data(mCore) != this) {
 			FBLOG_ERROR("CoreAPI::init", "Too old version of linphone core!");
 			--sInstanceCount;
@@ -496,7 +499,7 @@ CallAPIPtr CoreAPI::invite(const StringPtr &url) {
 
 	FBLOG_DEBUG("CoreAPI::invite", "this=" << this << "\t" << "url=" << url);
 	LinphoneCall *call = linphone_core_invite(mCore, STRING_TO_CHARPTR(url));
-	CallAPIPtr shared_call = mFactory->getCall(call);
+	CallAPIPtr shared_call = getFactory()->getCall(call);
 	return shared_call;
 }
 
@@ -508,7 +511,7 @@ CallAPIPtr CoreAPI::inviteAddress(const AddressAPIPtr &address) {
 
 	FBLOG_DEBUG("CoreAPI::inviteAddress", "this=" << this << "\t" << "address=" << address);
 	LinphoneCall *call = linphone_core_invite_address(mCore, address->getRef());
-	CallAPIPtr shared_call = mFactory->getCall(call);
+	CallAPIPtr shared_call = getFactory()->getCall(call);
 	return shared_call;
 }
 
@@ -520,7 +523,7 @@ CallAPIPtr CoreAPI::inviteWithParams(const StringPtr &url, const CallParamsAPIPt
 
 	FBLOG_DEBUG("CoreAPI::invite", "this=" << this << "\t" << "url=" << url << "\t" << "params=" << params);
 	LinphoneCall *call = linphone_core_invite_with_params(mCore, STRING_TO_CHARPTR(url), params->getRef());
-	CallAPIPtr shared_call = mFactory->getCall(call);
+	CallAPIPtr shared_call = getFactory()->getCall(call);
 	return shared_call;
 }
 
@@ -532,7 +535,7 @@ CallAPIPtr CoreAPI::inviteAddressWithParams(const AddressAPIPtr &address, const 
 
 	FBLOG_DEBUG("CoreAPI::inviteAddress", "this=" << this << "\t" << "address=" << address << "\t" << "params=" << params);
 	LinphoneCall *call = linphone_core_invite_address_with_params(mCore, address->getRef(), params->getRef());
-	CallAPIPtr shared_call = mFactory->getCall(call);
+	CallAPIPtr shared_call = getFactory()->getCall(call);
 	return shared_call;
 }
 
@@ -557,7 +560,7 @@ CallAPIPtr CoreAPI::getCurrentCall() {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getCurrentCall", "this=" << this);
-	return mFactory->getCall(linphone_core_get_current_call(mCore));
+	return getFactory()->getCall(linphone_core_get_current_call(mCore));
 }
 
 int CoreAPI::terminateCall(const CallAPIPtr &call) {
@@ -661,7 +664,7 @@ CallParamsAPIPtr CoreAPI::createDefaultCallParameters() {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::createDefaultCallParameters", "this=" << this);
-	return mFactory->getCallParams(linphone_core_create_default_call_parameters(mCore));
+	return getFactory()->getCallParams(linphone_core_create_default_call_parameters(mCore));
 }
 
 void CoreAPI::setIncTimeout(int timeout) {
@@ -1146,7 +1149,7 @@ std::vector<PayloadTypeAPIPtr> CoreAPI::getAudioCodecs() const {
 	FBLOG_DEBUG("CoreAPI::getAudioCodecs", "this=" << this);
 	std::vector<PayloadTypeAPIPtr> list;
 	for (const MSList *node = linphone_core_get_audio_codecs(mCore); node != NULL; node = ms_list_next(node)) {
-		list.push_back(mFactory->getPayloadType(reinterpret_cast<PayloadType*>(node->data)));
+		list.push_back(getFactory()->getPayloadType(reinterpret_cast<PayloadType*>(node->data)));
 	}
 	return list;
 }
@@ -1158,7 +1161,7 @@ std::vector<PayloadTypeAPIPtr> CoreAPI::getVideoCodecs() const {
 	FBLOG_DEBUG("CoreAPI::getVideoCodecs", "this=" << this);
 	std::vector<PayloadTypeAPIPtr> list;
 	for (const MSList *node = linphone_core_get_video_codecs(mCore); node != NULL; node = ms_list_next(node)) {
-		list.push_back(mFactory->getPayloadType(reinterpret_cast<PayloadType*>(node->data)));
+		list.push_back(getFactory()->getPayloadType(reinterpret_cast<PayloadType*>(node->data)));
 	}
 	return list;
 }
@@ -1216,7 +1219,7 @@ int CoreAPI::addProxyConfig(const ProxyConfigAPIPtr &config) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::addProxyConfig", "this=" << this << "\t" << "config=" << config);
-	config->mUsed = true;
+	config->disOwn();
 	return linphone_core_add_proxy_config(mCore, config->getRef());
 }
 
@@ -1233,7 +1236,7 @@ void CoreAPI::removeProxyConfig(const ProxyConfigAPIPtr &config) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::removeProxyConfig", "this=" << this << "\t" << "config=" << config);
-	config->mUsed = true;
+	config->disOwn();
 	linphone_core_remove_proxy_config(mCore, config->getRef());
 }
 
@@ -1244,7 +1247,7 @@ std::vector<ProxyConfigAPIPtr> CoreAPI::getProxyConfigList() const {
 	FBLOG_DEBUG("CoreAPI::getProxyConfigList", "this=" << this);
 	std::vector<ProxyConfigAPIPtr> list;
 	for (const MSList *node = linphone_core_get_proxy_config_list(mCore); node != NULL; node = ms_list_next(node)) {
-		list.push_back(mFactory->getProxyConfig(reinterpret_cast<LinphoneProxyConfig*>(node->data)));
+		list.push_back(getFactory()->getProxyConfig(reinterpret_cast<LinphoneProxyConfig*>(node->data)));
 	}
 	return list;
 }
@@ -1254,7 +1257,7 @@ void CoreAPI::setDefaultProxy(const ProxyConfigAPIPtr &config) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setDefaultProxy", "this=" << this << "\t" << "config=" << config);
-	config->mUsed = true;
+	config->disOwn();
 	linphone_core_set_default_proxy(mCore, config->getRef());
 }
 
@@ -1266,7 +1269,7 @@ ProxyConfigAPIPtr CoreAPI::getDefaultProxy() const {
 	LinphoneProxyConfig *ptr = NULL;
 	linphone_core_get_default_proxy(mCore, &ptr);
 	if (ptr != NULL)
-		return mFactory->getProxyConfig(ptr);
+		return getFactory()->getProxyConfig(ptr);
 	return ProxyConfigAPIPtr();
 }
 
@@ -1669,7 +1672,7 @@ SipTransportsAPIPtr CoreAPI::getSipTransports() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getSipTransports", "this=" << this);
-	SipTransportsAPIPtr sipTransports = mFactory->getSipTransports();
+	SipTransportsAPIPtr sipTransports = getFactory()->getSipTransports();
 	linphone_core_get_sip_transports(mCore, sipTransports->getRef());
 	return sipTransports;
 }
@@ -1806,7 +1809,7 @@ AuthInfoAPIPtr CoreAPI::findAuthInfo(const StringPtr &realm, const StringPtr &us
 
 	FBLOG_DEBUG("CoreAPI::findAuthInfo", "this=" << this << "\t" << "realm=" << realm << "\t" << "username=" << username);
 	const LinphoneAuthInfo* authInfo = linphone_core_find_auth_info(mCore, STRING_TO_CHARPTR(realm), STRING_TO_CHARPTR(username));
-	return mFactory->getAuthInfo(authInfo);
+	return getFactory()->getAuthInfo(authInfo);
 }
 
 std::vector<AuthInfoAPIPtr> CoreAPI::getAuthInfoList() const {
@@ -1816,7 +1819,7 @@ std::vector<AuthInfoAPIPtr> CoreAPI::getAuthInfoList() const {
 	FBLOG_DEBUG("CoreAPI::getAuthInfoList", "this=" << this);
 	std::vector<AuthInfoAPIPtr> list;
 	for (const MSList *node = linphone_core_get_auth_info_list(mCore); node != NULL; node = ms_list_next(node)) {
-		list.push_back(mFactory->getAuthInfo(reinterpret_cast<LinphoneAuthInfo*>(node->data)));
+		list.push_back(getFactory()->getAuthInfo(reinterpret_cast<LinphoneAuthInfo*>(node->data)));
 	}
 	return list;
 }
@@ -1838,9 +1841,9 @@ void CoreAPI::clearAllAuthInfo() {
 
 FileManagerAPIPtr CoreAPI::getFileManager() const {
 	
-	FBLOG_DEBUG("CoreAPI::newProxyConfig", "this=" << this);
+	FBLOG_DEBUG("CoreAPI::getFileManager", "this=" << this);
 	if(!mFileManager) {
-		mFileManager = mFactory->getFileManager();
+		mFileManager = getFactory()->getFileManager();
 	}
 	return mFileManager;
 }
@@ -1848,14 +1851,14 @@ FileManagerAPIPtr CoreAPI::getFileManager() const {
 ProxyConfigAPIPtr CoreAPI::newProxyConfig() const {
 
 	FBLOG_DEBUG("CoreAPI::newProxyConfig", "this=" << this);
-	return boost::make_shared<ProxyConfigAPI>();
+	return getFactory()->getProxyConfig();
 }
 
 AuthInfoAPIPtr CoreAPI::newAuthInfo(const StringPtr &username, const StringPtr &userid, const StringPtr &passwd, const StringPtr &ha1,
 		const StringPtr &realm) const {
 
 	FBLOG_DEBUG("CoreAPI::newAuthInfo", "this=" << this);
-	return boost::make_shared<AuthInfoAPI>(username, userid, passwd, ha1, realm);
+	return getFactory()->getAuthInfo(username, userid, passwd, ha1, realm);
 }
 
 
@@ -2226,12 +2229,12 @@ void CoreAPI::onGlobalStateChanged(LinphoneGlobalState gstate, const char *messa
 
 void CoreAPI::onRegistrationStateChanged(LinphoneProxyConfig *cfg, LinphoneRegistrationState rstate, const char *message) {
 	FBLOG_DEBUG("CoreAPI::onRegistrationStateChanged",  "this=" << this << "\t" << "cfg=" << cfg << "\t" << "rstate=" << rstate << "\t" << "message=" << message);
-	fire_registrationStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), mFactory->getProxyConfig(cfg), rstate, CHARPTR_TO_STRING(message));
+	fire_registrationStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), getFactory()->getProxyConfig(cfg), rstate, CHARPTR_TO_STRING(message));
 }
 
 void CoreAPI::onCallStateChanged(LinphoneCall *call, LinphoneCallState cstate, const char *message) {
 	FBLOG_DEBUG("CoreAPI::onCallStateChanged",  "this=" << this << "\t" << "call=" << call << "\t" << "cstate=" << cstate << "\t" << "message=" << message);
-	fire_callStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), mFactory->getCall(call), cstate, CHARPTR_TO_STRING(message));
+	fire_callStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), getFactory()->getCall(call), cstate, CHARPTR_TO_STRING(message));
 }
 
 void CoreAPI::onNotifyPresenceRecv(LinphoneFriend * lf) {

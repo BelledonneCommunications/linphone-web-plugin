@@ -26,27 +26,18 @@ namespace LinphoneWeb {
 
 AddressAPI::AddressAPI(LinphoneAddress *address) :
 		WrapperAPI(APIDescription(this)), mAddress(address) {
-	mUsed = true;
-	mConst = false;
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this << "\t" << "address=" << address);
-	initProxy();
 }
 
 AddressAPI::AddressAPI(const LinphoneAddress *address) :
 		WrapperAPI(APIDescription(this)), mAddress(const_cast<LinphoneAddress *>(address)) {
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this << "\t" << "address=" << address);
-	mUsed = true;
-	mConst = true;
-	initProxy();
 }
 
 AddressAPI::AddressAPI(const StringPtr &uri) :
 		WrapperAPI(APIDescription(this)) {
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this);
 	mAddress = linphone_address_new(STRING_TO_CHARPTR(uri));
-	mUsed = false;
-	mConst = false;
-	initProxy();
 }
 
 void AddressAPI::initProxy() {
@@ -54,7 +45,7 @@ void AddressAPI::initProxy() {
 	registerMethod("asStringUriOnly", make_method(this, &AddressAPI::asStringUriOnly));
 	registerMethod("clean", make_method(this, &AddressAPI::clean));
 	registerMethod("clone", make_method(this, &AddressAPI::clone));
-	if (mConst) {
+	if (isConst()) {
 		registerProperty("displayName", make_property(this, &AddressAPI::getDisplayName));
 		registerProperty("domain", make_property(this, &AddressAPI::getDomain));
 		registerProperty("port", make_property(this, &AddressAPI::getPort));
@@ -72,8 +63,10 @@ void AddressAPI::initProxy() {
 
 AddressAPI::~AddressAPI() {
 	FBLOG_DEBUG("AddressAPI::~AddressAPI", "this=" << this);
-	if(!mUsed) {
-		linphone_address_destroy(mAddress);
+	if(isOwned()) {
+		if(mAddress != NULL) {
+			linphone_address_destroy(mAddress);
+		}
 	}
 }
 
@@ -103,7 +96,7 @@ AddressAPIPtr AddressAPI::clone() const {
 	
 	FBLOG_DEBUG("AddressAPI::clone", "this=" << this);
 	AddressAPIPtr ret(new AddressAPI(linphone_address_clone(mAddress)));
-	ret->mUsed = false;
+	ret->own();
 	return ret;
 }
 
