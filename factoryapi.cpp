@@ -233,6 +233,12 @@ SipTransportsAPIPtr FactoryAPI::getSipTransports() {
 	SipTransportsAPIPtr shared_ptr = SipTransportsAPIPtr(new SipTransportsAPI());
 	return get(shared_ptr, true, false);
 }
+	
+VideoPolicyAPIPtr FactoryAPI::getVideoPolicy() {
+	FBLOG_DEBUG("FactoryAPI::getVideoPolicy", "this=" << this);
+	VideoPolicyAPIPtr shared_ptr = VideoPolicyAPIPtr(new VideoPolicyAPI());
+	return get(shared_ptr, true, false);
+}
 
 FileManagerAPIPtr FactoryAPI::getFileManager() {
 	FBLOG_DEBUG("FactoryAPI::getFileManager", "this=" << this);

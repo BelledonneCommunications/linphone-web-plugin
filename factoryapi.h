@@ -34,6 +34,7 @@
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
 #include "siptransportsapi.h"
+#include "videopolicyapi.h"
 
 #include "filemanagerapi.h"
 #include "Transfers/filetransferapi.h"
@@ -101,6 +102,9 @@ public:
 	
 	// SipTransports
 	SipTransportsAPIPtr getSipTransports();
+	
+	// VideoPolicy
+	VideoPolicyAPIPtr getVideoPolicy();
 	
 	// File
 	FileManagerAPIPtr getFileManager();

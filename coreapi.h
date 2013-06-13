@@ -35,12 +35,14 @@ namespace LinphoneWeb {
 FB_FORWARD_PTR(AddressAPI)
 FB_FORWARD_PTR(AuthInfoAPI)
 FB_FORWARD_PTR(CallAPI)
+FB_FORWARD_PTR(CallLogAPI)
 FB_FORWARD_PTR(CallParamsAPI)
 FB_FORWARD_PTR(CallStatsParamsAPI)
 FB_FORWARD_PTR(CoreAPI)
 FB_FORWARD_PTR(PayloadTypeAPI)
 FB_FORWARD_PTR(ProxyConfigAPI)
 FB_FORWARD_PTR(SipTransportsAPI)
+FB_FORWARD_PTR(VideoPolicyAPI)
 
 FB_FORWARD_PTR(FileManagerAPI)
 
@@ -86,6 +88,9 @@ public:
 	void setInCallTimeout(int timeout);
 	int getMaxCalls() const;
 	void setMaxCalls(int max);
+	std::vector<CallAPIPtr> getCalls() const;
+	int getCallsNb() const;
+	int getMissedCallsCount() const;
 
 	// Conference functions
 	int addAllToConference();
@@ -125,6 +130,8 @@ public:
 	unsigned long getNativePreviewWindowId() const;
 	bool getUsePreviewWindow() const;
 	void setUsePreviewWindow(bool enable);
+	VideoPolicyAPIPtr getVideoPolicy() const;
+	void setVideoPolicy(const VideoPolicyAPIPtr &videoPolicy);
 
 	// Sound device functions
 	void reloadSoundDevices();
@@ -162,6 +169,10 @@ public:
 	void setPrimaryContact(const StringPtr &contact);
 	StringPtr getPrimaryContact() const;
 	void refreshRegisters();
+	
+	// CallLog functions
+	void clearCallLogs();
+	std::vector<CallLogAPIPtr> getCallLogs() const;
 
 	// Network functions
 	void setAudioPort(int port);
@@ -216,6 +227,10 @@ public:
 	void setAudioJittcomp(int comp);
 	int getVideoJittcomp() const;
 	void setVideoJittcomp(int comp);
+	int getFirewallPolicy() const;
+	void setFirewallPolicy(int policy);
+	int getMediaEncryption() const;
+	void setMediaEncryption(int encryption);
 
 	// AuthInfo functions
 	void addAuthInfo(const AuthInfoAPIPtr &authInfo);

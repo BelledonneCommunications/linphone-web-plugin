@@ -44,6 +44,7 @@
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
 #include "siptransportsapi.h"
+#include "videopolicyapi.h"
 
 namespace LinphoneWeb {
 
@@ -188,6 +189,9 @@ void CoreAPI::initProxy() {
 	registerProperty("incTimeout", make_property(this, &CoreAPI::getIncTimeout, &CoreAPI::setIncTimeout));
 	registerProperty("inCallTimeout", make_property(this, &CoreAPI::getInCallTimeout, &CoreAPI::setInCallTimeout));
 	registerProperty("maxCalls", make_property(this, &CoreAPI::getMaxCalls, &CoreAPI::setMaxCalls));
+	registerProperty("calls", make_property(this, &CoreAPI::getCalls));
+	registerProperty("callsNb", make_property(this, &CoreAPI::getCallsNb));
+	registerProperty("missedCallsCount", make_property(this, &CoreAPI::getMissedCallsCount));
 
 	// Conference bindings
 	registerMethod("addAllToConference", make_method(this, &CoreAPI::addAllToConference));
@@ -215,6 +219,7 @@ void CoreAPI::initProxy() {
 	registerProperty("nativePreviewWindowId", make_property(this, &CoreAPI::getNativePreviewWindowId, &CoreAPI::setNativePreviewWindowId));
 	registerProperty("nativeVideoWindowId", make_property(this, &CoreAPI::getNativeVideoWindowId, &CoreAPI::setNativeVideoWindowId));
 	registerProperty("usePreviewWindow", make_property(this, &CoreAPI::getUsePreviewWindow, &CoreAPI::setUsePreviewWindow));
+	registerProperty("videoPolicy", make_property(this, &CoreAPI::getVideoPolicy, &CoreAPI::setVideoPolicy));
 
 	// Sound device bindings
 	registerMethod("reloadSoundDevices", make_method(this, &CoreAPI::reloadSoundDevices));
@@ -244,6 +249,10 @@ void CoreAPI::initProxy() {
 	registerProperty("defaultProxy", make_property(this, &CoreAPI::getDefaultProxy, &CoreAPI::setDefaultProxy));
 	registerMethod("refreshRegisters", make_method(this, &CoreAPI::refreshRegisters));
 
+	// CallLog bindings
+	registerMethod("clearCallLogs", make_method(this, &CoreAPI::clearCallLogs));
+	registerProperty("callLogs", make_property(this, &CoreAPI::getCallLogs));
+	
 	// Network bindings
 	registerProperty("audioPort", make_property(this, &CoreAPI::getAudioPort, &CoreAPI::setAudioPort));
 	registerProperty("audioPortRange", make_property(this, &CoreAPI::getAudioPortRange, &CoreAPI::setAudioPortRange));
@@ -271,7 +280,9 @@ void CoreAPI::initProxy() {
 	registerProperty("videoAdaptiveJittcomp", make_property(this, &CoreAPI::videoAdaptiveJittcompEnabled, &CoreAPI::enableVideoAdaptiveJittcomp));
 	registerProperty("audioJittcomp", make_property(this, &CoreAPI::getAudioJittcomp, &CoreAPI::setAudioJittcomp));
 	registerProperty("videoJittcomp", make_property(this, &CoreAPI::getVideoJittcomp, &CoreAPI::setVideoJittcomp));
-
+	registerProperty("firewallPolicy", make_property(this, &CoreAPI::getFirewallPolicy, &CoreAPI::setFirewallPolicy));
+	registerProperty("mediaEncryption", make_property(this, &CoreAPI::getMediaEncryption, &CoreAPI::setMediaEncryption));
+	
 	// AuthInfo bindings
 	registerMethod("addAuthInfo", make_method(this, &CoreAPI::addAuthInfo));
 	registerMethod("abortAuthentication", make_method(this, &CoreAPI::abortAuthentication));
@@ -714,7 +725,35 @@ void CoreAPI::setMaxCalls(int max) {
 	FBLOG_DEBUG("CoreAPI::setMaxCalls", "this=" << this << "\t" << "max=" << max);
 	linphone_core_set_max_calls(mCore, max);
 }
+	
+std::vector<CallAPIPtr> CoreAPI::getCalls() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getCalls", "this=" << this);
+	std::vector<CallAPIPtr> list;
+	for (const MSList *node = linphone_core_get_calls(mCore); node != NULL; node = ms_list_next(node)) {
+		list.push_back(getFactory()->getCall(reinterpret_cast<LinphoneCall *>(node->data)));
+	}
+	return list;
+}
 
+int CoreAPI::getCallsNb() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getCallsNb", "this=" << this);
+	return linphone_core_get_calls_nb(mCore);
+}
+
+int CoreAPI::getMissedCallsCount() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getMissedCallsCount", "this=" << this);
+	return linphone_core_get_missed_calls_count(mCore);
+}
+	
 /*
  *
  * Conference functions
@@ -985,6 +1024,7 @@ bool CoreAPI::getUsePreviewWindow() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getUsePreviewWindow", "this=" << this);
+	FBLOG_ERROR("CoreAPI::getUsePreviewWindow", "NOT IMPLEMENTED");
 	return FALSE; // TODO Don't have API yet
 }
 
@@ -994,6 +1034,28 @@ void CoreAPI::setUsePreviewWindow(bool enable) {
 	
 	FBLOG_DEBUG("CoreAPI::setUsePreviewWindow", "this=" << this << "\t" << "enable=" << enable);
 	linphone_core_use_preview_window(mCore, enable);
+}
+
+VideoPolicyAPIPtr CoreAPI::getVideoPolicy() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getVideoPolicy", "this=" << this);
+	VideoPolicyAPIPtr videoPolicy = getFactory()->getVideoPolicy();
+	FBLOG_ERROR("CoreAPI::getVideoPolicy", "NOT IMPLEMENTED");
+	//TODO
+	//linphone_core_get_video_policy(mCore);
+	return videoPolicy;
+}
+
+void CoreAPI::setVideoPolicy(const VideoPolicyAPIPtr &videoPolicy) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setVideoPolicy", "this=" << this << "\t" << "policy=" << videoPolicy);
+	FBLOG_ERROR("CoreAPI::setVideoPolicy","NOT IMPLEMENTED");
+	//TODO
+	//linphone_core_set_video_policy(mCore, videoPolicy->getRef());
 }
 
 /*
@@ -1149,7 +1211,7 @@ std::vector<PayloadTypeAPIPtr> CoreAPI::getAudioCodecs() const {
 	FBLOG_DEBUG("CoreAPI::getAudioCodecs", "this=" << this);
 	std::vector<PayloadTypeAPIPtr> list;
 	for (const MSList *node = linphone_core_get_audio_codecs(mCore); node != NULL; node = ms_list_next(node)) {
-		list.push_back(getFactory()->getPayloadType(reinterpret_cast<PayloadType*>(node->data)));
+		list.push_back(getFactory()->getPayloadType(reinterpret_cast< ::PayloadType*>(node->data)));
 	}
 	return list;
 }
@@ -1161,7 +1223,7 @@ std::vector<PayloadTypeAPIPtr> CoreAPI::getVideoCodecs() const {
 	FBLOG_DEBUG("CoreAPI::getVideoCodecs", "this=" << this);
 	std::vector<PayloadTypeAPIPtr> list;
 	for (const MSList *node = linphone_core_get_video_codecs(mCore); node != NULL; node = ms_list_next(node)) {
-		list.push_back(getFactory()->getPayloadType(reinterpret_cast<PayloadType*>(node->data)));
+		list.push_back(getFactory()->getPayloadType(reinterpret_cast< ::PayloadType*>(node->data)));
 	}
 	return list;
 }
@@ -1297,6 +1359,33 @@ void CoreAPI::refreshRegisters() {
 	linphone_core_refresh_registers(mCore);
 }
 
+	
+/*
+ *
+ * CallLog functions
+ *
+ */
+	
+void CoreAPI::clearCallLogs() {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::clearCallLogs", "this=" << this);
+	linphone_core_clear_call_logs(mCore);
+}
+	
+std::vector<CallLogAPIPtr> CoreAPI::getCallLogs() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getCallLogs", "this=" << this);
+	std::vector<CallLogAPIPtr> list;
+	for (const MSList *node = linphone_core_get_call_logs(mCore); node != NULL; node = ms_list_next(node)) {
+		list.push_back(getFactory()->getCallLog(reinterpret_cast<LinphoneCallLog *>(node->data)));
+	}
+	return list;
+}
+	
 /*
  *
  * Network functions
@@ -1772,6 +1861,39 @@ void CoreAPI::setVideoJittcomp(int comp) {
 	FBLOG_DEBUG("CoreAPI::setVideoJittcomp", "this=" << this << "\t" << "comp=" << comp);
 	linphone_core_set_video_jittcomp(mCore, comp);
 }
+	
+int CoreAPI::getFirewallPolicy() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getFirewallPolicy", "this=" << this);
+	return linphone_core_get_firewall_policy(mCore);
+}
+
+void CoreAPI::setFirewallPolicy(int policy) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setFirewallPolicy", "this=" << this << "\t" << "policy=" << policy);
+	linphone_core_set_firewall_policy(mCore, (LinphoneFirewallPolicy)policy);
+}
+	
+int CoreAPI::getMediaEncryption() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getMediaEncryption", "this=" << this);
+	return linphone_core_get_media_encryption(mCore);
+}
+
+void CoreAPI::setMediaEncryption(int encryption) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setMediaEncryption", "this=" << this << "\t" << "encryption=" << encryption);
+	linphone_core_set_media_encryption(mCore, (LinphoneMediaEncryption)encryption);
+}
+	
 
 /*
  *
@@ -1996,6 +2118,7 @@ StringPtr CoreAPI::getUserAgentName() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getUserAgentName", "this=" << this);
+	FBLOG_ERROR("CoreAPI::getUserAgentName", "NOT IMPLEMENTED");
 	//TODO
 	//return CHARPTR_TO_STRING(linphone_core_get_user_agent_name(mCore));
 	return StringPtr();
@@ -2006,6 +2129,7 @@ void CoreAPI::setUserAgentName(const StringPtr &name) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setUserAgentName", "this=" << this << "\t" << "name=" << name);
+	FBLOG_ERROR("CoreAPI::setUserAgentName", "NOT IMPLEMENTED");
 	//TODO
 	//linphone_core_set_user_agent_name(mCore, name);
 	return;
@@ -2016,6 +2140,7 @@ StringPtr CoreAPI::getUserAgentVersion() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getUserAgentVersion", "this=" << this);
+	FBLOG_ERROR("CoreAPI::getUserAgentVersion", "NOT IMPLEMENTED");
 	//TODO
 	//return CHARPTR_TO_STRING(linphone_core_get_user_agent_version(mCore));
 	return StringPtr();
@@ -2026,6 +2151,7 @@ void CoreAPI::setUserAgentVersion(const StringPtr &version) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setUserAgentVersion", "this=" << this << "\t" << "version=" << version);
+	FBLOG_ERROR("CoreAPI::setUserAgentVersion", "NOT IMPLEMENTED");
 	//TODO
 	//linphone_core_set_user_agent_version(mCore, name);
 	return;
@@ -2081,6 +2207,7 @@ StringPtr CoreAPI::getPlayFile() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getPlayFile", "this=" << this);
+	FBLOG_ERROR("CoreAPI::getPlayFile", "NOT IMPLEMENTED");
 	//TODO STUB
 	return StringPtr();// CHARPTR_TO_STRING(linphone_core_get_ringback(mCore));
 }
@@ -2100,6 +2227,7 @@ StringPtr CoreAPI::getRecordFile() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::getRecordFile", "this=" << this);
+	FBLOG_ERROR("CoreAPI::getRecordFile", "NOT IMPLEMENTED");
 	//TODO STUB
 	return StringPtr();// CHARPTR_TO_STRING(linphone_core_get_ringback(mCore));
 }
