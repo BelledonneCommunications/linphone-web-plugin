@@ -39,22 +39,22 @@ VideoPolicyAPI::~VideoPolicyAPI() {
 
 void VideoPolicyAPI::setAutomaticallyInitiate(bool enable) {
 	FBLOG_DEBUG("VideoPolicyAPI::setAutomaticallyInitiate", "this=" << this << "\t" << "enable=" << enable);
-	mVideoPolicy.automatically_initiate = enable;
+	mVideoPolicy.automatically_initiate = (enable)? TRUE : FALSE;
 }
 
 bool VideoPolicyAPI::getAutomaticallyInitiate() const {
 	FBLOG_DEBUG("VideoPolicyAPI::getAutomaticallyInitiate", "this=" << this);
-	return mVideoPolicy.automatically_initiate;
+	return (mVideoPolicy.automatically_initiate == TRUE)? true : false;
 }
 
 void VideoPolicyAPI::setAutomaticallyAccept(bool enable) {
 	FBLOG_DEBUG("VideoPolicyAPI::setAutomaticallyAccept", "this=" << this << "\t" << "enable=" << enable);
-	mVideoPolicy.automatically_accept = enable;
+	mVideoPolicy.automatically_accept = (enable)? TRUE : FALSE;
 }
 
 bool VideoPolicyAPI::getAutomaticallyAccept() const {
 	FBLOG_DEBUG("VideoPolicyAPI::getAutomaticallyAccept", "this=" << this);
-	return mVideoPolicy.automatically_accept;
+	return (mVideoPolicy.automatically_accept == TRUE)? true : false;
 }
 
 } // LinphoneWeb
