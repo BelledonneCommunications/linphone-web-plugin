@@ -55,10 +55,11 @@ set(FBSTRING_PluginFileName "np${PLUGIN_NAME}")
 
 # Internal settings name (common between all version of plugin)
 set(FBSTRING_ProductName "Linphone Web")
+# Internal settings domain (common between all version of plugin)
+set(FBSTRING_ProductDomain "linphone-web")
 
 # Shown name
 set(FBSTRING_PluginName "Linphone Web")
-
 # Plugin id
 set(FBSTRING_PluginDomain "linphone-web")
 

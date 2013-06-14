@@ -135,7 +135,7 @@ void FileManagerAPI::initializePaths() {
 	
 	// Temp
 	boost::filesystem::path tempPath = boost::filesystem::path(FB::System::getTempPath());
-	tempPath /= FBSTRING_ProductName;
+	tempPath /= FBSTRING_PluginDomain;
 	tempPath /= boost::filesystem::unique_path();
 	
 	// Local
@@ -143,7 +143,7 @@ void FileManagerAPI::initializePaths() {
 	CorePluginPtr plugin = getFactory()->getPlugin();
 	FB::URI loc = FB::URI::fromString(plugin->getHost()->getDOMWindow()->getLocation());
 	if(!loc.domain.empty()) {
-		std::string localPathString = FB::System::getLocalAppDataPath(FBSTRING_ProductName);
+		std::string localPathString = FB::System::getLocalAppDataPath(FBSTRING_PluginDomain);
 		if(!localPathString.empty()) {
 			localPath = boost::filesystem::path(localPathString);
 			localPath /= std::string(loc.domain);
