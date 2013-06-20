@@ -22,22 +22,19 @@
 #include <SystemHelpers.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
-#include <locale>
+#include <iterator>
+#include <src/3rdParty/utf8/utf8.h>
 
 namespace LinphoneWeb {
 
-static bool invalidChar(char c) {
-	return !std::isprint(static_cast<unsigned char>(c), std::locale::classic());
-}
-
-StringPtr CHARPTR_TO_STRING(const char *str) {
-	if(str != NULL) {
-		std::string filtredString(str);
+StringPtr CHARPTR_TO_STRING(const char *cstr) {
+	if(cstr != NULL) {
+		std::string str(cstr);
+		std::string filtredStr;
 		
-		// Remove not printable chars
-		filtredString.erase(std::remove_if(filtredString.begin(), filtredString.end(), invalidChar), filtredString.end());
-
-		return StringPtr(filtredString);
+		// Replace invalid utf8 chars
+		utf8::replace_invalid(str.begin(), str.end(), std::back_inserter(filtredStr));
+		return StringPtr(filtredStr);
 	}
 	return StringPtr();
 }

@@ -110,7 +110,7 @@ std::string APIDescription(T *ptr) {
 	return ss.str();
 }
 
-StringPtr CHARPTR_TO_STRING(const char *str);
+StringPtr CHARPTR_TO_STRING(const char *cstr);
 const char *STRING_TO_CHARPTR(const StringPtr &str);
 std::string PRINT_STRING(const StringPtr &str);
 	
