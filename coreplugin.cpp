@@ -72,7 +72,7 @@ void CorePlugin::log(OrtpLogLevel lev, const char *fmt, va_list args) {
 	if(plugin) {
 		CoreAPIPtr core = FB::ptr_cast<CoreAPI>(plugin->getRootJSAPI());
 		if(core) {
-			core->log(lname, msg);
+			core->log(lname, CHARPTR_TO_STRING(msg));
 		}
 	}
 	ortp_free(msg);

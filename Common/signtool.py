@@ -23,6 +23,5 @@ if __name__ == '__main__':
         print "Password file not found"
         sys.exit(3)
   actual_args = sys.argv[1:]
-  print actual_args
   ret = subprocess.call(actual_args)
   sys.exit(ret)

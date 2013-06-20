@@ -22,11 +22,24 @@
 #include <SystemHelpers.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
+#include <locale>
 
 namespace LinphoneWeb {
 
+static bool invalidChar(char c) {
+	return !std::isprint(static_cast<unsigned char>(c), std::locale::classic());
+}
+
 StringPtr CHARPTR_TO_STRING(const char *str) {
-	return (str != NULL) ? StringPtr(str) : StringPtr();
+	if(str != NULL) {
+		std::string filtredString(str);
+		
+		// Remove not printable chars
+		filtredString.erase(std::remove_if(filtredString.begin(), filtredString.end(), invalidChar), filtredString.end());
+
+		return StringPtr(filtredString);
+	}
+	return StringPtr();
 }
 
 const char *STRING_TO_CHARPTR(const StringPtr &str) {
