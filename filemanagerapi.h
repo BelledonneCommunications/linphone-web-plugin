@@ -21,7 +21,7 @@
 #define H_FILEMANAGERAPI
 
 #include "macro.h"
-#include <linphonecore.h>
+#include <linphone/linphonecore.h>
 #include "wrapperapi.h"
 
 #include <URI.h>

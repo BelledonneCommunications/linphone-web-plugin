@@ -20,7 +20,7 @@
 #ifndef H_ADDRESSAPI
 #define H_ADDRESSAPI
 
-#include <linphonecore.h>
+#include <linphone/linphonecore.h>
 #include "wrapperapi.h"
 
 namespace LinphoneWeb {

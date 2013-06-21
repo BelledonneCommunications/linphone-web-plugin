@@ -27,7 +27,7 @@
 #include <Timer.h>
 #include <variant_list.h>
 
-#include <linphonecore.h>
+#include <linphone/linphonecore.h>
 #include "wrapperapi.h"
 
 namespace LinphoneWeb {

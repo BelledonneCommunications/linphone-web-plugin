@@ -20,7 +20,7 @@
 #ifndef H_CALLPARAMSAPI
 #define H_CALLPARAMSAPI
 
-#include <linphonecore.h>
+#include <linphone/linphonecore.h>
 #include "wrapperapi.h"
 
 namespace LinphoneWeb {

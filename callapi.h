@@ -20,7 +20,7 @@
 #ifndef H_CALLAPI
 #define H_CALLAPI
 
-#include <linphonecore.h>
+#include <linphone/linphonecore.h>
 #include "wrapperapi.h"
 
 namespace LinphoneWeb {

@@ -23,7 +23,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <iterator>
-#include <src/3rdParty/utf8/utf8.h>
+#include <utf8.h>
 
 namespace LinphoneWeb {
 

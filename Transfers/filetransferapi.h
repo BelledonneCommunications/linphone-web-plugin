@@ -20,7 +20,6 @@
 #ifndef H_FILETRANSFERAPI
 #define H_FILETRANSFERAPI
 
-#include <linphonecore.h>
 #include "../wrapperapi.h"
 
 #include <URI.h>

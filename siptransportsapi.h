@@ -20,7 +20,7 @@
 #ifndef H_SIPTRANSPORTSAPI
 #define H_SIPTRANSPORTSAPI
 
-#include <linphonecore.h>
+#include <linphone/linphonecore.h>
 #include "wrapperapi.h"
 
 namespace LinphoneWeb {

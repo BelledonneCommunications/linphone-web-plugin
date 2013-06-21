@@ -20,7 +20,7 @@
 #ifndef H_PROXYCONFIGAPI
 #define H_PROXYCONFIGAPI
 
-#include <linphonecore.h>
+#include <linphone/linphonecore.h>
 #include "wrapperapi.h"
 
 namespace LinphoneWeb {

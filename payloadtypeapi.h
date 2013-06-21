@@ -20,7 +20,7 @@
 #ifndef H_PAYLOADTYPEAPI
 #define H_PAYLOADTYPEAPI
 
-#include <linphonecore.h>
+#include <linphone/linphonecore.h>
 #include "wrapperapi.h"
 
 namespace LinphoneWeb {

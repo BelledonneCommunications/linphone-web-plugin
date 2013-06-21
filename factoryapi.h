@@ -22,7 +22,7 @@
 
 #include <JSAPIAuto.h>
 #include <URI.h>
-#include <linphonecore.h>
+#include <linphone/linphonecore.h>
 
 #include "addressapi.h"
 #include "authinfoapi.h"

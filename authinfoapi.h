@@ -20,7 +20,7 @@
 #ifndef H_AUTHINFOAPI
 #define H_AUTHINFOAPI
 
-#include <linphonecore.h>
+#include <linphone/linphonecore.h>
 #include "wrapperapi.h"
 
 namespace LinphoneWeb {
