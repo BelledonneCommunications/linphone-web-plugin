@@ -238,7 +238,7 @@ std::string FileManagerAPI::uriToFile(const FB::URI &uri) {
 			return std::string();
 		}
 		
-		// boost::iequals(uri.protocol, internalProtocol)
+		// Get the Protocol from protocol name
 		std::list<Protocol>::iterator it = std::find_if(mProtocols.begin(),
 								                        mProtocols.end(),
 								                        boost::bind(std::equal_to<std::string>(), boost::ref(uri.protocol), boost::bind(&Protocol::getProtocol, _1)));
@@ -263,7 +263,7 @@ FB::URI FileManagerAPI::fileToUri(const std::string &file) {
 		std::string absFile = boost::filesystem::normalize(boost::filesystem::path(file)).generic_string();
 		std::string path;
 		
-		// boost::starts_with(absFile, path)
+		// Get the Protocol with a path starting by the "absFile" file path
 		std::list<Protocol>::iterator it = std::find_if(mProtocols.begin(),
 								                        mProtocols.end(),
 								                        boost::bind(boost::starts_with<std::string, std::string>, boost::ref(absFile), boost::bind(&boost::filesystem::path::string<std::string>, boost::bind(&Protocol::getPath, _1))));

@@ -30,11 +30,11 @@ namespace LinphoneWeb {
 StringPtr CHARPTR_TO_STRING(const char *cstr) {
 	if(cstr != NULL) {
 		std::string str(cstr);
-		std::string filtredStr;
+		std::string filteredStr;
 		
 		// Replace invalid utf8 chars
-		utf8::replace_invalid(str.begin(), str.end(), std::back_inserter(filtredStr));
-		return StringPtr(filtredStr);
+		utf8::replace_invalid(str.begin(), str.end(), std::back_inserter(filteredStr));
+		return StringPtr(filteredStr);
 	}
 	return StringPtr();
 }
