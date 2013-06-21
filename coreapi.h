@@ -316,9 +316,9 @@ public: // Internal Use
 		return mCore;
 	}
 	
-	inline void log(const std::string &level, const StringPtr &msg) {
+	inline void log(const std::string &level, const char *cmsg) {
 		if(mLogHandler) {
-			mLogHandler->InvokeAsync("", FB::variant_list_of(level)(msg));
+			mLogHandler->InvokeAsync("", FB::variant_list_of(level)(CHARPTR_TO_STRING(cmsg)));
 		}
 	}
 	
