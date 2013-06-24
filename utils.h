@@ -30,8 +30,8 @@
 namespace LinphoneWeb {
 
 typedef boost::optional<std::string> StringPtr;
-typedef boost::optional<const std::string> StringConstPtr;
-
+std::ostream& operator<<(std::ostream &out, const StringPtr &string);
+	
 class ThreadGroup {
 private:
 	ThreadGroup(ThreadGroup const&);
@@ -113,7 +113,7 @@ std::string APIDescription(T *ptr) {
 StringPtr CHARPTR_TO_STRING(const char *cstr);
 const char *STRING_TO_CHARPTR(const StringPtr &str);
 std::string PRINT_STRING(const StringPtr &str);
-	
+
 } // LinphoneWeb
 
 #endif // H_UTILS

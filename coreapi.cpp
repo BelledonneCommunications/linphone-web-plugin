@@ -332,7 +332,7 @@ void CoreAPI::initProxy() {
 }
 
 int CoreAPI::init(const StringPtr &config, const StringPtr &factory) {
-	FBLOG_DEBUG("CoreAPI::init", "this=" << this << "\t" << "config=" << (config?config.get():"(NULL)") << "\t" << "factory=" << (factory?factory.get():"(NULL)"));
+	FBLOG_DEBUG("CoreAPI::init", "this=" << this << "\t" << "config=" << config << "\t" << "factory=" << factory);
 	StringPtr realConfig = config;
 	StringPtr realFactory = factory;
 	GET_FILE("CoreAPI::init", realConfig);

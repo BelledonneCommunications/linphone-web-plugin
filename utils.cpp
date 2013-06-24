@@ -26,6 +26,15 @@
 #include <utf8.h>
 
 namespace LinphoneWeb {
+	
+std::ostream& operator<<(std::ostream &out, const StringPtr &string) {
+	if(string) {
+		out << string->c_str();
+	} else {
+		out << "(NULL)";
+	}
+	return out;
+}
 
 StringPtr CHARPTR_TO_STRING(const char *cstr) {
 	if(cstr != NULL) {
