@@ -164,7 +164,7 @@ CoreAPIPtr FactoryAPI::getCore(LinphoneCore *core) {
 	FBLOG_DEBUG("FactoryAPI::getCore", "this=" << this << "\t" << "core=" << core);
 	if (core == NULL) {
 		CoreAPIPtr shared_ptr = CoreAPIPtr(new CoreAPI());
-		return get(shared_ptr, true, false);
+		return get(shared_ptr, false, false); /* Not really owned (keep to false in order lock mutex on functions call) */
 	}
 	
 	void *ptr = linphone_core_get_user_data(core);
