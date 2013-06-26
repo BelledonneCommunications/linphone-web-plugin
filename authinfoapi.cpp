@@ -38,7 +38,7 @@ AuthInfoAPI::AuthInfoAPI(const LinphoneAuthInfo *authInfo) :
 AuthInfoAPI::AuthInfoAPI(const StringPtr &username, const StringPtr &userid, const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm) :
 		WrapperAPI(APIDescription(this)) {
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI",
-			"this=" << this << "username=" << username << ", userid=" << userid << ", passwd=" << passwd << ", ha1" << ha1 << ", realm=" << realm);
+			"this=" << this << "\t" << "username=" << username << "\t" << "userid=" << userid << "\t" << "passwd=" << passwd << "\t" << "ha1" << ha1 << "\t" << "realm=" << realm);
 	mAuthInfo = linphone_auth_info_new(STRING_TO_CHARPTR(username), STRING_TO_CHARPTR(userid), STRING_TO_CHARPTR(passwd), STRING_TO_CHARPTR(ha1), STRING_TO_CHARPTR(realm));
 }
 

@@ -26,6 +26,7 @@ WrapperAPI::WrapperAPI(const std::string& description): FB::JSAPIAuto(descriptio
 	// Reserved names
 	setReserved("className");
 	setReserved("classList");
+	setReserved("parentNode");
 }
 	
 WrapperAPI::~WrapperAPI() {

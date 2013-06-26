@@ -61,6 +61,7 @@ int CallParamsAPI::getAudioBandwidthLimit() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CallParamsAPI::getAudioBandwidthLimit", "this=" << this);
+	FBLOG_ERROR("CallParamsAPI::getAudioBandwidthLimit", "NOT IMPLEMENTED");
 	// TODO Stub
 	//return linphone_call_params_get_audio_bandwidth_limit(mCallParams);
 	return -1;
