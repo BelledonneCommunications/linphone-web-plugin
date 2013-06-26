@@ -40,7 +40,7 @@ CorePluginPtr FactoryAPI::getPlugin() {
 	return plugin;
 }
 
-boost::mutex &FactoryAPI::getCoreMutex() {
+boost::recursive_mutex &FactoryAPI::getCoreMutex() {
 	return mCoreMutex;
 }
 

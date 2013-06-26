@@ -190,7 +190,7 @@
 #define FB_ASSERT_CORE FB_ASSERT_MSG(mCore!=NULL, "Core not initialized")
 
 #ifdef CORE_THREADED
-#define CORE_MUTEX boost::mutex::scoped_lock scopedLock(getFactory()->getCoreMutex(), boost::defer_lock); \
+#define CORE_MUTEX boost::recursive_mutex::scoped_lock scopedLock(getFactory()->getCoreMutex(), boost::defer_lock); \
 	if(!isOwned()) scopedLock.lock();
 #else
 #define CORE_MUTEX

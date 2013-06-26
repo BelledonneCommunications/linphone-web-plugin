@@ -57,14 +57,14 @@ private:
 		return ptr;
 	}
 #ifdef CORE_THREADED
-	mutable boost::mutex mCoreMutex;
+	mutable boost::recursive_mutex mCoreMutex;
 #endif
 public:
 	FactoryAPI(const CorePluginWeakPtr &plugin);
 	~FactoryAPI();
 	
 	CorePluginPtr getPlugin();
-	boost::mutex &getCoreMutex();
+	boost::recursive_mutex &getCoreMutex();
 	
 	// Address
 	AddressAPIPtr getAddress(LinphoneAddress *address);
