@@ -23,6 +23,9 @@ namespace LinphoneWeb {
 
 WrapperAPI::WrapperAPI(const std::string& description): FB::JSAPIAuto(description), mOwned(false), mConst(false) {
 	
+	// Reserved names
+	setReserved("className");
+	setReserved("classList");
 }
 	
 WrapperAPI::~WrapperAPI() {
