@@ -29,7 +29,7 @@ namespace LinphoneWeb {
 	
 std::ostream& operator<<(std::ostream &out, const StringPtr &string) {
 	if(string) {
-		out << string->c_str();
+		out << "\"" << string->c_str() << "\"";
 	} else {
 		out << "(NULL)";
 	}
