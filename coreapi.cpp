@@ -64,10 +64,10 @@ static int sInstanceCount = 0;
 #include <dlfcn.h>
 #include <pthread.h>
 #endif //WIN32
-void * CoreAPI::libHandle = NULL;
 
 // Increment reference counter on this lib to avoid a early unload
-void CoreAPI::refLib() {
+void *CoreAPI::refLib() {
+	void *libHandle = NULL;
 #ifdef WIN32
 	HMODULE module;
 	if(GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast<LPCTSTR>(&refLib), &module)) {
@@ -79,10 +79,11 @@ void CoreAPI::refLib() {
 		libHandle = dlopen(info.dli_fname, RTLD_LAZY);
 	}
 #endif //WIN32
+	return libHandle;
 }
 
 // Decrement reference counter on this lib
-void CoreAPI::unrefLib() {
+void CoreAPI::unrefLib(void *libHandle) {
 #ifdef WIN32
 	if(libHandle != NULL) {
 		FreeLibraryAndExitThread((HMODULE)libHandle, 0);
@@ -96,14 +97,14 @@ void CoreAPI::unrefLib() {
 #endif //WIN32
 }
 
-void CoreAPI::destroyThread(LinphoneCore *core) {
+void CoreAPI::destroyThread(LinphoneCore *core, void *libHandle) {
 	FBLOG_DEBUG("CoreAPI::destroyThread", "start" << "\t" << "core=" << core);
 	linphone_core_destroy(core);
 	sInstanceMutex.lock();
 	--sInstanceCount;
 	sInstanceMutex.unlock();
 	FBLOG_DEBUG("CoreAPI::destroyThread", "end" << "\t" << "core=" << core);
-	unrefLib();
+	unrefLib(libHandle);
 }
 
 void CoreAPI::iterateThread(CoreAPIPtr &core) {
@@ -405,8 +406,7 @@ int CoreAPI::uninit() {
 		
 #ifdef CORE_THREADED
 		// TODO find a better way to do that
-		refLib();
-		boost::thread t(boost::bind(CoreAPI::destroyThread, mCore));
+		boost::thread t(boost::bind(CoreAPI::destroyThread, mCore, refLib()));
 #else  //CORE_THREADED
 		mTimer->stop();
 		linphone_core_destroy(mCore);

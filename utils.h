@@ -59,12 +59,7 @@ public:
 
 	void removeThread(boost::thread::id id) {
 		boost::lock_guard<boost::shared_mutex> guard(mMutex);
-		auto it = mThreadsMap.begin();
-		while(it != mThreadsMap.end()) {
-			if(it->second->get_id() == id)
-				break;
-			++it;
-		}
+		auto it = mThreadsMap.find(id);
 		if (it != mThreadsMap.end()) {
 			mThreadsMap.erase(it);
 		}
@@ -72,9 +67,22 @@ public:
 
 	void joinAll() {
 		boost::shared_lock<boost::shared_mutex> guard(mMutex);
-
-		for (auto it = mThreadsMap.begin(), end = mThreadsMap.end(); it != end; ++it) {
-			(*it).second->join();
+		
+		while(mThreadsMap.size()) {
+			boost::shared_ptr<boost::thread> thread;
+			boost::thread::id id;
+			{
+				auto it = mThreadsMap.begin();
+				id = it->first;
+				thread = it->second;
+			}
+			guard.unlock();
+			
+			// Join & Remove
+			thread->join();
+			removeThread(id);
+			
+			guard.lock();
 		}
 	}
 

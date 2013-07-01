@@ -30,7 +30,9 @@ WrapperAPI::WrapperAPI(const std::string& description): FB::JSAPIAuto(descriptio
 }
 	
 WrapperAPI::~WrapperAPI() {
-	
+	// Ensure that all associated threads are ended
+	// But if all the thread keeps reference to object this should never do something
+	mThreads.joinAll();
 }
 
 void WrapperAPI::setFactory(FactoryAPIPtr factory) {
