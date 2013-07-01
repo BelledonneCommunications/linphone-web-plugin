@@ -69,6 +69,7 @@ public:
 	// Address
 	AddressAPIPtr getAddress(LinphoneAddress *address);
 	AddressAPIPtr getAddress(const LinphoneAddress *address);
+	AddressAPIPtr getAddress(const StringPtr &address);
 	
 	// AuthInfo
 	AuthInfoAPIPtr getAuthInfo(LinphoneAuthInfo *authInfo);

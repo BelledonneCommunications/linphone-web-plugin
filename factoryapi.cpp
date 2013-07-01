@@ -63,6 +63,14 @@ AddressAPIPtr FactoryAPI::getAddress(const LinphoneAddress *address) {
 	shared_ptr = AddressAPIPtr(new AddressAPI(address));
 	return get(shared_ptr, false, true);
 }
+	
+AddressAPIPtr FactoryAPI::getAddress(const StringPtr &address) {
+	FBLOG_DEBUG("FactoryAPI::getAddress", "this=" << this << "\t" << "address=" << address);
+	
+	AddressAPIPtr shared_ptr;
+	shared_ptr = AddressAPIPtr(new AddressAPI(address));
+	return get(shared_ptr, true, false);
+}
 
 AuthInfoAPIPtr FactoryAPI::getAuthInfo(LinphoneAuthInfo *authInfo) {
 	FBLOG_DEBUG("FactoryAPI::getAuthInfo", "this=" << this << "\t" << "authInfo=" << authInfo);

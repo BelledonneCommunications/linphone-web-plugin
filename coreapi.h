@@ -245,6 +245,7 @@ public:
 	ProxyConfigAPIPtr newProxyConfig() const;
 	AuthInfoAPIPtr newAuthInfo(const StringPtr &username, const StringPtr &userid,
 			const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm) const;
+	AddressAPIPtr newAddress(const StringPtr &address) const;
 
 	// Dtmf
 	void sendDtmf(const std::string &dtmf);
@@ -256,6 +257,10 @@ public:
 	void setUseRfc2833ForDtmf(bool enable);
 
 
+	// Presence
+	int getPresenceInfo() const;
+	void setPresenceInfo(int status);
+	
 	// Core helpers
 	int init(const StringPtr &config, const StringPtr &factory);
 	int uninit();

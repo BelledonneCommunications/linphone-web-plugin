@@ -305,6 +305,7 @@ void CoreAPI::initProxy() {
 	registerMethod("getFileManager", make_method(this, &CoreAPI::getFileManager));
 	registerMethod("newProxyConfig", make_method(this, &CoreAPI::newProxyConfig));
 	registerMethod("newAuthInfo", make_method(this, &CoreAPI::newAuthInfo));
+	registerMethod("newAddress", make_method(this, &CoreAPI::newAddress));
 
 	// Dtmf
 	registerMethod("sendDtmf", make_method(this, &CoreAPI::sendDtmf));
@@ -313,6 +314,9 @@ void CoreAPI::initProxy() {
 	registerProperty("useInfoForDtmf", make_property(this, &CoreAPI::getUseInfoForDtmf, &CoreAPI::setUseInfoForDtmf));
 	registerProperty("useRfc2833ForDtmf", make_property(this, &CoreAPI::getUseRfc2833ForDtmf, &CoreAPI::setUseRfc2833ForDtmf));
 
+	// Presence
+	registerProperty("presenceInfo", make_property(this, &CoreAPI::getPresenceInfo, &CoreAPI::setPresenceInfo));
+	
 	// Miscs
 	registerProperty("echoCancellationEnabled", make_property(this, &CoreAPI::echoCancellationEnabled, &CoreAPI::enableEchoCancellation));
 	registerProperty("echoLimiterEnabled", make_property(this, &CoreAPI::echoLimiterEnabled, &CoreAPI::enableEchoLimiter));
@@ -1979,8 +1983,19 @@ ProxyConfigAPIPtr CoreAPI::newProxyConfig() const {
 AuthInfoAPIPtr CoreAPI::newAuthInfo(const StringPtr &username, const StringPtr &userid, const StringPtr &passwd, const StringPtr &ha1,
 		const StringPtr &realm) const {
 
-	FBLOG_DEBUG("CoreAPI::newAuthInfo", "this=" << this);
+	FBLOG_DEBUG("CoreAPI::newAuthInfo", "this=" << this
+				<< "\t" << "username=" << username
+				<< "\t" << "userid=" << userid
+				<< "\t" << "passwd=" << passwd
+				<< "\t" << "ha1=" << ha1
+				<< "\t" << "realm=" << realm);
 	return getFactory()->getAuthInfo(username, userid, passwd, ha1, realm);
+}
+	
+AddressAPIPtr CoreAPI::newAddress(const StringPtr &address) const {
+	
+	FBLOG_DEBUG("CoreAPI::newAddress", "this=" << this << "\t" << "address=" << address);
+	return getFactory()->getAddress(address);
 }
 
 
@@ -2011,7 +2026,7 @@ void CoreAPI::playDtmf(const std::string &dtmf, int duration_ms) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::playDtmf", "this=" << this << "\t" << "dtmf="<< dtmf << ", duration_ms=" << duration_ms);
+	FBLOG_DEBUG("CoreAPI::playDtmf", "this=" << this << "\t" << "dtmf=" << dtmf << ", duration_ms=" << duration_ms);
 	if (dtmf.size() == 1)
 		linphone_core_play_dtmf(mCore, dtmf[0], duration_ms);
 }
@@ -2028,7 +2043,7 @@ void CoreAPI::setUseInfoForDtmf(bool enable) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::setUseInfoForDtmf", "this=" << this << "\t" << "enable="<< enable);
+	FBLOG_DEBUG("CoreAPI::setUseInfoForDtmf", "this=" << this << "\t" << "enable=" << enable);
 	linphone_core_set_use_info_for_dtmf(mCore, enable ? TRUE : FALSE);
 }
 
@@ -2045,10 +2060,35 @@ void CoreAPI::setUseRfc2833ForDtmf(bool enable) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::setUseRfc2833ForDtmf", "this=" << this << "\t" << "enable="<< enable);
+	FBLOG_DEBUG("CoreAPI::setUseRfc2833ForDtmf", "this=" << this << "\t" << "enable=" << enable);
 	linphone_core_set_use_rfc2833_for_dtmf(mCore, enable ? TRUE : FALSE);
 }
 
+	
+/*
+ *
+ * Presence functions
+ *
+ */
+	
+int CoreAPI::getPresenceInfo() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getPresenceInfo", "this=" << this);
+	return linphone_core_get_presence_info(mCore);
+}
+
+void CoreAPI::setPresenceInfo(int status) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setPresenceInfo", "this=" << this << "\t" << "status=" << status);
+	FBLOG_WARN("CoreAPI::setPresenceInfo", "Not correcly wrapper !!!!");
+	return linphone_core_set_presence_info(mCore, 0, NULL, (LinphoneOnlineStatus)status);
+}
+
+	
 /*
  *
  * Misc functions
