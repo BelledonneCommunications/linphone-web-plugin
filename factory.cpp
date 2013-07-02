@@ -85,6 +85,13 @@ LONG CALLBACK unhandled_handler(EXCEPTION_POINTERS* e) {
 #endif //DEBUG
 
 class PluginFactory: public FB::FactoryBase {
+private:
+#ifdef DEBUG
+#ifdef WIN32
+		void *mExceptionHandler;
+#endif //WIN32
+#endif //DEBUG
+
 public:
 	///////////////////////////////////////////////////////////////////////////////
 	/// @fn FB::PluginCorePtr createPlugin(const std::string& mimetype)
@@ -103,29 +110,37 @@ public:
 	/// @see FB::FactoryBase::globalPluginInitialize
 	///////////////////////////////////////////////////////////////////////////////
 	void globalPluginInitialize() {
+		FBLOG_DEBUG("PluginFactory::globalPluginInitialize", "Start");
 #ifdef DEBUG
 #ifdef WIN32
-		AddVectoredExceptionHandler(TRUE, unhandled_handler);
+		mExceptionHandler = AddVectoredExceptionHandler(TRUE, unhandled_handler);
+		FBLOG_DEBUG("PluginFactory::globalPluginInitialize", "Add exception handler(" << unhandled_handler << ")=" << mExceptionHandler);
 #endif //WIN32
 #endif //DEBUG
 		srand((unsigned int)time(NULL));
 
 		CorePlugin::StaticInitialize();
 		VideoPlugin::StaticInitialize();
+		FBLOG_DEBUG("PluginFactory::globalPluginInitialize", "End");
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
 	/// @see FB::FactoryBase::globalPluginDeinitialize
 	///////////////////////////////////////////////////////////////////////////////
 	void globalPluginDeinitialize() {
+		FBLOG_DEBUG("PluginFactory::globalPluginDeinitialize", "Start");
+
 		CorePlugin::StaticDeinitialize();
 		VideoPlugin::StaticDeinitialize();
 
 #ifdef DEBUG
 #ifdef WIN32
-		RemoveVectoredExceptionHandler(unhandled_handler);
+		RemoveVectoredExceptionHandler(mExceptionHandler);
+		FBLOG_DEBUG("PluginFactory::globalPluginInitialize", "Remove exception handler=" << mExceptionHandler);
 #endif //WIN32
 #endif //DEBUG
+
+		FBLOG_DEBUG("PluginFactory::globalPluginDeinitialize", "End");
 	}
 
 	void getLoggingMethods(FB::Log::LogMethodList& outMethods) {
