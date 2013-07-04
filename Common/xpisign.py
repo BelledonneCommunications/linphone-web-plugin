@@ -5,7 +5,7 @@ class PassFile:
                self.file = file
        def password(self, v):
                file = open(self.file, 'r');
-               line = file.read()
+               line = file.readline().strip()
                file.close()
                return line
 
