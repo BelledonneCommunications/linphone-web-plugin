@@ -280,6 +280,7 @@ public:
 	void setUserAgentName(const StringPtr &name);
 	StringPtr getUserAgentVersion() const;
 	void setUserAgentVersion(const StringPtr &version);
+	AddressAPIPtr interpretUrl(const StringPtr &url) const;
 
 	// File
 	DECLARE_PROPERTY_FILE(CoreAPI, getRing, setRing);

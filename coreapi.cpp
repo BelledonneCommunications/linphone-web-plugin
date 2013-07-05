@@ -323,6 +323,7 @@ void CoreAPI::initProxy() {
 	registerProperty("staticPictureFps", make_property(this, &CoreAPI::getStaticPictureFps, &CoreAPI::setStaticPictureFps));
 	registerProperty("userAgentName", make_property(this, &CoreAPI::getUserAgentName, &CoreAPI::setUserAgentName));
 	registerProperty("userAgentVersion", make_property(this, &CoreAPI::getUserAgentVersion, &CoreAPI::setUserAgentVersion));
+	registerMethod("interpretUrl", make_method(this, &CoreAPI::interpretUrl));
 	
 	// Log
 	registerProperty("logHandler", make_property(this, &CoreAPI::getLogHandler, &CoreAPI::setLogHandler));
@@ -2196,7 +2197,14 @@ void CoreAPI::setUserAgentVersion(const StringPtr &version) {
 	//linphone_core_set_user_agent_version(mCore, name);
 	return;
 }
-
+	
+AddressAPIPtr CoreAPI::interpretUrl(const StringPtr &url) const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::interpretUrl", "this=" << this << "\t" << "url=" << url);
+	return getFactory()->getAddress(linphone_core_interpret_url(mCore, STRING_TO_CHARPTR(url)));
+}
 
 /*
  *
