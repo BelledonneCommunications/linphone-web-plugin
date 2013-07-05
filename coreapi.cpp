@@ -2203,7 +2203,9 @@ AddressAPIPtr CoreAPI::interpretUrl(const StringPtr &url) const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::interpretUrl", "this=" << this << "\t" << "url=" << url);
-	return getFactory()->getAddress(linphone_core_interpret_url(mCore, STRING_TO_CHARPTR(url)));
+	AddressAPIPtr address = getFactory()->getAddress(linphone_core_interpret_url(mCore, STRING_TO_CHARPTR(url)));
+	address->own();
+	return address;
 }
 
 /*
