@@ -1047,9 +1047,7 @@ VideoPolicyAPIPtr CoreAPI::getVideoPolicy() const {
 	
 	FBLOG_DEBUG("CoreAPI::getVideoPolicy", "this=" << this);
 	VideoPolicyAPIPtr videoPolicy = getFactory()->getVideoPolicy();
-	FBLOG_ERROR("CoreAPI::getVideoPolicy", "NOT IMPLEMENTED");
-	//TODO
-	//linphone_core_get_video_policy(mCore);
+	*videoPolicy->getRef() = *linphone_core_get_video_policy(mCore);
 	return videoPolicy;
 }
 
@@ -1058,9 +1056,7 @@ void CoreAPI::setVideoPolicy(const VideoPolicyAPIPtr &videoPolicy) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CoreAPI::setVideoPolicy", "this=" << this << "\t" << "policy=" << videoPolicy);
-	FBLOG_ERROR("CoreAPI::setVideoPolicy","NOT IMPLEMENTED");
-	//TODO
-	//linphone_core_set_video_policy(mCore, videoPolicy->getRef());
+	linphone_core_set_video_policy(mCore, videoPolicy->getRef());
 }
 
 /*
