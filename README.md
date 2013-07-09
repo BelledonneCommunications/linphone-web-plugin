@@ -31,11 +31,11 @@ Following the used system(GNU/Linux, Windows, Mac OS X) you have to extract the
 matched *rootfs* archive in the `./Rootfs/` directory at the linphone-web
 project root (create it if doesn't exist).
 
-* [GNU/Linux x86](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-linux-x86.tar.gz)
-* [GNU/Linux x86_64](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-linux-x86_64.tar.gz)
-* [Windows 32 bits](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-windows-x86.tar.gz)
-* [Mac OS X x86](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-darwin-x86.tar.gz)
-* [Mac OS X x86_64](http://www.linphone.org/rootfs/linphone-rootfs-linphone-webplugin-darwin-x86_64.tar.gz)
+* [GNU/Linux x86](http://www.linphone.org/snapshots/linphone-web/linphone-rootfs-linphone-webplugin-linux-x86-latest.tar.gz)
+* [GNU/Linux x86_64](http://www.linphone.org/snapshots/linphone-web/linphone-rootfs-linphone-webplugin-linux-x86_64-latest.tar.gz)
+* [Windows 32 bits](http://www.linphone.org/snapshots/linphone-web/linphone-rootfs-linphone-webplugin-windows-x86_64-latest.tar.gz)
+* [Mac OS X x86](http://www.linphone.org/snapshots/linphone-web/linphone-rootfs-linphone-webplugin-darwin-x86-latest.tar.gz)
+* [Mac OS X x86_64](http://www.linphone.org/snapshots/linphone-web/linphone-rootfs-linphone-webplugin-darwin-x86_64-latest.tar.gz)
 
 
 ### Generate a Rootfs
@@ -51,10 +51,8 @@ Firebreath
 FireBreath aims to be a cross-platform plugin architecture. You have to
 download the last stable version using git:
 
-    git clone git://github.com/firebreath/FireBreath.git -b firebreath-1.6 \
-    firebreath-1.6
-
-or [download the zip archive](https://github.com/firebreath/FireBreath/zipball/firebreath-1.6).
+    git clone git://github.com/diorcety/FireBreath.git -b firebreath-1.7 \
+    firebreath-1.7
 
 Place linphone-web project in the `./projects/` directory at the firebreath
 root(create it if doesn't exist). Follow the [Firebreath documentation](http://www.firebreath.org/display/documentation/Building+FireBreath+Plugins)
