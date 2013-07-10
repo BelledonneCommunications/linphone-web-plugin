@@ -391,8 +391,8 @@ int CoreAPI::init(const StringPtr &config, const StringPtr &factory) {
 		}
 		
 		// Specific Linphone Web behaviour
-		linphone_core_enable_video_preview(mCore, false); // MUST be disabled, we can't allow a detached window
-		linphone_core_use_preview_window(mCore, false); // MUST be disabled, we can't allow a detached window
+		linphone_core_set_native_preview_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
+		linphone_core_set_native_video_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
 
 		return 0;
 	} else {
@@ -992,36 +992,54 @@ bool CoreAPI::selfViewEnabled() const {
 	return linphone_core_self_view_enabled(mCore) == TRUE ? true : false;
 }
 
-void CoreAPI::setNativeVideoWindowId(unsigned long id) {
+void CoreAPI::setNativeVideoWindowId(WhiteBoard::IdType id) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setNativeVideoWindowId", "this=" << this << "\t" << "id=" << id);
-	linphone_core_set_native_video_window_id(mCore, id);
+	if(id != WhiteBoard::NoId) {
+		linphone_core_set_native_video_window_id(mCore, (unsigned long)getFactory()->getWhiteBoard()->getValue<void *>(id));
+	} else {
+		linphone_core_set_native_video_window_id(mCore, (unsigned long)-1);
+	}
 }
 
-unsigned long CoreAPI::getNativeVideoWindowId() const {
+WhiteBoard::IdType CoreAPI::getNativeVideoWindowId() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getNativeVideoWindowId", "this=" << this);
-	return linphone_core_get_native_video_window_id(mCore);
+	unsigned long ptr = linphone_core_get_native_video_window_id(mCore);
+	if(ptr != ((unsigned long)-1) && ptr != 0) {
+		return getFactory()->getWhiteBoard()->getId((void *) ptr);
+	} else {
+		return WhiteBoard::NoId;
+	}
 }
 
-void CoreAPI::setNativePreviewWindowId(unsigned long id) {
+void CoreAPI::setNativePreviewWindowId(WhiteBoard::IdType id) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setNativePreviewWindowId", "this=" << this << "\t" << "id=" << id);
-	linphone_core_set_native_preview_window_id(mCore, id);
+	if(id != WhiteBoard::NoId) {
+		linphone_core_set_native_preview_window_id(mCore, (unsigned long)getFactory()->getWhiteBoard()->getValue<void *>(id));
+	} else {
+		linphone_core_set_native_preview_window_id(mCore, (unsigned long)-1);
+	}
 }
 
-unsigned long CoreAPI::getNativePreviewWindowId() const {
+WhiteBoard::IdType CoreAPI::getNativePreviewWindowId() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getNativePreviewWindowId", "this=" << this);
-	return linphone_core_get_native_preview_window_id(mCore);
+	unsigned long ptr = linphone_core_get_native_preview_window_id(mCore);
+	if(ptr != ((unsigned long)-1) && ptr != 0) {
+		return getFactory()->getWhiteBoard()->getId((void *) ptr);
+	} else {
+		return WhiteBoard::NoId;
+	}
 }
 
 bool CoreAPI::getUsePreviewWindow() const {

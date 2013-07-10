@@ -40,6 +40,7 @@ FB_FORWARD_PTR(CallParamsAPI)
 FB_FORWARD_PTR(CallStatsParamsAPI)
 FB_FORWARD_PTR(CoreAPI)
 FB_FORWARD_PTR(PayloadTypeAPI)
+FB_FORWARD_PTR(PointerAPI)
 FB_FORWARD_PTR(ProxyConfigAPI)
 FB_FORWARD_PTR(SipTransportsAPI)
 FB_FORWARD_PTR(VideoPolicyAPI)
@@ -124,10 +125,10 @@ public:
 	bool videoPreviewEnabled() const;
 	void enableSelfView(bool enable);
 	bool selfViewEnabled() const;
-	void setNativeVideoWindowId(unsigned long id);
-	unsigned long getNativeVideoWindowId() const;
-	void setNativePreviewWindowId(unsigned long id);
-	unsigned long getNativePreviewWindowId() const;
+	void setNativeVideoWindowId(WhiteBoard::IdType id);
+	WhiteBoard::IdType getNativeVideoWindowId() const;
+	void setNativePreviewWindowId(WhiteBoard::IdType id);
+	WhiteBoard::IdType getNativePreviewWindowId() const;
 	bool getUsePreviewWindow() const;
 	void setUsePreviewWindow(bool enable);
 	VideoPolicyAPIPtr getVideoPolicy() const;
@@ -255,7 +256,6 @@ public:
 	void setUseInfoForDtmf(bool enable);
 	bool getUseRfc2833ForDtmf() const;
 	void setUseRfc2833ForDtmf(bool enable);
-
 
 	// Presence
 	int getPresenceInfo() const;

@@ -21,34 +21,35 @@
 #define H_VIDEOAPI
 
 #include <string>
-#include <JSAPIAuto.h>
-#include <BrowserHost.h>
-#include <variant_list.h>
-#include "videoplugin.h"
 #include "videowindow.h"
 
+#include "wrapperapi.h"
+
 namespace LinphoneWeb {
+	
+FB_FORWARD_PTR(PointerAPI)
 
 FB_FORWARD_PTR(VideoAPI)
-class VideoAPI: public FB::JSAPIAuto {
+class VideoAPI: public WrapperAPI {
+	friend class FactoryAPI;
 public:
-	VideoAPI(const VideoPluginWeakPtr& plugin);
+	VideoAPI();
 	~VideoAPI();
 
 	void setWindow(FB::PluginWindow *window);
-	VideoPluginPtr getPlugin();
 
 	// Property
 	const std::string &getMagic();
 	void setMagic(const std::string &magic);
-	unsigned long getWindow();
+	WhiteBoard::IdType getWindow();
 
 	void setBackgroundColor(int r, int g, int b);
 	bool draw();
-
+protected:
+	virtual void initProxy();
+	
 private:
 	std::string mMagic;
-	VideoPluginWeakPtr mPlugin;
 	VideoWindowPtr mWindow;
 };
 	

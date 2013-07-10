@@ -25,6 +25,7 @@
 #include <PluginEvents/AttachedEvent.h>
 #include <PluginCore.h>
 
+#include "whiteboard.h"
 #include "factoryapi.h"
 #include <ortp/logging.h>
 
@@ -42,12 +43,15 @@ private:
 	static void log(OrtpLogLevel lev, const char *fmt, va_list args);
 	static void enableLog();
 	static void disableLog();
+	
+	WhiteBoardPtr mWhiteBoard;
+	
 public:
 	static void StaticInitialize();
 	static void StaticDeinitialize();
 
 public:
-	CorePlugin();
+	CorePlugin(const WhiteBoardPtr &whiteboard);
 	virtual ~CorePlugin();
 
 public:

@@ -51,7 +51,7 @@ void VideoPlugin::StaticDeinitialize() {
 ///         at this point, nor the window.  For best results wait to use
 ///         the JSAPI object until the onPluginReady method is called
 ///////////////////////////////////////////////////////////////////////////////
-VideoPlugin::VideoPlugin(): mWindow(NULL) {
+VideoPlugin::VideoPlugin(const WhiteBoardPtr &whiteboard): mWindow(NULL), mWhiteBoard(whiteboard) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -96,9 +96,8 @@ void VideoPlugin::shutdown() {
 ///////////////////////////////////////////////////////////////////////////////
 FB::JSAPIPtr VideoPlugin::createJSAPI() {
 	FBLOG_DEBUG("VideoPlugin::createJSAPI", this);
-	// m_host is the BrowserHost
-
-	mVideo = boost::make_shared<VideoAPI>(FB::ptr_cast<VideoPlugin>(shared_from_this()));
+	FactoryAPIPtr factory = boost::make_shared<FactoryAPI>(FB::ptr_cast<FB::PluginCore>(shared_from_this()), mWhiteBoard);
+	mVideo = factory->getVideo();
 	if (mWindow) {
 		mVideo->setWindow(mWindow);
 	}
@@ -106,17 +105,14 @@ FB::JSAPIPtr VideoPlugin::createJSAPI() {
 }
 
 bool VideoPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *win) {
-	//printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
 	return false;
 }
 
 bool VideoPlugin::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow *win) {
-	//printf("Mouse up at: %d, %d\n", evt->m_x, evt->m_y);
 	return false;
 }
 
 bool VideoPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow *win) {
-	//printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
 	return false;
 }
 bool VideoPlugin::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *win) {

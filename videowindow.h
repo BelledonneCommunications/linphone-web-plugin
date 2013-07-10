@@ -32,7 +32,7 @@ public:
 	virtual ~VideoWindow() {
 
 	}
-	virtual unsigned long getId() = 0;
+	virtual void *getNativeHandle() const = 0;
 	virtual void setBackgroundColor(int r, int g, int b) = 0;
 	virtual void setWindow(FB::PluginWindow *window) = 0;
 	virtual bool draw() = 0;

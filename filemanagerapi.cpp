@@ -140,7 +140,7 @@ void FileManagerAPI::initializePaths() {
 	
 	// Local
 	boost::filesystem::path localPath = tempPath; // fallback
-	CorePluginPtr plugin = getFactory()->getPlugin();
+	FB::PluginCorePtr plugin = getFactory()->getPlugin();
 	FB::URI loc = FB::URI::fromString(plugin->getHost()->getDOMWindow()->getLocation());
 	if(!loc.domain.empty()) {
 		std::string localPathString = FB::System::getLocalAppDataPath(FBSTRING_ProductDomain);
@@ -190,7 +190,7 @@ void FileManagerAPI::initializePaths() {
 }
 
 bool FileManagerAPI::isSameHost(const FB::URI &uri) {
-	CorePluginPtr plugin = getFactory()->getPlugin();
+	FB::PluginCorePtr plugin = getFactory()->getPlugin();
 	FB::URI hostUri = plugin->getHost()->getDOMWindow()->getLocation();
 	bool ret = boost::iequals(hostUri.protocol, uri.protocol) &&
 		boost::iequals(hostUri.domain, uri.domain);

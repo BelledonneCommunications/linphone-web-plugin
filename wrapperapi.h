@@ -21,6 +21,7 @@
 #define H_WRAPPERAPI
 
 #include <JSAPIAuto.h>
+#include "whiteboard.h"
 #include "utils.h"
 #include "macro.h"
 

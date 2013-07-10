@@ -17,11 +17,9 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <JSObject.h>
-#include <variant_list.h>
-#include <DOM/Document.h>
-#include <global/config.h>
 #include "videoapi.h"
+
+#include "factoryapi.h"
 #include "utils.h"
 
 namespace LinphoneWeb {
@@ -36,16 +34,11 @@ namespace LinphoneWeb {
 /// @see FB::JSAPIAuto::registerProperty
 /// @see FB::JSAPIAuto::registerEvent
 ///////////////////////////////////////////////////////////////////////////////
-VideoAPI::VideoAPI(const VideoPluginWeakPtr& plugin) :
-		JSAPIAuto(APIDescription(this)), mPlugin(plugin) {
+VideoAPI::VideoAPI():
+		WrapperAPI(APIDescription(this)) {
 	FBLOG_DEBUG("videoAPI::videoAPI", "this=" << this);
 
 	mWindow = VideoWindow::create();
-
-	// Methods
-	registerProperty("magic", make_property(this, &VideoAPI::getMagic, &VideoAPI::setMagic));
-	registerProperty("window", make_property(this, &VideoAPI::getWindow));
-	registerMethod("setBackgroundColor", make_method(this, &VideoAPI::setBackgroundColor));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -57,27 +50,37 @@ VideoAPI::VideoAPI(const VideoPluginWeakPtr& plugin) :
 ///////////////////////////////////////////////////////////////////////////////
 VideoAPI::~VideoAPI() {
 	FBLOG_DEBUG("videoAPI::~videoAPI", "this=" << this);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-/// @fn videoPtr CoreAPI::getPlugin()
-///
-/// @brief  Gets a reference to the plugin that was passed in when the object
-///         was created.  If the plugin has already been released then this
-///         will throw a FB::script_error that will be translated into a
-///         javascript exception in the page.
-///////////////////////////////////////////////////////////////////////////////
-VideoPluginPtr VideoAPI::getPlugin() {
-	VideoPluginPtr plugin(mPlugin.lock());
-	if (!plugin) {
-		throw FB::script_error("The plugin is invalid");
+	
+	// Remove window handle from whiteboard
+	void * handle = mWindow->getNativeHandle();
+	if(handle != NULL) {
+		getFactory()->getWhiteBoard()->removeValue(handle);
 	}
-	return plugin;
 }
-
+	
+void VideoAPI::initProxy() {
+	// Methods
+	registerProperty("magic", make_property(this, &VideoAPI::getMagic, &VideoAPI::setMagic));
+	registerProperty("window", make_property(this, &VideoAPI::getWindow));
+	registerMethod("setBackgroundColor", make_method(this, &VideoAPI::setBackgroundColor));
+}
+	
 void VideoAPI::setWindow(FB::PluginWindow *window) {
 	FBLOG_DEBUG("videoAPI::setWindow", "this=" << this << "\t" << "window=" << window);
+
+	// Remove window handle from whiteboard
+	void * oldHandle = mWindow->getNativeHandle();
+	if(oldHandle != NULL) {
+		getFactory()->getWhiteBoard()->removeValue(oldHandle);
+	}
+	
 	mWindow->setWindow(window);
+	
+	// Add window handle to whiteboard
+	void * newHandle = mWindow->getNativeHandle();
+	if(newHandle != NULL) {
+		getFactory()->getWhiteBoard()->addValue(newHandle);
+	}
 }
 
 const std::string &VideoAPI::getMagic() {
@@ -90,9 +93,16 @@ void VideoAPI::setMagic(const std::string &magic) {
 	mMagic = magic;
 }
 
-unsigned long VideoAPI::getWindow() {
+WhiteBoard::IdType VideoAPI::getWindow() {
 	FBLOG_DEBUG("VideoAPI::getWindow", "this=" << this);
-	return mWindow->getId();
+	
+	// Get id of window handle in whiteboard
+	void * handle = mWindow->getNativeHandle();
+	if(handle != NULL) {
+		return getFactory()->getWhiteBoard()->getId(handle);
+	} else {
+		return WhiteBoard::NoId;
+	}
 }
 
 void VideoAPI::setBackgroundColor(int r, int g, int b) {

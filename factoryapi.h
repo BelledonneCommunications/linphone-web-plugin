@@ -21,6 +21,7 @@
 #define H_FACTORYAPI
 
 #include <JSAPIAuto.h>
+#include <FactoryBase.h>
 #include <URI.h>
 #include <linphone/linphonecore.h>
 
@@ -34,8 +35,10 @@
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
 #include "siptransportsapi.h"
+#include "videoapi.h"
 #include "videopolicyapi.h"
 
+#include "whiteboard.h"
 #include "filemanagerapi.h"
 #include "Transfers/filetransferapi.h"
 
@@ -46,7 +49,8 @@ FB_FORWARD_PTR(CorePlugin)
 FB_FORWARD_PTR(FactoryAPI)
 class FactoryAPI: public boost::enable_shared_from_this<FactoryAPI> {
 private:
-	CorePluginWeakPtr mPlugin;
+	FB::PluginCoreWeakPtr mPlugin;
+	WhiteBoardPtr mWhiteBoard;
 	FileManagerAPIWeakPtr mFileManager;
 	template<typename TypePtr>
 	TypePtr get(TypePtr ptr, bool owned, bool constant) {
@@ -60,11 +64,12 @@ private:
 	mutable boost::recursive_mutex mCoreMutex;
 #endif
 public:
-	FactoryAPI(const CorePluginWeakPtr &plugin);
+	FactoryAPI(const FB::PluginCorePtr &plugin, const WhiteBoardPtr &whiteboard);
 	~FactoryAPI();
 	
-	CorePluginPtr getPlugin();
-	boost::recursive_mutex &getCoreMutex();
+	FB::PluginCorePtr getPlugin() const;
+	WhiteBoardPtr getWhiteBoard() const;
+	boost::recursive_mutex &getCoreMutex() const;
 	
 	// Address
 	AddressAPIPtr getAddress(LinphoneAddress *address);
@@ -103,6 +108,9 @@ public:
 	
 	// SipTransports
 	SipTransportsAPIPtr getSipTransports();
+	
+	// Video getVideo
+	VideoAPIPtr getVideo();
 	
 	// VideoPolicy
 	VideoPolicyAPIPtr getVideoPolicy();

@@ -59,9 +59,9 @@ void VideoWindowMac::setWindow(FB::PluginWindow *window) {
 	}
 }
 
-unsigned long VideoWindowMac::getId() {
-	FBLOG_DEBUG("VideoWindowMac::getId", "this=" << this);
-	return (unsigned long) mWindow;
+void* VideoWindowMac::getNativeHandle() const {
+	FBLOG_DEBUG("VideoWindowMac::getNativeHandle", "this=" << this);
+	return (void*)mWindow;
 }
 
 bool VideoWindowMac::draw() {

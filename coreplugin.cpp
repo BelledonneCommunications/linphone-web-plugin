@@ -148,7 +148,7 @@ void CorePlugin::StaticDeinitialize() {
 ///         at this point, nor the window.  For best results wait to use
 ///         the JSAPI object until the onPluginReady method is called
 ///////////////////////////////////////////////////////////////////////////////
-CorePlugin::CorePlugin() {
+CorePlugin::CorePlugin(const WhiteBoardPtr &whiteboard): mWhiteBoard(whiteboard) {
 	FBLOG_DEBUG("CorePlugin::CorePlugin", "this" << this);
 }
 
@@ -214,7 +214,7 @@ void CorePlugin::shutdown() {
 ///////////////////////////////////////////////////////////////////////////////
 FB::JSAPIPtr CorePlugin::createJSAPI() {
 	FBLOG_DEBUG("CorePlugin::createJSAPI", this);
-	FactoryAPIPtr factory = boost::make_shared<FactoryAPI>(FB::ptr_cast<CorePlugin>(shared_from_this()));
+	FactoryAPIPtr factory = boost::make_shared<FactoryAPI>(FB::ptr_cast<FB::PluginCore>(shared_from_this()), mWhiteBoard);
 	CoreAPIPtr core = factory->getCore((LinphoneCore *)NULL);
 #ifdef DEBUG
 	// In debug initialize at startup for show logs

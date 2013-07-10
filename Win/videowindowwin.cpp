@@ -62,9 +62,9 @@ void VideoWindowWin::setWindow(FB::PluginWindow *window) {
 	}
 }
 
-unsigned long VideoWindowWin::getId() {
-	FBLOG_DEBUG("VideoWindowWin::getId()", "this=" << this);
-	return (unsigned long) mWin->getHWND();
+void* VideoWindowWin::getNativeHandle() const {
+	FBLOG_DEBUG("VideoWindowWin::getNativeHandle()", "this=" << this);
+	return (void *) mWin->getHWND();
 }
 	
 } // LinphoneWeb

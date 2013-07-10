@@ -22,9 +22,10 @@
 #include <global/config.h>
 #include "coreplugin.h"
 #include "videoplugin.h"
+#include "whiteboard.h"
 
 namespace LinphoneWeb {
-
+	
 #ifdef DEBUG
 #ifdef WIN32
 #include <Windows.h>
@@ -86,13 +87,21 @@ LONG CALLBACK unhandled_handler(EXCEPTION_POINTERS* e) {
 
 class PluginFactory: public FB::FactoryBase {
 private:
+
 #ifdef DEBUG
 #ifdef WIN32
-		void *mExceptionHandler;
+	void *mExceptionHandler;
 #endif //WIN32
 #endif //DEBUG
-
+	
+	WhiteBoardPtr mWhiteBoard;
+	
 public:
+	PluginFactory() {
+		// Create the common whiteboard
+		mWhiteBoard = boost::make_shared<WhiteBoard>();
+	}
+	
 	///////////////////////////////////////////////////////////////////////////////
 	/// @fn FB::PluginCorePtr createPlugin(const std::string& mimetype)
 	///
@@ -102,8 +111,8 @@ public:
 	FB::PluginCorePtr createPlugin(const std::string& mimetype) {
 		FBLOG_DEBUG("createPlugin", mimetype);
 		if (mimetype == "application/x-linphone-web-video")
-			return boost::make_shared<VideoPlugin>();
-		return boost::make_shared<CorePlugin>();
+			return boost::make_shared<VideoPlugin>(mWhiteBoard);
+		return boost::make_shared<CorePlugin>(mWhiteBoard);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////

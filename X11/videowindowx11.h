@@ -33,7 +33,7 @@ public:
 	~VideoWindowX11();
 
 	void setWindow(FB::PluginWindow *window);
-	unsigned long getId();
+	void* getNativeHandle() const;
 	void setBackgroundColor(int r, int g, int b);
 	bool draw();
 

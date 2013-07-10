@@ -27,6 +27,9 @@
 #include <PluginEvents/DrawingEvents.h>
 #include <PluginCore.h>
 
+#include "whiteboard.h"
+#include "factoryapi.h"
+
 namespace LinphoneWeb {
 
 FB_FORWARD_PTR(VideoAPI)
@@ -38,7 +41,7 @@ public:
 	static void StaticDeinitialize();
 
 public:
-	VideoPlugin();
+	VideoPlugin(const WhiteBoardPtr &whiteboard);
 	virtual ~VideoPlugin();
 
 public:
@@ -75,6 +78,7 @@ public:
 private:
 	VideoAPIPtr mVideo;
 	FB::PluginWindow* mWindow;
+	WhiteBoardPtr mWhiteBoard;
 };
 	
 } // LinphoneWeb

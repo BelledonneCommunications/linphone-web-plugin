@@ -24,7 +24,7 @@
 
 namespace LinphoneWeb {
 
-FactoryAPI::FactoryAPI(const CorePluginWeakPtr &plugin): mPlugin(plugin) {
+FactoryAPI::FactoryAPI(const FB::PluginCorePtr &plugin, const WhiteBoardPtr &whiteboard): mPlugin(plugin), mWhiteBoard(whiteboard) {
 	FBLOG_DEBUG("FactoryAPI::FactoryAPI", "this=" << this);
 }
 
@@ -32,15 +32,19 @@ FactoryAPI::~FactoryAPI() {
 	FBLOG_DEBUG("FactoryAPI::~FactoryAPI", "this=" << this);
 }
 
-CorePluginPtr FactoryAPI::getPlugin() {
-	CorePluginPtr plugin(mPlugin.lock());
+FB::PluginCorePtr FactoryAPI::getPlugin() const {
+	FB::PluginCorePtr plugin(mPlugin.lock());
 	if (!plugin) {
 		throw FB::script_error("The plugin is invalid");
 	}
 	return plugin;
 }
 
-boost::recursive_mutex &FactoryAPI::getCoreMutex() {
+WhiteBoardPtr FactoryAPI::getWhiteBoard() const {
+	return mWhiteBoard;
+}
+
+boost::recursive_mutex &FactoryAPI::getCoreMutex() const {
 	return mCoreMutex;
 }
 
@@ -239,6 +243,12 @@ ProxyConfigAPIPtr FactoryAPI::getProxyConfig() {
 SipTransportsAPIPtr FactoryAPI::getSipTransports() {
 	FBLOG_DEBUG("FactoryAPI::getSipTransports", "this=" << this);
 	SipTransportsAPIPtr shared_ptr = SipTransportsAPIPtr(new SipTransportsAPI());
+	return get(shared_ptr, true, false);
+}
+
+VideoAPIPtr FactoryAPI::getVideo() {
+	FBLOG_DEBUG("FactoryAPI::getVideo", "this=" << this);
+	VideoAPIPtr shared_ptr = VideoAPIPtr(new VideoAPI());
 	return get(shared_ptr, true, false);
 }
 	
