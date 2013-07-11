@@ -20,6 +20,8 @@
 #ifndef H_VIDEOWINDOWMAC
 #define H_VIDEOWINDOWMAC
 
+#import <AppKit/AppKit.h>
+
 #include <PluginWindowMac.h>
 #include <boost/shared_ptr.hpp>
 #include "../videowindow.h"
@@ -37,7 +39,10 @@ public:
 	bool draw();
 
 private:
-	void *mWindow;
+	void drawBackground();
+	
+	FB::PluginWindowMac *mWindow;
+	CGColorRef mBackgroundColor;
 };
 	
 } // LinphoneWeb

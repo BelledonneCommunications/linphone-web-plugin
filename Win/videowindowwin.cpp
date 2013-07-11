@@ -26,7 +26,7 @@ VideoWindowPtr VideoWindow::create() {
 	return boost::make_shared<VideoWindowWin>();
 }
 
-VideoWindowWin::VideoWindowWin(): mWin(NULL), mBrush(NULL) {
+VideoWindowWin::VideoWindowWin(): mWindow(NULL), mBrush(NULL) {
 	FBLOG_DEBUG("VideoWindowWin::VideoWindowWin()", "this=" << this);
 }
 
@@ -40,10 +40,15 @@ VideoWindowWin::~VideoWindowWin() {
 void VideoWindowWin::setBackgroundColor(int r, int g, int b) {
 	if(mBrush) {
 		DeleteObject(mBrush);
+		mBrush = NULL;
 	}
 	mBrush = CreateSolidBrush(RGB(r, g, b));
-	SetClassLongPtr(mWin->getHWND(), GCLP_HBRBACKGROUND, (LONG)mBrush);
-	RedrawWindow(mWin->getHWND(), NULL, NULL, RDW_INVALIDATE | RDW_ERASE);
+	drawBackground();
+}
+
+void VideoWindowWin::drawBackground() {
+	SetClassLongPtr(mWindow->getHWND(), GCLP_HBRBACKGROUND, (LONG)mBrush);
+	RedrawWindow(mWindow->getHWND(), NULL, NULL, RDW_INVALIDATE | RDW_ERASE);
 }
 
 bool VideoWindowWin::draw() {
@@ -54,17 +59,20 @@ void VideoWindowWin::setWindow(FB::PluginWindow *window) {
 	FBLOG_DEBUG("VideoWindowWin::setWindow()", "this=" << this << "\t" << "window=" << window);
 	FB::PluginWindowWin* win = reinterpret_cast<FB::PluginWindowWin*>(window);
 	if (win) {
-		mWin = win;
-		FBLOG_DEBUG( "VideoWindowWin::setWindow()", "this=" << this << "\t" << "Load HWND=" << mWin->getHWND());
+		mWindow = win;
+
+		drawBackground();
+
+		FBLOG_DEBUG( "VideoWindowWin::setWindow()", "this=" << this << "\t" << "Load HWND=" << mWindow->getHWND());
 	} else {
-		FBLOG_DEBUG("VideoWindowWin::setWindow()", "this=" << this << "\t" << "Unload HWND=" << mWin->getHWND());
-		mWin = NULL;
+		FBLOG_DEBUG("VideoWindowWin::setWindow()", "this=" << this << "\t" << "Unload HWND=" << mWindow->getHWND());
+		mWindow = NULL;
 	}
 }
 
 void* VideoWindowWin::getNativeHandle() const {
 	FBLOG_DEBUG("VideoWindowWin::getNativeHandle()", "this=" << this);
-	return (void *) mWin->getHWND();
+	return (void *) mWindow->getHWND();
 }
 	
 } // LinphoneWeb

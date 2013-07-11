@@ -39,7 +39,8 @@ public:
 	bool draw();
 
 private:
-	FB::PluginWindowWin *mWin;
+	void drawBackground();
+	FB::PluginWindowWin *mWindow;
 	HBRUSH mBrush;
 };
 	

@@ -41,8 +41,11 @@ public:
 	static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer *data);
 
 private:
+	void drawBackground();
+
+	GdkColor mBackgroundColor;
 	GdkPixmap *mPixmap;
-	GtkWidget *mGtkWidget;
+	FB::PluginWindowX11* mWindow;
 	int mExposeEventId;
 	int ConfigureEventId;
 };
