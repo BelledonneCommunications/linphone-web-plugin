@@ -76,7 +76,7 @@ void CallAPI::initProxy() {
 
 CallAPI::~CallAPI() {
 	FBLOG_DEBUG("CallAPI::~CallAPI", "this=" << this);
-	if(!mCall) {
+	if(mCall) {
 		linphone_call_set_user_pointer(mCall, NULL);
 		linphone_call_unref(mCall);
 	}
