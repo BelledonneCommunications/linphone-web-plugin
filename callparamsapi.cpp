@@ -41,19 +41,23 @@ CallParamsAPI::~CallParamsAPI() {
 void CallParamsAPI::initProxy() {
 	registerMethod("copy", make_method(this, &CallParamsAPI::copy));
 	registerProperty("localConferenceMode", make_property(this, &CallParamsAPI::localConferenceMode));
-
+	registerProperty("usedAudioCodec", make_property(this, &CallParamsAPI::getUsedAudioCodec));
+	registerProperty("usedVideoCodec", make_property(this, &CallParamsAPI::getUsedVideoCodec));
+	
 	if (!isConst()) {
 		registerProperty("audioBandwidthLimit", make_property(this, &CallParamsAPI::getAudioBandwidthLimit, &CallParamsAPI::setAudioBandwidthLimit));
 		registerProperty("earlyMediaSendingEnabled", make_property(this, &CallParamsAPI::earlyMediaSendingEnabled, &CallParamsAPI::enableEarlyMediaSending));
 		registerProperty("lowBandwidthEnabled", make_property(this, &CallParamsAPI::lowBandwidthEnabled, &CallParamsAPI::enableLowBandwidth));
 		registerProperty("recordFile", make_property(this, &CallParamsAPI::getRecordFile, &CallParamsAPI::setRecordFile));
 		registerProperty("videoEnabled", make_property(this, &CallParamsAPI::videoEnabled, &CallParamsAPI::enableVideo));
+		registerProperty("mediaEncryption", make_property(this, &CallParamsAPI::getMediaEncryption, &CallParamsAPI::setMediaEncryption));
 	} else {
 		registerProperty("audioBandwidthLimit", make_property(this, &CallParamsAPI::getAudioBandwidthLimit));
 		registerProperty("earlyMediaSendingEnabled", make_property(this, &CallParamsAPI::earlyMediaSendingEnabled));
 		registerProperty("lowBandwidthEnabled", make_property(this, &CallParamsAPI::lowBandwidthEnabled));
 		registerProperty("recordFile", make_property(this, &CallParamsAPI::getRecordFile));
 		registerProperty("videoEnabled", make_property(this, &CallParamsAPI::videoEnabled));
+		registerProperty("mediaEncryption", make_property(this, &CallParamsAPI::getMediaEncryption));
 	}
 }
 
@@ -110,10 +114,33 @@ void CallParamsAPI::enableLowBandwidth(bool enable) {
 	linphone_call_params_enable_low_bandwidth(mCallParams, enable ? TRUE : FALSE);
 }
 
-//getMediaEncryption	mediaEncryption
-//setMediaEncryption	mediaEncryption
-//getUsedAudioCodec	usedAudioCodec
-//getUsedVideoCodec	usedVideoCodec
+int CallParamsAPI::getMediaEncryption() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallParamsAPI::getMediaEncryption", "this=" << this);
+	return linphone_call_params_get_media_encryption(mCallParams);
+}
+
+void CallParamsAPI::setMediaEncryption(int encryption) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallParamsAPI::setMediaEncryption", "this=" << this << "\t" << "encryption=" << encryption);
+	linphone_call_params_set_media_encryption(mCallParams, (LinphoneMediaEncryption)encryption);
+}
+
+PayloadTypeAPIPtr CallParamsAPI::getUsedAudioCodec() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallParamsAPI::getUsedAudioCodec", "this=" << this);
+	return getFactory()->getPayloadType(linphone_call_params_get_used_audio_codec(mCallParams));
+}
+
+PayloadTypeAPIPtr CallParamsAPI::getUsedVideoCodec() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallParamsAPI::getUsedVideoCodec", "this=" << this);
+	return getFactory()->getPayloadType(linphone_call_params_get_used_video_codec(mCallParams));
+}
 
 StringPtr CallParamsAPI::getRecordFile() const {
 	CORE_MUTEX
@@ -148,7 +175,7 @@ bool CallParamsAPI::videoEnabled() const {
 CallParamsAPIPtr CallParamsAPI::copy() const {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CallParamsAPI::getRefKey", "this=" << this);
+	FBLOG_DEBUG("CallParamsAPI::copy", "this=" << this);
 	CallParamsAPIPtr ret(new CallParamsAPI(linphone_call_params_copy(mCallParams)));
 	ret->own();
 	return ret;

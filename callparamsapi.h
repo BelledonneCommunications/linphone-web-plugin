@@ -25,6 +25,8 @@
 
 namespace LinphoneWeb {
 
+FB_FORWARD_PTR(PayloadTypeAPI)
+	
 FB_FORWARD_PTR(CallParamsAPI)
 class CallParamsAPI: public WrapperAPI {
 	friend class FactoryAPI;
@@ -47,10 +49,10 @@ public:
 	bool localConferenceMode() const;
 	bool lowBandwidthEnabled() const;
 	void enableLowBandwidth(bool enable);
-	//getMediaEncryption	mediaEncryption
-	//setMediaEncryption	mediaEncryption
-	//getUsedAudioCodec	usedAudioCodec
-	//getUsedVideoCodec	usedVideoCodec
+	int getMediaEncryption() const;
+	void setMediaEncryption(int encryption);
+	PayloadTypeAPIPtr getUsedAudioCodec() const;
+	PayloadTypeAPIPtr getUsedVideoCodec() const;
 	StringPtr getRecordFile() const;
 	void setRecordFile(const StringPtr &file);
 	void enableVideo(bool enable);

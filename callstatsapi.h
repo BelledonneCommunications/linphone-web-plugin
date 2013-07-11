@@ -39,11 +39,16 @@ protected:
 public:
 	virtual ~CallStatsAPI();
 
-	int getType() const;
-	void setType(int type);
-
+	float getDownloadBandwidth() const;
+	int getIceStats() const;
+	float getLocalLateRate() const;
+	float getLocalLossRate() const;
+	//receivedRtcp() const;
 	float getRoundTripDelay() const;
-	void setRoundTripDelay(float delay);
+	//getSentRtcp() const;
+	int getType() const;
+	float getUploadBandwidth() const;
+	int getUpnpState() const;
 
 	inline LinphoneCallStats *getRef() {
 		return mCallStats;

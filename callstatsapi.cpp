@@ -30,45 +30,77 @@ CallStatsAPI::CallStatsAPI(const LinphoneCallStats *callStats) :
 }
 
 void CallStatsAPI::initProxy() {
-	if (isConst()) {
-		registerProperty("type", make_property(this, &CallStatsAPI::getType));
-		registerProperty("roundTripDelay", make_property(this, &CallStatsAPI::getRoundTripDelay));
-	} else {
-		registerProperty("type", make_property(this, &CallStatsAPI::getType, &CallStatsAPI::setType));
-		registerProperty("roundTripDelay", make_property(this, &CallStatsAPI::getRoundTripDelay, &CallStatsAPI::setRoundTripDelay));
-	}
+	registerProperty("downloadBandwidth", make_property(this, &CallStatsAPI::getDownloadBandwidth));
+	registerProperty("iceStats", make_property(this, &CallStatsAPI::getIceStats));
+	registerProperty("localLateRate", make_property(this, &CallStatsAPI::getLocalLateRate));
+	registerProperty("localLossRate", make_property(this, &CallStatsAPI::getLocalLossRate));
+	registerProperty("roundTripDelay", make_property(this, &CallStatsAPI::getRoundTripDelay));
+	registerProperty("type", make_property(this, &CallStatsAPI::getType));
+	registerProperty("uploadBandwidth", make_property(this, &CallStatsAPI::getUploadBandwidth));
+	registerProperty("upnpState", make_property(this, &CallStatsAPI::getUpnpState));
 }
 
 CallStatsAPI::~CallStatsAPI() {
 	FBLOG_DEBUG("CallStatsAPI::~CallStatsAPI", "this=" << this);
 }
 
-int CallStatsAPI::getType() const {
+float CallStatsAPI::getDownloadBandwidth() const {
 	CORE_MUTEX
-
-	FBLOG_DEBUG("CallStatsAPI::getType", "this=" << this);
-	return mCallStats->type;
+	
+	FBLOG_DEBUG("CallStatsAPI::getDownloadBandwidth", "this=" << this);
+	return mCallStats->download_bandwidth;
 }
 
-void CallStatsAPI::setType(int type) {
+int CallStatsAPI::getIceStats() const {
 	CORE_MUTEX
-
-	FBLOG_DEBUG("CallStatsAPI::setType", "this=" << this << "\t" << "type=" << type);
-	mCallStats->type = type;
+	
+	FBLOG_DEBUG("CallStatsAPI::getIceStats", "this=" << this);
+	return mCallStats->ice_state;
 }
 
+float CallStatsAPI::getLocalLateRate() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallStatsAPI::getLocalLossRate", "this=" << this);
+	return mCallStats->local_late_rate;
+}
+
+float CallStatsAPI::getLocalLossRate() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallStatsAPI::getLocalLossRate", "this=" << this);
+	return mCallStats->local_loss_rate;
+}
+
+//receivedRtcp() const;
 float CallStatsAPI::getRoundTripDelay() const {
 	CORE_MUTEX
-
+	
 	FBLOG_DEBUG("CallStatsAPI::getRoundTripDelay", "this=" << this);
 	return mCallStats->round_trip_delay;
 }
 
-void CallStatsAPI::setRoundTripDelay(float delay) {
-	CORE_MUTEX
+//getSentRtcp() const;
 
-	FBLOG_DEBUG("CallStatsAPI::setRoundTripDelay", "this=" << this << "\t" << "delay=" << delay);
-	mCallStats->round_trip_delay = delay;
-}
+int CallStatsAPI::getType() const {
+	CORE_MUTEX
 	
+	FBLOG_DEBUG("CallStatsAPI::getType", "this=" << this);
+	return mCallStats->type;
+}
+
+float CallStatsAPI::getUploadBandwidth() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallStatsAPI::getUploadBandwidth", "this=" << this);
+	return mCallStats->upload_bandwidth;
+}
+
+int CallStatsAPI::getUpnpState() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CallStatsAPI::getUpnpState", "this=" << this);
+	return mCallStats->upnp_state;
+}
+
 } // LinphoneWeb

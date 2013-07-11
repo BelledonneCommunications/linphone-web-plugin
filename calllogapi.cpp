@@ -43,27 +43,11 @@ void CallLogAPI::initProxy() {
 	registerProperty("status", make_property(this, &CallLogAPI::getStatus));
 	registerProperty("to", make_property(this, &CallLogAPI::getTo));
 	registerProperty("videoEnabled", make_property(this, &CallLogAPI::videoEnabled));
-
-	registerProperty("refKey", make_property(this, &CallLogAPI::getRefKey));
 }
 
 CallLogAPI::~CallLogAPI() {
 	FBLOG_DEBUG("CallLogAPI::~CallLogAPI", "this=" << this);
 	linphone_call_log_set_user_pointer(mCallLog, NULL);
-}
-
-StringPtr CallLogAPI::getRefKey() const {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CallLogAPI::getRefKey", "this=" << this);
-	return CHARPTR_TO_STRING(linphone_call_log_get_ref_key(mCallLog));
-}
-
-void CallLogAPI::setRefKey(const StringPtr &refKey) {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CallLogAPI::setRefKey", "this=" << this << "\t" << "refKey=" << refKey);
-	linphone_call_log_set_ref_key(mCallLog, STRING_TO_CHARPTR(refKey));
 }
 
 StringPtr CallLogAPI::getCallId() const {

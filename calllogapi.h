@@ -40,9 +40,6 @@ protected:
 	
 public:
 	virtual ~CallLogAPI();
-
-	StringPtr getRefKey() const;
-	void setRefKey(const StringPtr &refKey);
 	
 	StringPtr getCallId() const;
 	LinphoneCallDir getDir() const;

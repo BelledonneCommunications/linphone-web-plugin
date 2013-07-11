@@ -90,8 +90,10 @@ public:
 	int getMaxCalls() const;
 	void setMaxCalls(int max);
 	std::vector<CallAPIPtr> getCalls() const;
+	CallAPIPtr findCallFromUri(const StringPtr &uri) const;
 	int getCallsNb() const;
 	int getMissedCallsCount() const;
+	void resetMissedCallsCount();
 
 	// Conference functions
 	int addAllToConference();
@@ -159,6 +161,8 @@ public:
 	void setVideoCodecs(const std::vector<PayloadTypeAPIPtr> &list);
 	bool payloadTypeEnabled(const PayloadTypeAPIPtr &payloadType) const;
 	void enablePayloadType(const PayloadTypeAPIPtr &payloadType, bool enable);
+	PayloadTypeAPIPtr findPayloadType(const StringPtr &type, int rate, int channels) const;
+
 
 	// ProxyConfig functions
 	int addProxyConfig(const ProxyConfigAPIPtr &config);
@@ -174,6 +178,7 @@ public:
 	// CallLog functions
 	void clearCallLogs();
 	std::vector<CallLogAPIPtr> getCallLogs() const;
+	void removeCallLog(const CallLogAPIPtr &calllog);
 
 	// Network functions
 	void setAudioPort(int port);
@@ -232,6 +237,13 @@ public:
 	void setFirewallPolicy(int policy);
 	int getMediaEncryption() const;
 	void setMediaEncryption(int encryption);
+	bool isMediaEncryptionMandatory() const;
+	void setMediaEncryptionMandatory(bool mandatory);
+	int getNortpTimeout() const;
+	void setNortpTimeout(int timeout);
+	int getDelayedTimeout() const;
+	void setDelayedTimeout(int timeout);
+
 
 	// AuthInfo functions
 	void addAuthInfo(const AuthInfoAPIPtr &authInfo);

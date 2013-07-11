@@ -191,8 +191,10 @@ void CoreAPI::initProxy() {
 	registerProperty("inCallTimeout", make_property(this, &CoreAPI::getInCallTimeout, &CoreAPI::setInCallTimeout));
 	registerProperty("maxCalls", make_property(this, &CoreAPI::getMaxCalls, &CoreAPI::setMaxCalls));
 	registerProperty("calls", make_property(this, &CoreAPI::getCalls));
+	registerMethod("findCallFromUri", make_method(this, &CoreAPI::findCallFromUri));
 	registerProperty("callsNb", make_property(this, &CoreAPI::getCallsNb));
 	registerProperty("missedCallsCount", make_property(this, &CoreAPI::getMissedCallsCount));
+	registerMethod("resetMissedCallsCount", make_method(this, &CoreAPI::resetMissedCallsCount));
 
 	// Conference bindings
 	registerMethod("addAllToConference", make_method(this, &CoreAPI::addAllToConference));
@@ -241,6 +243,7 @@ void CoreAPI::initProxy() {
 	registerProperty("videoCodecs", make_property(this, &CoreAPI::getVideoCodecs, &CoreAPI::setVideoCodecs));
 	registerMethod("payloadTypeEnabled", make_method(this, &CoreAPI::payloadTypeEnabled));
 	registerMethod("enablePayloadType", make_method(this, &CoreAPI::enablePayloadType));
+	registerMethod("findPayloadType", make_method(this, &CoreAPI::findPayloadType));
 
 	// ProxyConfig bindings
 	registerMethod("addProxyConfig", make_method(this, &CoreAPI::addProxyConfig));
@@ -253,6 +256,7 @@ void CoreAPI::initProxy() {
 	// CallLog bindings
 	registerMethod("clearCallLogs", make_method(this, &CoreAPI::clearCallLogs));
 	registerProperty("callLogs", make_property(this, &CoreAPI::getCallLogs));
+	registerMethod("removeCallLog", make_method(this, &CoreAPI::removeCallLog));
 	
 	// Network bindings
 	registerProperty("audioPort", make_property(this, &CoreAPI::getAudioPort, &CoreAPI::setAudioPort));
@@ -283,6 +287,9 @@ void CoreAPI::initProxy() {
 	registerProperty("videoJittcomp", make_property(this, &CoreAPI::getVideoJittcomp, &CoreAPI::setVideoJittcomp));
 	registerProperty("firewallPolicy", make_property(this, &CoreAPI::getFirewallPolicy, &CoreAPI::setFirewallPolicy));
 	registerProperty("mediaEncryption", make_property(this, &CoreAPI::getMediaEncryption, &CoreAPI::setMediaEncryption));
+	registerProperty("mediaEncryptionMandatory", make_property(this, &CoreAPI::isMediaEncryptionMandatory, &CoreAPI::setMediaEncryptionMandatory));
+	registerProperty("nortpTimeout", make_property(this, &CoreAPI::getNortpTimeout, &CoreAPI::setNortpTimeout));
+	registerProperty("delayedTimeout", make_property(this, &CoreAPI::getDelayedTimeout, &CoreAPI::setDelayedTimeout));
 	
 	// AuthInfo bindings
 	registerMethod("addAuthInfo", make_method(this, &CoreAPI::addAuthInfo));
@@ -743,6 +750,14 @@ std::vector<CallAPIPtr> CoreAPI::getCalls() const {
 	return list;
 }
 
+CallAPIPtr CoreAPI::findCallFromUri(const StringPtr &uri) const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::findCallFromUri", "this=" << this << "\t" << "uri=" << uri);
+	return getFactory()->getCall(linphone_core_find_call_from_uri(mCore, STRING_TO_CHARPTR(uri)));
+}
+
 int CoreAPI::getCallsNb() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
@@ -757,6 +772,14 @@ int CoreAPI::getMissedCallsCount() const {
 	
 	FBLOG_DEBUG("CoreAPI::getMissedCallsCount", "this=" << this);
 	return linphone_core_get_missed_calls_count(mCore);
+}
+
+void CoreAPI::resetMissedCallsCount() {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::resetMissedCallsCount", "this=" << this);
+	return linphone_core_reset_missed_calls_count(mCore);
 }
 	
 /*
@@ -1288,6 +1311,14 @@ void CoreAPI::enablePayloadType(const PayloadTypeAPIPtr &payloadType, bool enabl
 	FBLOG_DEBUG("CoreAPI::enablePayloadType", "this=" << this << "\t" << "payloadType=" << payloadType << "\t" << "enable=" << enable);
 	linphone_core_enable_payload_type(mCore, payloadType->getRef(), enable ? TRUE : FALSE);
 }
+	
+PayloadTypeAPIPtr CoreAPI::findPayloadType(const StringPtr &type, int rate, int channels) const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::enablePayloadType", "this=" << this << "\t" << "type=" << type << "\t" << "rate=" << rate << "\t" << "channels=" << channels);
+	return getFactory()->getPayloadType(linphone_core_find_payload_type(mCore, STRING_TO_CHARPTR(type), rate, channels));
+}
 
 /*
  *
@@ -1403,6 +1434,14 @@ std::vector<CallLogAPIPtr> CoreAPI::getCallLogs() const {
 		list.push_back(getFactory()->getCallLog(reinterpret_cast<LinphoneCallLog *>(node->data)));
 	}
 	return list;
+}
+	
+void CoreAPI::removeCallLog(const CallLogAPIPtr &calllog) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getCallLogs", "this=" << this << "\t" << "calllog=" << calllog);
+	linphone_core_remove_call_log(mCore, calllog->getRef());
 }
 	
 /*
@@ -1911,6 +1950,54 @@ void CoreAPI::setMediaEncryption(int encryption) {
 	
 	FBLOG_DEBUG("CoreAPI::setMediaEncryption", "this=" << this << "\t" << "encryption=" << encryption);
 	linphone_core_set_media_encryption(mCore, (LinphoneMediaEncryption)encryption);
+}
+	
+bool CoreAPI::isMediaEncryptionMandatory() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::isMediaEncryptionMandatory", "this=" << this);
+	return linphone_core_is_media_encryption_mandatory(mCore) == TRUE? true : false;
+}
+	
+void CoreAPI::setMediaEncryptionMandatory(bool mandatory) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+		
+	FBLOG_DEBUG("CoreAPI::setMediaEncryptionMandatory", "this=" << this << "\t" << "mandatory=" << mandatory);
+	linphone_core_set_media_encryption_mandatory(mCore, mandatory? TRUE : FALSE);
+}
+	
+int CoreAPI::getNortpTimeout() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::getNortpTimeout", "this=" << this);
+	return linphone_core_get_nortp_timeout(mCore);
+}
+
+void CoreAPI::setNortpTimeout(int timeout) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setNortpTimeout", "this=" << this << "\t" << "timeout=" << timeout);
+	linphone_core_set_nortp_timeout(mCore, timeout);
+}
+	
+int CoreAPI::getDelayedTimeout() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+		
+	FBLOG_DEBUG("CoreAPI::getDelayedTimeout", "this=" << this);
+	return linphone_core_get_delayed_timeout(mCore);
+}
+	
+void CoreAPI::setDelayedTimeout(int timeout) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setDelayedTimeout", "this=" << this << "\t" << "timeout=" << timeout);
+	linphone_core_set_delayed_timeout(mCore, timeout);
 }
 	
 
