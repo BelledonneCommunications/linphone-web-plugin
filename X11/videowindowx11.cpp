@@ -50,7 +50,7 @@ gint VideoWindowX11::configure_event(GtkWidget *widget, GdkEventConfigure *event
 		context->mPixmap = NULL;
 	}
 	context->mPixmap = gdk_pixmap_new(widget->window, widget->allocation.width, widget->allocation.height, -1);
-	drawBackground();
+	context->drawBackground();
 	return TRUE;
 }
 
@@ -64,8 +64,8 @@ void VideoWindowX11::setBackgroundColor(int r, int g, int b) {
 
 void VideoWindowX11::drawBackground() {
 	GtkWidget *gtkWidget = mWindow->getWidget();
-	gtk_widget_modify_bg(mGtkWidget, GTK_STATE_NORMAL, &mBackgroundColor);
-	gdk_draw_rectangle(mPixmap, mGtkWidget->style->bg_gc[GTK_STATE_NORMAL], TRUE, 0, 0, mGtkWidget->allocation.width, mGtkWidget->allocation.height);
+	gtk_widget_modify_bg(gtkWidget, GTK_STATE_NORMAL, &mBackgroundColor);
+	gdk_draw_rectangle(mPixmap, gtkWidget->style->bg_gc[GTK_STATE_NORMAL], TRUE, 0, 0, gtkWidget->allocation.width, gtkWidget->allocation.height);
 }
 
 void VideoWindowX11::setWindow(FB::PluginWindow *window) {
@@ -82,8 +82,8 @@ void VideoWindowX11::setWindow(FB::PluginWindow *window) {
 	} else {
 		if (mWindow != NULL) {
 			GtkWidget *gtkWidget = mWindow->getWidget();
-			gtk_signal_disconnect(GTK_OBJECT(mGtkWidget), mExposeEventId);
-			gtk_signal_disconnect(GTK_OBJECT(mGtkWidget), ConfigureEventId);
+			gtk_signal_disconnect(GTK_OBJECT(gtkWidget), mExposeEventId);
+			gtk_signal_disconnect(GTK_OBJECT(gtkWidget), ConfigureEventId);
 			if(mPixmap) {
 				gdk_pixmap_unref(mPixmap);
 				mPixmap = NULL;
