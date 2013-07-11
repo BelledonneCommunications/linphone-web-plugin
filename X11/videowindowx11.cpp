@@ -95,7 +95,11 @@ void VideoWindowX11::setWindow(FB::PluginWindow *window) {
 
 void* VideoWindowX11::getNativeHandle() const {
 	FBLOG_DEBUG("VideoWindowX11::getNativeHandle()", "this=" << this);
-	return (void *)GDK_DRAWABLE_XID(gtk_widget_get_window(mGtkWidget->getWidget()));
+	if(mWindow) {
+		return (void *)GDK_DRAWABLE_XID(gtk_widget_get_window(mWindow->getWidget()));
+	} else {
+		return NULL;
+	}
 }
 
 bool VideoWindowX11::draw() {

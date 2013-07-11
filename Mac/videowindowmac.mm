@@ -78,7 +78,11 @@ void VideoWindowMac::setWindow(FB::PluginWindow *window) {
 
 void* VideoWindowMac::getNativeHandle() const {
 	FBLOG_DEBUG("VideoWindowMac::getNativeHandle", "this=" << this);
-	return (void*)mWindow;
+	if(mWindow) {
+		return (void*)mWindow->getDrawingPrimitive();
+	} else {
+		return NULL;
+	}
 }
 
 bool VideoWindowMac::draw() {

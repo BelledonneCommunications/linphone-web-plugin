@@ -72,7 +72,11 @@ void VideoWindowWin::setWindow(FB::PluginWindow *window) {
 
 void* VideoWindowWin::getNativeHandle() const {
 	FBLOG_DEBUG("VideoWindowWin::getNativeHandle()", "this=" << this);
-	return (void *) mWindow->getHWND();
+	if(mWindow) {
+		return (void *) mWindow->getHWND();
+	} else {
+		return NULL;
+	}
 }
 	
 } // LinphoneWeb
