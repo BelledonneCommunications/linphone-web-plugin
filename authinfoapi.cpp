@@ -35,7 +35,7 @@ AuthInfoAPI::AuthInfoAPI(const LinphoneAuthInfo *authInfo) :
 }
 
 
-AuthInfoAPI::AuthInfoAPI(const StringPtr &username, const StringPtr &userid, const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm) :
+AuthInfoAPI::AuthInfoAPI(StringPtr const &username, StringPtr const &userid, StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm) :
 		WrapperAPI(APIDescription(this)) {
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI",
 			"this=" << this << "\t" << "username=" << username << "\t" << "userid=" << userid << "\t" << "passwd=" << passwd << "\t" << "ha1" << ha1 << "\t" << "realm=" << realm);
@@ -66,7 +66,7 @@ StringPtr AuthInfoAPI::getHa1() const {
 	return CHARPTR_TO_STRING(linphone_auth_info_get_ha1(mAuthInfo));
 }
 
-void AuthInfoAPI::setHa1(const StringPtr &ha1) {
+void AuthInfoAPI::setHa1(StringPtr const &ha1) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AuthInfoAPI::setHa1", "this=" << this << "\t" << "ha1=" << ha1);
@@ -80,7 +80,7 @@ StringPtr AuthInfoAPI::getRealm() const {
 	return CHARPTR_TO_STRING(linphone_auth_info_get_realm(mAuthInfo));
 }
 
-void AuthInfoAPI::setRealm(const StringPtr &realm) {
+void AuthInfoAPI::setRealm(StringPtr const &realm) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AuthInfoAPI::setRealm", "this=" << this << "\t" << "realm=" << realm);
@@ -94,7 +94,7 @@ StringPtr AuthInfoAPI::getUserid() const {
 	return CHARPTR_TO_STRING(linphone_auth_info_get_userid(mAuthInfo));
 }
 
-void AuthInfoAPI::setUserid(const StringPtr &userid) {
+void AuthInfoAPI::setUserid(StringPtr const &userid) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AuthInfoAPI::setUserid", "this=" << this << "\t" << "userid=" << userid);
@@ -108,7 +108,7 @@ StringPtr AuthInfoAPI::getUsername() const {
 	return CHARPTR_TO_STRING(linphone_auth_info_get_username(mAuthInfo));
 }
 
-void AuthInfoAPI::setUsername(const StringPtr &username) {
+void AuthInfoAPI::setUsername(StringPtr const &username) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AuthInfoAPI::setUsername", "this=" << this << "\t" << "username=" << username);
@@ -122,7 +122,7 @@ StringPtr AuthInfoAPI::getPasswd() const {
 	return CHARPTR_TO_STRING(linphone_auth_info_get_passwd(mAuthInfo));
 }
 
-void AuthInfoAPI::setPasswd(const StringPtr &passwd) {
+void AuthInfoAPI::setPasswd(StringPtr const &passwd) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AuthInfoAPI::setPasswd", "this=" << this << "\t" << "passwd=" << passwd);

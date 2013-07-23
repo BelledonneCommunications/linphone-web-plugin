@@ -26,7 +26,7 @@ namespace LinphoneWeb {
 
 const unsigned int UploadFileTransferAPI::BUFFER_SIZE = 32 * 1024;
 
-UploadFileTransferAPI::UploadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
+UploadFileTransferAPI::UploadFileTransferAPI(FB::URI const &sourceUri, FB::URI const &targetUri, FB::JSObjectPtr const &callback):
 	FileTransferAPI(sourceUri, targetUri, callback) {
 	FBLOG_DEBUG("UploadFileTransferAPI::UploadFileTransferAPI", "this=" << this);
 }
@@ -125,7 +125,7 @@ void UploadFileTransferAPI::threadFct() {
 	mThread.reset();
 }
 
-void UploadFileTransferAPI::callbackFct(bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size) {
+void UploadFileTransferAPI::callbackFct(bool success, FB::HeaderMap const &headers, boost::shared_array<uint8_t> const &data, const size_t size) {
 	FBLOG_DEBUG("UploadFileTransferAPI::callbackFct", "this=" << this);
 	if(!success) {
 		FBLOG_DEBUG("UploadFileTransferAPI::callbackFct", "HTTP error");

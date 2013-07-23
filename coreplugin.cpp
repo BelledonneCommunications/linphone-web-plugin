@@ -148,7 +148,7 @@ void CorePlugin::StaticDeinitialize() {
 ///         at this point, nor the window.  For best results wait to use
 ///         the JSAPI object until the onPluginReady method is called
 ///////////////////////////////////////////////////////////////////////////////
-CorePlugin::CorePlugin(const WhiteBoardPtr &whiteboard): mWhiteBoard(whiteboard) {
+CorePlugin::CorePlugin(WhiteBoardPtr const &whiteboard): mWhiteBoard(whiteboard) {
 	FBLOG_DEBUG("CorePlugin::CorePlugin", "this" << this);
 }
 

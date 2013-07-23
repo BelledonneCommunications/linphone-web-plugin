@@ -21,7 +21,7 @@
 
 namespace LinphoneWeb {
 
-FileTransferAPI::FileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
+FileTransferAPI::FileTransferAPI(FB::URI const &sourceUri, FB::URI const &targetUri, FB::JSObjectPtr const &callback):
 	WrapperAPI(APIDescription(this)), mSourceUri(sourceUri), mTargetUri(targetUri), mCallback(callback), mDone(false) {
 }
 
@@ -44,7 +44,7 @@ void FileTransferAPI::onSuccess(bool done) {
 	mCallback->InvokeAsync("", FB::variant_list_of(done)(FB::variant()));
 }
 
-void FileTransferAPI::onError(const std::string &error) {
+void FileTransferAPI::onError(std::string const &error) {
 	FBLOG_DEBUG("FileManagerAPI::onError", "this=" << this << "\t" << "error=" << error);
 	mDone = false;
 	mError = error;

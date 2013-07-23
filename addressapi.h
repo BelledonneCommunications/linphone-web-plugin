@@ -33,7 +33,7 @@ private:
 
 	AddressAPI(LinphoneAddress *address);
 	AddressAPI(const LinphoneAddress *address);
-	AddressAPI(const StringPtr &uri);
+	AddressAPI(StringPtr const &uri);
 
 protected:
 	virtual void initProxy();
@@ -51,11 +51,11 @@ public:
 	int getPortInt() const;
 	StringPtr getScheme() const;
 	StringPtr getUsername() const;
-	void setDisplayName(const StringPtr &displayname);
-	void setDomain(const StringPtr &domain);
-	void setPort(const StringPtr &port);
+	void setDisplayName(StringPtr const &displayname);
+	void setDomain(StringPtr const &domain);
+	void setPort(StringPtr const &port);
 	void setPortInt(int port);
-	void setUsername(const StringPtr &username);
+	void setUsername(StringPtr const &username);
 
 	inline LinphoneAddress *getRef() {
 		return mAddress;

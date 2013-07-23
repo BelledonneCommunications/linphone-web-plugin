@@ -24,7 +24,7 @@
 
 namespace LinphoneWeb {
 
-FactoryAPI::FactoryAPI(const FB::PluginCorePtr &plugin, const WhiteBoardPtr &whiteboard): mPlugin(plugin), mWhiteBoard(whiteboard) {
+FactoryAPI::FactoryAPI(FB::PluginCorePtr const &plugin, WhiteBoardPtr const &whiteboard): mPlugin(plugin), mWhiteBoard(whiteboard) {
 	FBLOG_DEBUG("FactoryAPI::FactoryAPI", "this=" << this);
 }
 
@@ -68,7 +68,7 @@ AddressAPIPtr FactoryAPI::getAddress(const LinphoneAddress *address) {
 	return get(shared_ptr, false, true);
 }
 	
-AddressAPIPtr FactoryAPI::getAddress(const StringPtr &address) {
+AddressAPIPtr FactoryAPI::getAddress(StringPtr const &address) {
 	FBLOG_DEBUG("FactoryAPI::getAddress", "this=" << this << "\t" << "address=" << address);
 	
 	AddressAPIPtr shared_ptr;
@@ -96,8 +96,8 @@ AuthInfoAPIPtr FactoryAPI::getAuthInfo(const LinphoneAuthInfo *authInfo) {
 	return get(shared_ptr, false, true);
 }
 
-AuthInfoAPIPtr FactoryAPI::getAuthInfo(const StringPtr &username, const StringPtr &userid,
-						   const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm) {
+AuthInfoAPIPtr FactoryAPI::getAuthInfo(StringPtr const &username, StringPtr const &userid,
+						   StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm) {
 	FBLOG_DEBUG("FactoryAPI::getAuthInfo", "this=" << this << "\t" << "username=" << username
 				<< "\t" << "userid=" << userid
 				<< "\t" << "passwd=" << passwd
@@ -269,7 +269,7 @@ FileManagerAPIPtr FactoryAPI::getFileManager() {
 	return shared_ptr;
 }
 
-FileTransferAPIPtr FactoryAPI::getFileTransfer(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr &callback) {
+FileTransferAPIPtr FactoryAPI::getFileTransfer(FB::URI const &sourceUri, FB::URI const &targetUri, FB::JSObjectPtr const &callback) {
 	FBLOG_DEBUG("FactoryAPI::getFileTransfer", "this=" << this
 				<< "\t" << "sourceUri=" << sourceUri.toString()
 				<< "\t" << "targetUri=" << targetUri.toString()

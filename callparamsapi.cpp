@@ -149,7 +149,7 @@ StringPtr CallParamsAPI::getRecordFile() const {
 	return CHARPTR_TO_STRING(linphone_call_params_get_record_file(mCallParams));
 }
 
-void CallParamsAPI::setRecordFile(const StringPtr &file) {
+void CallParamsAPI::setRecordFile(StringPtr const &file) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CallParamsAPI::setRecordFile", "this=" << this << "\t" << "file=" << file);

@@ -28,7 +28,7 @@ namespace LinphoneWeb {
 FB_FORWARD_PTR(FileStreamHelper);
 class FileStreamHelper: public FB::SimpleStreamHelper {
 public:
-	static FileStreamHelperPtr AsyncRequest(const FB::BrowserHostConstPtr& host, const FB::BrowserStreamRequest& req) {
+	static FileStreamHelperPtr AsyncRequest(FB::BrowserHostConstPtr const &host, FB::BrowserStreamRequest const &req) {
 		if (!req.getCallback()) {
 			throw std::runtime_error("Invalid callback");
 		}
@@ -43,7 +43,7 @@ public:
 		return AsyncRequest(host, stream, req);
 	}
 	
-	static FileStreamHelperPtr AsyncRequest(const FB::BrowserHostConstPtr& host, const FB::BrowserStreamPtr& stream, const FB::BrowserStreamRequest& req) {
+	static FileStreamHelperPtr AsyncRequest(FB::BrowserHostConstPtr const &host, FB::BrowserStreamPtr const &stream, FB::BrowserStreamRequest const &req) {
 		if (!host->isMainThread()) {
 			// This must be run from the main thread
 			return host->CallOnMainThread(boost::bind(&AsyncRequest, host, stream, req));
@@ -55,7 +55,7 @@ public:
 		stream->AttachObserver(ptr);
 		return ptr;
 	}
-	FileStreamHelper(const FB::HttpCallback& callback, const size_t blockSize):
+	FileStreamHelper(FB::HttpCallback const &callback, const size_t blockSize):
 		FB::SimpleStreamHelper(callback, blockSize) {
 		
 	}
@@ -72,7 +72,7 @@ protected:
 	}
 	
 private:
-	void keepReference(const FileStreamHelperPtr& ptr) {
+	void keepReference(FileStreamHelperPtr const &ptr) {
 		self = ptr;
 	}
 	FileStreamHelperPtr self;

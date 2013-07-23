@@ -37,9 +37,9 @@ protected:
 	std::string mError;
 	
 protected:
-	FileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
+	FileTransferAPI(FB::URI const &sourceUri, FB::URI const &targetUri, FB::JSObjectPtr const &callback);
 	virtual void onSuccess(bool done);
-	virtual void onError(const std::string &error);
+	virtual void onError(std::string const &error);
 	virtual void initProxy();
 	
 public:

@@ -42,11 +42,11 @@ protected:
 	virtual void setFactory(FactoryAPIPtr factory);
 	virtual void initProxy() = 0;
 	
-	WrapperAPI(const std::string& description = "<JSAPI-Auto Javascript Object>");
+	WrapperAPI(std::string const &description = "<JSAPI-Auto Javascript Object>");
 	virtual ~WrapperAPI() = 0;
 	
 	// Thread
-	void attachThread(const boost::shared_ptr<boost::thread> &thread);
+	void attachThread(boost::shared_ptr<boost::thread> const &thread);
 	void detachThread(boost::thread::id id);
 	
 public:

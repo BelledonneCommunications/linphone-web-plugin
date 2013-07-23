@@ -26,7 +26,7 @@ namespace LinphoneWeb {
 
 const unsigned int LocalFileTransferAPI::BUFFER_SIZE = 32 * 1024;
 
-LocalFileTransferAPI::LocalFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
+LocalFileTransferAPI::LocalFileTransferAPI(FB::URI const &sourceUri, FB::URI const &targetUri, FB::JSObjectPtr const &callback):
 	FileTransferAPI(sourceUri, targetUri, callback), mTotalBytes(-1), mTransferedBytes(-1) {
 	FBLOG_DEBUG("LocalFileTransferAPI::LocalFileTransferAPI", "this=" << this);
 }
@@ -79,7 +79,7 @@ void LocalFileTransferAPI::onSuccess(bool done) {
 	FileTransferAPI::onSuccess(done);
 }
 
-void LocalFileTransferAPI::onError(const std::string &error) {
+void LocalFileTransferAPI::onError(std::string const &error) {
 	FileTransferAPI::onError(error);
 }
 

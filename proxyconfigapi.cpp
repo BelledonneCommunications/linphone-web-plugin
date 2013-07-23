@@ -94,7 +94,7 @@ StringPtr ProxyConfigAPI::getContactParameters() const {
 	return CHARPTR_TO_STRING(linphone_proxy_config_get_contact_parameters(mProxyConfig));
 }
 
-void ProxyConfigAPI::setContactParameters(const StringPtr &parameter) {
+void ProxyConfigAPI::setContactParameters(StringPtr const &parameter) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("ProxyConfigAPI::setContactParameters", "this=" << this << "\t" << "parameter=" << parameter);
@@ -122,7 +122,7 @@ StringPtr ProxyConfigAPI::getDialPrefix() const {
 	return CHARPTR_TO_STRING(linphone_proxy_config_get_dial_prefix(mProxyConfig));
 }
 
-void ProxyConfigAPI::setDialPrefix(const StringPtr &prefix) {
+void ProxyConfigAPI::setDialPrefix(StringPtr const &prefix) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("ProxyConfigAPI::setDialEscapePlus", "this=" << this << "\t" << "prefix=" << prefix);
@@ -158,7 +158,7 @@ StringPtr ProxyConfigAPI::getSipSetup() const {
 	return CHARPTR_TO_STRING((setup != NULL) ? setup->name : NULL);
 }
 
-void ProxyConfigAPI::setSipSetup(const StringPtr &sip_setup) {
+void ProxyConfigAPI::setSipSetup(StringPtr const &sip_setup) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("ProxyConfigAPI::setDialEscapePlus", "this=" << this << "\t" << "sip_setup=" << sip_setup);
@@ -172,7 +172,7 @@ int ProxyConfigAPI::getError() const {
 	return linphone_proxy_config_get_error(mProxyConfig);
 }
 
-void ProxyConfigAPI::setServerAddr(const StringPtr &server_addr) {
+void ProxyConfigAPI::setServerAddr(StringPtr const &server_addr) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("ProxyConfigAPI::setServerAddr", "this=" << this << "\t" << "server_addr=" << server_addr);
@@ -186,7 +186,7 @@ StringPtr ProxyConfigAPI::getServerAddr() const {
 	return CHARPTR_TO_STRING(linphone_proxy_config_get_addr(mProxyConfig));
 }
 
-void ProxyConfigAPI::setIdentity(const StringPtr &identity) {
+void ProxyConfigAPI::setIdentity(StringPtr const &identity) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("ProxyConfigAPI::setIdentity", "this=" << this << "\t" << "identity=" << identity);
@@ -200,7 +200,7 @@ StringPtr ProxyConfigAPI::getIdentity() const {
 	return CHARPTR_TO_STRING(linphone_proxy_config_get_identity(mProxyConfig));
 }
 
-void ProxyConfigAPI::setRoute(const StringPtr &route) {
+void ProxyConfigAPI::setRoute(StringPtr const &route) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("ProxyConfigAPI::setRoute", "this=" << this << "\t" << "route=" << route);
@@ -263,7 +263,7 @@ int ProxyConfigAPI::done() {
 	return linphone_proxy_config_done(mProxyConfig);
 }
 
-StringPtr ProxyConfigAPI::normalizeNumber(const StringPtr &username) const {
+StringPtr ProxyConfigAPI::normalizeNumber(StringPtr const &username) const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("ProxyConfigAPI::normalizeNumber", "this=" << this << "\t" << "username=" << username);

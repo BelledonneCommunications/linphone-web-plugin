@@ -11,7 +11,7 @@ namespace LinphoneWeb {
 
 static const unsigned char* base64_charset = (const unsigned char *)"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
-std::string base64_encode(const std::string& indata) {
+std::string base64_encode(std::string const &indata) {
   std::string outdata;
   outdata.reserve(((indata.size() * 8) / 6) + 2);
   std::string::size_type remaining = indata.size();
@@ -40,7 +40,7 @@ std::string base64_encode(const std::string& indata) {
   return outdata;
 }
 
-std::string base64_decode(const std::string& indata) {
+std::string base64_decode(std::string const &indata) {
   std::string outdata;
   outdata.reserve((indata.size() * 6) / 8);
   static char* xtbl = NULL;

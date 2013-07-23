@@ -43,13 +43,13 @@ private:
 	long long mTransferedBytes;
 	boost::shared_ptr<boost::thread> mThread;
 	
-	LocalFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback);
+	LocalFileTransferAPI(FB::URI const &sourceUri, FB::URI const &targetUri, FB::JSObjectPtr const &callback);
 	static void threadFctHolder(LocalFileTransferAPIPtr &self);
 	void threadFct();
 	
 protected:
 	virtual void onSuccess(bool done);
-	virtual void onError(const std::string &error);
+	virtual void onError(std::string const &error);
 	
 public:
 	virtual ~LocalFileTransferAPI();

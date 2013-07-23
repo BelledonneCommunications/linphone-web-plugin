@@ -45,13 +45,13 @@ public:
 	CoreAPIPtr getCore() const;
 
 	StringPtr getContactParameters() const;
-	void setContactParameters(const StringPtr &parameter);
+	void setContactParameters(StringPtr const &parameter);
 
 	bool getDialEscapePlus() const;
 	void setDialEscapePlus(bool escape);
 
 	StringPtr getDialPrefix() const;
-	void setDialPrefix(const StringPtr &prefix);
+	void setDialPrefix(StringPtr const &prefix);
 
 	StringPtr getDomain() const;
 	int getError() const;
@@ -60,18 +60,18 @@ public:
 	void enablePublish(bool enable);
 
 	StringPtr getSipSetup() const;
-	void setSipSetup(const StringPtr &sip_setup);
+	void setSipSetup(StringPtr const &sip_setup);
 
 	bool isRegistered() const;
 	//getSipSetupContext
 
-	void setServerAddr(const StringPtr &server_addr);
+	void setServerAddr(StringPtr const &server_addr);
 	StringPtr getServerAddr() const;
 
-	void setIdentity(const StringPtr &identity);
+	void setIdentity(StringPtr const &identity);
 	StringPtr getIdentity() const;
 
-	void setRoute(const StringPtr &route);
+	void setRoute(StringPtr const &route);
 	StringPtr getRoute() const;
 
 	void setExpires(int expires);
@@ -85,7 +85,7 @@ public:
 	void edit();
 	int done();
 
-	StringPtr normalizeNumber(const StringPtr &username) const;
+	StringPtr normalizeNumber(StringPtr const &username) const;
 	void refreshRegister();
 
 	inline LinphoneProxyConfig *getRef() {

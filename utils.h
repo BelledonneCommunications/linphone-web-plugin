@@ -30,7 +30,7 @@
 namespace LinphoneWeb {
 
 typedef boost::optional<std::string> StringPtr;
-std::ostream& operator<<(std::ostream &out, const StringPtr &string);
+std::ostream& operator<<(std::ostream &out, StringPtr const &string);
 	
 class ThreadGroup {
 private:
@@ -50,7 +50,7 @@ public:
 		return thread;
 	}
 
-	void addThread(const boost::shared_ptr<boost::thread> &thrd) {
+	void addThread(boost::shared_ptr<boost::thread> const &thrd) {
 		if (thrd) {
 			boost::lock_guard<boost::shared_mutex> guard(mMutex);
 			mThreadsMap.insert(std::pair<boost::thread::id, boost::shared_ptr<boost::thread> >(thrd->get_id(), thrd));
@@ -119,8 +119,8 @@ std::string APIDescription(T *ptr) {
 }
 
 StringPtr CHARPTR_TO_STRING(const char *cstr);
-const char *STRING_TO_CHARPTR(const StringPtr &str);
-std::string PRINT_STRING(const StringPtr &str);
+const char *STRING_TO_CHARPTR(StringPtr const &str);
+std::string PRINT_STRING(StringPtr const &str);
 
 } // LinphoneWeb
 

@@ -103,12 +103,12 @@ public:
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////
-	/// @fn FB::PluginCorePtr createPlugin(const std::string& mimetype)
+	/// @fn FB::PluginCorePtr createPlugin(std::string const &mimetype)
 	///
 	/// @brief  Creates a plugin object matching the provided mimetype
 	///         If mimetype is empty, returns the default plugin
 	///////////////////////////////////////////////////////////////////////////////
-	FB::PluginCorePtr createPlugin(const std::string& mimetype) {
+	FB::PluginCorePtr createPlugin(std::string const &mimetype) {
 		FBLOG_DEBUG("createPlugin", mimetype);
 		if (mimetype == "application/x-linphone-web-video")
 			return boost::make_shared<VideoPlugin>(mWhiteBoard);

@@ -21,7 +21,7 @@
 
 namespace LinphoneWeb {
 
-WrapperAPI::WrapperAPI(const std::string& description): FB::JSAPIAuto(description), mOwned(false), mConst(false) {
+WrapperAPI::WrapperAPI(std::string const &description): FB::JSAPIAuto(description), mOwned(false), mConst(false) {
 	
 	// Reserved names
 	setReserved("className");
@@ -64,7 +64,7 @@ void WrapperAPI::shutdown() {
 	mThreads.interruptAll();
 }
 
-void WrapperAPI::attachThread(const boost::shared_ptr<boost::thread> &thread) {
+void WrapperAPI::attachThread(boost::shared_ptr<boost::thread> const &thread) {
 	FBLOG_DEBUG("WrapperAPI::attachThread", "this=" << this  << "\t" << "id=" << thread->get_id());
 	mThreads.addThread(thread);
 }

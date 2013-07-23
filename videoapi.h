@@ -39,8 +39,8 @@ public:
 	void setWindow(FB::PluginWindow *window);
 
 	// Property
-	const std::string &getMagic();
-	void setMagic(const std::string &magic);
+	std::string const &getMagic();
+	void setMagic(std::string const &magic);
 	WhiteBoard::IdType getWindow();
 
 	void setBackgroundColor(int r, int g, int b);

@@ -25,7 +25,7 @@
 namespace LinphoneWeb {
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @fn videoAPI::videoAPI(const videoPtr& plugin, const FB::BrowserHostPtr host)
+/// @fn videoAPI::videoAPI(videoPtr const &plugin, const FB::BrowserHostPtr host)
 ///
 /// @brief  Constructor for your JSAPI object.  You should register your methods, properties, and events
 ///         that should be accessible to Javascript from here.
@@ -83,12 +83,12 @@ void VideoAPI::setWindow(FB::PluginWindow *window) {
 	}
 }
 
-const std::string &VideoAPI::getMagic() {
+std::string const &VideoAPI::getMagic() {
 	FBLOG_DEBUG("VideoAPI::getMagic", "this=" << this);
 	return mMagic;
 }
 
-void VideoAPI::setMagic(const std::string &magic) {
+void VideoAPI::setMagic(std::string const &magic) {
 	FBLOG_DEBUG("VideoAPI::setMagic", "this=" << this << "\t" << "magic=" << magic);
 	mMagic = magic;
 }

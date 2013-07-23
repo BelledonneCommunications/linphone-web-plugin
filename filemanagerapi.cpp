@@ -44,7 +44,7 @@
 
 namespace  boost {
 	namespace  filesystem {
-		boost::filesystem::path normalize(const boost::filesystem::path &path) {
+		boost::filesystem::path normalize(boost::filesystem::path const &path) {
 			boost::filesystem::path absPath = absolute(path);
 			boost::filesystem::path::iterator it = absPath.begin();
 			boost::filesystem::path result = *it++;
@@ -85,14 +85,14 @@ const std::string FileManagerAPI::Protocol::internal("internal");
 const std::string FileManagerAPI::Protocol::temp("tmp");
 const std::string FileManagerAPI::Protocol::local("local");
 
-FileManagerAPI::Protocol::Protocol(const std::string &protocol, const boost::filesystem::path& path): mProtocol(protocol), mPath(path) {
+FileManagerAPI::Protocol::Protocol(std::string const &protocol, boost::filesystem::path const &path): mProtocol(protocol), mPath(path) {
 }
 
-const std::string &FileManagerAPI::Protocol::getProtocol() {
+std::string const &FileManagerAPI::Protocol::getProtocol() {
 	return mProtocol;
 }
 
-const boost::filesystem::path &FileManagerAPI::Protocol::getPath() {
+boost::filesystem::path const &FileManagerAPI::Protocol::getPath() {
 	return mPath;
 }
 
@@ -189,7 +189,7 @@ void FileManagerAPI::initializePaths() {
 	}
 }
 
-bool FileManagerAPI::isSameHost(const FB::URI &uri) {
+bool FileManagerAPI::isSameHost(FB::URI const &uri) {
 	FB::PluginCorePtr plugin = getFactory()->getPlugin();
 	FB::URI hostUri = plugin->getHost()->getDOMWindow()->getLocation();
 	bool ret = boost::iequals(hostUri.protocol, uri.protocol) &&
@@ -216,22 +216,22 @@ bool FileManagerAPI::isSameHost(const FB::URI &uri) {
 	return ret;
 }
 
-bool FileManagerAPI::isHttp(const FB::URI &uri) {
+bool FileManagerAPI::isHttp(FB::URI const &uri) {
 	return boost::iequals(uri.protocol, Protocol::http) ||
 	boost::iequals(uri.protocol, Protocol::https);
 }
 
-bool FileManagerAPI::isInternal(const FB::URI &uri) {
+bool FileManagerAPI::isInternal(FB::URI const &uri) {
 	return boost::iequals(uri.protocol, Protocol::internal);
 }
 
-bool FileManagerAPI::isFile(const FB::URI &uri) {
+bool FileManagerAPI::isFile(FB::URI const &uri) {
 	return boost::iequals(uri.protocol, Protocol::internal) ||
 		   boost::iequals(uri.protocol, Protocol::temp) ||
 		   boost::iequals(uri.protocol, Protocol::local);
 }
 
-std::string FileManagerAPI::uriToFile(const FB::URI &uri) {
+std::string FileManagerAPI::uriToFile(FB::URI const &uri) {
 	try {
 		// A domain it's not valid
 		if(!uri.domain.empty()) {
@@ -257,7 +257,7 @@ std::string FileManagerAPI::uriToFile(const FB::URI &uri) {
 	}
 }
 
-FB::URI FileManagerAPI::fileToUri(const std::string &file) {
+FB::URI FileManagerAPI::fileToUri(std::string const &file) {
 	try {
 		FB::URI uri;
 		std::string absFile = boost::filesystem::normalize(boost::filesystem::path(file)).generic_string();
@@ -280,7 +280,7 @@ FB::URI FileManagerAPI::fileToUri(const std::string &file) {
 	}
 }
 
-FileTransferAPIPtr FileManagerAPI::copy(const std::string &sourceUrl, const std::string &targetUrl, const FB::JSObjectPtr& callback) {
+FileTransferAPIPtr FileManagerAPI::copy(std::string const &sourceUrl, std::string const &targetUrl, FB::JSObjectPtr const &callback) {
 	FBLOG_DEBUG("FileManagerAPI::copy", "this=" << this << "\t" << "sourceUrl=" << sourceUrl << "\t" << "targetUrl=" << targetUrl << "\t" << "callback=" << callback);
 	FB::URI sourceUri(sourceUrl);
 	FB::URI targetUri(targetUrl);
@@ -309,7 +309,7 @@ FileTransferAPIPtr FileManagerAPI::copy(const std::string &sourceUrl, const std:
 }
 
 
-void FileManagerAPI::exists(const std::string &url, const FB::JSObjectPtr& callback) {
+void FileManagerAPI::exists(std::string const &url, FB::JSObjectPtr const &callback) {
 	FBLOG_DEBUG("FileManagerAPI::exists", "this=" << this << "\t" << "url=" << url << "\t" << "callback=" << callback);
 	FB::URI uri(url);
 	if(!FileManagerAPI::isFile(uri)) {
@@ -335,7 +335,7 @@ void FileManagerAPI::exists(const std::string &url, const FB::JSObjectPtr& callb
 	}
 }
 
-void FileManagerAPI::mkdir(const std::string &url, const FB::JSObjectPtr& callback) {
+void FileManagerAPI::mkdir(std::string const &url, FB::JSObjectPtr const &callback) {
 	FBLOG_DEBUG("FileManagerAPI::mkdir", "this=" << this << "\t" << "url=" << url << "\t" << "callback=" << callback);
 	FB::URI uri(url);
 	try {
@@ -371,7 +371,7 @@ void FileManagerAPI::mkdir(const std::string &url, const FB::JSObjectPtr& callba
 	}
 }
 
-void FileManagerAPI::remove(const std::string &url, const FB::JSObjectPtr& callback) {
+void FileManagerAPI::remove(std::string const &url, FB::JSObjectPtr const &callback) {
 	FBLOG_DEBUG("FileManagerAPI::remove", "this=" << this << "\t" << "url=" << url << "\t" << "callback=" << callback);
 	FB::URI uri(url);
 	try {

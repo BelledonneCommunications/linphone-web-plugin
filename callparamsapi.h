@@ -54,7 +54,7 @@ public:
 	PayloadTypeAPIPtr getUsedAudioCodec() const;
 	PayloadTypeAPIPtr getUsedVideoCodec() const;
 	StringPtr getRecordFile() const;
-	void setRecordFile(const StringPtr &file);
+	void setRecordFile(StringPtr const &file);
 	void enableVideo(bool enable);
 	bool videoEnabled() const;
 	CallParamsAPIPtr copy() const;

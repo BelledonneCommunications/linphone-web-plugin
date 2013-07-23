@@ -59,29 +59,29 @@ public:
 	StringPtr getPluginVersion() const;
 
 	// Property
-	const StringPtr &getMagic() const;
-	void setMagic(const StringPtr &magic);
+	StringPtr const &getMagic() const;
+	void setMagic(StringPtr const &magic);
 
 	// Call functions
-	DECLARE_SYNC_N_ASYNC(CoreAPI, invite, 1, (const StringPtr &), CallAPIPtr);
-	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteAddress, 1, (const AddressAPIPtr &), CallAPIPtr);
-	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteWithParams, 2, (const StringPtr &, const CallParamsAPIPtr &), CallAPIPtr);
-	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteAddressWithParams, 2, (const AddressAPIPtr &, const CallParamsAPIPtr &), CallAPIPtr);
-	int acceptCall(const CallAPIPtr &call);
-	int acceptCallWithParams(const CallAPIPtr &call, const CallParamsAPIPtr &params);
+	DECLARE_SYNC_N_ASYNC(CoreAPI, invite, 1, (StringPtr const &), CallAPIPtr);
+	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteAddress, 1, (AddressAPIPtr const &), CallAPIPtr);
+	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteWithParams, 2, (StringPtr const &, CallParamsAPIPtr const &), CallAPIPtr);
+	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteAddressWithParams, 2, (AddressAPIPtr const &, CallParamsAPIPtr const &), CallAPIPtr);
+	int acceptCall(CallAPIPtr const &call);
+	int acceptCallWithParams(CallAPIPtr const &call, CallParamsAPIPtr const &params);
 	CallAPIPtr getCurrentCall();
-	int terminateCall(const CallAPIPtr &call);
+	int terminateCall(CallAPIPtr const &call);
 	int terminateAllCalls();
-	int redirectCall(const CallAPIPtr &call, const StringPtr &uri);
-	int declineCall(const CallAPIPtr &call, int reason);
-	int transferCall(const CallAPIPtr &call, const StringPtr &uri);
-	int transferCallToAnother(const CallAPIPtr &call, const CallAPIPtr &dest);
-	int resumeCall(const CallAPIPtr &call);
-	int pauseCall(const CallAPIPtr &call);
+	int redirectCall(CallAPIPtr const &call, StringPtr const &uri);
+	int declineCall(CallAPIPtr const &call, int reason);
+	int transferCall(CallAPIPtr const &call, StringPtr const &uri);
+	int transferCallToAnother(CallAPIPtr const &call, CallAPIPtr const &dest);
+	int resumeCall(CallAPIPtr const &call);
+	int pauseCall(CallAPIPtr const &call);
 	int pauseAllCalls();
-	int updateCall(const CallAPIPtr &call, const CallParamsAPIPtr &params);
-	int deferCallUpdate(const CallAPIPtr &call);
-	int acceptCallUpdate(const CallAPIPtr &call, const CallParamsAPIPtr &params);
+	int updateCall(CallAPIPtr const &call, CallParamsAPIPtr const &params);
+	int deferCallUpdate(CallAPIPtr const &call);
+	int acceptCallUpdate(CallAPIPtr const &call, CallParamsAPIPtr const &params);
 	CallParamsAPIPtr createDefaultCallParameters();
 	int getIncTimeout() const;
 	void setIncTimeout(int timeout);
@@ -90,19 +90,19 @@ public:
 	int getMaxCalls() const;
 	void setMaxCalls(int max);
 	std::vector<CallAPIPtr> getCalls() const;
-	CallAPIPtr findCallFromUri(const StringPtr &uri) const;
+	CallAPIPtr findCallFromUri(StringPtr const &uri) const;
 	int getCallsNb() const;
 	int getMissedCallsCount() const;
 	void resetMissedCallsCount();
 
 	// Conference functions
 	int addAllToConference();
-	int addToConference(const CallAPIPtr &call);
+	int addToConference(CallAPIPtr const &call);
 	int enterConference();
 	int getConferenceSize() const;
 	bool isInConference() const;
 	int leaveConference();
-	int removeFromConference(const CallAPIPtr &call);
+	int removeFromConference(CallAPIPtr const &call);
 	int terminateConference();
 
 	// Level functions
@@ -134,16 +134,16 @@ public:
 	bool getUsePreviewWindow() const;
 	void setUsePreviewWindow(bool enable);
 	VideoPolicyAPIPtr getVideoPolicy() const;
-	void setVideoPolicy(const VideoPolicyAPIPtr &videoPolicy);
+	void setVideoPolicy(VideoPolicyAPIPtr const &videoPolicy);
 
 	// Sound device functions
 	void reloadSoundDevices();
 	std::vector<StringPtr> getSoundDevices() const;
-	bool soundDeviceCanCapture(const StringPtr &devid) const;
-	bool soundDeviceCanPlayback(const StringPtr &devid) const;
-	void setRingerDevice(const StringPtr &devid);
-	void setPlaybackDevice(const StringPtr &devid);
-	void setCaptureDevice(const StringPtr &devid);
+	bool soundDeviceCanCapture(StringPtr const &devid) const;
+	bool soundDeviceCanPlayback(StringPtr const &devid) const;
+	void setRingerDevice(StringPtr const &devid);
+	void setPlaybackDevice(StringPtr const &devid);
+	void setCaptureDevice(StringPtr const &devid);
 	StringPtr getRingerDevice() const;
 	StringPtr getPlaybackDevice() const;
 	StringPtr getCaptureDevice() const;
@@ -151,43 +151,43 @@ public:
 	// Video device functions
 	void reloadVideoDevices();
 	std::vector<StringPtr> getVideoDevices() const;
-	void setVideoDevice(const StringPtr &devid);
+	void setVideoDevice(StringPtr const &devid);
 	StringPtr getVideoDevice() const;
 
 	// Codecs functions
 	std::vector<PayloadTypeAPIPtr> getAudioCodecs() const;
 	std::vector<PayloadTypeAPIPtr> getVideoCodecs() const;
-	void setAudioCodecs(const std::vector<PayloadTypeAPIPtr> &list);
-	void setVideoCodecs(const std::vector<PayloadTypeAPIPtr> &list);
-	bool payloadTypeEnabled(const PayloadTypeAPIPtr &payloadType) const;
-	void enablePayloadType(const PayloadTypeAPIPtr &payloadType, bool enable);
-	PayloadTypeAPIPtr findPayloadType(const StringPtr &type, int rate, int channels) const;
+	void setAudioCodecs(std::vector<PayloadTypeAPIPtr> const &list);
+	void setVideoCodecs(std::vector<PayloadTypeAPIPtr> const &list);
+	bool payloadTypeEnabled(PayloadTypeAPIPtr const &payloadType) const;
+	void enablePayloadType(PayloadTypeAPIPtr const &payloadType, bool enable);
+	PayloadTypeAPIPtr findPayloadType(StringPtr const &type, int rate, int channels) const;
 
 
 	// ProxyConfig functions
-	int addProxyConfig(const ProxyConfigAPIPtr &config);
+	int addProxyConfig(ProxyConfigAPIPtr const &config);
 	void clearProxyConfig();
-	void removeProxyConfig(const ProxyConfigAPIPtr &config);
+	void removeProxyConfig(ProxyConfigAPIPtr const &config);
 	std::vector<ProxyConfigAPIPtr> getProxyConfigList() const;
-	void setDefaultProxy(const ProxyConfigAPIPtr &config);
+	void setDefaultProxy(ProxyConfigAPIPtr const &config);
 	ProxyConfigAPIPtr getDefaultProxy() const;
-	void setPrimaryContact(const StringPtr &contact);
+	void setPrimaryContact(StringPtr const &contact);
 	StringPtr getPrimaryContact() const;
 	void refreshRegisters();
 	
 	// CallLog functions
 	void clearCallLogs();
 	std::vector<CallLogAPIPtr> getCallLogs() const;
-	void removeCallLog(const CallLogAPIPtr &calllog);
+	void removeCallLog(CallLogAPIPtr const &calllog);
 
 	// Network functions
 	void setAudioPort(int port);
 	int getAudioPort() const;
-	void setAudioPortRange(const StringPtr &range);
+	void setAudioPortRange(StringPtr const &range);
 	StringPtr getAudioPortRange() const;
 	void setVideoPort(int port);
 	int getVideoPort() const;
-	void setVideoPortRange(const StringPtr &range);
+	void setVideoPortRange(StringPtr const &range);
 	StringPtr getVideoPortRange() const;
 	void setDownloadBandwidth(int bandwidth);
 	int getDownloadBandwidth() const;
@@ -199,11 +199,11 @@ public:
 	int getUploadPtime() const;
 	void setMtu(int mtu);
 	int getMtu() const;
-	void setStunServer(const StringPtr &server);
+	void setStunServer(StringPtr const &server);
 	StringPtr getStunServer() const;
-	void setRelayAddr(const StringPtr &addr);
+	void setRelayAddr(StringPtr const &addr);
 	StringPtr getRelayAddr() const;
-	void setNatAddress(const StringPtr &address);
+	void setNatAddress(StringPtr const &address);
 	StringPtr getNatAddress() const;
 	void setGuessHostname(bool guess);
 	bool getGuessHostname() const;
@@ -219,7 +219,7 @@ public:
 	int getVideoDscp() const;
 	int getSipPort() const;
 	void setSipPort(int port);
-	void setSipTransports(const SipTransportsAPIPtr &sipTransports);
+	void setSipTransports(SipTransportsAPIPtr const &sipTransports);
 	SipTransportsAPIPtr getSipTransports() const;
 	bool adaptiveRateControlEnabled() const;
 	void enableAdaptiveRateControl(bool enable);
@@ -246,24 +246,24 @@ public:
 
 
 	// AuthInfo functions
-	void addAuthInfo(const AuthInfoAPIPtr &authInfo);
-	void abortAuthentication(const AuthInfoAPIPtr &authInfo);
-	void removeAuthInfo(const AuthInfoAPIPtr &authInfo);
-	AuthInfoAPIPtr findAuthInfo(const StringPtr &realm, const StringPtr &username);
+	void addAuthInfo(AuthInfoAPIPtr const &authInfo);
+	void abortAuthentication(AuthInfoAPIPtr const &authInfo);
+	void removeAuthInfo(AuthInfoAPIPtr const &authInfo);
+	AuthInfoAPIPtr findAuthInfo(StringPtr const &realm, StringPtr const &username);
 	std::vector<AuthInfoAPIPtr> getAuthInfoList() const;
 	void clearAllAuthInfo();
 
 	// Instantiator functions
 	FileManagerAPIPtr getFileManager() const;
 	ProxyConfigAPIPtr newProxyConfig() const;
-	AuthInfoAPIPtr newAuthInfo(const StringPtr &username, const StringPtr &userid,
-			const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm) const;
-	AddressAPIPtr newAddress(const StringPtr &address) const;
+	AuthInfoAPIPtr newAuthInfo(StringPtr const &username, StringPtr const &userid,
+			StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm) const;
+	AddressAPIPtr newAddress(StringPtr const &address) const;
 
 	// Dtmf
-	void sendDtmf(const std::string &dtmf);
+	void sendDtmf(std::string const &dtmf);
 	void stopDtmf();
-	void playDtmf(const std::string &dtmf, int duration_ms);
+	void playDtmf(std::string const &dtmf, int duration_ms);
 	bool getUseInfoForDtmf() const;
 	void setUseInfoForDtmf(bool enable);
 	bool getUseRfc2833ForDtmf() const;
@@ -274,7 +274,7 @@ public:
 	void setPresenceInfo(int status);
 	
 	// Core helpers
-	int init(const StringPtr &config, const StringPtr &factory);
+	int init(StringPtr const &config, StringPtr const &factory);
 	int uninit();
 	void setIterateInterval(int ms);
 	int getIterateInterval() const;
@@ -289,10 +289,10 @@ public:
 	void setStaticPictureFps(float fps);
 	float getStaticPictureFps() const;
 	StringPtr getUserAgentName() const;
-	void setUserAgentName(const StringPtr &name);
+	void setUserAgentName(StringPtr const &name);
 	StringPtr getUserAgentVersion() const;
-	void setUserAgentVersion(const StringPtr &version);
-	AddressAPIPtr interpretUrl(const StringPtr &url) const;
+	void setUserAgentVersion(StringPtr const &version);
+	AddressAPIPtr interpretUrl(StringPtr const &url) const;
 
 	// File
 	DECLARE_PROPERTY_FILE(CoreAPI, getRing, setRing);
@@ -304,7 +304,7 @@ public:
 	DECLARE_PROPERTY_FILE(CoreAPI, getZrtpSecretsFile, setZrtpSecretsFile);
 	
 	// Log
-	void setLogHandler(const FB::JSObjectPtr &handler);
+	void setLogHandler(FB::JSObjectPtr const &handler);
 	FB::JSObjectPtr getLogHandler() const;
 	
 	// uPnP
@@ -334,7 +334,7 @@ public: // Internal Use
 		return mCore;
 	}
 	
-	inline void log(const std::string &level, const char *cmsg) {
+	inline void log(std::string const &level, const char *cmsg) {
 		if(mLogHandler) {
 			mLogHandler->InvokeAsync("", FB::variant_list_of(level)(CHARPTR_TO_STRING(cmsg)));
 		}

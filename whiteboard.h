@@ -44,7 +44,7 @@ private:
 		T mValue;
 		
 	public:
-		Container(const T &value): mRef(1), mValue(value) {
+		Container(T const &value): mRef(1), mValue(value) {
 		}
 		
 		void incRef() const {
@@ -54,7 +54,7 @@ private:
 			return (--mRef) <= 0;
 		}
 		
-		const T &value() const {
+		T const &value() const {
 			return mValue;
 		}
 		
@@ -76,14 +76,14 @@ private:
 	mutable boost::shared_mutex mMutex;
 
 private:
-	ValueType getVariantValue(const IdType &id);
+	ValueType getVariantValue(IdType const &id);
 	
 public:
 	WhiteBoard();
-	IdType addValue(const ValueType &value);
-	IdType getId(const ValueType &value, bool append = false);
+	IdType addValue(ValueType const &value);
+	IdType getId(ValueType const &value, bool append = false);
 	template <typename T>
-	T getValue(const IdType &id) {
+	T getValue(IdType const &id) {
 		FBLOG_DEBUG("WhiteBoard::getValue", this << "\t" << "(Type)" << typeid(T).name() << "\t" << "id=" << id);
 		ValueType variant = getVariantValue(id);
 		T * value = boost::get<T>(&variant);
@@ -92,8 +92,8 @@ public:
 		}
 		return *value;
 	}
-	bool removeId(const IdType &id);
-	bool removeValue(const ValueType &value);
+	bool removeId(IdType const &id);
+	bool removeValue(ValueType const &value);
 };
 
 }

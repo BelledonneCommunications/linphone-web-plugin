@@ -132,7 +132,7 @@
 // PROPERTY FILE
 //
 #define DECLARE_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)                  \
-	void BOOST_PP_CAT(setter, _file)(const StringPtr &arg);                     \
+	void BOOST_PP_CAT(setter, _file)(StringPtr const &arg);                     \
 
 #define DECLARE_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)                  \
 	StringPtr BOOST_PP_CAT(getter, _file)() const;                              \
@@ -143,13 +143,13 @@
 
 #define DECLARE_PROPERTY_FILE(class, getter, setter)           \
 	StringPtr getter() const;                                  \
-	void setter(const StringPtr &arg);                         \
+	void setter(StringPtr const &arg);                         \
 	DECLARE_PROPERTY_N_DOWNLOAD_FILE_GETTER(class, getter)     \
 	DECLARE_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)     \
 
 
 #define IMPLEMENT_PROPERTY_N_DOWNLOAD_FILE_SETTER(class, setter)                               \
-	void class::BOOST_PP_CAT(setter, _file)(const StringPtr &arg) {                            \
+	void class::BOOST_PP_CAT(setter, _file)(StringPtr const &arg) {                            \
 		StringPtr file;                                                                        \
 		if(arg) {                                                                              \
 			FB::URI uri(*arg);                                                                 \

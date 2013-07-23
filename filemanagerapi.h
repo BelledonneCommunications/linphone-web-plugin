@@ -49,9 +49,9 @@ private:
 		boost::filesystem::path mPath;
 		
 	public:
-		Protocol(const std::string &protocol, const boost::filesystem::path& path);
-		const std::string &getProtocol();
-		const boost::filesystem::path &getPath();
+		Protocol(std::string const &protocol, boost::filesystem::path const &path);
+		std::string const &getProtocol();
+		boost::filesystem::path const &getPath();
 		
 	public:
 		static const std::string http;
@@ -70,12 +70,12 @@ protected:
 	virtual void setFactory(FactoryAPIPtr factory);
 	
 public:
-	bool isSameHost(const FB::URI &uri);
-	static bool isInternal(const FB::URI &uri);
-	static bool isFile(const FB::URI &uri);
-	static bool isHttp(const FB::URI &uri);
-	std::string uriToFile(const FB::URI &uri);
-	FB::URI fileToUri(const std::string &file);
+	bool isSameHost(FB::URI const &uri);
+	static bool isInternal(FB::URI const &uri);
+	static bool isFile(FB::URI const &uri);
+	static bool isHttp(FB::URI const &uri);
+	std::string uriToFile(FB::URI const &uri);
+	FB::URI fileToUri(std::string const &file);
 	
 protected:
 	virtual void initProxy();
@@ -83,10 +83,10 @@ protected:
 public:
 	virtual ~FileManagerAPI();
 	
-	FileTransferAPIPtr copy(const std::string &sourceUrl, const std::string &targetUrl, const FB::JSObjectPtr& callback);
-	void exists(const std::string &url, const FB::JSObjectPtr& callback);
-	void remove(const std::string &url, const FB::JSObjectPtr& callback);
-	void mkdir(const std::string &url, const FB::JSObjectPtr& callback);
+	FileTransferAPIPtr copy(std::string const &sourceUrl, std::string const &targetUrl, FB::JSObjectPtr const &callback);
+	void exists(std::string const &url, FB::JSObjectPtr const &callback);
+	void remove(std::string const &url, FB::JSObjectPtr const &callback);
+	void mkdir(std::string const &url, FB::JSObjectPtr const &callback);
 };
 	
 } // LinphoneWeb

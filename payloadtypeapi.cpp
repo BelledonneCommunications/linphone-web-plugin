@@ -118,7 +118,7 @@ StringPtr PayloadTypeAPI::getZeroPattern() const {
 	FBLOG_DEBUG("PayloadTypeAPI::getZeroPattern", "this=" << this);
 	return CHARPTR_TO_STRING(mPayloadType->zero_pattern);
 }
-void PayloadTypeAPI::setZeroPattern(const StringPtr &pattern) {
+void PayloadTypeAPI::setZeroPattern(StringPtr const &pattern) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PayloadTypeAPI::setZeroPattern", "this=" << this << "\t" << "pattern=" << pattern);
@@ -159,7 +159,7 @@ StringPtr PayloadTypeAPI::getMimeType() const {
 	FBLOG_DEBUG("PayloadTypeAPI::getMimeType", "this=" << this);
 	return CHARPTR_TO_STRING(mPayloadType->mime_type);
 }
-void PayloadTypeAPI::setMimeType(const StringPtr &mime) {
+void PayloadTypeAPI::setMimeType(StringPtr const &mime) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PayloadTypeAPI::setMimeType", "this=" << this << "\t" << "mime=" << mime);
@@ -188,7 +188,7 @@ StringPtr PayloadTypeAPI::getRecvFmtp() const {
 	return CHARPTR_TO_STRING(mPayloadType->recv_fmtp);
 }
 
-void PayloadTypeAPI::setRecvFmtp(const StringPtr &rfmtp) {
+void PayloadTypeAPI::setRecvFmtp(StringPtr const &rfmtp) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PayloadTypeAPI::setRecvFmtp", "this=" << this << "\t" << "rfmtp=" << rfmtp);
@@ -203,7 +203,7 @@ StringPtr PayloadTypeAPI::getSendFmtp() const {
 	FBLOG_DEBUG("PayloadTypeAPI::getSendFmtp", "this=" << this);
 	return CHARPTR_TO_STRING(mPayloadType->send_fmtp);
 }
-void PayloadTypeAPI::setSendFmtp(const StringPtr &sfmtp) {
+void PayloadTypeAPI::setSendFmtp(StringPtr const &sfmtp) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PayloadTypeAPI::setSendFmtp", "this=" << this << "\t" << "sfmtp=" << sfmtp);

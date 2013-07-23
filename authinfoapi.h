@@ -33,8 +33,8 @@ private:
 
 	AuthInfoAPI(LinphoneAuthInfo *authInfo);
 	AuthInfoAPI(const LinphoneAuthInfo *authInfo);
-	AuthInfoAPI(const StringPtr &username, const StringPtr &userid,
-				const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm);
+	AuthInfoAPI(StringPtr const &username, StringPtr const &userid,
+				StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm);
 	
 protected:
 	virtual void initProxy();
@@ -43,19 +43,19 @@ public:
 	virtual ~AuthInfoAPI();
 
 	StringPtr getHa1() const;
-	void setHa1(const StringPtr &ha1);
+	void setHa1(StringPtr const &ha1);
 	
 	StringPtr getRealm() const;
-	void setRealm(const StringPtr &realm);
+	void setRealm(StringPtr const &realm);
 	
 	StringPtr getUserid() const;
-	void setUserid(const StringPtr &userid);
+	void setUserid(StringPtr const &userid);
 
 	StringPtr getUsername() const;
-	void setUsername(const StringPtr &username);
+	void setUsername(StringPtr const &username);
 
 	StringPtr getPasswd() const;
-	void setPasswd(const StringPtr &passwd);
+	void setPasswd(StringPtr const &passwd);
 
 	inline LinphoneAuthInfo *getRef() {
 		return mAuthInfo;

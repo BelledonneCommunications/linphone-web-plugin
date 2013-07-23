@@ -27,7 +27,7 @@
 
 namespace LinphoneWeb {
 	
-std::ostream& operator<<(std::ostream &out, const StringPtr &string) {
+std::ostream& operator<<(std::ostream &out, StringPtr const &string) {
 	if(string) {
 		out << "\"" << string->c_str() << "\"";
 	} else {
@@ -48,11 +48,11 @@ StringPtr CHARPTR_TO_STRING(const char *cstr) {
 	return StringPtr();
 }
 
-const char *STRING_TO_CHARPTR(const StringPtr &str) {
+const char *STRING_TO_CHARPTR(StringPtr const &str) {
 	return (str)? str->c_str() : NULL;
 }
 	
-std::string PRINT_STRING(const StringPtr &str) {
+std::string PRINT_STRING(StringPtr const &str) {
 	return (str)? str->c_str() : "(NULL)";
 }
 	

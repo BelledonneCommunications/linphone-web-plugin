@@ -25,7 +25,7 @@ namespace LinphoneWeb {
 
 const unsigned int DownloadFileTransferAPI::BUFFER_SIZE = 32 * 1024;
 
-DownloadFileTransferAPI::DownloadFileTransferAPI(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr& callback):
+DownloadFileTransferAPI::DownloadFileTransferAPI(FB::URI const &sourceUri, FB::URI const &targetUri, FB::JSObjectPtr const &callback):
 	FileTransferAPI(sourceUri, targetUri, callback) {
 	FBLOG_DEBUG("DownloadFileTransferAPI::DownloadFileTransferAPI", "this=" << this);
 }
@@ -65,7 +65,7 @@ void DownloadFileTransferAPI::start() {
 	}
 }
 
-void DownloadFileTransferAPI::callbackFct(bool success, const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size) {
+void DownloadFileTransferAPI::callbackFct(bool success, FB::HeaderMap const &headers, boost::shared_array<uint8_t> const &data, const size_t size) {
 	FBLOG_DEBUG("UploadFileTransferAPI::callbackFct", "this=" << this);
 	if(!success) {
 		mFileStream.close();
@@ -79,11 +79,11 @@ void DownloadFileTransferAPI::callbackFct(bool success, const FB::HeaderMap& hea
 	attachThread(mThread);
 }
 
-void DownloadFileTransferAPI::threadFctHolder(DownloadFileTransferAPIPtr &self, const boost::shared_array<uint8_t> &adata, size_t &size) {
+void DownloadFileTransferAPI::threadFctHolder(DownloadFileTransferAPIPtr &self, boost::shared_array<uint8_t> const &adata, size_t &size) {
 	self->threadFct(adata, size);
 }
 
-void DownloadFileTransferAPI::threadFct(const boost::shared_array<uint8_t> &adata, size_t &size) {
+void DownloadFileTransferAPI::threadFct(boost::shared_array<uint8_t> const &adata, size_t &size) {
 	FBLOG_DEBUG("DownloadFileTransferAPI::threadFct", "this=" << this);
 	
 	mFileStream.open(mFileStr.c_str(), std::ios_base::out | std::ios_base::binary);

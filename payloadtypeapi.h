@@ -55,7 +55,7 @@ public:
 	void setBitsPerSample(int bps);
 
 	StringPtr getZeroPattern() const;
-	void setZeroPattern(const StringPtr &pattern);
+	void setZeroPattern(StringPtr const &pattern);
 
 	int getPatternLength() const;
 	void setPatternLength(int length);
@@ -64,16 +64,16 @@ public:
 	void setNormalBitrate(int bitrate);
 
 	StringPtr getMimeType() const;
-	void setMimeType(const StringPtr &mime);
+	void setMimeType(StringPtr const &mime);
 
 	int getChannels() const;
 	void setChannels(int channels);
 
 	StringPtr getRecvFmtp() const;
-	void setRecvFmtp(const StringPtr &rfmtp);
+	void setRecvFmtp(StringPtr const &rfmtp);
 
 	StringPtr getSendFmtp() const;
-	void setSendFmtp(const StringPtr &sfmtp);
+	void setSendFmtp(StringPtr const &sfmtp);
 
 	int getFlags() const;
 	void setFlags(int flags);

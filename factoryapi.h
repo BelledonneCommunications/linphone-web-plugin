@@ -64,7 +64,7 @@ private:
 	mutable boost::recursive_mutex mCoreMutex;
 #endif
 public:
-	FactoryAPI(const FB::PluginCorePtr &plugin, const WhiteBoardPtr &whiteboard);
+	FactoryAPI(FB::PluginCorePtr const &plugin, WhiteBoardPtr const &whiteboard);
 	~FactoryAPI();
 	
 	FB::PluginCorePtr getPlugin() const;
@@ -74,13 +74,13 @@ public:
 	// Address
 	AddressAPIPtr getAddress(LinphoneAddress *address);
 	AddressAPIPtr getAddress(const LinphoneAddress *address);
-	AddressAPIPtr getAddress(const StringPtr &address);
+	AddressAPIPtr getAddress(StringPtr const &address);
 	
 	// AuthInfo
 	AuthInfoAPIPtr getAuthInfo(LinphoneAuthInfo *authInfo);
 	AuthInfoAPIPtr getAuthInfo(const LinphoneAuthInfo *authInfo);
-	AuthInfoAPIPtr getAuthInfo(const StringPtr &username, const StringPtr &userid,
-				const StringPtr &passwd, const StringPtr &ha1, const StringPtr &realm);
+	AuthInfoAPIPtr getAuthInfo(StringPtr const &username, StringPtr const &userid,
+				StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm);
 	
 	// Call
 	CallAPIPtr getCall(LinphoneCall *call);
@@ -117,7 +117,7 @@ public:
 	
 	// File
 	FileManagerAPIPtr getFileManager();
-	FileTransferAPIPtr getFileTransfer(const FB::URI &sourceUri, const FB::URI &targetUri, const FB::JSObjectPtr &callback);
+	FileTransferAPIPtr getFileTransfer(FB::URI const &sourceUri, FB::URI const &targetUri, FB::JSObjectPtr const &callback);
 };
 
 } // LinphoneWeb

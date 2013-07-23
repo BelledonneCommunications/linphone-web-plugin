@@ -17,7 +17,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 
 namespace LinphoneWeb {
 
-std::string base64_encode(const std::string& indata);
-std::string base64_decode(const std::string& indata);
+std::string base64_encode(std::string const &indata);
+std::string base64_decode(std::string const &indata);
 
 } // LinphoneWeb

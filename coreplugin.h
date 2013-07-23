@@ -51,7 +51,7 @@ public:
 	static void StaticDeinitialize();
 
 public:
-	CorePlugin(const WhiteBoardPtr &whiteboard);
+	CorePlugin(WhiteBoardPtr const &whiteboard);
 	virtual ~CorePlugin();
 
 public:

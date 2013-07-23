@@ -41,7 +41,7 @@ public:
 	static void StaticDeinitialize();
 
 public:
-	VideoPlugin(const WhiteBoardPtr &whiteboard);
+	VideoPlugin(WhiteBoardPtr const &whiteboard);
 	virtual ~VideoPlugin();
 
 public:
