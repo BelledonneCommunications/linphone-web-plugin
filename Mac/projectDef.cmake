@@ -182,7 +182,6 @@ create_signed_xpi(${PLUGIN_NAME}
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	${PLUGIN_NAME}${FB_XPI_PACKAGE_SUFFIX}
 )
-SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_XPI_SIGNED_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 ###############################################################################
 
 ###############################################################################
@@ -230,7 +229,6 @@ create_signed_crx(${PLUGIN_NAME}
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	${PLUGIN_NAME}${FB_CRX_PACKAGE_SUFFIX}
 )
-SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_CRX_SIGNED_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 ###############################################################################
 
 
