@@ -228,6 +228,7 @@ void PayloadTypeAPI::setFlags(int flags) {
 PayloadTypeAPIPtr PayloadTypeAPI::clone() const {
 	CORE_MUTEX
 	
+	FBLOG_DEBUG("PayloadTypeAPI::clone", "this=" << this);
 	PayloadTypeAPIPtr ret = getFactory()->getPayloadType(payload_type_clone(mPayloadType));
 	ret->own();
 	return ret;
@@ -236,6 +237,7 @@ PayloadTypeAPIPtr PayloadTypeAPI::clone() const {
 StringPtr PayloadTypeAPI::getRtpmap() const {
 	CORE_MUTEX
 
+	FBLOG_DEBUG("PayloadTypeAPI::getRtpmap", "this=" << this);
 	return CHARPTR_TO_STRING(payload_type_get_rtpmap(mPayloadType));
 }
 
