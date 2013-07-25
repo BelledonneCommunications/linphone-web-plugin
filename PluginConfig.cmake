@@ -81,11 +81,9 @@ set(FBSTRING_PluginDescription
 
 # Version variable
 set(FBSTRING_V_TXT_WIN "Windows")
-#set(FBSTRING_V_WIN "win")
 set(FBSTRING_V_TXT_MAC "Mac")
-#set(FBSTRING_V_MAC "mac")
 set(FBSTRING_V_TXT_X11 "Linux")
-#set(FBSTRING_V_X11 "lin")
+
 set(FBSTRING_V_TXT_X86 "")
 set(FBSTRING_V_X86 "")
 set(FBSTRING_V_TXT_X86_64 "64 bits")
@@ -125,6 +123,8 @@ if(FB_PLATFORM_ARCH_64)
 		set(FBSTRING_PluginFileName "${FBSTRING_PluginFileName}${FBSTRING_V_X86_64}")
 	endif(NOT ${FBSTRING_V_X86_64} STREQUAL "")
 endif(FB_PLATFORM_ARCH_64)
+
+message("-- Platform: "${FBSTRING_PluginName})
 
 ### PACKAGES ###
 # WiX
