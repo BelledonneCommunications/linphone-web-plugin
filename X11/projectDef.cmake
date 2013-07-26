@@ -74,6 +74,11 @@ IF(NOT DEFINED CMAKE_CHRPATH)
 	SET(CMAKE_CHRPATH chrpath)
 ENDIF(NOT DEFINED CMAKE_CHRPATH)
 
+# Use default chmod if not defined
+IF(NOT DEFINED CMAKE_CHMOD)
+	SET(CMAKE_CHMOD chmod)
+ENDIF(NOT DEFINED CMAKE_CHMOD)
+
 ###############################################################################
 # Create Rootfs
 if (NOT FB_ROOTFS_SUFFIX)
@@ -132,7 +137,9 @@ function (create_rootfs PROJNAME)
 			DEPENDS ${DIR_SRC}/${elem}
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
 			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+			COMMAND ${CMAKE_CHMOD} +w ${DIR_DEST}/${elem}
 			COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${DIR_DEST}/${elem}
+			COMMAND ${CMAKE_CHMOD} -w ${DIR_DEST}/${elem}
 		)
 		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
