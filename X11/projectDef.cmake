@@ -88,19 +88,14 @@ endif()
 function (create_rootfs PROJNAME)
 	# Define components
 	SET(ROOTFS_LIB_SOURCES
-		libcrypto.${DEPENDENCY_EXT}.1.0.0
-		libeXosip2.${DEPENDENCY_EXT}.7
 		libjpeg.${DEPENDENCY_EXT}.8
 		liblinphone.${DEPENDENCY_EXT}.5
 		libmediastreamer_base.${DEPENDENCY_EXT}.3
 		libmediastreamer_voip.${DEPENDENCY_EXT}.3
 		libogg.${DEPENDENCY_EXT}.0
 		libortp.${DEPENDENCY_EXT}.9
-		libosip2.${DEPENDENCY_EXT}.7
-		libosipparser2.${DEPENDENCY_EXT}.7
 		libspeex.${DEPENDENCY_EXT}.1
 		libspeexdsp.${DEPENDENCY_EXT}.1
-		libssl.${DEPENDENCY_EXT}.1.0.0
 		libtheora.${DEPENDENCY_EXT}.0
 		libv4l1.${DEPENDENCY_EXT}.0
 		libv4l2.${DEPENDENCY_EXT}.0
@@ -108,6 +103,21 @@ function (create_rootfs PROJNAME)
 		libvpx.${DEPENDENCY_EXT}.1
 		libz.${DEPENDENCY_EXT}.1
 	)
+	IF(LW_USE_OPENSSL)
+		SET(ROOTFS_LIB_SOURCES
+			${ROOTFS_LIB_SOURCES}
+			libcrypto.${DEPENDENCY_EXT}.1.0.0
+			libssl.${DEPENDENCY_EXT}.1.0.0
+		)
+	ENDIF(LW_USE_OPENSSL)
+	IF(LW_USE_EXOSIP)
+		SET(ROOTFS_LIB_SOURCES
+			${ROOTFS_LIB_SOURCES}
+			libeXosip2.${DEPENDENCY_EXT}.7
+			libosip2.${DEPENDENCY_EXT}.7
+			libosipparser2.${DEPENDENCY_EXT}.7
+		)
+	ENDIF(LW_USE_EXOSIP)
 	IF(LW_USE_FFMPEG)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}

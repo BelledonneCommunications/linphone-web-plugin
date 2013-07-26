@@ -169,12 +169,20 @@ endif(FB_PLATFORM_NAME STREQUAL "X11")
 ### CONFIGURATIONS ###
 
 set(LW_USE_FFMPEG 1)
+set(LW_USE_OPENSSL 1)
+set(LW_USE_EXOSIP 1)
 
 ##
 message("-- Configurations:")
 if(LW_USE_FFMPEG)
 message("    + FFMPEG")
 endif(LW_USE_FFMPEG)
+if(LW_USE_OPENSSL)
+message("    + OPENSSL")
+endif(LW_USE_OPENSSL)
+if(LW_USE_EXOSIP)
+message("    + EXOSIP")
+endif(LW_USE_EXOSIP)
 
 ######################
 

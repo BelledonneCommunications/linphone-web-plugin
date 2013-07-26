@@ -85,22 +85,32 @@ endif()
 function (create_rootfs PROJNAME)
 	# Define components
 	SET(ROOTFS_LIB_SOURCES
-		libeXosip2-7.${DEPENDENCY_EXT}
-		libeay32.${DEPENDENCY_EXT}
 		liblinphone-5.${DEPENDENCY_EXT}
 		libmediastreamer_base-3.${DEPENDENCY_EXT}
 		libmediastreamer_voip-3.${DEPENDENCY_EXT}
 		libogg-0.${DEPENDENCY_EXT}
 		libortp-9.${DEPENDENCY_EXT}
-		libosip2-7.${DEPENDENCY_EXT}
-		libosipparser2-7.${DEPENDENCY_EXT}
 		libspeex-1.${DEPENDENCY_EXT}
 		libspeexdsp-1.${DEPENDENCY_EXT}
 		libtheora-0.${DEPENDENCY_EXT}
 		libvpx-1.${DEPENDENCY_EXT}
 		libz-1.${DEPENDENCY_EXT}
-		ssleay32.${DEPENDENCY_EXT}
 	)
+	IF(LW_USE_OPENSSL)
+		SET(ROOTFS_LIB_SOURCES
+			${ROOTFS_LIB_SOURCES}
+			libeay32.${DEPENDENCY_EXT}
+			ssleay32.${DEPENDENCY_EXT}
+		)
+	ENDIF(LW_USE_OPENSSL)
+	IF(LW_USE_EXOSIP)
+		SET(ROOTFS_LIB_SOURCES
+			${ROOTFS_LIB_SOURCES}
+			libeXosip2-7.${DEPENDENCY_EXT}
+			libosip2-7.${DEPENDENCY_EXT}
+			libosipparser2-7.${DEPENDENCY_EXT}
+		)
+	ENDIF(LW_USE_EXOSIP)
 	IF(LW_USE_FFMPEG)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
