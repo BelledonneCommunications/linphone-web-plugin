@@ -163,7 +163,20 @@ if(FB_PLATFORM_NAME STREQUAL "X11")
 	endif(FB_PLATFORM_ARCH_32)
 endif(FB_PLATFORM_NAME STREQUAL "X11") 
 
-### PACKAGES ###
+#################
+
+
+### CONFIGURATIONS ###
+
+set(LW_USE_FFMPEG 1)
+
+##
+message("-- Configurations:")
+if(LW_USE_FFMPEG)
+message("    + FFMPEG")
+endif(LW_USE_FFMPEG)
+
+######################
 
 # Uncomment this next line if you're not planning on your plugin doing
 # any drawing:

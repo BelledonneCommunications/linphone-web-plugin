@@ -83,73 +83,79 @@ if (NOT FB_ROOTFS_SUFFIX)
 endif()
 
 function (create_rootfs PROJNAME)
-	SET(ROOTFS_SOURCES
-		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avcodec-53.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avutil-51.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libeXosip2-7.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libeay32.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/liblinphone-5.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libmediastreamer_base-3.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libmediastreamer_voip-3.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libogg-0.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libortp-9.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libosip2-7.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libosipparser2-7.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libspeex-1.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libspeexdsp-1.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libtheora-0.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libvpx-1.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libz-1.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/ssleay32.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/swscale-2.${DEPENDENCY_EXT}
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/images/nowebcamCIF.jpg
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/toy-mono.wav
+	# Define components
+	SET(ROOTFS_LIB_SOURCES
+		libeXosip2-7.${DEPENDENCY_EXT}
+		libeay32.${DEPENDENCY_EXT}
+		liblinphone-5.${DEPENDENCY_EXT}
+		libmediastreamer_base-3.${DEPENDENCY_EXT}
+		libmediastreamer_voip-3.${DEPENDENCY_EXT}
+		libogg-0.${DEPENDENCY_EXT}
+		libortp-9.${DEPENDENCY_EXT}
+		libosip2-7.${DEPENDENCY_EXT}
+		libosipparser2-7.${DEPENDENCY_EXT}
+		libspeex-1.${DEPENDENCY_EXT}
+		libspeexdsp-1.${DEPENDENCY_EXT}
+		libtheora-0.${DEPENDENCY_EXT}
+		libvpx-1.${DEPENDENCY_EXT}
+		libz-1.${DEPENDENCY_EXT}
+		ssleay32.${DEPENDENCY_EXT}
+	)
+	IF(LW_USE_FFMPEG)
+		SET(ROOTFS_LIB_SOURCES
+			${ROOTFS_LIB_SOURCES}
+			avcodec-53.${DEPENDENCY_EXT}
+			avutil-51.${DEPENDENCY_EXT}
+			swscale-2.${DEPENDENCY_EXT}
+		)
+	ENDIF(LW_USE_FFMPEG)
+
+	SET(ROOTFS_SHARE_SOURCES
+		linphone/rootca.pem
+		images/nowebcamCIF.jpg
+		sounds/linphone/ringback.wav
+		sounds/linphone/rings/oldphone.wav
+		sounds/linphone/rings/toy-mono.wav
 	)
 
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_ROOTFS_DIR})
-	SET_TARGET_PROPERTIES(${PROJNAME}${FB_ROOTFS_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_ROOTFS_DIR}
+	# Set Rootfs sources
+	SET(ROOTFS_SOURCES
+		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
+	)
+	FOREACH(elem ${ROOTFS_LIB_SOURCES})
+		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib)
+		SET(DIR_DEST ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR})
+		GET_FILENAME_COMPONENT(path ${elem} PATH)
+		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
+			DEPENDS ${DIR_SRC}/${elem}
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
+			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+			COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${DIR_DEST}/${elem}
+		)
+		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
+	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
+	FOREACH(elem ${ROOTFS_SHARE_SOURCES})
+		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share)
+		SET(DIR_DEST ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share)
+		GET_FILENAME_COMPONENT(path ${elem} PATH)
+		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
+			DEPENDS ${DIR_SRC}/${elem}
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
+			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+		)
+		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
+	ENDFOREACH(elem ${ROOTFS_SHARE_SOURCES})
+
+	ADD_CUSTOM_COMMAND(OUTPUT ${FB_OUT_DIR}/Rootfs.updated 
 		DEPENDS ${ROOTFS_SOURCES}
-		COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_ROOTFS_DIR}
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}
 		COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.pdb ${FB_ROOTFS_DIR}/ || ${CMAKE_COMMAND} -E echo "No pdb"
 		COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avcodec-53.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/avutil-51.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libeXosip2-7.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libeay32.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/liblinphone-5.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libmediastreamer_base-3.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libmediastreamer_voip-3.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libogg-0.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libortp-9.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libosip2-7.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libosipparser2-7.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libspeex-1.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libspeexdsp-1.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libtheora-0.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libvpx-1.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/libz-1.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/ssleay32.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin/swscale-2.${DEPENDENCY_EXT} ${FB_ROOTFS_DIR}/
-
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/linphone/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/linphone/rootca.pem ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/linphone/
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/images/nowebcamCIF.jpg ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/toy-mono.wav ${FB_ROOTFS_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
 
 		COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/Rootfs.updated
 	)
+	
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_OUT_DIR}/Rootfs.updated)
+	SET_TARGET_PROPERTIES(${PROJNAME}${FB_ROOTFS_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 	ADD_DEPENDENCIES(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
 	MESSAGE("-- Successfully added Rootfs step")
 endfunction(create_rootfs)
@@ -166,6 +172,8 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 )
 
 # Sign dll dependencies
+
+IF(LW_USE_FFMPEG)
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/avcodec-53.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
@@ -178,6 +186,14 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/swscale-2.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+ENDIF(LW_USE_FFMPEG)
+
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/libeXosip2-7.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
@@ -264,12 +280,6 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/ssleay32.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/swscale-2.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"

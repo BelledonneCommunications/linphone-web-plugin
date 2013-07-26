@@ -80,52 +80,99 @@ IF(FB_PLATFORM_ARCH_64)
 ELSE(FB_PLATFORM_ARCH_64)
 	SET(FB_PACKAGE_SUFFIX "${FB_PACKAGE_SUFFIX}-x86")
 ENDIF(FB_PLATFORM_ARCH_64)
-SET(LINPHONEWEB_SHAREDIR linphoneweb)
+
 SET(FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
 SET(FB_BUNDLE_DIR ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}/Contents/MacOS)
+SET(LINPHONEWEB_SHAREDIR linphoneweb)
 
-# Copy dylib dependencies
-ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavcodec.53.61.100.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libavutil.51.35.100.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libcrypto.1.0.0.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libeXosip2.7.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.5.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base.3.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip.3.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libogg.0.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.9.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosip2.7.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libosipparser2.7.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeex.1.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libspeexdsp.1.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libssl.1.0.0.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libswscale.2.1.100.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheora.0.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libtheora.0.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libvpx.1.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libz.1.${DEPENDENCY_EXT} ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
+###############################################################################
+# Create Rootfs
+if (NOT FB_ROOTFS_SUFFIX)
+	SET(FB_ROOTFS_SUFFIX _RootFS)
+endif()
 
-	COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/
-	COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/linphone/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/linphone/rootca.pem ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/linphone/
-	COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/images/nowebcamCIF.jpg ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/images/
-	COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/
-	COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
-	COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/ringback.wav ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/oldphone.wav ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/sounds/linphone/rings/toy-mono.wav ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share/sounds/linphone/rings/
+function (create_rootfs PROJNAME)
+	# Define components
+	SET(ROOTFS_LIB_SOURCES
+		libcrypto.1.0.0.${DEPENDENCY_EXT}
+		libeXosip2.7.${DEPENDENCY_EXT}
+		liblinphone.5.${DEPENDENCY_EXT}
+		libmediastreamer_base.3.${DEPENDENCY_EXT}
+		libmediastreamer_voip.3.${DEPENDENCY_EXT}
+		libogg.0.${DEPENDENCY_EXT}
+		libortp.9.${DEPENDENCY_EXT}
+		libosip2.7.${DEPENDENCY_EXT}
+		libosipparser2.7.${DEPENDENCY_EXT}
+		libspeex.1.${DEPENDENCY_EXT}
+		libspeexdsp.1.${DEPENDENCY_EXT}
+		libssl.1.0.0.${DEPENDENCY_EXT}
+		libtheora.0.${DEPENDENCY_EXT}
+		libtheora.0.${DEPENDENCY_EXT}
+		libvpx.1.${DEPENDENCY_EXT}
+		libz.1.${DEPENDENCY_EXT}
+	)
+	IF(LW_USE_FFMPEG)
+		SET(ROOTFS_LIB_SOURCES
+			${ROOTFS_LIB_SOURCES}
+			libavcodec.53.61.100.${DEPENDENCY_EXT}
+			libavutil.51.35.100.${DEPENDENCY_EXT}
+			libswscale.2.1.100.${DEPENDENCY_EXT}
+		)
+	ENDIF(LW_USE_FFMPEG)
 
-	# Change rpath
-	COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
-	COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/ ${FB_BUNDLE_DIR}/${FBSTRING_PluginFileName}
-)
+	SET(ROOTFS_SHARE_SOURCES
+		linphone/rootca.pem
+		images/nowebcamCIF.jpg
+		sounds/linphone/ringback.wav
+		sounds/linphone/rings/oldphone.wav
+		sounds/linphone/rings/toy-mono.wav
+	)
 
+	# Set Rootfs sources
+	SET(ROOTFS_SOURCES
+	)
+	FOREACH(elem ${ROOTFS_LIB_SOURCES})
+		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib)
+		SET(DIR_DEST ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR})
+		GET_FILENAME_COMPONENT(path ${elem} PATH)
+		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
+			DEPENDS ${DIR_SRC}/${elem}
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
+			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+		)
+		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
+	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
+	FOREACH(elem ${ROOTFS_SHARE_SOURCES})
+		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share)
+		SET(DIR_DEST ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/share)
+		GET_FILENAME_COMPONENT(path ${elem} PATH)
+		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
+			DEPENDS ${DIR_SRC}/${elem}
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
+			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+		)
+		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
+	ENDFOREACH(elem ${ROOTFS_SHARE_SOURCES})
+
+
+	ADD_CUSTOM_COMMAND(OUTPUT ${FB_OUT_DIR}/Rootfs.updated 
+		DEPENDS ${ROOTFS_SOURCES}
+		
+		# Change rpath
+		COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/
+		COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${LINPHONEWEB_SHAREDIR}/ ${FB_BUNDLE_DIR}/${FBSTRING_PluginFileName}
+
+		COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/Rootfs.updated
+	)
+	
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_OUT_DIR}/Rootfs.updated)
+	SET_TARGET_PROPERTIES(${PROJNAME}${FB_ROOTFS_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
+	ADD_DEPENDENCIES(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
+	MESSAGE("-- Successfully added Rootfs step")
+endfunction(create_rootfs)
+###############################################################################
+
+create_rootfs(${PLUGIN_NAME})
 
 ###############################################################################
 # XPI Package
@@ -173,7 +220,11 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	MESSAGE("-- Successfully added XPI package step")
 endfunction(create_xpi_package)
 
-create_xpi_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME})
+create_xpi_package(${PLUGIN_NAME}
+	${FBSTRING_PLUGIN_VERSION}
+	${FB_OUT_DIR}
+	${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+)
 
 create_signed_xpi(${PLUGIN_NAME}
 	"${FB_OUT_DIR}/XPI/"
@@ -220,7 +271,11 @@ function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	MESSAGE("-- Successfully added CRX package step")
 endfunction(create_crx_package)
 
-create_crx_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME})
+create_crx_package(${PLUGIN_NAME}
+	${FBSTRING_PLUGIN_VERSION}
+	${FB_OUT_DIR}
+	${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+)
 
 create_signed_crx(${PLUGIN_NAME}
 	"${FB_OUT_DIR}/CRX/"
@@ -246,7 +301,7 @@ function (create_pkg_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Mac/PKG.pmdoc/01linphone-contents.xml ${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/01linphone-contents.xml)
 
 	ADD_CUSTOM_TARGET(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}.pkg)
-	SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_PKG_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
+	SET_TARGET_PROPERTIES(${PROJNAME}${FB_PKG_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}.pkg
 				DEPENDS ${PKG_SOURCES}
 				COMMAND ${CMAKE_COMMAND} -E remove_directory ${OUTDIR}/PKG.pmdoc
@@ -257,5 +312,9 @@ function (create_pkg_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	MESSAGE("-- Successfully added PKG package step")
 endfunction(create_pkg_package)
 
-create_pkg_package(${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION} ${FB_OUT_DIR} ${PLUGIN_NAME})
+create_pkg_package(${PLUGIN_NAME}
+	${FBSTRING_PLUGIN_VERSION}
+	${FB_OUT_DIR}
+	${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+)
 ###############################################################################
