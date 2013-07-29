@@ -146,7 +146,6 @@ function (create_rootfs PROJNAME)
 			DEPENDS ${DIR_SRC}/${elem}
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
 			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
-			COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${DIR_DEST}/${elem}
 		)
 		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
