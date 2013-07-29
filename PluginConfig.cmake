@@ -168,12 +168,16 @@ endif(FB_PLATFORM_NAME STREQUAL "X11")
 
 ### CONFIGURATIONS ###
 
+set(LW_USE_SRTP 1)
 set(LW_USE_FFMPEG 1)
 set(LW_USE_OPENSSL 1)
 set(LW_USE_EXOSIP 1)
 
 ##
 message("-- Configurations:")
+if(LW_USE_SRTP)
+message("    + SRTP")
+endif(LW_USE_SRTP)
 if(LW_USE_FFMPEG)
 message("    + FFMPEG")
 endif(LW_USE_FFMPEG)
