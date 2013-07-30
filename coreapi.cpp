@@ -382,7 +382,7 @@ int CoreAPI::init(StringPtr const &config, StringPtr const &factory) {
 		mVtable.dtmf_received = CoreAPI::wrapper_dtmf_received;
 		mVtable.refer_received = CoreAPI::wrapper_refer_received;
 		mVtable.buddy_info_updated = CoreAPI::wrapper_buddy_info_updated;
-		mVtable.notify_recv = CoreAPI::wrapper_notify_recv;
+		//mVtable.notify_recv = CoreAPI::wrapper_notify_recv;
 		mVtable.display_status = CoreAPI::wrapper_display_status;
 		mVtable.display_message = CoreAPI::wrapper_display_message;
 		mVtable.display_warning = CoreAPI::wrapper_display_warning;
@@ -2549,9 +2549,11 @@ void CoreAPI::onBuddyInfoUpdated(LinphoneFriend *lf) {
 	FBLOG_DEBUG("CoreAPI::onBuddyInfo_updated",  "this=" << this << "\t" << "lf=" << lf);
 }
 
+/*
 void CoreAPI::onNotifyRecv(LinphoneCall *call, const char *from, const char *event) {
 	FBLOG_DEBUG("CoreAPI::onNotifyRecv",  "this=" << this << "\t" << "call=" << call  << "\t" << "from=" << from << "\t" << "event=" << event);
 }
+*/
 
 void CoreAPI::onDisplayStatus(const char *message) {
 	FBLOG_DEBUG("CoreAPI::onDisplayStatus",  "this=" << this << "\t" << "message=" << message);
@@ -2667,6 +2669,7 @@ void CoreAPI::wrapper_buddy_info_updated(LinphoneCore *lc, LinphoneFriend *lf) {
 		FBLOG_ERROR("CoreAPI::wrapper_buddy_info_updated", "No proxy defined !");
 	}
 }
+/*
 void CoreAPI::wrapper_notify_recv(LinphoneCore *lc, LinphoneCall *call, const char *from, const char *event) {
 	if (GLC_DEFINED()) {
 		GLC_THIS()->onNotifyRecv(call, from, event);
@@ -2674,6 +2677,7 @@ void CoreAPI::wrapper_notify_recv(LinphoneCore *lc, LinphoneCall *call, const ch
 		FBLOG_ERROR("CoreAPI::wrapper_notify_recv", "No proxy defined !");
 	}
 }
+*/
 void CoreAPI::wrapper_display_status(LinphoneCore *lc, const char *message) {
 	if (GLC_DEFINED()) {
 		GLC_THIS()->onDisplayStatus(message);

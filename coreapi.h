@@ -386,7 +386,7 @@ protected:
 	virtual void onDtmfReceived(LinphoneCall *call, int dtmf);
 	virtual void onReferReceived(const char *refer_to);
 	virtual void onBuddyInfoUpdated(LinphoneFriend *lf);
-	virtual void onNotifyRecv(LinphoneCall *call, const char *from, const char *event);
+	//virtual void onNotifyRecv(LinphoneCall *call, const char *from, const char *event);
 	virtual void onDisplayStatus(const char *message);
 	virtual void onDisplayMessage(const char *message);
 	virtual void onDisplayWarning(const char *message);
@@ -407,7 +407,7 @@ private:
 	static void wrapper_dtmf_received(LinphoneCore *lc, LinphoneCall *call, int dtmf);
 	static void wrapper_refer_received(LinphoneCore *lc, const char *refer_to);
 	static void wrapper_buddy_info_updated(LinphoneCore *lc, LinphoneFriend *lf);
-	static void wrapper_notify_recv(LinphoneCore *lc, LinphoneCall *call, const char *from, const char *event);
+	//static void wrapper_notify_recv(LinphoneCore *lc, LinphoneCall *call, const char *from, const char *event);
 	static void wrapper_display_status(LinphoneCore *lc, const char *message);
 	static void wrapper_display_message(LinphoneCore *lc, const char *message);
 	static void wrapper_display_warning(LinphoneCore *lc, const char *message);

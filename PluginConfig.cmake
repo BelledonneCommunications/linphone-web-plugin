@@ -172,6 +172,8 @@ set(LW_USE_SRTP 1)
 set(LW_USE_FFMPEG 1)
 set(LW_USE_OPENSSL 1)
 set(LW_USE_EXOSIP 1)
+set(LW_USE_POLARSSL 0)
+set(LW_USE_BELLESIP 0)
 
 ##
 message("-- Configurations:")
@@ -187,6 +189,12 @@ endif(LW_USE_OPENSSL)
 if(LW_USE_EXOSIP)
 message("    + EXOSIP")
 endif(LW_USE_EXOSIP)
+if(LW_USE_POLARSSL)
+message("    + POLARSSL")
+endif(LW_USE_POLARSSL)
+if(LW_USE_BELLESIP)
+message("    + BELLESIP")
+endif(LW_USE_BELLESIP)
 
 ######################
 
