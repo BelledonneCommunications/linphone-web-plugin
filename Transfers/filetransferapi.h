@@ -43,6 +43,7 @@ protected:
 	virtual void initProxy();
 	
 public:
+	static FileTransferAPIPtr create(FB::URI const &sourceUri, FB::URI const &targetUri, FB::JSObjectPtr const &callback);
 	virtual void start() = 0;
 	virtual void cancel() = 0;
 	std::string getError();

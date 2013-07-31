@@ -30,6 +30,8 @@ namespace LinphoneWeb {
 FB_FORWARD_PTR(UploadFileTransferAPI)
 class UploadFileTransferAPI: public FileTransferAPI {
 	friend class FactoryAPI;
+	friend class FileTransferAPI;
+	
 private:
 	FileStreamHelperPtr mHelper;
 	static const unsigned int BUFFER_SIZE;

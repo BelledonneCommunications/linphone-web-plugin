@@ -29,6 +29,7 @@ namespace LinphoneWeb {
 FB_FORWARD_PTR(LocalFileTransferAPI)
 class LocalFileTransferAPI: public FileTransferAPI {
 	friend class FactoryAPI;
+	friend class FileTransferAPI;
 	
 private:
 	LocalFileTransferAPIPtr self;

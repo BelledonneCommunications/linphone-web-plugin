@@ -22,6 +22,8 @@
 #include "utils.h"
 #include "factoryapi.h"
 
+#include <stdexcept>
+
 namespace LinphoneWeb {
 
 AuthInfoAPI::AuthInfoAPI(LinphoneAuthInfo *authInfo) :
@@ -40,6 +42,9 @@ AuthInfoAPI::AuthInfoAPI(StringPtr const &username, StringPtr const &userid, Str
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI",
 			"this=" << this << "\t" << "username=" << username << "\t" << "userid=" << userid << "\t" << "passwd=" << passwd << "\t" << "ha1" << ha1 << "\t" << "realm=" << realm);
 	mAuthInfo = linphone_auth_info_new(STRING_TO_CHARPTR(username), STRING_TO_CHARPTR(userid), STRING_TO_CHARPTR(passwd), STRING_TO_CHARPTR(ha1), STRING_TO_CHARPTR(realm));
+	if(mAuthInfo == NULL) {
+		throw std::invalid_argument("one/many parameters is/are invalid");
+	}
 }
 
 void AuthInfoAPI::initProxy() {

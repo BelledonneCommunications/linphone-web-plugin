@@ -53,7 +53,7 @@ private:
 	WhiteBoardPtr mWhiteBoard;
 	FileManagerAPIWeakPtr mFileManager;
 	template<typename TypePtr>
-	TypePtr get(TypePtr ptr, bool owned, bool constant) {
+	TypePtr handle(TypePtr ptr, bool owned, bool constant) {
 		ptr->mOwned = owned;
 		ptr->mConst = constant;
 		ptr->setFactory(shared_from_this());

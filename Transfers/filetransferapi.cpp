@@ -19,7 +19,25 @@
 
 #include "filetransferapi.h"
 
+#include "downloadfiletransferapi.h"
+#include "uploadfiletransferapi.h"
+#include "localfiletransferapi.h"
+#include "../filemanagerapi.h"
+
 namespace LinphoneWeb {
+
+FileTransferAPIPtr FileTransferAPI::create(FB::URI const &sourceUri, FB::URI const &targetUri, FB::JSObjectPtr const &callback) {
+	if(FileManagerAPI::isFile(sourceUri) && FileManagerAPI::isHttp(targetUri)) {
+		return FileTransferAPIPtr(new UploadFileTransferAPI(sourceUri, targetUri, callback));
+	} else if(FileManagerAPI::isHttp(sourceUri) && FileManagerAPI::isFile(targetUri)) {
+		return FileTransferAPIPtr(new DownloadFileTransferAPI(sourceUri, targetUri, callback));
+	} else if(FileManagerAPI::isFile(sourceUri) && FileManagerAPI::isFile(targetUri)) {
+		return FileTransferAPIPtr(new LocalFileTransferAPI(sourceUri, targetUri, callback));
+	}
+	
+	// Not allowed
+	throw std::exception();
+}
 
 FileTransferAPI::FileTransferAPI(FB::URI const &sourceUri, FB::URI const &targetUri, FB::JSObjectPtr const &callback):
 	WrapperAPI(APIDescription(this)), mSourceUri(sourceUri), mTargetUri(targetUri), mCallback(callback), mDone(false) {

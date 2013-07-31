@@ -18,9 +18,8 @@
  */
 
 #include "factoryapi.h"
-#include "Transfers/downloadfiletransferapi.h"
-#include "Transfers/uploadfiletransferapi.h"
-#include "Transfers/localfiletransferapi.h"
+
+#include <exception>
 
 namespace LinphoneWeb {
 
@@ -54,8 +53,13 @@ AddressAPIPtr FactoryAPI::getAddress(LinphoneAddress *address) {
 		return AddressAPIPtr();
 	
 	AddressAPIPtr shared_ptr;
-	shared_ptr = AddressAPIPtr(new AddressAPI(address));
-	return get(shared_ptr, false, false);
+	try {
+		shared_ptr = AddressAPIPtr(new AddressAPI(address));
+		handle(shared_ptr, false, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getAddress", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 
 AddressAPIPtr FactoryAPI::getAddress(const LinphoneAddress *address) {
@@ -64,16 +68,26 @@ AddressAPIPtr FactoryAPI::getAddress(const LinphoneAddress *address) {
 		return AddressAPIPtr();
 	
 	AddressAPIPtr shared_ptr;
-	shared_ptr = AddressAPIPtr(new AddressAPI(address));
-	return get(shared_ptr, false, true);
+	try {
+		shared_ptr = AddressAPIPtr(new AddressAPI(address));
+		handle(shared_ptr, false, true);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getAddress", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 	
 AddressAPIPtr FactoryAPI::getAddress(StringPtr const &address) {
 	FBLOG_DEBUG("FactoryAPI::getAddress", "this=" << this << "\t" << "address=" << address);
 	
 	AddressAPIPtr shared_ptr;
-	shared_ptr = AddressAPIPtr(new AddressAPI(address));
-	return get(shared_ptr, true, false);
+	try {
+		shared_ptr = AddressAPIPtr(new AddressAPI(address));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getAddress", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 
 AuthInfoAPIPtr FactoryAPI::getAuthInfo(LinphoneAuthInfo *authInfo) {
@@ -82,8 +96,13 @@ AuthInfoAPIPtr FactoryAPI::getAuthInfo(LinphoneAuthInfo *authInfo) {
 		return AuthInfoAPIPtr();
 	
 	AuthInfoAPIPtr shared_ptr;
-	shared_ptr = AuthInfoAPIPtr(new AuthInfoAPI(authInfo));
-	return get(shared_ptr, false, false);
+	try {
+		shared_ptr = AuthInfoAPIPtr(new AuthInfoAPI(authInfo));
+		handle(shared_ptr, false, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getAuthInfo", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 
 AuthInfoAPIPtr FactoryAPI::getAuthInfo(const LinphoneAuthInfo *authInfo) {
@@ -92,8 +111,13 @@ AuthInfoAPIPtr FactoryAPI::getAuthInfo(const LinphoneAuthInfo *authInfo) {
 		return AuthInfoAPIPtr();
 	
 	AuthInfoAPIPtr shared_ptr;
-	shared_ptr = AuthInfoAPIPtr(new AuthInfoAPI(authInfo));
-	return get(shared_ptr, false, true);
+	try{
+		shared_ptr = AuthInfoAPIPtr(new AuthInfoAPI(authInfo));
+		handle(shared_ptr, false, true);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getAuthInfo", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 
 AuthInfoAPIPtr FactoryAPI::getAuthInfo(StringPtr const &username, StringPtr const &userid,
@@ -105,8 +129,13 @@ AuthInfoAPIPtr FactoryAPI::getAuthInfo(StringPtr const &username, StringPtr cons
 				<< "\t" << "realm=" << realm);
 	
 	AuthInfoAPIPtr shared_ptr;
-	shared_ptr = AuthInfoAPIPtr(new AuthInfoAPI(username, userid, passwd, ha1, realm));
-	return get(shared_ptr, true, false);
+	try {
+		shared_ptr = AuthInfoAPIPtr(new AuthInfoAPI(username, userid, passwd, ha1, realm));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getAuthInfo", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 	
 
@@ -117,11 +146,15 @@ CallAPIPtr FactoryAPI::getCall(LinphoneCall *call) {
 	
 	void *ptr = linphone_call_get_user_pointer(call);
 	CallAPIPtr shared_ptr;
-	if (ptr == NULL) {
-		shared_ptr = CallAPIPtr(new CallAPI(call));
-		get(shared_ptr, false, false);
-	} else {
-		shared_ptr = boost::static_pointer_cast<CallAPI>(reinterpret_cast<CallAPI *>(ptr)->shared_from_this());
+	try {
+		if (ptr == NULL) {
+			shared_ptr = CallAPIPtr(new CallAPI(call));
+			handle(shared_ptr, false, false);
+		} else {
+			shared_ptr = boost::static_pointer_cast<CallAPI>(reinterpret_cast<CallAPI *>(ptr)->shared_from_this());
+		}
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getCall", "exception: " << e.what());
 	}
 	return shared_ptr;
 }
@@ -133,11 +166,15 @@ CallLogAPIPtr FactoryAPI::getCallLog(LinphoneCallLog *callLog) {
 	
 	void *ptr = linphone_call_log_get_user_pointer(callLog);
 	CallLogAPIPtr shared_ptr;
-	if (ptr == NULL) {
-		shared_ptr = CallLogAPIPtr(new CallLogAPI(callLog));
-		get(shared_ptr, false, false);
-	} else {
-		shared_ptr = boost::static_pointer_cast<CallLogAPI>(reinterpret_cast<CallLogAPI *>(ptr)->shared_from_this());
+	try {
+		if (ptr == NULL) {
+			shared_ptr = CallLogAPIPtr(new CallLogAPI(callLog));
+			handle(shared_ptr, false, false);
+		} else {
+			shared_ptr = boost::static_pointer_cast<CallLogAPI>(reinterpret_cast<CallLogAPI *>(ptr)->shared_from_this());
+		}
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getCallLog", "exception: " << e.what());
 	}
 	return shared_ptr;
 }
@@ -148,8 +185,13 @@ CallParamsAPIPtr FactoryAPI::getCallParams(LinphoneCallParams *callParams) {
 		return CallParamsAPIPtr();
 	
 	CallParamsAPIPtr shared_ptr;
-	shared_ptr = CallParamsAPIPtr(new CallParamsAPI(callParams));
-	return get(shared_ptr, false, false);
+	try {
+		shared_ptr = CallParamsAPIPtr(new CallParamsAPI(callParams));
+		handle(shared_ptr, false, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getCallParams", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 
 CallParamsAPIPtr FactoryAPI::getCallParams(const LinphoneCallParams *callParams) {
@@ -158,8 +200,13 @@ CallParamsAPIPtr FactoryAPI::getCallParams(const LinphoneCallParams *callParams)
 		return CallParamsAPIPtr();
 	
 	CallParamsAPIPtr shared_ptr;
-	shared_ptr = CallParamsAPIPtr(new CallParamsAPI(callParams));
-	return get(shared_ptr, false, true);
+	try {
+		shared_ptr = CallParamsAPIPtr(new CallParamsAPI(callParams));
+		handle(shared_ptr, false, true);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getCallParams", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 
 CallStatsAPIPtr FactoryAPI::getCallStats(const LinphoneCallStats *callStats) {
@@ -168,21 +215,30 @@ CallStatsAPIPtr FactoryAPI::getCallStats(const LinphoneCallStats *callStats) {
 		return CallStatsAPIPtr();
 	
 	CallStatsAPIPtr shared_ptr;
-	shared_ptr = CallStatsAPIPtr(new CallStatsAPI(callStats));
-	return get(shared_ptr, false, true);
+	try {
+		shared_ptr = CallStatsAPIPtr(new CallStatsAPI(callStats));
+		handle(shared_ptr, false, true);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getCallStats", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 
 CoreAPIPtr FactoryAPI::getCore(LinphoneCore *core) {
 	FBLOG_DEBUG("FactoryAPI::getCore", "this=" << this << "\t" << "core=" << core);
 	if (core == NULL) {
 		CoreAPIPtr shared_ptr = CoreAPIPtr(new CoreAPI());
-		return get(shared_ptr, false, false); /* Not really owned (keep to false in order lock mutex on functions call) */
+		return handle(shared_ptr, false, false); /* Not really owned (keep to false in order lock mutex on functions call) */
 	}
 	
 	void *ptr = linphone_core_get_user_data(core);
 	CoreAPIPtr shared_ptr;
-	if (ptr != NULL) {
-		shared_ptr = boost::static_pointer_cast<CoreAPI>(reinterpret_cast<CoreAPI *>(ptr)->shared_from_this());
+	try {
+		if (ptr != NULL) {
+			shared_ptr = boost::static_pointer_cast<CoreAPI>(reinterpret_cast<CoreAPI *>(ptr)->shared_from_this());
+		}
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getCore", "exception: " << e.what());
 	}
 	return shared_ptr;
 }
@@ -194,12 +250,17 @@ PayloadTypeAPIPtr FactoryAPI::getPayloadType(PayloadType *payloadType) {
 	
 	//void *ptr = payloadType->user_data;
 	PayloadTypeAPIPtr shared_ptr;
-	/*if (ptr == NULL) {*/
-	shared_ptr = PayloadTypeAPIPtr(new PayloadTypeAPI(payloadType));
-	/*} else {
-	 shared_ptr = boost::static_pointer_cast<PayloadTypeAPI>(reinterpret_cast<PayloadTypeAPI *>(ptr)->shared_from_this());
-	 }*/
-	return get(shared_ptr, false, false);
+	try {
+		/*if (ptr == NULL) {*/
+		shared_ptr = PayloadTypeAPIPtr(new PayloadTypeAPI(payloadType));
+		/*} else {
+		 shared_ptr = boost::static_pointer_cast<PayloadTypeAPI>(reinterpret_cast<PayloadTypeAPI *>(ptr)->shared_from_this());
+		 }*/
+		handle(shared_ptr, false, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPayloadType", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 
 PayloadTypeAPIPtr FactoryAPI::getPayloadType(const PayloadType *payloadType) {
@@ -209,12 +270,17 @@ PayloadTypeAPIPtr FactoryAPI::getPayloadType(const PayloadType *payloadType) {
 	
 	//void *ptr = payloadType->user_data;
 	PayloadTypeAPIPtr shared_ptr;
-	/*if (ptr == NULL) {*/
-	shared_ptr = PayloadTypeAPIPtr(new PayloadTypeAPI(payloadType));
-	/*} else {
-	 shared_ptr = boost::static_pointer_cast<PayloadTypeAPI>(reinterpret_cast<PayloadTypeAPI *>(ptr)->shared_from_this());
-	 }*/
-	return get(shared_ptr, false, true);
+	try {
+		/*if (ptr == NULL) {*/
+		shared_ptr = PayloadTypeAPIPtr(new PayloadTypeAPI(payloadType));
+		/*} else {
+		shared_ptr = boost::static_pointer_cast<PayloadTypeAPI>(reinterpret_cast<PayloadTypeAPI *>(ptr)->shared_from_this());
+		}*/
+		handle(shared_ptr, false, true);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPayloadType", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 
 ProxyConfigAPIPtr FactoryAPI::getProxyConfig(LinphoneProxyConfig *proxyConfig) {
@@ -224,47 +290,78 @@ ProxyConfigAPIPtr FactoryAPI::getProxyConfig(LinphoneProxyConfig *proxyConfig) {
 	
 	void *ptr = linphone_proxy_config_get_user_data(proxyConfig);
 	ProxyConfigAPIPtr shared_ptr;
-	if (ptr == NULL) {
-		shared_ptr = ProxyConfigAPIPtr(new ProxyConfigAPI(proxyConfig));
-		get(shared_ptr, false, false);
-	} else {
-		shared_ptr = boost::static_pointer_cast<ProxyConfigAPI>(reinterpret_cast<ProxyConfigAPI *>(ptr)->shared_from_this());
+	try {
+		if (ptr == NULL) {
+			shared_ptr = ProxyConfigAPIPtr(new ProxyConfigAPI(proxyConfig));
+			handle(shared_ptr, false, false);
+		} else {
+			shared_ptr = boost::static_pointer_cast<ProxyConfigAPI>(reinterpret_cast<ProxyConfigAPI *>(ptr)->shared_from_this());
+		}
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getProxyConfig", "exception: " << e.what());
 	}
 	return shared_ptr;
 }
 	
 ProxyConfigAPIPtr FactoryAPI::getProxyConfig() {
 	FBLOG_DEBUG("FactoryAPI::getProxyConfig", "this=" << this);
-	ProxyConfigAPIPtr shared_ptr = ProxyConfigAPIPtr(new ProxyConfigAPI());
-	get(shared_ptr, true, false);
+	ProxyConfigAPIPtr shared_ptr;
+	try{
+		shared_ptr = ProxyConfigAPIPtr(new ProxyConfigAPI());
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getProxyConfig", "exception: " << e.what());
+	}
 	return shared_ptr;
 }
 
 SipTransportsAPIPtr FactoryAPI::getSipTransports() {
 	FBLOG_DEBUG("FactoryAPI::getSipTransports", "this=" << this);
-	SipTransportsAPIPtr shared_ptr = SipTransportsAPIPtr(new SipTransportsAPI());
-	return get(shared_ptr, true, false);
+	SipTransportsAPIPtr shared_ptr;
+	try{
+		shared_ptr = SipTransportsAPIPtr(new SipTransportsAPI());
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getSipTransports", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 
 VideoAPIPtr FactoryAPI::getVideo() {
 	FBLOG_DEBUG("FactoryAPI::getVideo", "this=" << this);
-	VideoAPIPtr shared_ptr = VideoAPIPtr(new VideoAPI());
-	return get(shared_ptr, true, false);
+	VideoAPIPtr shared_ptr;
+	try{
+		shared_ptr = VideoAPIPtr(new VideoAPI());
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getVideo", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 	
 VideoPolicyAPIPtr FactoryAPI::getVideoPolicy() {
 	FBLOG_DEBUG("FactoryAPI::getVideoPolicy", "this=" << this);
-	VideoPolicyAPIPtr shared_ptr = VideoPolicyAPIPtr(new VideoPolicyAPI());
-	return get(shared_ptr, true, false);
+	VideoPolicyAPIPtr shared_ptr;
+	try {
+		shared_ptr = VideoPolicyAPIPtr(new VideoPolicyAPI());
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getVideoPolicy", "exception: " << e.what());
+	}
+	return shared_ptr;
 }
 
 FileManagerAPIPtr FactoryAPI::getFileManager() {
 	FBLOG_DEBUG("FactoryAPI::getFileManager", "this=" << this);
 	FileManagerAPIPtr shared_ptr = mFileManager.lock();
 	if(!shared_ptr) {
-		shared_ptr = FileManagerAPIPtr(new FileManagerAPI());
-		get(shared_ptr, true, false);
-		mFileManager = shared_ptr;
+		try {
+			shared_ptr = FileManagerAPIPtr(new FileManagerAPI());
+			handle(shared_ptr, true, false);
+			mFileManager = shared_ptr;
+		} catch(std::exception &e) {
+			FBLOG_WARN("FactoryAPI::getFileManager", "exception: " << e.what());
+		}
 	}
 	return shared_ptr;
 }
@@ -275,15 +372,11 @@ FileTransferAPIPtr FactoryAPI::getFileTransfer(FB::URI const &sourceUri, FB::URI
 				<< "\t" << "targetUri=" << targetUri.toString()
 				<< "\t" << "callback=" << callback);
 	FileTransferAPIPtr shared_ptr;
-	if(FileManagerAPI::isFile(sourceUri) && FileManagerAPI::isHttp(targetUri)) {
-		shared_ptr = FileTransferAPIPtr(new UploadFileTransferAPI(sourceUri, targetUri, callback));
-		get(shared_ptr, true, false);
-	} else if(FileManagerAPI::isHttp(sourceUri) && FileManagerAPI::isFile(targetUri)) {
-		shared_ptr = FileTransferAPIPtr(new DownloadFileTransferAPI(sourceUri, targetUri, callback));
-		get(shared_ptr, true, false);
-	} else if(FileManagerAPI::isFile(sourceUri) && FileManagerAPI::isFile(targetUri)) {
-		shared_ptr = FileTransferAPIPtr(new LocalFileTransferAPI(sourceUri, targetUri, callback));
-		get(shared_ptr, true, false);
+	try {
+		shared_ptr = FileTransferAPI::create(sourceUri, targetUri, callback);
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getFileTransfer", "exception: " << e.what());
 	}
 	return shared_ptr;
 }

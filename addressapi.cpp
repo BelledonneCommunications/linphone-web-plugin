@@ -22,6 +22,8 @@
 #include "utils.h"
 #include "factoryapi.h"
 
+#include <stdexcept>
+
 namespace LinphoneWeb {
 
 AddressAPI::AddressAPI(LinphoneAddress *address) :
@@ -38,6 +40,9 @@ AddressAPI::AddressAPI(StringPtr const &uri) :
 		WrapperAPI(APIDescription(this)) {
 	FBLOG_DEBUG("AddressAPI::AddressAPI", "this=" << this);
 	mAddress = linphone_address_new(STRING_TO_CHARPTR(uri));
+	if(mAddress == NULL) {
+		throw std::invalid_argument("uri is invalid");
+	}
 }
 
 void AddressAPI::initProxy() {
