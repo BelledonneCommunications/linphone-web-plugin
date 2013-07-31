@@ -99,7 +99,7 @@ function (create_rootfs PROJNAME)
 	IF(LW_USE_SRTP)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
-			libsrtp-1.4.2.${DEPENDENCY_EXT}
+			libsrtp-1.4.5.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_SRTP)
 	IF(LW_USE_OPENSSL)
