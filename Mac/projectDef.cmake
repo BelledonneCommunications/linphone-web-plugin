@@ -160,6 +160,7 @@ function (create_rootfs PROJNAME)
 
 	# Set Rootfs sources
 	SET(ROOTFS_SOURCES
+		${FB_BUNDLE_DIR}/${FBSTRING_PluginFileName}
 	)
 	FOREACH(elem ${ROOTFS_LIB_SOURCES})
 		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib)

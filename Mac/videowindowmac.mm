@@ -69,6 +69,9 @@ void VideoWindowMac::setWindow(FB::PluginWindow *window) {
 		FBLOG_DEBUG("VideoWindowMac::setWindow", "this=" << this << "\t" << "LOAD DRAWINGPRIMITIVE=" << layer);
 	} else {
 		if(mWindow) {
+			if (FB::PluginWindowMac::DrawingModelInvalidatingCoreAnimation == mWindow->getDrawingModel()) {
+				mWindow->StopAutoInvalidate();
+			}
 			CALayer *layer = (CALayer *)mWindow->getDrawingPrimitive();
 			FBLOG_DEBUG("VideoWindowMac::setWindow", "this=" << this << "\t" << "UNLOAD DRAWINGPRIMITIVE=" << layer);
 			mWindow = NULL;
