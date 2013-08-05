@@ -31,6 +31,17 @@ namespace LinphoneWeb {
 
 typedef boost::optional<std::string> StringPtr;
 std::ostream& operator<<(std::ostream &out, StringPtr const &string);
+
+template<typename T>
+std::ostream& operator<<(std::ostream &out, boost::weak_ptr<T > const &ptr) {
+	boost::shared_ptr<T > shared_ptr = ptr.lock();
+	if(shared_ptr) {
+		out << &(*shared_ptr);
+	} else {
+		out << "(NULL)";
+	}
+	return out;
+}
 	
 class ThreadGroup {
 private:

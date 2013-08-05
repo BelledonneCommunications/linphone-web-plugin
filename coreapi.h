@@ -44,6 +44,8 @@ FB_FORWARD_PTR(PointerAPI)
 FB_FORWARD_PTR(ProxyConfigAPI)
 FB_FORWARD_PTR(SipTransportsAPI)
 FB_FORWARD_PTR(VideoPolicyAPI)
+	
+FB_FORWARD_PTR(VideoAPI)
 
 FB_FORWARD_PTR(FileManagerAPI)
 
@@ -244,7 +246,6 @@ public:
 	int getDelayedTimeout() const;
 	void setDelayedTimeout(int timeout);
 
-
 	// AuthInfo functions
 	void addAuthInfo(AuthInfoAPIPtr const &authInfo);
 	void abortAuthentication(AuthInfoAPIPtr const &authInfo);
@@ -348,6 +349,11 @@ private:
 	mutable FileManagerAPIPtr mFileManager;
 	FB::JSObjectPtr mLogHandler;
 	StringPtr mMagic;
+	
+	VideoAPIWeakPtr mVideoWindow;
+	static void videoWindowEventHandler(const CoreAPIWeakPtr &corePtr, void *ptr);
+	VideoAPIWeakPtr mPreviewWindow;
+	static void previewWindowEventHandler(const CoreAPIWeakPtr &corePtr, void *ptr);
 
 	LinphoneCore *mCore; // Linphone core object
 	LinphoneCoreVTable mVtable;// Linphone callback methods table

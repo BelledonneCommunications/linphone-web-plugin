@@ -28,10 +28,12 @@
 namespace LinphoneWeb {
 	
 FB_FORWARD_PTR(WhiteBoard)
+FB_FORWARD_PTR(VideoAPI)
+	
 class WhiteBoard {
 public:
 	typedef unsigned int IdType;
-	typedef boost::variant<void *> ValueType;
+	typedef boost::variant<VideoAPIWeakPtr> ValueType;
 	static const IdType NoId;
 	static const ValueType NoValue;
 	

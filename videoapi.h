@@ -33,6 +33,7 @@ FB_FORWARD_PTR(VideoAPI)
 class VideoAPI: public WrapperAPI {
 	friend class FactoryAPI;
 public:
+	typedef boost::function<void (void *ptr)> WindowEventHandler;
 	VideoAPI();
 	~VideoAPI();
 
@@ -43,12 +44,16 @@ public:
 	void setMagic(std::string const &magic);
 	WhiteBoard::IdType getWindow();
 
+	void setWindowEventHandler(WindowEventHandler const &windowEventHandler);
+	
 	void setBackgroundColor(int r, int g, int b);
 	bool draw();
 protected:
 	virtual void initProxy();
 	
 private:
+	WindowEventHandler mWindowEventHandler;
+	WhiteBoard::IdType mId;
 	std::string mMagic;
 	VideoWindowPtr mWindow;
 };

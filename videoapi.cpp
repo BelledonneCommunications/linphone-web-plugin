@@ -36,8 +36,8 @@ namespace LinphoneWeb {
 ///////////////////////////////////////////////////////////////////////////////
 VideoAPI::VideoAPI():
 		WrapperAPI(APIDescription(this)) {
-	FBLOG_DEBUG("videoAPI::videoAPI", "this=" << this);
-
+	FBLOG_DEBUG("VideoAPI::VideoAPI", "this=" << this);
+			
 	mWindow = VideoWindow::create();
 }
 
@@ -49,37 +49,33 @@ VideoAPI::VideoAPI():
 ///         the plugin is released.
 ///////////////////////////////////////////////////////////////////////////////
 VideoAPI::~VideoAPI() {
-	FBLOG_DEBUG("videoAPI::~videoAPI", "this=" << this);
+	FBLOG_DEBUG("VideoAPI::~videoAPI", "this=" << this);
 	
-	// Remove window handle from whiteboard
-	void * handle = mWindow->getNativeHandle();
-	if(handle != NULL) {
-		getFactory()->getWhiteBoard()->removeValue(handle);
-	}
+	getFactory()->getWhiteBoard()->removeId(mId);
 }
 	
 void VideoAPI::initProxy() {
+	mId = getFactory()->getWhiteBoard()->addValue(VideoAPIWeakPtr(boost::static_pointer_cast<VideoAPI>(this->shared_from_this())));
+	
 	// Methods
 	registerProperty("magic", make_property(this, &VideoAPI::getMagic, &VideoAPI::setMagic));
 	registerProperty("window", make_property(this, &VideoAPI::getWindow));
 	registerMethod("setBackgroundColor", make_method(this, &VideoAPI::setBackgroundColor));
 }
 	
-void VideoAPI::setWindow(FB::PluginWindow *window) {
-	FBLOG_DEBUG("videoAPI::setWindow", "this=" << this << "\t" << "window=" << window);
-
-	// Remove window handle from whiteboard
-	void * oldHandle = mWindow->getNativeHandle();
-	if(oldHandle != NULL) {
-		getFactory()->getWhiteBoard()->removeValue(oldHandle);
+void VideoAPI::setWindowEventHandler(WindowEventHandler const &windowEventHandler) {
+	mWindowEventHandler = windowEventHandler;
+	if(mWindowEventHandler) {
+		mWindowEventHandler(mWindow->getNativeHandle());
 	}
+}
 	
+void VideoAPI::setWindow(FB::PluginWindow *window) {
+	FBLOG_DEBUG("VideoAPI::setWindow", "this=" << this << "\t" << "window=" << window);
+
 	mWindow->setWindow(window);
-	
-	// Add window handle to whiteboard
-	void * newHandle = mWindow->getNativeHandle();
-	if(newHandle != NULL) {
-		getFactory()->getWhiteBoard()->addValue(newHandle);
+	if(mWindowEventHandler) {
+		mWindowEventHandler(mWindow->getNativeHandle());
 	}
 }
 
@@ -96,13 +92,7 @@ void VideoAPI::setMagic(std::string const &magic) {
 WhiteBoard::IdType VideoAPI::getWindow() {
 	FBLOG_DEBUG("VideoAPI::getWindow", "this=" << this);
 	
-	// Get id of window handle in whiteboard
-	void * handle = mWindow->getNativeHandle();
-	if(handle != NULL) {
-		return getFactory()->getWhiteBoard()->getId(handle);
-	} else {
-		return WhiteBoard::NoId;
-	}
+	return mId;
 }
 
 void VideoAPI::setBackgroundColor(int r, int g, int b) {

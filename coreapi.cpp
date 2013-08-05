@@ -1014,16 +1014,46 @@ bool CoreAPI::selfViewEnabled() const {
 	FBLOG_DEBUG("CoreAPI::selfViewEnabled", "this=" << this);
 	return linphone_core_self_view_enabled(mCore) == TRUE ? true : false;
 }
+	
+void CoreAPI::videoWindowEventHandler(const CoreAPIWeakPtr &corePtr, void *ptr) {
+	CoreAPIPtr core = corePtr.lock();
+	if(core) {
+		FBLOG_DEBUG("CoreAPI::previewWindowEventHandler", "core=" << &(*core) << "\t" << "ptr=" << ptr);
+		if(ptr != NULL) {
+			linphone_core_set_native_video_window_id(core->mCore, (unsigned long)ptr);
+		} else {
+			linphone_core_set_native_video_window_id(core->mCore, (unsigned long)-1);
+		}
+	}
+}
 
 void CoreAPI::setNativeVideoWindowId(WhiteBoard::IdType id) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setNativeVideoWindowId", "this=" << this << "\t" << "id=" << id);
+	
+	if(getFactory()->getWhiteBoard()->getId(mVideoWindow) == id) {
+		// Same do nothing
+		return;
+	}
+	
+	// Unset old
+	VideoAPIPtr video = mVideoWindow.lock();
+	if(video) {
+		video->setWindowEventHandler(VideoAPI::WindowEventHandler());
+	}
+	mVideoWindow.reset();
+	
+	// Set new
 	if(id != WhiteBoard::NoId) {
-		linphone_core_set_native_video_window_id(mCore, (unsigned long)getFactory()->getWhiteBoard()->getValue<void *>(id));
-	} else {
-		linphone_core_set_native_video_window_id(mCore, (unsigned long)-1);
+		mVideoWindow = getFactory()->getWhiteBoard()->getValue<VideoAPIWeakPtr>(id);
+		video = mVideoWindow.lock();
+		if(video) {
+			video->setWindowEventHandler(boost::bind(&CoreAPI::videoWindowEventHandler,
+											   CoreAPIWeakPtr(boost::static_pointer_cast<CoreAPI>(this->shared_from_this())),
+											   _1));
+		}
 	}
 }
 
@@ -1032,11 +1062,19 @@ WhiteBoard::IdType CoreAPI::getNativeVideoWindowId() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getNativeVideoWindowId", "this=" << this);
-	unsigned long ptr = linphone_core_get_native_video_window_id(mCore);
-	if(ptr != ((unsigned long)-1) && ptr != 0) {
-		return getFactory()->getWhiteBoard()->getId((void *) ptr);
-	} else {
-		return WhiteBoard::NoId;
+	
+	return getFactory()->getWhiteBoard()->getId(mVideoWindow);
+}
+	
+void CoreAPI::previewWindowEventHandler(const CoreAPIWeakPtr &corePtr, void *ptr) {
+	CoreAPIPtr core = corePtr.lock();
+	if(core) {
+		FBLOG_DEBUG("CoreAPI::previewWindowEventHandler", "core=" << &(*core) << "\t" << "ptr=" << ptr);
+		if(ptr != NULL) {
+			linphone_core_set_native_preview_window_id(core->mCore, (unsigned long)ptr);
+		} else {
+			linphone_core_set_native_preview_window_id(core->mCore, (unsigned long)-1);
+		}
 	}
 }
 
@@ -1045,10 +1083,28 @@ void CoreAPI::setNativePreviewWindowId(WhiteBoard::IdType id) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setNativePreviewWindowId", "this=" << this << "\t" << "id=" << id);
+	
+	if(getFactory()->getWhiteBoard()->getId(mPreviewWindow) == id) {
+		// Same do nothing
+		return;
+	}
+	
+	// Unset old
+	VideoAPIPtr video = mPreviewWindow.lock();
+	if(video) {
+		video->setWindowEventHandler(VideoAPI::WindowEventHandler());
+	}
+	mPreviewWindow.reset();
+	
+	// Set new
 	if(id != WhiteBoard::NoId) {
-		linphone_core_set_native_preview_window_id(mCore, (unsigned long)getFactory()->getWhiteBoard()->getValue<void *>(id));
-	} else {
-		linphone_core_set_native_preview_window_id(mCore, (unsigned long)-1);
+		mPreviewWindow = getFactory()->getWhiteBoard()->getValue<VideoAPIWeakPtr>(id);
+		video = mPreviewWindow.lock();
+		if(video) {
+			video->setWindowEventHandler(boost::bind(&CoreAPI::previewWindowEventHandler,
+											   CoreAPIWeakPtr(boost::static_pointer_cast<CoreAPI>(this->shared_from_this())),
+											   _1));
+		}
 	}
 }
 
@@ -1057,12 +1113,8 @@ WhiteBoard::IdType CoreAPI::getNativePreviewWindowId() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getNativePreviewWindowId", "this=" << this);
-	unsigned long ptr = linphone_core_get_native_preview_window_id(mCore);
-	if(ptr != ((unsigned long)-1) && ptr != 0) {
-		return getFactory()->getWhiteBoard()->getId((void *) ptr);
-	} else {
-		return WhiteBoard::NoId;
-	}
+	
+	return getFactory()->getWhiteBoard()->getId(mPreviewWindow);
 }
 
 bool CoreAPI::getUsePreviewWindow() const {
