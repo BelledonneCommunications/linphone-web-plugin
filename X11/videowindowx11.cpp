@@ -59,12 +59,17 @@ void VideoWindowX11::setBackgroundColor(int r, int g, int b) {
 	mBackgroundColor.green = g;
 	mBackgroundColor.blue = b;
 	mBackgroundColor.pixel = 0;
+	if (mWindow != NULL) {
+		gtk_widget_modify_bg(mWindow->getWidget(), GTK_STATE_NORMAL, &mBackgroundColor);
+	}
 	drawBackground();
 }
 
 void VideoWindowX11::drawBackground() {
 	GtkWidget *gtkWidget = mWindow->getWidget();
-	gtk_widget_modify_bg(gtkWidget, GTK_STATE_NORMAL, &mBackgroundColor);
+	if (mPixmap == NULL) {
+		mPixmap = gdk_pixmap_new(gtkWidget->window, gtkWidget->allocation.width, gtkWidget->allocation.height, -1);
+	}
 	gdk_draw_rectangle(mPixmap, gtkWidget->style->bg_gc[GTK_STATE_NORMAL], TRUE, 0, 0, gtkWidget->allocation.width, gtkWidget->allocation.height);
 }
 
@@ -74,9 +79,9 @@ void VideoWindowX11::setWindow(FB::PluginWindow *window) {
 	if (wnd) {
 		mWindow = wnd;
 		GtkWidget *gtkWidget = mWindow->getWidget();
-		
+		gtk_widget_modify_bg(gtkWidget, GTK_STATE_NORMAL, &mBackgroundColor);
 		drawBackground();
-		
+
 		mExposeEventId = gtk_signal_connect(GTK_OBJECT(gtkWidget), "expose_event", (GtkSignalFunc) expose_event, this);
 		ConfigureEventId = gtk_signal_connect(GTK_OBJECT(gtkWidget), "configure_event", (GtkSignalFunc) configure_event, this);
 	} else {
