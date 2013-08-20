@@ -1,6 +1,6 @@
 /*!
  Linphone Web - Web plugin of Linphone an audio/video SIP phone
- Copyright (C) 2012  Yann Diorcet <yann.diorcet@linphone.org>
+ Copyright (C) 2012-2013 Belledonne Communications
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -15,6 +15,11 @@
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ 
+ 
+ Authors:
+ - Yann Diorcet <diorcet.yann@gmail.com>
+ 
  */
 
 #include "siptransportsapi.h"
