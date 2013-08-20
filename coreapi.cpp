@@ -1018,12 +1018,19 @@ bool CoreAPI::selfViewEnabled() const {
 void CoreAPI::videoWindowEventHandler(const CoreAPIWeakPtr &corePtr, void *ptr) {
 	CoreAPIPtr core = corePtr.lock();
 	if(core) {
-		FBLOG_DEBUG("CoreAPI::previewWindowEventHandler", "core=" << &(*core) << "\t" << "ptr=" << ptr);
-		if(ptr != NULL) {
-			linphone_core_set_native_video_window_id(core->mCore, (unsigned long)ptr);
-		} else {
-			linphone_core_set_native_video_window_id(core->mCore, (unsigned long)-1);
-		}
+		core->setVideoWindow(ptr);
+	}
+}
+	
+void CoreAPI::setVideoWindow(void *ptr) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setVideoWindow", "this=" << this << "\t" << "ptr=" << ptr);
+	if(ptr != NULL) {
+		linphone_core_set_native_video_window_id(mCore, (unsigned long)ptr);
+	} else {
+		linphone_core_set_native_video_window_id(mCore, (unsigned long)-1);
 	}
 }
 
@@ -1069,12 +1076,19 @@ WhiteBoard::IdType CoreAPI::getNativeVideoWindowId() const {
 void CoreAPI::previewWindowEventHandler(const CoreAPIWeakPtr &corePtr, void *ptr) {
 	CoreAPIPtr core = corePtr.lock();
 	if(core) {
-		FBLOG_DEBUG("CoreAPI::previewWindowEventHandler", "core=" << &(*core) << "\t" << "ptr=" << ptr);
-		if(ptr != NULL) {
-			linphone_core_set_native_preview_window_id(core->mCore, (unsigned long)ptr);
-		} else {
-			linphone_core_set_native_preview_window_id(core->mCore, (unsigned long)-1);
-		}
+		core->setPreviewWindow(ptr);
+	}
+}
+	
+void CoreAPI::setPreviewWindow(void *ptr) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("CoreAPI::setPreviewWindow", "this=" << this << "\t" << "ptr=" << ptr);
+	if(ptr != NULL) {
+		linphone_core_set_native_preview_window_id(mCore, (unsigned long)ptr);
+	} else {
+		linphone_core_set_native_preview_window_id(mCore, (unsigned long)-1);
 	}
 }
 

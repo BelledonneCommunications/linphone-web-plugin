@@ -352,8 +352,10 @@ private:
 	
 	VideoAPIWeakPtr mVideoWindow;
 	static void videoWindowEventHandler(const CoreAPIWeakPtr &corePtr, void *ptr);
+	void setVideoWindow(void *ptr);
 	VideoAPIWeakPtr mPreviewWindow;
 	static void previewWindowEventHandler(const CoreAPIWeakPtr &corePtr, void *ptr);
+	void setPreviewWindow(void *ptr);
 
 	LinphoneCore *mCore; // Linphone core object
 	LinphoneCoreVTable mVtable;// Linphone callback methods table
