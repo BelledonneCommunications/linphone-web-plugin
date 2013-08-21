@@ -170,10 +170,10 @@ endif(FB_PLATFORM_NAME STREQUAL "X11")
 
 set(LW_USE_SRTP 1)
 set(LW_USE_FFMPEG 1)
-set(LW_USE_OPENSSL 1)
-set(LW_USE_EXOSIP 1)
-set(LW_USE_POLARSSL 0)
-set(LW_USE_BELLESIP 0)
+set(LW_USE_OPENSSL 0)
+set(LW_USE_EXOSIP 0)
+set(LW_USE_POLARSSL 1)
+set(LW_USE_BELLESIP 1)
 
 ##
 message("-- Configurations:")
