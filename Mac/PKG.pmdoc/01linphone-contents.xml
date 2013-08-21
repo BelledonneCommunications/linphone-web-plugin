@@ -18,6 +18,7 @@
 					<f n="libosipparser2.7.dylib" p="33261"/>
 					<f n="libspeex.1.dylib" p="33261"/>
 					<f n="libspeexdsp.1.dylib" p="33261"/>
+					<f n="libsrtp.1.4.5.dylib" p="33261"/>
 					<f n="libssl.1.0.0.dylib" p="33261"/>
 					<f n="libswscale.2.dylib" p="33261"/>
 					<f n="libtheora.0.dylib" p="33261"/>

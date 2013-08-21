@@ -73,6 +73,7 @@
 								<File Id="libosipparser2" Source="$(var.BINSRC)/libosipparser2-7.dll" />
 								<File Id="libspeex" Source="$(var.BINSRC)/libspeex-1.dll" />
 								<File Id="libspeexdsp" Source="$(var.BINSRC)/libspeexdsp-1.dll" />
+								<File Id="libsrtp" Source="$(var.BINSRC)/libsrtp-1.4.5.dll" />
 								<File Id="libtheora" Source="$(var.BINSRC)/libtheora-0.dll" />
 								<File Id="libvpx" Source="$(var.BINSRC)/libvpx-1.dll" />
 								<File Id="libz" Source="$(var.BINSRC)/libz-1.dll" />
