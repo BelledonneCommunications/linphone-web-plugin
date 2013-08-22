@@ -223,6 +223,7 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 )
 ENDIF(LW_USE_FFMPEG)
 
+IF(LW_USE_EXOSIP)
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/libeXosip2-7.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
@@ -230,11 +231,68 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/libosip2-7.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/libosipparser2-7.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+ENDIF(LW_USE_EXOSIP)
+IF(LW_USE_OPENSSL)
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/libeay32.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/ssleay32.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+ENDIF(LW_USE_OPENSSL)
+IF(LW_USE_SRTP)
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/libsrtp-1.4.5.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+ENDIF(LW_USE_SRTP)
+IF(LW_USE_POLARSSL)
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/libpolarssl-0.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+ENDIF(LW_USE_POLARSSL)
+IF(LW_USE_BELLESIP)
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/libbellesip-0.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/libantlr3c-0.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/libxml2-2.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+ENDIF(LW_USE_BELLESIP)
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/liblinphone-5.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
@@ -266,18 +324,6 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libosip2-7.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libosipparser2-7.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/libspeex-1.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
@@ -303,12 +349,6 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/libz-1.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/ssleay32.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
