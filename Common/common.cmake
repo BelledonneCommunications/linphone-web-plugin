@@ -11,7 +11,7 @@ function (create_signed_xpi PROJNAME DIRECTORY OUT_FILE PEMFILE PASSFILE PROJDEP
 		${PEMFILE}
 		${PASSFILE}
 	)
-
+	
 	if (EXISTS ${PEMFILE})
 		ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_SIGNED_SUFFIX} ALL DEPENDS ${OUT_FILE})
 		ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_SIGNED_SUFFIX} ${PROJDEP})
@@ -36,7 +36,7 @@ function (create_signed_crx PROJNAME DIRECTORY OUT_FILE PEMFILE PASSFILE PROJDEP
 		${PEMFILE}
 		${PASSFILE}
 	)
-
+	
 	if (EXISTS ${PEMFILE})
 		ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_SIGNED_SUFFIX} ALL DEPENDS ${OUT_FILE})
 		ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_SIGNED_SUFFIX} ${PROJDEP})
@@ -53,20 +53,15 @@ function (create_signed_crx PROJNAME DIRECTORY OUT_FILE PEMFILE PASSFILE PROJDEP
 endfunction(create_signed_crx)
 
 function(configure_file_ext SRC DEST)
-	set(SRC_TMP "${DEST}.tmp")
-	configure_file("${SRC}" "${SRC_TMP}" COPYONLY)
+	configure_file("${SRC}" "${DEST}" COPYONLY)
 	get_cmake_property(_variableNames VARIABLES)
 	foreach(VAR ${_variableNames})
 		if(VAR MATCHES "^LW_.*$")
-        		set(VALUE "${${VAR}}")
-			execute_process(COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/Common/regex.py" "${SRC_TMP}" "${SRC_TMP}" "${VAR}" "${VALUE}")
+			set(VALUE "${${VAR}}")
+			execute_process(COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/Common/regex.py" "${DEST}" "${DEST}" "${VAR}" "${VALUE}")
 		endif()
 	endforeach()
 	
-	# Needed #
-	configure_file("${SRC_TMP}" "${DEST}" COPYONLY)
-	##########
-
 	configure_file("${DEST}" "${DEST}")
 endfunction(configure_file_ext)
 
@@ -101,6 +96,6 @@ macro(my_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
 		else()
 			message(STATUS "No signtool certificate found; assuming development machine (${PFXFILE})")
 		endif()
-
+	
 	endif()
 endmacro(my_sign_file)
