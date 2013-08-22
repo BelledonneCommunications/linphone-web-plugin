@@ -87,6 +87,14 @@
 								<File Id="libeay32" Source="$(var.BINSRC)/libeay32.dll" />
 								<File Id="ssleay32" Source="$(var.BINSRC)/ssleay32.dll" />
 								${ENDIF}
+								${IF LW_USE_POLARSSL}
+								<File Id="libpolarssl" Source="$(var.BINSRC)/libpolarssl-0.dll" />
+								${ENDIF}
+								${IF LW_USE_BELLESIP}
+								<File Id="libbellesip" Source="$(var.BINSRC)/libbellesip-0.dll" />
+								<File Id="libantlr3c" Source="$(var.BINSRC)/libantlr3c-0.dll" />
+								<File Id="libxml2" Source="$(var.BINSRC)/libxml2-2.dll" />
+								${ENDIF}
 								<RegistryValue
 									Root="HKCU"
 									Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"

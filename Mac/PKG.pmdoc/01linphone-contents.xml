@@ -32,6 +32,14 @@
 					<f n="libavutil.51.35.100.dylib" p="33261"/>
 					<f n="libswscale.2.dylib" p="33261"/>
 					${ENDIF}
+					${IF LW_USE_POLARSSL}
+					<f n="libpolarssl.0.dylib" p="33261"/>
+					${ENDIF}
+					${IF LW_USE_BELLESIP}
+					<f n="libbellesip.0.dylib" p="33261"/>
+					<f n="libantlr3c.0.dylib" p="33261"/>
+					<f n="libxml2.2.dylib" p="33261"/>
+					${ENDIF}
 					<f n="share" p="16877">
 						<f n="images" p="16877">
 							<f n="nowebcamCIF.jpg" p="33188"/>
