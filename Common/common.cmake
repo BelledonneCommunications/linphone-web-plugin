@@ -53,17 +53,21 @@ function (create_signed_crx PROJNAME DIRECTORY OUT_FILE PEMFILE PASSFILE PROJDEP
 endfunction(create_signed_crx)
 
 function(configure_file_ext SRC DEST)
-	SET(SRC_TMP "${SRC}.tmp")
-	configure_file(${SRC} ${SRC_TMP} COPYONLY)
+	set(SRC_TMP "${DEST}.tmp")
+	configure_file("${SRC}" "${SRC_TMP}" COPYONLY)
 	get_cmake_property(_variableNames VARIABLES)
 	foreach(VAR ${_variableNames})
-		IF(VAR MATCHES "^LW_.*$")
-        		SET(VALUE "${${VAR}}")
-			execute_process(COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/regex.py ${SRC_TMP} ${SRC_TMP} ${VAR} ${VALUE})
-		ENDIF()
+		if(VAR MATCHES "^LW_.*$")
+        		set(VALUE "${${VAR}}")
+			execute_process(COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/Common/regex.py" "${SRC_TMP}" "${SRC_TMP}" "${VAR}" "${VALUE}")
+		endif()
 	endforeach()
-	configure_file(${SRC_TMP} ${DEST})
-	FILE(REMOVE ${SRC_TMP})
+	
+	# Needed #
+	configure_file("${SRC_TMP}" "${DEST}" COPYONLY)
+	##########
+
+	configure_file("${DEST}" "${DEST}")
 endfunction(configure_file_ext)
 
 macro(my_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
