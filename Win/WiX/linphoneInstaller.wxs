@@ -70,7 +70,7 @@
 								<File Id="libtheora" Source="$(var.BINSRC)/libtheora-0.dll" />
 								<File Id="libvpx" Source="$(var.BINSRC)/libvpx-1.dll" />
 								<File Id="libz" Source="$(var.BINSRC)/libz-1.dll" />
-								${IF LW_USE_SRTP}
+								${IF LW_USE_EXOSIP}
 								<File Id="libexosip2" Source="$(var.BINSRC)/libexosip2-7.dll" />
 								<File Id="libosip2" Source="$(var.BINSRC)/libosip2-7.dll" />
 								<File Id="libosipparser2" Source="$(var.BINSRC)/libosipparser2-7.dll" />
