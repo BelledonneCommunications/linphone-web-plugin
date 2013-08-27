@@ -366,9 +366,9 @@ private:
 	LinphoneCoreVTable mVtable;// Linphone callback methods table
 
 	int mIterateInterval;
+	bool mIterate;
 #ifdef CORE_THREADED
 	boost::shared_ptr<boost::thread> mCoreThread;
-	bool mIterate;
 #else
 	FB::TimerPtr mTimer;
 #endif //CORE_THREADED

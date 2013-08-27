@@ -97,7 +97,7 @@
 	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
 			void class::BOOST_PP_CAT(name, _async) (boost::optional<FB::JSObjectPtr> callback) {,                                                                   \
 			void class::BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)),                                \
-													boost::optional<FB::JSObjectPtr callback>) {)                                                                   \
+													boost::optional<FB::JSObjectPtr> callback) {)                                                                   \
 	try {BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),                                                                                                           \
 		name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList)));                                                                        \
 		if(callback)(*callback)->InvokeAsync("", FB::variant_list_of(shared_from_this()));,                                                                         \

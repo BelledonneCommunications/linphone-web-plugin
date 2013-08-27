@@ -65,9 +65,7 @@ private:
 		ptr->initProxy();
 		return ptr;
 	}
-#ifdef CORE_THREADED
 	mutable boost::recursive_mutex mCoreMutex;
-#endif
 public:
 	FactoryAPI(FB::PluginCorePtr const &plugin, WhiteBoardPtr const &whiteboard);
 	~FactoryAPI();
