@@ -31,7 +31,7 @@ VideoWindowPtr VideoWindow::create() {
 	return boost::make_shared<VideoWindowWin>();
 }
 
-VideoWindowWin::VideoWindowWin(): mWindow(NULL), mBrush(NULL) {
+VideoWindowWin::VideoWindowWin(): mWindow(NULL), mBrush(NULL), mBackgroundColor(RGB(0, 0, 0)) {
 	FBLOG_DEBUG("VideoWindowWin::VideoWindowWin()", "this=" << this);
 }
 
@@ -47,13 +47,16 @@ void VideoWindowWin::setBackgroundColor(int r, int g, int b) {
 		DeleteObject(mBrush);
 		mBrush = NULL;
 	}
-	mBrush = CreateSolidBrush(RGB(r, g, b));
+	mBackgroundColor = RGB(r, g, b);
+	mBrush = CreateSolidBrush(mBackgroundColor);
 	drawBackground();
 }
 
 void VideoWindowWin::drawBackground() {
-	SetClassLongPtr(mWindow->getHWND(), GCLP_HBRBACKGROUND, (LONG)mBrush);
-	RedrawWindow(mWindow->getHWND(), NULL, NULL, RDW_INVALIDATE | RDW_ERASE);
+	if (mWindow) {
+		SetClassLongPtr(mWindow->getHWND(), GCLP_HBRBACKGROUND, (LONG)mBrush);
+		RedrawWindow(mWindow->getHWND(), NULL, NULL, RDW_INVALIDATE | RDW_ERASE);
+	}
 }
 
 bool VideoWindowWin::draw() {
@@ -65,7 +68,7 @@ void VideoWindowWin::setWindow(FB::PluginWindow *window) {
 	FB::PluginWindowWin* win = reinterpret_cast<FB::PluginWindowWin*>(window);
 	if (win) {
 		mWindow = win;
-
+		mBrush = CreateSolidBrush(mBackgroundColor);
 		drawBackground();
 
 		FBLOG_DEBUG( "VideoWindowWin::setWindow()", "this=" << this << "\t" << "Load HWND=" << mWindow->getHWND());

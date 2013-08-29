@@ -47,6 +47,7 @@ private:
 	void drawBackground();
 	FB::PluginWindowWin *mWindow;
 	HBRUSH mBrush;
+	COLORREF mBackgroundColor;
 };
 	
 } // LinphoneWeb
