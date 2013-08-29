@@ -28,7 +28,7 @@
 #include <PluginWindow.h>
 #include <PluginWindowWin.h>
 #include <boost/shared_ptr.hpp>
-#include "../videowindow.h"
+#include "../Src/videowindow.h"
 #include <WinDef.h>
 
 namespace LinphoneWeb {

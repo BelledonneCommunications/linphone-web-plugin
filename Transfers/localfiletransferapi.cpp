@@ -23,8 +23,8 @@
  */
 
 #include "localfiletransferapi.h"
-#include "../coreplugin.h"
-#include "../factoryapi.h"
+#include "../Src/coreplugin.h"
+#include "../Src/factoryapi.h"
 #include <boost/thread/thread.hpp>
 
 namespace LinphoneWeb {

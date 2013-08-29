@@ -24,8 +24,8 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 Project(${PLUGIN_NAME})
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    [^.]*.cpp
-    [^.]*.h
+    Src/[^.]*.cpp
+    Src/[^.]*.h
     [^.]*.cmake
     )
 	
@@ -37,6 +37,7 @@ file (GLOB TRANSFERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 include_directories(${PLUGIN_INCLUDE_DIRS})
 include_directories(${FB_UTF8_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Generated files are stored in ${GENERATED} by the project configuration
 SET_SOURCE_FILES_PROPERTIES(

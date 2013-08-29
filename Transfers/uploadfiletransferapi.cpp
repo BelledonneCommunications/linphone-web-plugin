@@ -23,9 +23,9 @@
  */
 
 #include "uploadfiletransferapi.h"
-#include "../coreplugin.h"
-#include "../factoryapi.h"
-#include "../base64.h"
+#include "../Src/coreplugin.h"
+#include "../Src/factoryapi.h"
+#include "../Src/base64.h"
 
 namespace LinphoneWeb {
 

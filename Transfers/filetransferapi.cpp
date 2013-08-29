@@ -27,7 +27,7 @@
 #include "downloadfiletransferapi.h"
 #include "uploadfiletransferapi.h"
 #include "localfiletransferapi.h"
-#include "../filemanagerapi.h"
+#include "../Src/filemanagerapi.h"
 
 namespace LinphoneWeb {
 

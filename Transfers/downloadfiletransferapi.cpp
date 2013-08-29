@@ -23,8 +23,8 @@
  */
 
 #include "downloadfiletransferapi.h"
-#include "../coreplugin.h"
-#include "../factoryapi.h"
+#include "../Src/coreplugin.h"
+#include "../Src/factoryapi.h"
 
 namespace LinphoneWeb {
 

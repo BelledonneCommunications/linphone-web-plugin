@@ -29,7 +29,7 @@
 
 #include <PluginWindowMac.h>
 #include <boost/shared_ptr.hpp>
-#include "../videowindow.h"
+#include "../Src/videowindow.h"
 
 namespace LinphoneWeb {
 

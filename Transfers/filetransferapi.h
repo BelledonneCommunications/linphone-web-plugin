@@ -25,7 +25,7 @@
 #ifndef H_FILETRANSFERAPI
 #define H_FILETRANSFERAPI
 
-#include "../wrapperapi.h"
+#include "../Src/wrapperapi.h"
 
 #include <URI.h>
 
