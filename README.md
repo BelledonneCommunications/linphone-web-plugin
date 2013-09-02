@@ -39,11 +39,11 @@ project root (create it if doesn't exist).
 
 
 ### Generate a Rootfs
-TODO
-#### Manual way
-TODO
-#### oe-lite way
-TODO
+Clone the oe-lite git repository from:
+
+	git clone git://git.linphone.org/oe-lite.git --recursive
+
+Follow the README.md file from this repository.
 
 
 Firebreath
@@ -51,11 +51,11 @@ Firebreath
 FireBreath aims to be a cross-platform plugin architecture. You have to
 download the last stable version using git:
 
-    git clone git://github.com/diorcety/FireBreath.git -b firebreath-1.7 \
-    firebreath-1.7
+    git clone git://git.linphone.org/firebreath.git -b firebreath-1.7 --recursive
 
-Place linphone-web project in the `./projects/` directory at the firebreath
-root(create it if doesn't exist). Follow the [Firebreath documentation](http://www.firebreath.org/display/documentation/Building+FireBreath+Plugins)
+Place linphone-web-plugin project in the `./projects/` directory at the firebreath
+root (create it if doesn't exist).
+Follow the [Firebreath documentation](http://www.firebreath.org/display/documentation/Building+FireBreath+Plugins)
 following the used system for compiling linphone-web.
 
 
@@ -90,7 +90,7 @@ directory at the linphone-web project root (create it if doesn't exist) the
 following files:
 
 * **linphoneweb.pfx**: The file containing private/public keys and the 
-certificate(only for active-x part)
+certificate (only for active-x part)
 * **linphoneweb.pem**: The file containing private/public keys and the 
 certificate
 * **passphrase.txt**: The password used for open the two previous files 
