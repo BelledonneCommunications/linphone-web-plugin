@@ -61,8 +61,6 @@ void usleep(int waitTime) {
 }
 #endif //WIN32
 
-static boost::mutex sInstanceMutex;
-static int sInstanceCount = 0;
 
 void CoreAPI::iterateWithMutex() {
 	CORE_MUTEX
@@ -288,52 +286,42 @@ int CoreAPI::init(StringPtr const &config, StringPtr const &factory) {
 	GET_FILE("CoreAPI::init", realConfig);
 	GET_FILE("CoreAPI::init", realFactory);
 
-	boost::mutex::scoped_lock scoped_instance_count_lock(sInstanceMutex);
-
 	if(mCore != NULL) {
 		return -1;
 	}
 
-	if (sInstanceCount == 0) {
-		++sInstanceCount;
+	// Initialize callback table
+	memset(&mVtable, 0, sizeof(LinphoneCoreVTable));
+	mVtable.global_state_changed = CoreAPI::wrapper_global_state_changed;
+	mVtable.registration_state_changed = CoreAPI::wrapper_registration_state_changed;
+	mVtable.call_state_changed = CoreAPI::wrapper_call_state_changed;
+	mVtable.notify_presence_recv = CoreAPI::wrapper_notify_presence_recv;
+	mVtable.new_subscription_request = CoreAPI::wrapper_new_subscription_request;
+	mVtable.auth_info_requested = CoreAPI::wrapper_auth_info_requested;
+	mVtable.call_log_updated = CoreAPI::wrapper_call_log_updated;
+	mVtable.text_received = CoreAPI::wrapper_text_received;
+	mVtable.dtmf_received = CoreAPI::wrapper_dtmf_received;
+	mVtable.refer_received = CoreAPI::wrapper_refer_received;
+	mVtable.buddy_info_updated = CoreAPI::wrapper_buddy_info_updated;
+	//mVtable.notify_recv = CoreAPI::wrapper_notify_recv;
+	mVtable.display_status = CoreAPI::wrapper_display_status;
+	mVtable.display_message = CoreAPI::wrapper_display_message;
+	mVtable.display_warning = CoreAPI::wrapper_display_warning;
+	mVtable.display_url = CoreAPI::wrapper_display_url;
+	mVtable.show = CoreAPI::wrapper_show;
+	mVtable.call_encryption_changed = CoreAPI::wrapper_call_encryption_changed;
 
-		// Initialize callback table
-		memset(&mVtable, 0, sizeof(LinphoneCoreVTable));
-		mVtable.global_state_changed = CoreAPI::wrapper_global_state_changed;
-		mVtable.registration_state_changed = CoreAPI::wrapper_registration_state_changed;
-		mVtable.call_state_changed = CoreAPI::wrapper_call_state_changed;
-		mVtable.notify_presence_recv = CoreAPI::wrapper_notify_presence_recv;
-		mVtable.new_subscription_request = CoreAPI::wrapper_new_subscription_request;
-		mVtable.auth_info_requested = CoreAPI::wrapper_auth_info_requested;
-		mVtable.call_log_updated = CoreAPI::wrapper_call_log_updated;
-		mVtable.text_received = CoreAPI::wrapper_text_received;
-		mVtable.dtmf_received = CoreAPI::wrapper_dtmf_received;
-		mVtable.refer_received = CoreAPI::wrapper_refer_received;
-		mVtable.buddy_info_updated = CoreAPI::wrapper_buddy_info_updated;
-		//mVtable.notify_recv = CoreAPI::wrapper_notify_recv;
-		mVtable.display_status = CoreAPI::wrapper_display_status;
-		mVtable.display_message = CoreAPI::wrapper_display_message;
-		mVtable.display_warning = CoreAPI::wrapper_display_warning;
-		mVtable.display_url = CoreAPI::wrapper_display_url;
-		mVtable.show = CoreAPI::wrapper_show;
-		mVtable.call_encryption_changed = CoreAPI::wrapper_call_encryption_changed;
-
-		mCore = linphone_core_new(&mVtable, STRING_TO_CHARPTR(realConfig), STRING_TO_CHARPTR(realFactory), (void *) this);
-		if (linphone_core_get_user_data(mCore) != this) {
-			FBLOG_ERROR("CoreAPI::init", "Too old version of linphone core!");
-			--sInstanceCount;
-			return 1;
-		}
-
-		// Specific Linphone Web behaviour
-		linphone_core_set_native_preview_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
-		linphone_core_set_native_video_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
-
-		return 0;
-	} else {
-		FBLOG_ERROR("CoreAPI::init", "Already started linphone instance");
-		return 2;
+	mCore = linphone_core_new(&mVtable, STRING_TO_CHARPTR(realConfig), STRING_TO_CHARPTR(realFactory), (void *) this);
+	if (linphone_core_get_user_data(mCore) != this) {
+		FBLOG_ERROR("CoreAPI::init", "Too old version of linphone core!");
+		return 1;
 	}
+
+	// Specific Linphone Web behaviour
+	linphone_core_set_native_preview_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
+	linphone_core_set_native_video_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
+
+	return 0;
 }
 
 
@@ -345,9 +333,6 @@ int CoreAPI::uninit() {
 		linphone_core_set_user_data(mCore, NULL);
 		mTimer->stop();
 		linphone_core_destroy(mCore);
-		sInstanceMutex.lock();
-		--sInstanceCount;
-		sInstanceMutex.unlock();
 		mCore = NULL;
 		return 0;
 	}
