@@ -1,25 +1,25 @@
 /*!
  Linphone Web - Web plugin of Linphone an audio/video SIP phone
  Copyright (C) 2012-2013 Belledonne Communications
- 
+
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- 
- 
+
+
  Authors:
  - Yann Diorcet <diorcet.yann@gmail.com>
- 
+
  */
 
 #include <JSObject.h>
@@ -64,76 +64,11 @@ void usleep(int waitTime) {
 static boost::mutex sInstanceMutex;
 static int sInstanceCount = 0;
 
-#ifdef CORE_THREADED
-#ifndef WIN32
-#include <dlfcn.h>
-#include <pthread.h>
-#endif //WIN32
-
-// Increment reference counter on this lib to avoid a early unload
-void *CoreAPI::refLib() {
-	void *libHandle = NULL;
-#ifdef WIN32
-	HMODULE module;
-	if(GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast<LPCTSTR>(&refLib), &module)) {
-		libHandle = module;
-	}
-#else //WIN32
-	Dl_info info;
-	if(dladdr((void*)refLib, &info)) {
-		libHandle = dlopen(info.dli_fname, RTLD_LAZY);
-	}
-#endif //WIN32
-	return libHandle;
-}
-
-// Decrement reference counter on this lib
-void CoreAPI::unrefLib(void *libHandle) {
-#ifdef WIN32
-	if(libHandle != NULL) {
-		FreeLibraryAndExitThread((HMODULE)libHandle, 0);
-	}
-#else //WIN32
-	if(libHandle != NULL) {
-		pthread_cleanup_push((void(*)(void*))dlclose, (void*)libHandle);
-		pthread_exit(0);
-		pthread_cleanup_pop(0);
-	}
-#endif //WIN32
-}
-
-void CoreAPI::destroyThread(LinphoneCore *core, void *libHandle) {
-	FBLOG_DEBUG("CoreAPI::destroyThread", "start" << "\t" << "core=" << core);
-	linphone_core_destroy(core);
-	sInstanceMutex.lock();
-	--sInstanceCount;
-	sInstanceMutex.unlock();
-	FBLOG_DEBUG("CoreAPI::destroyThread", "end" << "\t" << "core=" << core);
-	unrefLib(libHandle);
-}
-
-void CoreAPI::iterateThread(CoreAPIPtr &core) {
-	FBLOG_DEBUG("CoreAPI::iterateThread", "start" << "\t" << "core=" << core);
-
-	boost::this_thread::disable_interruption di;
-
-	while (!boost::this_thread::interruption_requested()) {
-		core->iterateWithMutex();
-		usleep(core->mIterateInterval * 1000);
-		//FBLOG_DEBUG("linphone_iterate_thread", "it" << "\t" << "core=" << core);
-	}
-	core->detachThread(boost::this_thread::get_id());
-	core->mCoreThread.reset();
-	FBLOG_DEBUG("CoreAPI::iterateThread", "end" << "\t" << "core=" << core);
-}
-
 void CoreAPI::iterateWithMutex() {
 	CORE_MUTEX
-	
+
 	iterate();
 }
-
-#endif //CORE_THREADED
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @fn CoreAPI::CoreAPI(corePtr const &plugin, const FB::BrowserHostPtr host)
@@ -148,13 +83,10 @@ void CoreAPI::iterateWithMutex() {
 CoreAPI::CoreAPI() :
 		WrapperAPI(APIDescription(this)), mCore(NULL) {
 	FBLOG_DEBUG("CoreAPI::CoreAPI", "this=" << this);
-	
+
 	mIterateInterval = 20;
 	mIterate = false;
-#ifdef CORE_THREADED
-#else //CORE_THREADED
-	mTimer = FB::Timer::getTimer(mIterateInterval, true, boost::bind(&CoreAPI::iterate, this));
-#endif //CORE_THREADED
+	mTimer = FB::Timer::getTimer(mIterateInterval, true, boost::bind(&CoreAPI::iterateWithMutex, this));
 }
 
 void CoreAPI::initProxy() {
@@ -164,7 +96,7 @@ void CoreAPI::initProxy() {
 
 	// Propery
 	registerProperty("magic", make_property(this, &CoreAPI::getMagic, &CoreAPI::setMagic));
-	
+
 	// Core helpers
 	registerMethod("init", make_method(this, &CoreAPI::init));
 	registerMethod("uninit", make_method(this, &CoreAPI::uninit));
@@ -262,7 +194,7 @@ void CoreAPI::initProxy() {
 	registerMethod("clearCallLogs", make_method(this, &CoreAPI::clearCallLogs));
 	registerProperty("callLogs", make_property(this, &CoreAPI::getCallLogs));
 	registerMethod("removeCallLog", make_method(this, &CoreAPI::removeCallLog));
-	
+
 	// Network bindings
 	registerProperty("audioPort", make_property(this, &CoreAPI::getAudioPort, &CoreAPI::setAudioPort));
 	registerProperty("audioPortRange", make_property(this, &CoreAPI::getAudioPortRange, &CoreAPI::setAudioPortRange));
@@ -295,7 +227,7 @@ void CoreAPI::initProxy() {
 	registerProperty("mediaEncryptionMandatory", make_property(this, &CoreAPI::isMediaEncryptionMandatory, &CoreAPI::setMediaEncryptionMandatory));
 	registerProperty("nortpTimeout", make_property(this, &CoreAPI::getNortpTimeout, &CoreAPI::setNortpTimeout));
 	registerProperty("delayedTimeout", make_property(this, &CoreAPI::getDelayedTimeout, &CoreAPI::setDelayedTimeout));
-	
+
 	// AuthInfo bindings
 	registerMethod("addAuthInfo", make_method(this, &CoreAPI::addAuthInfo));
 	registerMethod("abortAuthentication", make_method(this, &CoreAPI::abortAuthentication));
@@ -328,7 +260,7 @@ void CoreAPI::initProxy() {
 
 	// Presence
 	registerProperty("presenceInfo", make_property(this, &CoreAPI::getPresenceInfo, &CoreAPI::setPresenceInfo));
-	
+
 	// Miscs
 	registerProperty("echoCancellationEnabled", make_property(this, &CoreAPI::echoCancellationEnabled, &CoreAPI::enableEchoCancellation));
 	registerProperty("echoLimiterEnabled", make_property(this, &CoreAPI::echoLimiterEnabled, &CoreAPI::enableEchoLimiter));
@@ -336,15 +268,15 @@ void CoreAPI::initProxy() {
 	registerProperty("userAgentName", make_property(this, &CoreAPI::getUserAgentName, &CoreAPI::setUserAgentName));
 	registerProperty("userAgentVersion", make_property(this, &CoreAPI::getUserAgentVersion, &CoreAPI::setUserAgentVersion));
 	registerMethod("interpretUrl", make_method(this, &CoreAPI::interpretUrl));
-	
+
 	// Log
 	registerProperty("logHandler", make_property(this, &CoreAPI::getLogHandler, &CoreAPI::setLogHandler));
-	
+
 	// uPnP
 	registerProperty("upnpAvailable", make_property(this, &CoreAPI::upnpAvailable));
 	registerProperty("upnpExternalIpaddress", make_property(this, &CoreAPI::getUpnpExternalIpaddress));
 	registerProperty("upnpState", make_property(this, &CoreAPI::getUpnpState));
-	
+
 	// Tunnel
 	registerProperty("tunnelAvailable", make_property(this, &CoreAPI::tunnelAvailable));
 }
@@ -355,18 +287,9 @@ int CoreAPI::init(StringPtr const &config, StringPtr const &factory) {
 	StringPtr realFactory = factory;
 	GET_FILE("CoreAPI::init", realConfig);
 	GET_FILE("CoreAPI::init", realFactory);
-	
+
 	boost::mutex::scoped_lock scoped_instance_count_lock(sInstanceMutex);
-	
-	
-#ifdef CORE_THREADED
-	if(!mCoreThread) {
-		mCoreThread = boost::make_shared<boost::thread>(CoreAPI::iterateThread, boost::static_pointer_cast<CoreAPI>(shared_from_this()));
-		attachThread(mCoreThread);
-	}
-#else //CORE_THREADED
-#endif //CORE_THREADED
-	
+
 	if(mCore != NULL) {
 		return -1;
 	}
@@ -394,14 +317,14 @@ int CoreAPI::init(StringPtr const &config, StringPtr const &factory) {
 		mVtable.display_url = CoreAPI::wrapper_display_url;
 		mVtable.show = CoreAPI::wrapper_show;
 		mVtable.call_encryption_changed = CoreAPI::wrapper_call_encryption_changed;
-		
+
 		mCore = linphone_core_new(&mVtable, STRING_TO_CHARPTR(realConfig), STRING_TO_CHARPTR(realFactory), (void *) this);
 		if (linphone_core_get_user_data(mCore) != this) {
 			FBLOG_ERROR("CoreAPI::init", "Too old version of linphone core!");
 			--sInstanceCount;
 			return 1;
 		}
-		
+
 		// Specific Linphone Web behaviour
 		linphone_core_set_native_preview_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
 		linphone_core_set_native_video_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
@@ -416,21 +339,15 @@ int CoreAPI::init(StringPtr const &config, StringPtr const &factory) {
 
 int CoreAPI::uninit() {
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::uninit", "this=" << this);
 	if (mCore != NULL) {
 		linphone_core_set_user_data(mCore, NULL);
-		
-#ifdef CORE_THREADED
-		// TODO find a better way to do that
-		boost::thread t(boost::bind(CoreAPI::destroyThread, mCore, refLib()));
-#else  //CORE_THREADED
 		mTimer->stop();
 		linphone_core_destroy(mCore);
 		sInstanceMutex.lock();
 		--sInstanceCount;
 		sInstanceMutex.unlock();
-#endif //CORE_THREADED
 		mCore = NULL;
 		return 0;
 	}
@@ -440,23 +357,17 @@ int CoreAPI::uninit() {
 void CoreAPI::enableIterate(bool enable) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::start", "this=" << this << "\t" << "enable=" << enable);
-	
+
 	if(enable == mIterate)
 		return;
-	
+
 	if(enable) {
-#ifdef CORE_THREADED
-#else //CORE_THREADED
 		mTimer->start();
-#endif //CORE_THREADED
 		mIterate = true;
 	} else {
-#ifdef CORE_THREADED
-#else //CORE_THREADED
 		mTimer->stop();
-#endif //CORE_THREADED
 		mIterate = false;
 	}
 }
@@ -464,7 +375,7 @@ void CoreAPI::enableIterate(bool enable) {
 bool CoreAPI::iterateEnabled() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::iterateEnabled", "this=" << this);
 	return mIterate;
 }
@@ -472,21 +383,18 @@ bool CoreAPI::iterateEnabled() const {
 void CoreAPI::setIterateInterval(int ms) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setIterateInterval", "this=" << this << "\t" << "ms=" << ms);
 	mIterateInterval = ms;
-#ifdef CORE_THREADED
-#else //CORE_THREADED
 	mTimer->stop();
-	mTimer = FB::Timer::getTimer(mIterateInterval, true, boost::bind(&CoreAPI::iterate, this));
+	mTimer = FB::Timer::getTimer(mIterateInterval, true, boost::bind(&CoreAPI::iterateWithMutex, this));
 	mTimer->start();
-#endif //CORE_THREADED
 }
 
 int CoreAPI::getIterateInterval() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getIterateInterval", "this=" << this);
 	return mIterateInterval;
 }
@@ -746,7 +654,7 @@ void CoreAPI::setMaxCalls(int max) {
 std::vector<CallAPIPtr> CoreAPI::getCalls() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getCalls", "this=" << this);
 	std::vector<CallAPIPtr> list;
 	for (const MSList *node = linphone_core_get_calls(mCore); node != NULL; node = ms_list_next(node)) {
@@ -758,7 +666,7 @@ std::vector<CallAPIPtr> CoreAPI::getCalls() const {
 CallAPIPtr CoreAPI::findCallFromUri(StringPtr const &uri) const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::findCallFromUri", "this=" << this << "\t" << "uri=" << uri);
 	return getFactory()->getCall(linphone_core_find_call_from_uri(mCore, STRING_TO_CHARPTR(uri)));
 }
@@ -766,7 +674,7 @@ CallAPIPtr CoreAPI::findCallFromUri(StringPtr const &uri) const {
 int CoreAPI::getCallsNb() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getCallsNb", "this=" << this);
 	return linphone_core_get_calls_nb(mCore);
 }
@@ -774,7 +682,7 @@ int CoreAPI::getCallsNb() const {
 int CoreAPI::getMissedCallsCount() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getMissedCallsCount", "this=" << this);
 	return linphone_core_get_missed_calls_count(mCore);
 }
@@ -782,11 +690,11 @@ int CoreAPI::getMissedCallsCount() const {
 void CoreAPI::resetMissedCallsCount() {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::resetMissedCallsCount", "this=" << this);
 	return linphone_core_reset_missed_calls_count(mCore);
 }
-	
+
 /*
  *
  * Conference functions
@@ -1030,7 +938,7 @@ void CoreAPI::videoWindowEventHandler(const CoreAPIWeakPtr &corePtr, void *ptr) 
 void CoreAPI::setVideoWindow(void *ptr) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setVideoWindow", "this=" << this << "\t" << "ptr=" << ptr);
 	if(ptr != NULL) {
 		linphone_core_set_native_video_window_id(mCore, (unsigned long)ptr);
@@ -1049,14 +957,14 @@ void CoreAPI::setNativeVideoWindowId(WhiteBoard::IdType id) {
 		// Same do nothing
 		return;
 	}
-	
+
 	// Unset old
 	VideoAPIPtr video = mVideoWindow.lock();
 	if(video) {
 		video->setWindowEventHandler(VideoAPI::WindowEventHandler());
 	}
 	mVideoWindow.reset();
-	
+
 	// Set new
 	if(id != WhiteBoard::NoId) {
 		mVideoWindow = getFactory()->getWhiteBoard()->getValue<VideoAPIWeakPtr>(id);
@@ -1088,7 +996,7 @@ void CoreAPI::previewWindowEventHandler(const CoreAPIWeakPtr &corePtr, void *ptr
 void CoreAPI::setPreviewWindow(void *ptr) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setPreviewWindow", "this=" << this << "\t" << "ptr=" << ptr);
 	if(ptr != NULL) {
 		linphone_core_set_native_preview_window_id(mCore, (unsigned long)ptr);
@@ -1107,14 +1015,14 @@ void CoreAPI::setNativePreviewWindowId(WhiteBoard::IdType id) {
 		// Same do nothing
 		return;
 	}
-	
+
 	// Unset old
 	VideoAPIPtr video = mPreviewWindow.lock();
 	if(video) {
 		video->setWindowEventHandler(VideoAPI::WindowEventHandler());
 	}
 	mPreviewWindow.reset();
-	
+
 	// Set new
 	if(id != WhiteBoard::NoId) {
 		mPreviewWindow = getFactory()->getWhiteBoard()->getValue<VideoAPIWeakPtr>(id);
@@ -1139,7 +1047,7 @@ WhiteBoard::IdType CoreAPI::getNativePreviewWindowId() const {
 bool CoreAPI::getUsePreviewWindow() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getUsePreviewWindow", "this=" << this);
 	FBLOG_ERROR("CoreAPI::getUsePreviewWindow", "NOT IMPLEMENTED");
 	return FALSE; // TODO Don't have API yet
@@ -1148,7 +1056,7 @@ bool CoreAPI::getUsePreviewWindow() const {
 void CoreAPI::setUsePreviewWindow(bool enable) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setUsePreviewWindow", "this=" << this << "\t" << "enable=" << enable);
 	linphone_core_use_preview_window(mCore, enable);
 }
@@ -1156,7 +1064,7 @@ void CoreAPI::setUsePreviewWindow(bool enable) {
 VideoPolicyAPIPtr CoreAPI::getVideoPolicy() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getVideoPolicy", "this=" << this);
 	VideoPolicyAPIPtr videoPolicy = getFactory()->getVideoPolicy();
 	*videoPolicy->getRef() = *linphone_core_get_video_policy(mCore);
@@ -1166,7 +1074,7 @@ VideoPolicyAPIPtr CoreAPI::getVideoPolicy() const {
 void CoreAPI::setVideoPolicy(VideoPolicyAPIPtr const &videoPolicy) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setVideoPolicy", "this=" << this << "\t" << "policy=" << videoPolicy);
 	linphone_core_set_video_policy(mCore, videoPolicy->getRef());
 }
@@ -1382,11 +1290,11 @@ void CoreAPI::enablePayloadType(PayloadTypeAPIPtr const &payloadType, bool enabl
 	FBLOG_DEBUG("CoreAPI::enablePayloadType", "this=" << this << "\t" << "payloadType=" << payloadType << "\t" << "enable=" << enable);
 	linphone_core_enable_payload_type(mCore, payloadType->getRef(), enable ? TRUE : FALSE);
 }
-	
+
 PayloadTypeAPIPtr CoreAPI::findPayloadType(StringPtr const &type, int rate, int channels) const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::enablePayloadType", "this=" << this << "\t" << "type=" << type << "\t" << "rate=" << rate << "\t" << "channels=" << channels);
 	return getFactory()->getPayloadType(linphone_core_find_payload_type(mCore, STRING_TO_CHARPTR(type), rate, channels));
 }
@@ -1480,25 +1388,25 @@ void CoreAPI::refreshRegisters() {
 	linphone_core_refresh_registers(mCore);
 }
 
-	
+
 /*
  *
  * CallLog functions
  *
  */
-	
+
 void CoreAPI::clearCallLogs() {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::clearCallLogs", "this=" << this);
 	linphone_core_clear_call_logs(mCore);
 }
-	
+
 std::vector<CallLogAPIPtr> CoreAPI::getCallLogs() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getCallLogs", "this=" << this);
 	std::vector<CallLogAPIPtr> list;
 	for (const MSList *node = linphone_core_get_call_logs(mCore); node != NULL; node = ms_list_next(node)) {
@@ -1506,15 +1414,15 @@ std::vector<CallLogAPIPtr> CoreAPI::getCallLogs() const {
 	}
 	return list;
 }
-	
+
 void CoreAPI::removeCallLog(CallLogAPIPtr const &calllog) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getCallLogs", "this=" << this << "\t" << "calllog=" << calllog);
 	linphone_core_remove_call_log(mCore, calllog->getRef());
 }
-	
+
 /*
  *
  * Network functions
@@ -1533,14 +1441,14 @@ static bool parseRange(std::string const &str, int &min, int &max) {
 	if(tokens.size() != 2) {
 		return false;
 	}
-	
+
 	try {
 		min = boost::lexical_cast<int>(tokens[0]);
 		max = boost::lexical_cast<int>(tokens[1]);
 	} catch(boost::bad_lexical_cast &) {
 		return false;
 	}
-	
+
 	if(max < min) {
 		return false;
 	}
@@ -1549,11 +1457,11 @@ static bool parseRange(std::string const &str, int &min, int &max) {
 
 static bool validPort(int port) {
 	if(port < 0) {
-        return false;
-    }
-    if(port > 65535) {
-        return false;
-    }
+		return false;
+	}
+	if(port > 65535) {
+		return false;
+	}
 	return true;
 }
 
@@ -1576,7 +1484,7 @@ int CoreAPI::getAudioPort() const {
 void CoreAPI::setAudioPortRange(StringPtr const &range) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setAudioPortRange", "this=" << this << "\t" << "range=" << range);
 	int min, max;
 	if(range && parseRange(*range, min, max) && validPort(min) && validPort(max)) {
@@ -1590,7 +1498,7 @@ void CoreAPI::setAudioPortRange(StringPtr const &range) {
 StringPtr CoreAPI::getAudioPortRange() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getAudioPortRange", "this=" << this);
 	int min, max;
 	linphone_core_get_audio_port_range(mCore, &min, &max);
@@ -1616,7 +1524,7 @@ int CoreAPI::getVideoPort() const {
 void CoreAPI::setVideoPortRange(StringPtr const &range) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setVideoPortRange", "this=" << this << "\t" << "range=" << range);
 	int min, max;
 	if(range && parseRange(*range, min, max) && validPort(min) && validPort(max)) {
@@ -1630,7 +1538,7 @@ void CoreAPI::setVideoPortRange(StringPtr const &range) {
 StringPtr CoreAPI::getVideoPortRange() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getVideoPortRange", "this=" << this);
 	int min, max;
 	linphone_core_get_video_port_range(mCore, &min, &max);
@@ -1880,7 +1788,7 @@ int CoreAPI::getSipPort() const {
 void CoreAPI::setSipTransports(SipTransportsAPIPtr const &sipTransports) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setSipTransports", "this=" << this << "\t" << "sipTransports=" << sipTransports);
 	linphone_core_set_sip_transports(mCore, sipTransports->getRef());
 }
@@ -1888,7 +1796,7 @@ void CoreAPI::setSipTransports(SipTransportsAPIPtr const &sipTransports) {
 SipTransportsAPIPtr CoreAPI::getSipTransports() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getSipTransports", "this=" << this);
 	SipTransportsAPIPtr sipTransports = getFactory()->getSipTransports();
 	linphone_core_get_sip_transports(mCore, sipTransports->getRef());
@@ -1990,11 +1898,11 @@ void CoreAPI::setVideoJittcomp(int comp) {
 	FBLOG_DEBUG("CoreAPI::setVideoJittcomp", "this=" << this << "\t" << "comp=" << comp);
 	linphone_core_set_video_jittcomp(mCore, comp);
 }
-	
+
 int CoreAPI::getFirewallPolicy() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getFirewallPolicy", "this=" << this);
 	return linphone_core_get_firewall_policy(mCore);
 }
@@ -2002,15 +1910,15 @@ int CoreAPI::getFirewallPolicy() const {
 void CoreAPI::setFirewallPolicy(int policy) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setFirewallPolicy", "this=" << this << "\t" << "policy=" << policy);
 	linphone_core_set_firewall_policy(mCore, (LinphoneFirewallPolicy)policy);
 }
-	
+
 int CoreAPI::getMediaEncryption() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getMediaEncryption", "this=" << this);
 	return linphone_core_get_media_encryption(mCore);
 }
@@ -2018,31 +1926,31 @@ int CoreAPI::getMediaEncryption() const {
 void CoreAPI::setMediaEncryption(int encryption) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setMediaEncryption", "this=" << this << "\t" << "encryption=" << encryption);
 	linphone_core_set_media_encryption(mCore, (LinphoneMediaEncryption)encryption);
 }
-	
+
 bool CoreAPI::isMediaEncryptionMandatory() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::isMediaEncryptionMandatory", "this=" << this);
 	return linphone_core_is_media_encryption_mandatory(mCore) == TRUE? true : false;
 }
-	
+
 void CoreAPI::setMediaEncryptionMandatory(bool mandatory) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-		
+
 	FBLOG_DEBUG("CoreAPI::setMediaEncryptionMandatory", "this=" << this << "\t" << "mandatory=" << mandatory);
 	linphone_core_set_media_encryption_mandatory(mCore, mandatory? TRUE : FALSE);
 }
-	
+
 int CoreAPI::getNortpTimeout() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getNortpTimeout", "this=" << this);
 	return linphone_core_get_nortp_timeout(mCore);
 }
@@ -2050,27 +1958,27 @@ int CoreAPI::getNortpTimeout() const {
 void CoreAPI::setNortpTimeout(int timeout) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setNortpTimeout", "this=" << this << "\t" << "timeout=" << timeout);
 	linphone_core_set_nortp_timeout(mCore, timeout);
 }
-	
+
 int CoreAPI::getDelayedTimeout() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-		
+
 	FBLOG_DEBUG("CoreAPI::getDelayedTimeout", "this=" << this);
 	return linphone_core_get_delayed_timeout(mCore);
 }
-	
+
 void CoreAPI::setDelayedTimeout(int timeout) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setDelayedTimeout", "this=" << this << "\t" << "timeout=" << timeout);
 	linphone_core_set_delayed_timeout(mCore, timeout);
 }
-	
+
 
 /*
  *
@@ -2139,7 +2047,6 @@ void CoreAPI::clearAllAuthInfo() {
  */
 
 FileManagerAPIPtr CoreAPI::getFileManager() const {
-	
 	FBLOG_DEBUG("CoreAPI::getFileManager", "this=" << this);
 	if(!mFileManager) {
 		mFileManager = getFactory()->getFileManager();
@@ -2148,7 +2055,6 @@ FileManagerAPIPtr CoreAPI::getFileManager() const {
 }
 
 ProxyConfigAPIPtr CoreAPI::newProxyConfig() const {
-
 	FBLOG_DEBUG("CoreAPI::newProxyConfig", "this=" << this);
 	return getFactory()->getProxyConfig();
 }
@@ -2166,7 +2072,6 @@ AuthInfoAPIPtr CoreAPI::newAuthInfo(StringPtr const &username, StringPtr const &
 }
 	
 AddressAPIPtr CoreAPI::newAddress(StringPtr const &address) const {
-	
 	FBLOG_DEBUG("CoreAPI::newAddress", "this=" << this << "\t" << "address=" << address);
 	return getFactory()->getAddress(address);
 }
@@ -2237,17 +2142,17 @@ void CoreAPI::setUseRfc2833ForDtmf(bool enable) {
 	linphone_core_set_use_rfc2833_for_dtmf(mCore, enable ? TRUE : FALSE);
 }
 
-	
+
 /*
  *
  * Presence functions
  *
  */
-	
+
 int CoreAPI::getPresenceInfo() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getPresenceInfo", "this=" << this);
 	return linphone_core_get_presence_info(mCore);
 }
@@ -2255,7 +2160,7 @@ int CoreAPI::getPresenceInfo() const {
 void CoreAPI::setPresenceInfo(int status) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setPresenceInfo", "this=" << this << "\t" << "status=" << status);
 	FBLOG_WARN("CoreAPI::setPresenceInfo", "Not correcly wrapper !!!!");
 	return linphone_core_set_presence_info(mCore, 0, NULL, (LinphoneOnlineStatus)status);
@@ -2340,7 +2245,7 @@ StringPtr CoreAPI::getUserAgentName() const {
 void CoreAPI::setUserAgentName(StringPtr const &name) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setUserAgentName", "this=" << this << "\t" << "name=" << name);
 	FBLOG_ERROR("CoreAPI::setUserAgentName", "NOT IMPLEMENTED");
 	//TODO
@@ -2351,7 +2256,7 @@ void CoreAPI::setUserAgentName(StringPtr const &name) {
 StringPtr CoreAPI::getUserAgentVersion() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getUserAgentVersion", "this=" << this);
 	FBLOG_ERROR("CoreAPI::getUserAgentVersion", "NOT IMPLEMENTED");
 	//TODO
@@ -2362,7 +2267,7 @@ StringPtr CoreAPI::getUserAgentVersion() const {
 void CoreAPI::setUserAgentVersion(StringPtr const &version) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setUserAgentVersion", "this=" << this << "\t" << "version=" << version);
 	FBLOG_ERROR("CoreAPI::setUserAgentVersion", "NOT IMPLEMENTED");
 	//TODO
@@ -2373,7 +2278,7 @@ void CoreAPI::setUserAgentVersion(StringPtr const &version) {
 AddressAPIPtr CoreAPI::interpretUrl(StringPtr const &url) const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::interpretUrl", "this=" << this << "\t" << "url=" << url);
 	AddressAPIPtr address = getFactory()->getAddress(linphone_core_interpret_url(mCore, STRING_TO_CHARPTR(url)));
 	address->own();
@@ -2427,7 +2332,7 @@ IMPLEMENT_PROPERTY_FILE(CoreAPI, getPlayFile, setPlayFile);
 StringPtr CoreAPI::getPlayFile() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getPlayFile", "this=" << this);
 	FBLOG_ERROR("CoreAPI::getPlayFile", "NOT IMPLEMENTED");
 	//TODO STUB
@@ -2437,7 +2342,7 @@ StringPtr CoreAPI::getPlayFile() const {
 void CoreAPI::setPlayFile(StringPtr const &playFile) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setPlayFile", "this=" << this << "\t" << "playFile=" << playFile);
 	linphone_core_set_play_file(mCore, STRING_TO_CHARPTR(playFile));
 }
@@ -2447,7 +2352,7 @@ IMPLEMENT_PROPERTY_FILE(CoreAPI, getRecordFile, setRecordFile);
 StringPtr CoreAPI::getRecordFile() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getRecordFile", "this=" << this);
 	FBLOG_ERROR("CoreAPI::getRecordFile", "NOT IMPLEMENTED");
 	//TODO STUB
@@ -2457,7 +2362,7 @@ StringPtr CoreAPI::getRecordFile() const {
 void CoreAPI::setRecordFile(StringPtr const &recordFile) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::setRecordFile", "this=" << this << "\t" << "recordFile=" << recordFile);
 	linphone_core_set_record_file(mCore, STRING_TO_CHARPTR(recordFile));
 }
@@ -2544,7 +2449,7 @@ bool CoreAPI::upnpAvailable() const {
 StringPtr CoreAPI::getUpnpExternalIpaddress() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getUpnpExternalIpaddress", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_core_get_upnp_external_ipaddress(mCore));
 }
@@ -2552,7 +2457,7 @@ StringPtr CoreAPI::getUpnpExternalIpaddress() const {
 LinphoneUpnpState CoreAPI::getUpnpState() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CoreAPI::getUpnpState", "this=" << this);
 	return linphone_core_get_upnp_state(mCore);
 }

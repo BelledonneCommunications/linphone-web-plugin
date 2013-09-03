@@ -43,56 +43,12 @@
 #define DECLARE_SYNC_N_ASYNC_SYNC_FCT(class, name, argCount, argList, ret)                        \
 	ret name (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)));   \
 
-#ifdef CORE_THREADED
-#define DECLARE_SYNC_N_ASYNC_THREAD_FCT(class, name, argCount, argList, ret)                                                                                        \
-	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
-			void BOOST_PP_CAT(name, _async_thread) (boost::optional<FB::JSObjectPtr> callback);,                                                                    \
-			void BOOST_PP_CAT(name, _async_thread) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)),                                \
-													boost::optional<FB::JSObjectPtr> callback);)                                                                    \
-
-#define DECLARE_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList)                                                                                              \
-	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
-			void BOOST_PP_CAT(name, _async) (boost::optional<FB::JSObjectPtr> callback);,                                                                           \
-			void BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)),                                       \
-											boost::optional<FB::JSObjectPtr> callback);)                                                                            \
-
-
-#else
 #define DECLARE_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList, ret)                                                                                         \
 	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
 			void BOOST_PP_CAT(name, _async) (boost::optional<FB::JSObjectPtr> callback);,                                                                           \
 			void BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)),                                       \
 											boost::optional<FB::JSObjectPtr> callback);)                                                                            \
 
-#endif //CORE_THREADED
-
-#ifdef CORE_THREADED
-#define IMPLEMENT_SYNC_N_ASYNC_THREAD_FCT(class, name, argCount, argList, ret)                                                                                      \
-	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
-			void class::BOOST_PP_CAT(name, _async_thread) (boost::optional<FB::JSObjectPtr> callback) {,                                                            \
-			void class::BOOST_PP_CAT(name, _async_thread) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)),                         \
-															boost::optional<FB::JSObjectPtr> callback) {)                                                           \
-	try {BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),                                                                                                           \
-		name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL));                                                                                       \
-		if(callback)(*callback)->InvokeAsync("", FB::variant_list_of(shared_from_this()));,                                                                         \
-		ret value = name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL));                                                                           \
-		if(callback)(*callback)->InvokeAsync("", FB::variant_list_of(shared_from_this())(value));)                                                                  \
-		detachThread(boost::this_thread::get_id());                                                                                                                 \
-		} catch(std::runtime_error&) {}                                                                                                                             \
-	}                                                                                                                                                               \
-
-#define IMPLEMENT_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList)                                                                                            \
-	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
-			void class::BOOST_PP_CAT(name, _async) (boost::optional<FB::JSObjectPtr> callback) {,                                                                   \
-			void class::BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)),                                \
-													boost::optional<FB::JSObjectPtr> callback) {)                                                                   \
-		attachThread(boost::make_shared<boost::thread>(boost::bind(&class::BOOST_PP_CAT(name, _async_thread), this,                                                 \
-		BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, NULL)                                                                                              \
-		BOOST_PP_IF(BOOST_PP_NOT_EQUAL(argCount, 0), BOOST_PP_COMMA, BOOST_PP_EMPTY)()                                                                              \
-		callback)));                                                                                                                                                \
-	}                                                                                                                                                               \
-
-#else
 #define IMPLEMENT_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList, ret)                                                                                       \
 	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
 			void class::BOOST_PP_CAT(name, _async) (boost::optional<FB::JSObjectPtr> callback) {,                                                                   \
@@ -106,31 +62,12 @@
 		} catch(std::runtime_error&) {}                                                                                                                             \
 	}                                                                                                                                                               \
 
-#endif //CORE_THREADED
-
-#ifdef CORE_THREADED
-#define DECLARE_SYNC_N_ASYNC(class, name, argCount, argList, ret)          \
-	DECLARE_SYNC_N_ASYNC_SYNC_FCT(class, name, argCount, argList, ret)     \
-	DECLARE_SYNC_N_ASYNC_THREAD_FCT(class, name, argCount, argList, ret)   \
-	DECLARE_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList)         \
-
-#else
 #define DECLARE_SYNC_N_ASYNC(class, name, argCount, argList, ret)          \
 	DECLARE_SYNC_N_ASYNC_SYNC_FCT(class, name, argCount, argList, ret)     \
 	DECLARE_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList, ret)    \
 
-#endif //CORE_THREADED
-
-#ifdef CORE_THREADED
-#define IMPLEMENT_SYNC_N_ASYNC(class, name, argCount, argList, ret)          \
-	IMPLEMENT_SYNC_N_ASYNC_THREAD_FCT(class, name, argCount, argList, ret)   \
-	IMPLEMENT_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList)         \
-
-#else
 #define IMPLEMENT_SYNC_N_ASYNC(class, name, argCount, argList, ret)          \
 	IMPLEMENT_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList, ret)    \
-
-#endif //CORE_THREADED
 
 
 //
@@ -200,12 +137,8 @@
 #define FB_ASSERT(x) FB_ASSERT_MSG(x,BOOST_PP_STRINGIZE(x))
 #define FB_ASSERT_CORE FB_ASSERT_MSG(mCore!=NULL, "Core not initialized")
 
-#ifdef CORE_THREADED
 #define CORE_MUTEX boost::recursive_mutex::scoped_lock scopedLock(getFactory()->getCoreMutex(), boost::defer_lock); \
 	if(!isOwned()) scopedLock.lock();
-#else
-#define CORE_MUTEX
-#endif //CORE_THREADED
 
 #endif // H_MACRO
 

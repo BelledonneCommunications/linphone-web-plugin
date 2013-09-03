@@ -1,25 +1,25 @@
 /*!
  Linphone Web - Web plugin of Linphone an audio/video SIP phone
  Copyright (C) 2012-2013 Belledonne Communications
- 
+
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- 
- 
+
+
  Authors:
  - Yann Diorcet <diorcet.yann@gmail.com>
- 
+
  */
 
 #ifndef H_COREAPI
@@ -49,12 +49,10 @@ FB_FORWARD_PTR(PointerAPI)
 FB_FORWARD_PTR(ProxyConfigAPI)
 FB_FORWARD_PTR(SipTransportsAPI)
 FB_FORWARD_PTR(VideoPolicyAPI)
-	
 FB_FORWARD_PTR(VideoAPI)
-
 FB_FORWARD_PTR(FileManagerAPI)
-
 FB_FORWARD_PTR(CoreAPI)
+
 class CoreAPI: public WrapperAPI {
 	friend class FactoryAPI;
 public:
@@ -181,7 +179,7 @@ public:
 	void setPrimaryContact(StringPtr const &contact);
 	StringPtr getPrimaryContact() const;
 	void refreshRegisters();
-	
+
 	// CallLog functions
 	void clearCallLogs();
 	std::vector<CallLogAPIPtr> getCallLogs() const;
@@ -278,7 +276,7 @@ public:
 	// Presence
 	int getPresenceInfo() const;
 	void setPresenceInfo(int status);
-	
+
 	// Core helpers
 	int init(StringPtr const &config, StringPtr const &factory);
 	int uninit();
@@ -286,7 +284,7 @@ public:
 	int getIterateInterval() const;
 	void enableIterate(bool enable);
 	bool iterateEnabled() const;
-	
+
 	// Miscs
 	void enableEchoCancellation(bool enable);
 	bool echoCancellationEnabled() const;
@@ -308,17 +306,16 @@ public:
 	DECLARE_PROPERTY_FILE(CoreAPI, getRootCa, setRootCa);
 	DECLARE_PROPERTY_FILE(CoreAPI, getStaticPicture, setStaticPicture);
 	DECLARE_PROPERTY_FILE(CoreAPI, getZrtpSecretsFile, setZrtpSecretsFile);
-	
+
 	// Log
 	void setLogHandler(FB::JSObjectPtr const &handler);
 	FB::JSObjectPtr getLogHandler() const;
-	
+
 	// uPnP
 	bool upnpAvailable() const;
 	StringPtr getUpnpExternalIpaddress() const;
 	LinphoneUpnpState getUpnpState() const;
 
-	
 	// Tunnel
 	bool tunnelAvailable() const;
 
@@ -339,22 +336,21 @@ public: // Internal Use
 	inline LinphoneCore *getRef() const {
 		return mCore;
 	}
-	
+
 	inline void log(std::string const &level, const char *cmsg) {
 		if(mLogHandler) {
 			mLogHandler->InvokeAsync("", FB::variant_list_of(level)(CHARPTR_TO_STRING(cmsg)));
 		}
 	}
-	
 
 protected:
 	virtual void initProxy();
-	
+
 private:
 	mutable FileManagerAPIPtr mFileManager;
 	FB::JSObjectPtr mLogHandler;
 	StringPtr mMagic;
-	
+
 	VideoAPIWeakPtr mVideoWindow;
 	static void videoWindowEventHandler(const CoreAPIWeakPtr &corePtr, void *ptr);
 	void setVideoWindow(void *ptr);
@@ -367,11 +363,7 @@ private:
 
 	int mIterateInterval;
 	bool mIterate;
-#ifdef CORE_THREADED
-	boost::shared_ptr<boost::thread> mCoreThread;
-#else
 	FB::TimerPtr mTimer;
-#endif //CORE_THREADED
 
 	inline void iterate() {
 		if (mCore != NULL) {
@@ -379,13 +371,7 @@ private:
 		}
 	}
 
-#ifdef CORE_THREADED
-	static void* refLib();
-	static void unrefLib(void *libHandle);
-	static void destroyThread(LinphoneCore *core, void *libHandle);
-	static void iterateThread(CoreAPIPtr &core);
 	void iterateWithMutex();
-#endif
 
 protected:
 	virtual void onGlobalStateChanged(LinphoneGlobalState gstate, const char *message);
@@ -428,7 +414,7 @@ private:
 	static void wrapper_show(LinphoneCore *lc);
 	static void wrapper_call_encryption_changed(LinphoneCore *lc, LinphoneCall *call, bool_t on, const char *authentication_token);
 };
-	
+
 } // LinphoneWeb
 
 #endif // H_COREAPI
