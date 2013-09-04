@@ -330,8 +330,7 @@ int CoreAPI::uninit() {
 
 	FBLOG_DEBUG("CoreAPI::uninit", "this=" << this);
 	if (mCore != NULL) {
-		linphone_core_set_user_data(mCore, NULL);
-		mTimer->stop();
+		enableIterate(false);
 		linphone_core_destroy(mCore);
 		mCore = NULL;
 		return 0;
@@ -343,7 +342,7 @@ void CoreAPI::enableIterate(bool enable) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::start", "this=" << this << "\t" << "enable=" << enable);
+	FBLOG_DEBUG("CoreAPI::enableIterate", "this=" << this << "\t" << "enable=" << enable);
 
 	if(enable == mIterate)
 		return;
