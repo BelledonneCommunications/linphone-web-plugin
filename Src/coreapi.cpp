@@ -100,6 +100,7 @@ void CoreAPI::initProxy() {
 	registerMethod("uninit", make_method(this, &CoreAPI::uninit));
 	registerProperty("iterateEnabled", make_property(this, &CoreAPI::iterateEnabled, &CoreAPI::enableIterate));
 	registerProperty("iterateInterval", make_property(this, &CoreAPI::getIterateInterval, &CoreAPI::setIterateInterval));
+	registerProperty("config", make_property(this, &CoreAPI::getConfig));
 
 	// Call bindings
 	REGISTER_SYNC_N_ASYNC(CoreAPI, "invite", invite);
@@ -248,6 +249,7 @@ void CoreAPI::initProxy() {
 	registerMethod("newProxyConfig", make_method(this, &CoreAPI::newProxyConfig));
 	registerMethod("newAuthInfo", make_method(this, &CoreAPI::newAuthInfo));
 	registerMethod("newAddress", make_method(this, &CoreAPI::newAddress));
+	registerMethod("newLpConfig", make_method(this, &CoreAPI::newLpConfig));
 
 	// Dtmf
 	registerMethod("sendDtmf", make_method(this, &CoreAPI::sendDtmf));
@@ -383,6 +385,12 @@ int CoreAPI::getIterateInterval() const {
 	FBLOG_DEBUG("CoreAPI::getIterateInterval", "this=" << this);
 	return mIterateInterval;
 }
+
+LpConfigAPIPtr CoreAPI::getConfig() const {
+	FBLOG_DEBUG("CoreAPI::getConfig", "this=" << this);
+	return getFactory()->getLpConfig(linphone_core_get_config(mCore));
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @fn CoreAPI::~CoreAPI()
@@ -2046,7 +2054,6 @@ ProxyConfigAPIPtr CoreAPI::newProxyConfig() const {
 
 AuthInfoAPIPtr CoreAPI::newAuthInfo(StringPtr const &username, StringPtr const &userid, StringPtr const &passwd, StringPtr const &ha1,
 		StringPtr const &realm) const {
-
 	FBLOG_DEBUG("CoreAPI::newAuthInfo", "this=" << this
 				<< "\t" << "username=" << username
 				<< "\t" << "userid=" << userid
@@ -2059,6 +2066,20 @@ AuthInfoAPIPtr CoreAPI::newAuthInfo(StringPtr const &username, StringPtr const &
 AddressAPIPtr CoreAPI::newAddress(StringPtr const &address) const {
 	FBLOG_DEBUG("CoreAPI::newAddress", "this=" << this << "\t" << "address=" << address);
 	return getFactory()->getAddress(address);
+}
+
+LpConfigAPIPtr CoreAPI::newLpConfig(StringPtr const &uri) const {
+	FBLOG_DEBUG("CoreAPI::newLpConfig", "this=" << this << "\t" << "uri=" << uri);
+	StringPtr filename;
+	if (uri) {
+		FB::URI fburi(*uri);
+		filename = getFactory()->getFileManager()->uriToFile(fburi);
+		if (filename->empty()) {
+			FBLOG_WARN("CoreAPI::newLpConfig", "Invalid file URI: " << uri);
+			throw FB::script_error(std::string("Invalid file URI: ") + PRINT_STRING(uri));
+		}
+	}
+	return getFactory()->getLpConfig(filename);
 }
 
 

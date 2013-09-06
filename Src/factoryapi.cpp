@@ -23,6 +23,7 @@
  */
 
 #include "factoryapi.h"
+#include "lpconfigapi.h"
 
 #include <exception>
 
@@ -244,6 +245,34 @@ CoreAPIPtr FactoryAPI::getCore(LinphoneCore *core) {
 		}
 	} catch(std::exception &e) {
 		FBLOG_WARN("FactoryAPI::getCore", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+LpConfigAPIPtr FactoryAPI::getLpConfig(LpConfig *config) {
+	FBLOG_DEBUG("FactoryAPI::getLpConfig", "this=" << this << "\t" << "config=" << config);
+	if (config == NULL)
+		return LpConfigAPIPtr();
+
+	LpConfigAPIPtr shared_ptr;
+	try {
+		shared_ptr = LpConfigAPIPtr(new LpConfigAPI(config));
+		handle(shared_ptr, false, false);
+	} catch (std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getLpConfig", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+LpConfigAPIPtr FactoryAPI::getLpConfig(StringPtr const &configFilename) {
+	FBLOG_DEBUG("FactoryAPI::getLpConfig", "this=" << this << "\t" << "configFilename=" << configFilename);
+
+	LpConfigAPIPtr shared_ptr;
+	try {
+		shared_ptr = LpConfigAPIPtr(new LpConfigAPI(configFilename));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getLpConfig", "exception: " << e.what());
 	}
 	return shared_ptr;
 }

@@ -44,6 +44,7 @@ FB_FORWARD_PTR(CallLogAPI)
 FB_FORWARD_PTR(CallParamsAPI)
 FB_FORWARD_PTR(CallStatsParamsAPI)
 FB_FORWARD_PTR(CoreAPI)
+FB_FORWARD_PTR(LpConfigAPI)
 FB_FORWARD_PTR(PayloadTypeAPI)
 FB_FORWARD_PTR(PointerAPI)
 FB_FORWARD_PTR(ProxyConfigAPI)
@@ -263,6 +264,7 @@ public:
 	AuthInfoAPIPtr newAuthInfo(StringPtr const &username, StringPtr const &userid,
 			StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm) const;
 	AddressAPIPtr newAddress(StringPtr const &address) const;
+	LpConfigAPIPtr newLpConfig(StringPtr const &uri) const;
 
 	// Dtmf
 	void sendDtmf(std::string const &dtmf);
@@ -284,6 +286,7 @@ public:
 	int getIterateInterval() const;
 	void enableIterate(bool enable);
 	bool iterateEnabled() const;
+	LpConfigAPIPtr getConfig() const;
 
 	// Miscs
 	void enableEchoCancellation(bool enable);
