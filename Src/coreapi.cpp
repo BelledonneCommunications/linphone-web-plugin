@@ -331,6 +331,7 @@ int CoreAPI::uninit() {
 	FBLOG_DEBUG("CoreAPI::uninit", "this=" << this);
 	if (mCore != NULL) {
 		enableIterate(false);
+		linphone_core_set_user_data(mCore, NULL);
 		linphone_core_destroy(mCore);
 		mCore = NULL;
 		return 0;
