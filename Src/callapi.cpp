@@ -133,7 +133,9 @@ CallParamsAPIPtr CallAPI::getCurrentParams() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CallAPI::getCurrentParams", "this=" << this);
-	return getFactory()->getCallParams(linphone_call_get_current_params(mCall));
+	const LinphoneCallParams *const_params = linphone_call_get_current_params(mCall);
+	LinphoneCallParams *params = linphone_call_params_copy(const_params);
+	return getFactory()->getCallParams(params);
 }
 
 float CallAPI::getCurrentQuality() const {
