@@ -48,8 +48,8 @@ set(FBSTRING_CompanyName "Belledonne Communications")
 # Company id
 set(FBSTRING_CompanyDomain "com.belledonne-communication")
 
-set(FBSTRING_PLUGIN_VERSION "0.0.2.1")
-set(FBSTRING_PLUGIN_VERSION_ACTIVEX "0,0,2,1")
+set(FBSTRING_PLUGIN_VERSION "0.0.2.2")
+set(FBSTRING_PLUGIN_VERSION_ACTIVEX "0,0,2,2")
 set(FBSTRING_LegalCopyright "Copyright 2013 Belledonne Communications")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}")
 
