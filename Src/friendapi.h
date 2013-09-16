@@ -33,6 +33,7 @@ namespace LinphoneWeb {
 
 FB_FORWARD_PTR(AddressAPI)
 FB_FORWARD_PTR(FriendAPI)
+FB_FORWARD_PTR(PresenceModelAPI)
 
 class FriendAPI: public WrapperAPI {
 	friend class FactoryAPI;
@@ -40,6 +41,7 @@ class FriendAPI: public WrapperAPI {
 private:
 	LinphoneFriend *mFriend;
 
+	FriendAPI();
 	FriendAPI(LinphoneFriend *lFriend);
 	FriendAPI(StringPtr const &address);
 
@@ -62,6 +64,7 @@ public:
 	void edit();
 	void done();
 	bool inList() const;
+	PresenceModelAPIPtr getPresenceModel() const;
 
 	inline LinphoneFriend *getRef() {
 		return mFriend;

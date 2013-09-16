@@ -249,6 +249,19 @@ CoreAPIPtr FactoryAPI::getCore(LinphoneCore *core) {
 	return shared_ptr;
 }
 
+FriendAPIPtr FactoryAPI::getFriend() {
+	FBLOG_DEBUG("FactoryAPI::getFriend", "this=" << this);
+
+	FriendAPIPtr shared_ptr;
+	try {
+		shared_ptr = FriendAPIPtr(new FriendAPI());
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getFriend", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
 FriendAPIPtr FactoryAPI::getFriend(LinphoneFriend *f) {
 	FBLOG_DEBUG("FactoryAPI::getFriend", "this=" << this << "\t" << "f=" << f);
 	if (f == NULL)
@@ -341,6 +354,175 @@ PayloadTypeAPIPtr FactoryAPI::getPayloadType(const PayloadType *payloadType) {
 		handle(shared_ptr, false, true);
 	} catch(std::exception &e) {
 		FBLOG_WARN("FactoryAPI::getPayloadType", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresenceActivityAPIPtr FactoryAPI::getPresenceActivity(LinphonePresenceActivity *activity) {
+	FBLOG_DEBUG("FactoryAPI::getPresenceActivity", "this=" << this << "\t" << "activity=" << activity);
+
+	PresenceActivityAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresenceActivityAPIPtr(new PresenceActivityAPI(activity));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresenceActivity", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresenceActivityAPIPtr FactoryAPI::getPresenceActivity(int type, StringPtr const &description) {
+	FBLOG_DEBUG("FactoryAPI::getPresenceActivity", "this=" << this << "\t" << "type=" << type << "\t" << "description=" << description);
+
+	PresenceActivityAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresenceActivityAPIPtr(new PresenceActivityAPI(type, description));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresenceActivity", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresenceModelAPIPtr FactoryAPI::getPresenceModel() {
+	FBLOG_DEBUG("FactoryAPI::getPresenceModel", "this=" << this);
+
+	PresenceModelAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresenceModelAPIPtr(new PresenceModelAPI());
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresenceModel", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresenceModelAPIPtr FactoryAPI::getPresenceModel(LinphonePresenceModel *model) {
+	FBLOG_DEBUG("FactoryAPI::getPresenceModel", "this=" << this);
+
+	PresenceModelAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresenceModelAPIPtr(new PresenceModelAPI(model));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresenceModel", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresenceModelAPIPtr FactoryAPI::getPresenceModel(const LinphonePresenceModel *model) {
+	FBLOG_DEBUG("FactoryAPI::getPresenceModel", "this=" << this);
+
+	PresenceModelAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresenceModelAPIPtr(new PresenceModelAPI(model));
+		handle(shared_ptr, false, true);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresenceModel", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresenceModelAPIPtr FactoryAPI::getPresenceModel(int acttype, StringPtr const &description) {
+	FBLOG_DEBUG("FactoryAPI::getPresenceModel", "this=" << this << "\t" << "acttype=" << acttype << "\t" << "description=" << description);
+
+	PresenceModelAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresenceModelAPIPtr(new PresenceModelAPI(acttype, description));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresenceModel", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresenceModelAPIPtr FactoryAPI::getPresenceModel(int acttype, StringPtr const &description, StringPtr const &note, StringPtr const &lang) {
+	FBLOG_DEBUG("FactoryAPI::getPresenceModel", "this=" << this << "\t" << "acttype=" << acttype << "\t" << "description=" << description << "\t" << "note=" << note << "\t" << "lang=" << lang);
+
+	PresenceModelAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresenceModelAPIPtr(new PresenceModelAPI(acttype, description, note, lang));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresenceModel", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresenceNoteAPIPtr FactoryAPI::getPresenceNote(LinphonePresenceNote *note) {
+	FBLOG_DEBUG("FactoryAPI::getPresenceNote", "this=" << this << "\t" << "note=" << note);
+
+	PresenceNoteAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresenceNoteAPIPtr(new PresenceNoteAPI(note));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresenceNote", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresenceNoteAPIPtr FactoryAPI::getPresenceNote(StringPtr const &content, StringPtr const &lang) {
+	FBLOG_DEBUG("FactoryAPI::getPresenceNote", "this=" << this << "\t" << "content=" << content << "\t" << "lang=" << lang);
+
+	PresenceNoteAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresenceNoteAPIPtr(new PresenceNoteAPI(content, lang));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresenceNote", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresencePersonAPIPtr FactoryAPI::getPresencePerson(LinphonePresencePerson *person) {
+	FBLOG_DEBUG("FactoryAPI::getPresencePerson", "this=" << this << "\t" << "person=" << person);
+
+	PresencePersonAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresencePersonAPIPtr(new PresencePersonAPI(person));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresencePerson", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresencePersonAPIPtr FactoryAPI::getPresencePerson(StringPtr const &id) {
+	FBLOG_DEBUG("FactoryAPI::getPresencePerson", "this=" << this << "\t" << "id=" << id);
+
+	PresencePersonAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresencePersonAPIPtr(new PresencePersonAPI(id));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresencePerson", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresenceServiceAPIPtr FactoryAPI::getPresenceService(LinphonePresenceService *service) {
+	FBLOG_DEBUG("FactoryAPI::getPresenceService", "this=" << this << "\t" << "service=" << service);
+
+	PresenceServiceAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresenceServiceAPIPtr(new PresenceServiceAPI(service));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresenceService", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+PresenceServiceAPIPtr FactoryAPI::getPresenceService(StringPtr const &id, int basicStatus, StringPtr const &contact) {
+	FBLOG_DEBUG("FactoryAPI::getPresenceService", "this=" << this << "\t" << "id=" << id << "\t" << "basicStatus=" << basicStatus << "\t" << "contact=" << contact);
+
+	PresenceServiceAPIPtr shared_ptr;
+	try {
+		shared_ptr = PresenceServiceAPIPtr(new PresenceServiceAPI(id, basicStatus, contact));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getPresenceService", "exception: " << e.what());
 	}
 	return shared_ptr;
 }

@@ -30,6 +30,7 @@
 #include <URI.h>
 #include <linphone/linphonecore.h>
 #include <linphone/linphonefriend.h>
+#include <linphone/linphonepresence.h>
 #include <linphone/lpconfig.h>
 
 #include "addressapi.h"
@@ -42,6 +43,7 @@
 #include "friendapi.h"
 #include "lpconfigapi.h"
 #include "payloadtypeapi.h"
+#include "presenceapi.h"
 #include "proxyconfigapi.h"
 #include "siptransportsapi.h"
 #include "videoapi.h"
@@ -108,6 +110,7 @@ public:
 	CoreAPIPtr getCore(LinphoneCore *core);
 
 	// Friend
+	FriendAPIPtr getFriend();
 	FriendAPIPtr getFriend(LinphoneFriend *f);
 	FriendAPIPtr getFriend(StringPtr const &address);
 
@@ -118,6 +121,21 @@ public:
 	// PayloadType
 	PayloadTypeAPIPtr getPayloadType(PayloadType *payloadType);
 	PayloadTypeAPIPtr getPayloadType(const PayloadType *payloadType);
+
+	// Presence
+	PresenceActivityAPIPtr getPresenceActivity(LinphonePresenceActivity *activity);
+	PresenceActivityAPIPtr getPresenceActivity(int type, StringPtr const &description);
+	PresenceModelAPIPtr getPresenceModel();
+	PresenceModelAPIPtr getPresenceModel(LinphonePresenceModel *model);
+	PresenceModelAPIPtr getPresenceModel(const LinphonePresenceModel *model);
+	PresenceModelAPIPtr getPresenceModel(int acttype, StringPtr const &description);
+	PresenceModelAPIPtr getPresenceModel(int acttype, StringPtr const &description, StringPtr const &note, StringPtr const &lang);
+	PresenceNoteAPIPtr getPresenceNote(LinphonePresenceNote *note);
+	PresenceNoteAPIPtr getPresenceNote(StringPtr const &content, StringPtr const &lang);
+	PresencePersonAPIPtr getPresencePerson(LinphonePresencePerson *person);
+	PresencePersonAPIPtr getPresencePerson(StringPtr const &id);
+	PresenceServiceAPIPtr getPresenceService(LinphonePresenceService *service);
+	PresenceServiceAPIPtr getPresenceService(StringPtr const &id, int basicStatus, StringPtr const &contact);
 
 	// ProxyConfig
 	ProxyConfigAPIPtr getProxyConfig(LinphoneProxyConfig *proxyConfig);

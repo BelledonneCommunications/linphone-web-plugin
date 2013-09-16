@@ -253,6 +253,14 @@ void CoreAPI::initProxy() {
 	registerMethod("newAddress", make_method(this, &CoreAPI::newAddress));
 	registerMethod("newLpConfig", make_method(this, &CoreAPI::newLpConfig));
 	registerMethod("newFriend", make_method(this, &CoreAPI::newFriend));
+	registerMethod("newFriendWithAddress", make_method(this, &CoreAPI::newFriendWithAddress));
+	registerMethod("newPresenceActivity", make_method(this, &CoreAPI::newPresenceActivity));
+	registerMethod("newPresenceModel", make_method(this, &CoreAPI::newPresenceModel));
+	registerMethod("newPresenceModelWithActivity", make_method(this, &CoreAPI::newPresenceModelWithActivity));
+	registerMethod("newPresenceModelWithActivityAndNote", make_method(this, &CoreAPI::newPresenceModelWithActivityAndNote));
+	registerMethod("newPresenceNote", make_method(this, &CoreAPI::newPresenceNote));
+	registerMethod("newPresencePerson", make_method(this, &CoreAPI::newPresencePerson));
+	registerMethod("newPresenceService", make_method(this, &CoreAPI::newPresenceService));
 
 	// Dtmf
 	registerMethod("sendDtmf", make_method(this, &CoreAPI::sendDtmf));
@@ -270,7 +278,8 @@ void CoreAPI::initProxy() {
 	registerMethod("removeFriend", make_method(this, &CoreAPI::removeFriend));
 
 	// Presence
-	registerProperty("presenceInfo", make_property(this, &CoreAPI::getPresenceInfo, &CoreAPI::setPresenceInfo));
+	registerProperty("presenceModel", make_property(this, &CoreAPI::getPresenceModel, &CoreAPI::setPresenceModel));
+	registerMethod("notifyAllFriends", make_method(this, &CoreAPI::notifyAllFriends));
 
 	// Miscs
 	registerProperty("echoCancellationEnabled", make_property(this, &CoreAPI::echoCancellationEnabled, &CoreAPI::enableEchoCancellation));
@@ -2089,9 +2098,49 @@ LpConfigAPIPtr CoreAPI::newLpConfig(StringPtr const &uri) const {
 	return getFactory()->getLpConfig(filename);
 }
 
-FriendAPIPtr CoreAPI::newFriend(StringPtr const &address) const {
+FriendAPIPtr CoreAPI::newFriend() const {
+	FBLOG_DEBUG("CoreAPI::newFriend", "this=" << this);
+	return getFactory()->getFriend();
+}
+
+FriendAPIPtr CoreAPI::newFriendWithAddress(StringPtr const &address) const {
 	FBLOG_DEBUG("CoreAPI::newFriend", "this=" << this << "\t" << "address=" << address);
 	return getFactory()->getFriend(address);
+}
+
+PresenceActivityAPIPtr CoreAPI::newPresenceActivity(int type, StringPtr const &description) const {
+	FBLOG_DEBUG("CoreAPI::newPresenceActivity", "this=" << this << "\t" << "type=" << type << "\t" << "description=" << description);
+	return getFactory()->getPresenceActivity(type, description);
+}
+
+PresenceModelAPIPtr CoreAPI::newPresenceModel() const {
+	FBLOG_DEBUG("CoreAPI::newPresenceModel", "this=" << this);
+	return getFactory()->getPresenceModel();
+}
+
+PresenceModelAPIPtr CoreAPI::newPresenceModelWithActivity(int acttype, StringPtr const &description) const {
+	FBLOG_DEBUG("CoreAPI::newPresenceModel", "this=" << this << "\t" << "acttype=" << acttype << "\t" << "description=" << description);
+	return getFactory()->getPresenceModel(acttype, description);
+}
+
+PresenceModelAPIPtr CoreAPI::newPresenceModelWithActivityAndNote(int acttype, StringPtr const &description, StringPtr const &note, StringPtr const &lang) const {
+	FBLOG_DEBUG("CoreAPI::newPresenceModel", "this=" << this << "\t" << "acttype=" << acttype << "\t" << "description=" << description << "\t" << "note=" << note << "\t" << "lang=" << lang);
+	return getFactory()->getPresenceModel(acttype, description, note, lang);
+}
+
+PresenceNoteAPIPtr CoreAPI::newPresenceNote(StringPtr const &content, StringPtr const &lang) const {
+	FBLOG_DEBUG("CoreAPI::newPresenceNote", "this=" << this << "\t" << "content=" << content << "\t" << "lang=" << lang);
+	return getFactory()->getPresenceNote(content, lang);
+}
+
+PresencePersonAPIPtr CoreAPI::newPresencePerson(StringPtr const &id) const {
+	FBLOG_DEBUG("CoreAPI::newPresencePerson", "this=" << this << "\t" << "id=" << id);
+	return getFactory()->getPresencePerson(id);
+}
+
+PresenceServiceAPIPtr CoreAPI::newPresenceService(StringPtr const &id, int basicStatus, StringPtr const &contact) const {
+	FBLOG_DEBUG("CoreAPI::newPresenceService", "this=" << this << "\t" << "id=" << id << "\t" << "basicStatus=" << basicStatus << "\t" << "contact=" << contact);
+	return getFactory()->getPresenceService(id, basicStatus, contact);
 }
 
 
@@ -2228,21 +2277,29 @@ std::vector<FriendAPIPtr> CoreAPI::getFriendList() const {
  *
  */
 
-int CoreAPI::getPresenceInfo() const {
+PresenceModelAPIPtr CoreAPI::getPresenceModel() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::getPresenceInfo", "this=" << this);
-	return linphone_core_get_presence_info(mCore);
+	FBLOG_DEBUG("CoreAPI::getPresenceModel", "this=" << this);
+	LinphonePresenceModel *model = linphone_core_get_presence_model(mCore);
+	return getFactory()->getPresenceModel(model);
 }
 
-void CoreAPI::setPresenceInfo(int status) {
+void CoreAPI::setPresenceModel(PresenceModelAPIPtr const &model) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::setPresenceInfo", "this=" << this << "\t" << "status=" << status);
-	FBLOG_WARN("CoreAPI::setPresenceInfo", "Not correcly wrapper !!!!");
-	return linphone_core_set_presence_info(mCore, 0, NULL, (LinphoneOnlineStatus)status);
+	FBLOG_DEBUG("CoreAPI::setPresenceModel", "this=" << this << "\t" << "model=" << model);
+	linphone_core_set_presence_model(mCore, model->getRef());
+}
+
+void CoreAPI::notifyAllFriends(PresenceModelAPIPtr const &model) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::notifyAllFriends", "this=" << this << "\t" << "model=" << model);
+	linphone_core_notify_all_friends(mCore, model->getRef());
 }
 
 	

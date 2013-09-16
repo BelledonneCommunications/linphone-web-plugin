@@ -50,6 +50,11 @@ FB_FORWARD_PTR(FriendAPI)
 FB_FORWARD_PTR(LpConfigAPI)
 FB_FORWARD_PTR(PayloadTypeAPI)
 FB_FORWARD_PTR(PointerAPI)
+FB_FORWARD_PTR(PresenceActivityAPI)
+FB_FORWARD_PTR(PresenceModelAPI)
+FB_FORWARD_PTR(PresenceNoteAPI)
+FB_FORWARD_PTR(PresencePersonAPI)
+FB_FORWARD_PTR(PresenceServiceAPI)
 FB_FORWARD_PTR(ProxyConfigAPI)
 FB_FORWARD_PTR(SipTransportsAPI)
 FB_FORWARD_PTR(VideoAPI)
@@ -266,7 +271,15 @@ public:
 			StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm) const;
 	AddressAPIPtr newAddress(StringPtr const &address) const;
 	LpConfigAPIPtr newLpConfig(StringPtr const &uri) const;
-	FriendAPIPtr newFriend(StringPtr const &address) const;
+	FriendAPIPtr newFriend() const;
+	FriendAPIPtr newFriendWithAddress(StringPtr const &address) const;
+	PresenceActivityAPIPtr newPresenceActivity(int type, StringPtr const &description) const;
+	PresenceModelAPIPtr newPresenceModel() const;
+	PresenceModelAPIPtr newPresenceModelWithActivity(int acttype, StringPtr const &description) const;
+	PresenceModelAPIPtr newPresenceModelWithActivityAndNote(int acttype, StringPtr const &description, StringPtr const &note, StringPtr const &lang) const;
+	PresenceNoteAPIPtr newPresenceNote(StringPtr const &content, StringPtr const &lang) const;
+	PresencePersonAPIPtr newPresencePerson(StringPtr const &id) const;
+	PresenceServiceAPIPtr newPresenceService(StringPtr const &id, int basicStatus, StringPtr const &contact) const;
 
 	// Dtmf
 	void sendDtmf(std::string const &dtmf);
@@ -286,8 +299,9 @@ public:
 	std::vector<FriendAPIPtr> getFriendList() const;
 
 	// Presence
-	int getPresenceInfo() const;
-	void setPresenceInfo(int status);
+	PresenceModelAPIPtr getPresenceModel() const;
+	void setPresenceModel(PresenceModelAPIPtr const &model);
+	void notifyAllFriends(PresenceModelAPIPtr const &model);
 
 	// Core helpers
 	int init(StringPtr const &config, StringPtr const &factory);

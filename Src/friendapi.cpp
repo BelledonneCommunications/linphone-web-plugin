@@ -29,6 +29,12 @@
 
 namespace LinphoneWeb {
 
+FriendAPI::FriendAPI() :
+		WrapperAPI(APIDescription(this)) {
+	FBLOG_DEBUG("FriendAPI::FriendAPI", "this=" << this);
+	mFriend = linphone_friend_new();
+}
+
 FriendAPI::FriendAPI(LinphoneFriend *lFriend) :
 		WrapperAPI(APIDescription(this)), mFriend(lFriend) {
 	FBLOG_DEBUG("FriendAPI::FriendAPI", "this=" << this << "\t" << "lFriend=" << lFriend);
@@ -47,6 +53,7 @@ void FriendAPI::initProxy() {
 	registerProperty("address", make_property(this, &FriendAPI::getAddress, &FriendAPI::setAddress));
 	registerProperty("incSubscribePolicy", make_property(this, &FriendAPI::getIncSubscribePolicy, &FriendAPI::setIncSubscribePolicy));
 	registerProperty("name", make_property(this, &FriendAPI::getName, &FriendAPI::setName));
+	registerProperty("presenceModel", make_property(this, &FriendAPI::getPresenceModel));
 	registerProperty("refKey", make_property(this, &FriendAPI::getRefKey, &FriendAPI::setRefKey));
 	registerProperty("subscribesEnabled", make_property(this, &FriendAPI::subscribesEnabled, &FriendAPI::enableSubscribes));
 
@@ -154,6 +161,14 @@ bool FriendAPI::inList() const {
 
 	FBLOG_DEBUG("FriendAPI::inList", "this=" << this);
 	return (linphone_friend_in_list(mFriend) == TRUE) ? true : false;
+}
+
+PresenceModelAPIPtr FriendAPI::getPresenceModel() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("FriendAPI::getPresenceModel", "this=" << this);
+	const LinphonePresenceModel *model = linphone_friend_get_presence_model(mFriend);
+	return getFactory()->getPresenceModel(model);
 }
 
 } // LinphoneWeb
