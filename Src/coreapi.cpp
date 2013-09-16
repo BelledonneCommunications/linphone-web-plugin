@@ -19,6 +19,7 @@
 
  Authors:
  - Yann Diorcet <diorcet.yann@gmail.com>
+ - Ghislain MARY <ghislain.mary@belledonne-communications.com>
 
  */
 
@@ -46,6 +47,7 @@
 #include "callparamsapi.h"
 #include "callstatsapi.h"
 #include "coreapi.h"
+#include "friendapi.h"
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
 #include "siptransportsapi.h"
@@ -257,6 +259,15 @@ void CoreAPI::initProxy() {
 	registerMethod("stopDtmf", make_method(this, &CoreAPI::stopDtmf));
 	registerProperty("useInfoForDtmf", make_property(this, &CoreAPI::getUseInfoForDtmf, &CoreAPI::setUseInfoForDtmf));
 	registerProperty("useRfc2833ForDtmf", make_property(this, &CoreAPI::getUseRfc2833ForDtmf, &CoreAPI::setUseRfc2833ForDtmf));
+
+	// Friend bindings
+	registerMethod("addFriend", make_method(this, &CoreAPI::addFriend));
+	registerMethod("getFriendByAddress", make_method(this, &CoreAPI::getFriendByAddress));
+	registerMethod("getFriendByRefKey", make_method(this, &CoreAPI::getFriendByRefKey));
+	registerMethod("getFriendList", make_method(this, &CoreAPI::getFriendList));
+	registerMethod("interpretFriendURI", make_method(this, &CoreAPI::interpretFriendURI));
+	registerMethod("rejectSubscriber", make_method(this, &CoreAPI::rejectSubscriber));
+	registerMethod("removeFriend", make_method(this, &CoreAPI::removeFriend));
 
 	// Presence
 	registerProperty("presenceInfo", make_property(this, &CoreAPI::getPresenceInfo, &CoreAPI::setPresenceInfo));
@@ -2146,6 +2157,77 @@ void CoreAPI::setUseRfc2833ForDtmf(bool enable) {
 
 	FBLOG_DEBUG("CoreAPI::setUseRfc2833ForDtmf", "this=" << this << "\t" << "enable=" << enable);
 	linphone_core_set_use_rfc2833_for_dtmf(mCore, enable ? TRUE : FALSE);
+}
+
+
+/*
+ *
+ * Friend functions
+ *
+ */
+
+StringPtr CoreAPI::interpretFriendURI(StringPtr const &uri) const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::interpretFriendURI", "this=" << this << "\t" << "uri=" << uri);
+	char *result = NULL;
+	linphone_core_interpret_friend_uri(mCore, STRING_TO_CHARPTR(uri), &result);
+	return CHARPTR_TO_STRING(result);
+}
+
+void CoreAPI::addFriend(FriendAPIPtr const &f) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::addFriend", "this=" << this << "\t" << "f=" << f);
+	linphone_core_add_friend(mCore, f->getRef());
+}
+
+void CoreAPI::removeFriend(FriendAPIPtr const &f) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::removeFriend", "this=" << this << "\t" << "f=" << f);
+	linphone_core_remove_friend(mCore, f->getRef());
+}
+
+void CoreAPI::rejectSubscriber(FriendAPIPtr const &f) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::rejectSubscriber", "this=" << this << "\t" << "f=" << f);
+	linphone_core_reject_subscriber(mCore, f->getRef());
+}
+
+FriendAPIPtr CoreAPI::getFriendByAddress(StringPtr const &address) const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getFriendByAddress", "this=" << this << "\t" << "address=" << address);
+	LinphoneFriend *f = linphone_core_get_friend_by_address(mCore, STRING_TO_CHARPTR(address));
+	return getFactory()->getFriend(f);
+}
+
+FriendAPIPtr CoreAPI::getFriendByRefKey(StringPtr const &key) const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getFriendByRefKey", "this=" << this << "\t" << "key=" << key);
+	LinphoneFriend *f = linphone_core_get_friend_by_ref_key(mCore, STRING_TO_CHARPTR(key));
+	return getFactory()->getFriend(f);
+}
+
+std::vector<FriendAPIPtr> CoreAPI::getFriendList() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getFriendList", "this=" << this);
+	std::vector<FriendAPIPtr> list;
+	for (const MSList *node = linphone_core_get_friend_list(mCore); node != NULL; node = ms_list_next(node)) {
+		list.push_back(getFactory()->getFriend(reinterpret_cast<LinphoneFriend *>(node->data)));
+	}
+	return list;
 }
 
 

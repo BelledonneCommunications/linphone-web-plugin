@@ -19,6 +19,7 @@
 
  Authors:
  - Yann Diorcet <diorcet.yann@gmail.com>
+ - Ghislain MARY <ghislain.mary@belledonne-communications.com>
 
  */
 
@@ -44,15 +45,15 @@ FB_FORWARD_PTR(CallLogAPI)
 FB_FORWARD_PTR(CallParamsAPI)
 FB_FORWARD_PTR(CallStatsParamsAPI)
 FB_FORWARD_PTR(CoreAPI)
+FB_FORWARD_PTR(FileManagerAPI)
+FB_FORWARD_PTR(FriendAPI)
 FB_FORWARD_PTR(LpConfigAPI)
 FB_FORWARD_PTR(PayloadTypeAPI)
 FB_FORWARD_PTR(PointerAPI)
 FB_FORWARD_PTR(ProxyConfigAPI)
 FB_FORWARD_PTR(SipTransportsAPI)
-FB_FORWARD_PTR(VideoPolicyAPI)
 FB_FORWARD_PTR(VideoAPI)
-FB_FORWARD_PTR(FileManagerAPI)
-FB_FORWARD_PTR(CoreAPI)
+FB_FORWARD_PTR(VideoPolicyAPI)
 
 class CoreAPI: public WrapperAPI {
 	friend class FactoryAPI;
@@ -274,6 +275,15 @@ public:
 	void setUseInfoForDtmf(bool enable);
 	bool getUseRfc2833ForDtmf() const;
 	void setUseRfc2833ForDtmf(bool enable);
+
+	// Friend
+	StringPtr interpretFriendURI(StringPtr const &uri) const;
+	void addFriend(FriendAPIPtr const &f);
+	void removeFriend(FriendAPIPtr const &f);
+	void rejectSubscriber(FriendAPIPtr const &f);
+	FriendAPIPtr getFriendByAddress(StringPtr const &address) const;
+	FriendAPIPtr getFriendByRefKey(StringPtr const &key) const;
+	std::vector<FriendAPIPtr> getFriendList() const;
 
 	// Presence
 	int getPresenceInfo() const;

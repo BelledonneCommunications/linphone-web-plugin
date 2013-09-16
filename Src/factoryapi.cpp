@@ -249,6 +249,21 @@ CoreAPIPtr FactoryAPI::getCore(LinphoneCore *core) {
 	return shared_ptr;
 }
 
+FriendAPIPtr FactoryAPI::getFriend(LinphoneFriend *f) {
+	FBLOG_DEBUG("FactoryAPI::getFriend", "this=" << this << "\t" << "f=" << f);
+	if (f == NULL)
+		return FriendAPIPtr();
+
+	FriendAPIPtr shared_ptr;
+	try {
+		shared_ptr = FriendAPIPtr(new FriendAPI(f));
+		handle(shared_ptr, false, false);
+	} catch (std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getFriend", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
 LpConfigAPIPtr FactoryAPI::getLpConfig(LpConfig *config) {
 	FBLOG_DEBUG("FactoryAPI::getLpConfig", "this=" << this << "\t" << "config=" << config);
 	if (config == NULL)

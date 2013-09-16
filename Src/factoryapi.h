@@ -29,6 +29,7 @@
 #include <FactoryBase.h>
 #include <URI.h>
 #include <linphone/linphonecore.h>
+#include <linphone/linphonefriend.h>
 #include <linphone/lpconfig.h>
 
 #include "addressapi.h"
@@ -38,6 +39,7 @@
 #include "callparamsapi.h"
 #include "callstatsapi.h"
 #include "coreapi.h"
+#include "friendapi.h"
 #include "lpconfigapi.h"
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
@@ -104,6 +106,9 @@ public:
 
 	// Core
 	CoreAPIPtr getCore(LinphoneCore *core);
+
+	// Friend
+	FriendAPIPtr getFriend(LinphoneFriend *f);
 
 	// LpConfig
 	LpConfigAPIPtr getLpConfig(LpConfig *config);
