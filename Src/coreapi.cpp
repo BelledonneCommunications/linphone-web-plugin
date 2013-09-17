@@ -970,14 +970,12 @@ void CoreAPI::setNativeVideoWindowId(WhiteBoard::IdType id) {
 	mVideoWindow.reset();
 
 	// Set new
-	if(id != WhiteBoard::NoId) {
-		mVideoWindow = getFactory()->getWhiteBoard()->getValue<VideoAPIWeakPtr>(id);
-		video = mVideoWindow.lock();
-		if(video) {
-			video->setWindowEventHandler(boost::bind(&CoreAPI::videoWindowEventHandler,
-											   CoreAPIWeakPtr(boost::static_pointer_cast<CoreAPI>(this->shared_from_this())),
-											   _1));
-		}
+	mVideoWindow = getFactory()->getWhiteBoard()->getValue<VideoAPIWeakPtr>(id);
+	video = mVideoWindow.lock();
+	if(video) {
+		video->setWindowEventHandler(boost::bind(&CoreAPI::videoWindowEventHandler,
+										   CoreAPIWeakPtr(boost::static_pointer_cast<CoreAPI>(this->shared_from_this())),
+										   _1));
 	}
 }
 
@@ -1028,14 +1026,12 @@ void CoreAPI::setNativePreviewWindowId(WhiteBoard::IdType id) {
 	mPreviewWindow.reset();
 
 	// Set new
-	if(id != WhiteBoard::NoId) {
-		mPreviewWindow = getFactory()->getWhiteBoard()->getValue<VideoAPIWeakPtr>(id);
-		video = mPreviewWindow.lock();
-		if(video) {
-			video->setWindowEventHandler(boost::bind(&CoreAPI::previewWindowEventHandler,
-											   CoreAPIWeakPtr(boost::static_pointer_cast<CoreAPI>(this->shared_from_this())),
-											   _1));
-		}
+	mPreviewWindow = getFactory()->getWhiteBoard()->getValue<VideoAPIWeakPtr>(id);
+	video = mPreviewWindow.lock();
+	if(video) {
+		video->setWindowEventHandler(boost::bind(&CoreAPI::previewWindowEventHandler,
+										   CoreAPIWeakPtr(boost::static_pointer_cast<CoreAPI>(this->shared_from_this())),
+										   _1));
 	}
 }
 
