@@ -35,7 +35,7 @@ WhiteBoard::WhiteBoard(): mNextId(1) {
 }
 	
 WhiteBoard::IdType WhiteBoard::addValue(WhiteBoard::ValueType const &value) {
-	FBLOG_DEBUG("WhiteBoard::addValue", this << "\t" << "value=" << value);
+	FBLOG_DEBUG("WhiteBoard::addValue", "this=" << this << "\t" << "value=" << value);
 	boost::shared_lock<boost::shared_mutex> guard(mMutex);
 	
 	MapType::right_const_iterator it = mMap.right.find(value);
@@ -49,7 +49,7 @@ WhiteBoard::IdType WhiteBoard::addValue(WhiteBoard::ValueType const &value) {
 }
 
 WhiteBoard::IdType WhiteBoard::getId(WhiteBoard::ValueType const &value, bool append) {
-	FBLOG_DEBUG("WhiteBoard::getId", this << "\t" << "value=" << value << "\t" << "append=" << append);
+	FBLOG_DEBUG("WhiteBoard::getId", "this=" << this << "\t" << "value=" << value << "\t" << "append=" << append);
 	
 	boost::shared_lock<boost::shared_mutex> guard(mMutex);
 	
@@ -76,7 +76,7 @@ WhiteBoard::ValueType WhiteBoard::getVariantValue(WhiteBoard::IdType const &id) 
 }
 
 bool WhiteBoard::removeId(WhiteBoard::IdType const &id) {
-	FBLOG_DEBUG("WhiteBoard::removeId", this << "\t" << "id=" << id);
+	FBLOG_DEBUG("WhiteBoard::removeId", "this=" << this << "\t" << "id=" << id);
 	boost::shared_lock<boost::shared_mutex> guard(mMutex);
 	
 	MapType::left_const_iterator it = mMap.left.find(id);
@@ -91,7 +91,7 @@ bool WhiteBoard::removeId(WhiteBoard::IdType const &id) {
 }
 
 bool WhiteBoard::removeValue(WhiteBoard::ValueType const &value) {
-	FBLOG_DEBUG("WhiteBoard::removeId", this << "\t" << "value=" << value);
+	FBLOG_DEBUG("WhiteBoard::removeId", "this=" << this << "\t" << "value=" << value);
 	boost::shared_lock<boost::shared_mutex> guard(mMutex);
 	
 	MapType::right_const_iterator it = mMap.right.find(value);

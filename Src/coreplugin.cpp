@@ -154,7 +154,7 @@ void CorePlugin::StaticDeinitialize() {
 ///         the JSAPI object until the onPluginReady method is called
 ///////////////////////////////////////////////////////////////////////////////
 CorePlugin::CorePlugin(WhiteBoardPtr const &whiteboard): mWhiteBoard(whiteboard) {
-	FBLOG_DEBUG("CorePlugin::CorePlugin", "this" << this);
+	FBLOG_DEBUG("CorePlugin::CorePlugin", "this=" << this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -218,7 +218,7 @@ void CorePlugin::shutdown() {
 /// as it could prevent your plugin class from getting destroyed properly.
 ///////////////////////////////////////////////////////////////////////////////
 FB::JSAPIPtr CorePlugin::createJSAPI() {
-	FBLOG_DEBUG("CorePlugin::createJSAPI", this);
+	FBLOG_DEBUG("CorePlugin::createJSAPI", "this=" << this);
 	FactoryAPIPtr factory = boost::make_shared<FactoryAPI>(FB::ptr_cast<FB::PluginCore>(shared_from_this()), mWhiteBoard);
 	CoreAPIPtr core = factory->getCore((LinphoneCore *)NULL);
 #ifdef DEBUG
