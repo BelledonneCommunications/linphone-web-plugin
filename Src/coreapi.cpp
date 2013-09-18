@@ -2573,6 +2573,9 @@ void CoreAPI::onRegistrationStateChanged(LinphoneProxyConfig *cfg, LinphoneRegis
 
 void CoreAPI::onCallStateChanged(LinphoneCall *call, LinphoneCallState cstate, const char *message) {
 	FBLOG_DEBUG("CoreAPI::onCallStateChanged",  "this=" << this << "\t" << "call=" << call << "\t" << "cstate=" << cstate << "\t" << "message=" << message);
+	if (cstate == LinphoneCallUpdatedByRemote) {
+		linphone_core_defer_call_update(mCore, call);
+	}
 	fire_callStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), getFactory()->getCall(call), cstate, CHARPTR_TO_STRING(message));
 }
 
