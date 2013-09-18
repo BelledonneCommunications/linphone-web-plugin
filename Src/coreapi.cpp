@@ -252,6 +252,7 @@ void CoreAPI::initProxy() {
 	registerMethod("newAuthInfo", make_method(this, &CoreAPI::newAuthInfo));
 	registerMethod("newAddress", make_method(this, &CoreAPI::newAddress));
 	registerMethod("newLpConfig", make_method(this, &CoreAPI::newLpConfig));
+	registerMethod("newFriend", make_method(this, &CoreAPI::newFriend));
 
 	// Dtmf
 	registerMethod("sendDtmf", make_method(this, &CoreAPI::sendDtmf));
@@ -265,7 +266,6 @@ void CoreAPI::initProxy() {
 	registerMethod("getFriendByAddress", make_method(this, &CoreAPI::getFriendByAddress));
 	registerMethod("getFriendByRefKey", make_method(this, &CoreAPI::getFriendByRefKey));
 	registerMethod("getFriendList", make_method(this, &CoreAPI::getFriendList));
-	registerMethod("interpretFriendURI", make_method(this, &CoreAPI::interpretFriendURI));
 	registerMethod("rejectSubscriber", make_method(this, &CoreAPI::rejectSubscriber));
 	registerMethod("removeFriend", make_method(this, &CoreAPI::removeFriend));
 
@@ -2089,6 +2089,11 @@ LpConfigAPIPtr CoreAPI::newLpConfig(StringPtr const &uri) const {
 	return getFactory()->getLpConfig(filename);
 }
 
+FriendAPIPtr CoreAPI::newFriend(StringPtr const &address) const {
+	FBLOG_DEBUG("CoreAPI::newFriend", "this=" << this << "\t" << "address=" << address);
+	return getFactory()->getFriend(address);
+}
+
 
 /*
  *
@@ -2161,16 +2166,6 @@ void CoreAPI::setUseRfc2833ForDtmf(bool enable) {
  * Friend functions
  *
  */
-
-StringPtr CoreAPI::interpretFriendURI(StringPtr const &uri) const {
-	FB_ASSERT_CORE
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CoreAPI::interpretFriendURI", "this=" << this << "\t" << "uri=" << uri);
-	char *result = NULL;
-	linphone_core_interpret_friend_uri(mCore, STRING_TO_CHARPTR(uri), &result);
-	return CHARPTR_TO_STRING(result);
-}
 
 void CoreAPI::addFriend(FriendAPIPtr const &f) {
 	FB_ASSERT_CORE

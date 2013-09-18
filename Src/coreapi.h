@@ -266,6 +266,7 @@ public:
 			StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm) const;
 	AddressAPIPtr newAddress(StringPtr const &address) const;
 	LpConfigAPIPtr newLpConfig(StringPtr const &uri) const;
+	FriendAPIPtr newFriend(StringPtr const &address) const;
 
 	// Dtmf
 	void sendDtmf(std::string const &dtmf);
@@ -277,7 +278,6 @@ public:
 	void setUseRfc2833ForDtmf(bool enable);
 
 	// Friend
-	StringPtr interpretFriendURI(StringPtr const &uri) const;
 	void addFriend(FriendAPIPtr const &f);
 	void removeFriend(FriendAPIPtr const &f);
 	void rejectSubscriber(FriendAPIPtr const &f);

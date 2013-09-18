@@ -264,6 +264,19 @@ FriendAPIPtr FactoryAPI::getFriend(LinphoneFriend *f) {
 	return shared_ptr;
 }
 
+FriendAPIPtr FactoryAPI::getFriend(StringPtr const &address) {
+	FBLOG_DEBUG("FactoryAPI::getFriend", "this=" << this << "\t" << "address=" << address);
+
+	FriendAPIPtr shared_ptr;
+	try {
+		shared_ptr = FriendAPIPtr(new FriendAPI(address));
+		handle(shared_ptr, true, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getFriend", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
 LpConfigAPIPtr FactoryAPI::getLpConfig(LpConfig *config) {
 	FBLOG_DEBUG("FactoryAPI::getLpConfig", "this=" << this << "\t" << "config=" << config);
 	if (config == NULL)

@@ -109,6 +109,7 @@ public:
 
 	// Friend
 	FriendAPIPtr getFriend(LinphoneFriend *f);
+	FriendAPIPtr getFriend(StringPtr const &address);
 
 	// LpConfig
 	LpConfigAPIPtr getLpConfig(LpConfig *config);
