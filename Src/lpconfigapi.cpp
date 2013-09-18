@@ -97,7 +97,7 @@ bool LpConfigAPI::hasSection(StringPtr const &section) const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("LpConfigAPI::hasSection", "this=" << this << "\t" << "section=" << section);
-	return (bool)lp_config_has_section(mLpConfig, STRING_TO_CHARPTR(section));
+	return (lp_config_has_section(mLpConfig, STRING_TO_CHARPTR(section)) == TRUE) ? true : false;
 }
 
 void LpConfigAPI::cleanSection(StringPtr const &section) {
@@ -111,7 +111,7 @@ bool LpConfigAPI::needsCommit() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("LpConfigAPI::needsCommit", "this=" << this);
-	return (bool)lp_config_needs_commit(mLpConfig);
+	return (lp_config_needs_commit(mLpConfig) == TRUE) ? true : false;
 }
 
 
@@ -140,7 +140,7 @@ FB::VariantList LpConfigAPI::getRange(StringPtr const &section, StringPtr const 
 	int defaultMin = defaultValues[0].cast<int>();
 	int defaultMax = defaultValues[1].cast<int>();
 	int min, max;
-	bool res = (bool)lp_config_get_range(mLpConfig, STRING_TO_CHARPTR(section), STRING_TO_CHARPTR(key), &min, &max, defaultMin, defaultMax);
+	bool res = (lp_config_get_range(mLpConfig, STRING_TO_CHARPTR(section), STRING_TO_CHARPTR(key), &min, &max, defaultMin, defaultMax) == TRUE) ? true : false;
 	if (!res) {
 		return FB::VariantList();
 	}
