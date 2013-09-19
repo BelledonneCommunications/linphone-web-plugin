@@ -52,14 +52,12 @@ public:
 	AddressAPIPtr clone() const;
 	StringPtr getDisplayName() const;
 	StringPtr getDomain() const;
-	StringPtr getPort() const;
-	int getPortInt() const;
+	int getPort() const;
 	StringPtr getScheme() const;
 	StringPtr getUsername() const;
 	void setDisplayName(StringPtr const &displayname);
 	void setDomain(StringPtr const &domain);
-	void setPort(StringPtr const &port);
-	void setPortInt(int port);
+	void setPort(int port);
 	void setUsername(StringPtr const &username);
 
 	inline LinphoneAddress *getRef() {

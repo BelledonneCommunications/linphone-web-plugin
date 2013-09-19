@@ -59,13 +59,11 @@ void AddressAPI::initProxy() {
 		registerProperty("displayName", make_property(this, &AddressAPI::getDisplayName));
 		registerProperty("domain", make_property(this, &AddressAPI::getDomain));
 		registerProperty("port", make_property(this, &AddressAPI::getPort));
-		registerProperty("portInt", make_property(this, &AddressAPI::getPortInt));
 		registerProperty("username", make_property(this, &AddressAPI::getUsername));
 	} else {
 		registerProperty("displayName", make_property(this, &AddressAPI::getDisplayName, &AddressAPI::setDisplayName));
 		registerProperty("domain", make_property(this, &AddressAPI::getDomain, &AddressAPI::setDomain));
 		registerProperty("port", make_property(this, &AddressAPI::getPort, &AddressAPI::setPort));
-		registerProperty("portInt", make_property(this, &AddressAPI::getPortInt, &AddressAPI::setPortInt));
 		registerProperty("username", make_property(this, &AddressAPI::getUsername, &AddressAPI::setUsername));
 	}
 	registerProperty("scheme", make_property(this, &AddressAPI::getScheme));
@@ -138,32 +136,18 @@ void AddressAPI::setDomain(StringPtr const &domain) {
 	linphone_address_set_domain(mAddress, STRING_TO_CHARPTR(domain));
 }
 
-StringPtr AddressAPI::getPort() const {
+int AddressAPI::getPort() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AddressAPI::getPort", "this=" << this);
-	return CHARPTR_TO_STRING(linphone_address_get_port(mAddress));
+	return linphone_address_get_port(mAddress);
 }
 
-void AddressAPI::setPort(StringPtr const &port) {
+void AddressAPI::setPort(int port) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AddressAPI::setPort", "this=" << this << "\t" << "port=" << port);
-	linphone_address_set_port(mAddress, STRING_TO_CHARPTR(port));
-}
-
-int AddressAPI::getPortInt() const {
-	CORE_MUTEX
-	
-	FBLOG_DEBUG("AddressAPI::getPortInt", "this=" << this);
-	return linphone_address_get_port_int(mAddress);
-}
-
-void AddressAPI::setPortInt(int port) {
-	CORE_MUTEX
-	
-	FBLOG_DEBUG("AddressAPI::setPortInt", "this=" << this << "\t" << "port=" << port);
-	linphone_address_set_port_int(mAddress, port);
+	linphone_address_set_port(mAddress, port);
 }
 
 StringPtr AddressAPI::getScheme() const {
