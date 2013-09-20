@@ -43,7 +43,7 @@ FriendAPI::FriendAPI(LinphoneFriend *lFriend) :
 FriendAPI::FriendAPI(StringPtr const &address) :
 		WrapperAPI(APIDescription(this)) {
 	FBLOG_DEBUG("FriendAPI::FriendAPI", "this=" << this << "\t" << "address=" << address);
-	mFriend = linphone_friend_new_with_addr(STRING_TO_CHARPTR(address));
+	mFriend = linphone_friend_new_with_address(STRING_TO_CHARPTR(address));
 	if (mFriend == NULL) {
 		throw std::invalid_argument("one/many parameters is/are invalid");
 	}
@@ -75,7 +75,7 @@ void FriendAPI::setAddress(AddressAPIPtr const &address) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("FriendAPI::setAddress", "this=" << this << "\t" << "address=" << address);
-	linphone_friend_set_addr(mFriend, address->getRef());
+	linphone_friend_set_address(mFriend, address->getRef());
 }
 
 AddressAPIPtr FriendAPI::getAddress() const {
