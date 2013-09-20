@@ -101,7 +101,8 @@ time_t CallLogAPI::getStartDate() const {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("CallLogAPI::getStartDate", "this=" << this);
-	return linphone_call_log_get_start_date(mCallLog);
+	// WARNING: Keep only the least-significant 32 bits because of difference of definition of time_t between mingw and visual studio
+	return (linphone_call_log_get_start_date(mCallLog) & 0xFFFFFFFF);
 }
 
 LinphoneCallStatus CallLogAPI::getStatus() const {

@@ -186,7 +186,8 @@ time_t PresenceModelAPI::getTimestamp() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("PresenceModelAPI::getTimestamp", "this=" << this);
-	return linphone_presence_model_get_timestamp(mModel);
+	// WARNING: Keep only the least-significant 32 bits because of difference of definition of time_t between mingw and visual studio
+	return (linphone_presence_model_get_timestamp(mModel) && 0xFFFFFFFF);
 }
 
 void PresenceModelAPI::setContact(StringPtr const &contact) {
