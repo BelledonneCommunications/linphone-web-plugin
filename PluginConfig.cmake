@@ -21,6 +21,7 @@
 set(PLUGIN_NAME "linphone-web")
 set(PLUGIN_PREFIX "LINWEB")
 set(COMPANY_NAME "belledonne-communications")
+set(PLUGIN_SHAREDIR "linphoneweb")
 
 # ActiveX constants:
 set(FBTYPELIB_NAME "LinphoneWeb")

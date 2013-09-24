@@ -136,7 +136,7 @@ void FileManagerAPI::initializePaths() {
 	// Internal
 	boost::filesystem::path internalPath = FB::BrowserPlugin::getFSPath();
 	internalPath = internalPath.parent_path();
-	internalPath /= std::string("linphoneweb");
+	internalPath /= std::string(PLUGIN_SHAREDIR);
 	
 	// Temp
 	boost::filesystem::path tempPath = boost::filesystem::path(FB::System::getTempPath());
