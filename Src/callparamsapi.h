@@ -63,7 +63,8 @@ public:
 	void enableVideo(bool enable);
 	bool videoEnabled() const;
 	CallParamsAPIPtr copy() const;
-
+	void addCustomHeader(StringPtr const &headerName, StringPtr const &headerValue);
+	StringPtr getCustomHeader(StringPtr const &headerName) const;
 
 	inline LinphoneCallParams *getRef() {
 		return mCallParams;

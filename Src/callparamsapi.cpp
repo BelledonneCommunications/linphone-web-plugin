@@ -42,14 +42,16 @@ CallParamsAPI::CallParamsAPI(const LinphoneCallParams *callParams) :
 CallParamsAPI::~CallParamsAPI() {
 	FBLOG_DEBUG("CallParamsAPI::~CallParamsAPI", "this=" << this);
 }
-	
+
 void CallParamsAPI::initProxy() {
 	registerMethod("copy", make_method(this, &CallParamsAPI::copy));
+	registerMethod("getCustomHeader", make_method(this, &CallParamsAPI::getCustomHeader));
 	registerProperty("localConferenceMode", make_property(this, &CallParamsAPI::localConferenceMode));
 	registerProperty("usedAudioCodec", make_property(this, &CallParamsAPI::getUsedAudioCodec));
 	registerProperty("usedVideoCodec", make_property(this, &CallParamsAPI::getUsedVideoCodec));
-	
+
 	if (!isConst()) {
+		registerMethod("addCustomHeader", make_method(this, &CallParamsAPI::addCustomHeader));
 		registerProperty("audioBandwidthLimit", make_property(this, &CallParamsAPI::getAudioBandwidthLimit, &CallParamsAPI::setAudioBandwidthLimit));
 		registerProperty("earlyMediaSendingEnabled", make_property(this, &CallParamsAPI::earlyMediaSendingEnabled, &CallParamsAPI::enableEarlyMediaSending));
 		registerProperty("lowBandwidthEnabled", make_property(this, &CallParamsAPI::lowBandwidthEnabled, &CallParamsAPI::enableLowBandwidth));
@@ -68,7 +70,7 @@ void CallParamsAPI::initProxy() {
 
 int CallParamsAPI::getAudioBandwidthLimit() const {
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CallParamsAPI::getAudioBandwidthLimit", "this=" << this);
 	FBLOG_ERROR("CallParamsAPI::getAudioBandwidthLimit", "NOT IMPLEMENTED");
 	// TODO Stub
@@ -107,56 +109,56 @@ bool CallParamsAPI::localConferenceMode() const {
 
 bool CallParamsAPI::lowBandwidthEnabled() const {
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CallParamsAPI::lowBandwidthEnabled", "this=" << this);
 	return linphone_call_params_low_bandwidth_enabled(mCallParams) == TRUE ? true : false;
 }
 
 void CallParamsAPI::enableLowBandwidth(bool enable) {
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CallParamsAPI::enableLowBandwidth", "this=" << this << "\t" << "enable=" << enable);
 	linphone_call_params_enable_low_bandwidth(mCallParams, enable ? TRUE : FALSE);
 }
 
 int CallParamsAPI::getMediaEncryption() const {
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CallParamsAPI::getMediaEncryption", "this=" << this);
 	return linphone_call_params_get_media_encryption(mCallParams);
 }
 
 void CallParamsAPI::setMediaEncryption(int encryption) {
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CallParamsAPI::setMediaEncryption", "this=" << this << "\t" << "encryption=" << encryption);
 	linphone_call_params_set_media_encryption(mCallParams, (LinphoneMediaEncryption)encryption);
 }
 
 PayloadTypeAPIPtr CallParamsAPI::getUsedAudioCodec() const {
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CallParamsAPI::getUsedAudioCodec", "this=" << this);
 	return getFactory()->getPayloadType(linphone_call_params_get_used_audio_codec(mCallParams));
 }
 
 PayloadTypeAPIPtr CallParamsAPI::getUsedVideoCodec() const {
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CallParamsAPI::getUsedVideoCodec", "this=" << this);
 	return getFactory()->getPayloadType(linphone_call_params_get_used_video_codec(mCallParams));
 }
 
 StringPtr CallParamsAPI::getRecordFile() const {
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CallParamsAPI::getRecordFile", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_call_params_get_record_file(mCallParams));
 }
 
 void CallParamsAPI::setRecordFile(StringPtr const &file) {
 	CORE_MUTEX
-	
+
 	FBLOG_DEBUG("CallParamsAPI::setRecordFile", "this=" << this << "\t" << "file=" << file);
 	linphone_call_params_set_record_file(mCallParams, STRING_TO_CHARPTR(file));
 }
@@ -166,7 +168,6 @@ void CallParamsAPI::enableVideo(bool enable) {
 
 	FBLOG_DEBUG("CallParamsAPI::enableVideo", "this=" << this << "\t" << "enable=" << enable);
 	return linphone_call_params_enable_video(mCallParams, enable ? TRUE : FALSE);
-
 }
 
 bool CallParamsAPI::videoEnabled() const {
@@ -174,7 +175,6 @@ bool CallParamsAPI::videoEnabled() const {
 
 	FBLOG_DEBUG("CallParamsAPI::videoEnabled", "this=" << this);
 	return linphone_call_params_video_enabled(mCallParams) == TRUE ? true : false;
-
 }
 
 CallParamsAPIPtr CallParamsAPI::copy() const {
@@ -185,5 +185,19 @@ CallParamsAPIPtr CallParamsAPI::copy() const {
 	ret->own();
 	return ret;
 }
-	
+
+void CallParamsAPI::addCustomHeader(StringPtr const &headerName, StringPtr const &headerValue) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CallParamsAPI::addCustomHeader", "this=" << this << "\n" << "headerName=" << headerName << "\n" << "headerValue=" << headerValue);
+	linphone_call_params_add_custom_header(mCallParams, STRING_TO_CHARPTR(headerName), STRING_TO_CHARPTR(headerValue));
+}
+
+StringPtr CallParamsAPI::getCustomHeader(StringPtr const &headerName) const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CallParamsAPI::getCustomHeader", "this=" << this << "\n" << "headerName=" << headerName);
+	return CHARPTR_TO_STRING(linphone_call_params_get_custom_header(mCallParams, STRING_TO_CHARPTR(headerName)));
+}
+
 } // LinphoneWeb
