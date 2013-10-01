@@ -1,3 +1,6 @@
 .DS_store
+*~
+.kdev4/
+*.kdev4
 /Sign/
 /Rootfs/
