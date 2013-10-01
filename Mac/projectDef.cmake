@@ -96,6 +96,7 @@ function (create_rootfs PROJNAME)
 		libmediastreamer_base.3.${DEPENDENCY_EXT}
 		libmediastreamer_voip.3.${DEPENDENCY_EXT}
 		libogg.0.${DEPENDENCY_EXT}
+		libopus.0.${DEPENDENCY_EXT}
 		libortp.9.${DEPENDENCY_EXT}
 		libspeex.1.${DEPENDENCY_EXT}
 		libspeexdsp.1.${DEPENDENCY_EXT}
