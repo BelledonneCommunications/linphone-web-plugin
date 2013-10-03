@@ -382,9 +382,9 @@ function (create_documentation_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 				COMMAND ${CMAKE_COMMAND} -E remove_directory ${JSWRAPPER_DIR}
 				COMMAND ${CMAKE_COMMAND} -E make_directory ${JSWRAPPER_DIR}
 				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/README.md ${FB_PKG_DIR}
-				COMMAND pushd ${JSWRAPPER_DIR} && lp-gen-wrappers --output javascript --project linphoneweb ${DOCUMENTATION} && popd
-				COMMAND pushd ${FB_PKG_DIR} && jsdoc --recurse --destination ${PROJECT_NAME}-${PROJVERSION} ${JSWRAPPER_DIR} ${FB_PKG_DIR}/README.md && popd
-				COMMAND pushd ${FB_PKG_DIR} && zip -r ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-doc.zip ${PROJECT_NAME}-${PROJVERSION} && popd
+				COMMAND cd ${JSWRAPPER_DIR} && lp-gen-wrappers --output javascript --project linphoneweb ${DOCUMENTATION}
+				COMMAND cd ${FB_PKG_DIR} && jsdoc --recurse --destination ${PROJECT_NAME}-${PROJVERSION} ${JSWRAPPER_DIR} ${FB_PKG_DIR}/README.md
+				COMMAND cd ${FB_PKG_DIR} && zip -r ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-doc.zip ${PROJECT_NAME}-${PROJVERSION}
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_DOC_PACKAGE_SUFFIX} ${PROJDEP})
 	MESSAGE("-- Successfully added documentation package step")
