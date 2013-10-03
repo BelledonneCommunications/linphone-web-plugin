@@ -28,11 +28,15 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Src/[^.]*.h
     [^.]*.cmake
     )
-	
+
 file (GLOB TRANSFERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Transfers/[^.]*.cpp
     Transfers/[^.]*.h
     Transfers/[^.]*.cmake
+    )
+
+file (GLOB DOCUMENTATION
+    Rootfs/share/doc/linphone-[^.]*.[^.]*.[^.]*/xml/[^.]*.xml
     )
 
 include_directories(${PLUGIN_INCLUDE_DIRS})
@@ -46,10 +50,7 @@ SET_SOURCE_FILES_PROPERTIES(
         GENERATED 1
     )
 
-SOURCE_GROUP(Generated FILES
-    ${GENERATED}
-    )
-	
+SOURCE_GROUP(Generated FILES ${GENERATED})
 SOURCE_GROUP(Transfers FILES ${TRANSFERS})
 
 SET(SOURCES

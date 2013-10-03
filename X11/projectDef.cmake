@@ -28,6 +28,7 @@ FILE(GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 	X11/[^.]*.cmake
 )
 
+
 # GCC options
 ADD_DEFINITIONS(
 	-DPLUGIN_SHAREDIR="${PLUGIN_SHAREDIR}"
@@ -352,5 +353,46 @@ create_signed_crx(${PLUGIN_NAME}
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	${PLUGIN_NAME}${FB_CRX_PACKAGE_SUFFIX}
+)
+###############################################################################
+
+
+###############################################################################
+# Documentation Package
+if (NOT FB_DOC_PACKAGE_SUFFIX)
+	SET(FB_DOC_PACKAGE_SUFFIX _DOC)
+endif()
+
+function (create_documentation_package PROJNAME PROJVERSION OUTDIR PROJDEP)
+	SET(DOC_SOURCES
+		${FB_OUT_DIR}/Rootfs.updated
+		${CMAKE_CURRENT_SOURCE_DIR}/README.md
+		${DOCUMENTATION}
+	)
+
+	SET(FB_PKG_DIR ${FB_OUT_DIR}/Doc)
+	SET(JSWRAPPER_DIR ${FB_PKG_DIR}/jswrapper)
+
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_DOC_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-doc.zip)
+	SET_TARGET_PROPERTIES(${PROJNAME}${FB_DOC_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-doc.zip
+				DEPENDS ${DOC_SOURCES}
+				COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
+				COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
+				COMMAND ${CMAKE_COMMAND} -E remove_directory ${JSWRAPPER_DIR}
+				COMMAND ${CMAKE_COMMAND} -E make_directory ${JSWRAPPER_DIR}
+				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/README.md ${FB_PKG_DIR}
+				COMMAND pushd ${JSWRAPPER_DIR} && lp-gen-wrappers --output javascript --project linphoneweb ${DOCUMENTATION} && popd
+				COMMAND pushd ${FB_PKG_DIR} && jsdoc --recurse --destination ${PROJECT_NAME}-${PROJVERSION} ${JSWRAPPER_DIR} ${FB_PKG_DIR}/README.md && popd
+				COMMAND pushd ${FB_PKG_DIR} && zip -r ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-doc.zip ${PROJECT_NAME}-${PROJVERSION} && popd
+	)
+	ADD_DEPENDENCIES(${PROJNAME}${FB_DOC_PACKAGE_SUFFIX} ${PROJDEP})
+	MESSAGE("-- Successfully added documentation package step")
+endfunction(create_documentation_package)
+
+create_documentation_package(${PLUGIN_NAME}
+	${FBSTRING_PLUGIN_VERSION}
+	${FB_OUT_DIR}
+	${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 )
 ###############################################################################
