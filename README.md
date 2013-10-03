@@ -100,7 +100,7 @@ License
 -------
 
 	Linphone Web - Web plugin of Linphone an audio/video SIP phone
-	Copyright (C) 2012  Yann Diorcet <yann.diorcet@linphone.org>	
+	Copyright (C) 2012-2013 Belledonne Communications
 	
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
