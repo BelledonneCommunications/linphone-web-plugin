@@ -318,6 +318,12 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/libopus-0.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/libortp-9.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
