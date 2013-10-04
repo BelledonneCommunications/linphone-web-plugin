@@ -137,6 +137,7 @@ void PresenceModelAPI::initProxy() {
 	registerProperty("timestamp", make_property(this, &PresenceModelAPI::getTimestamp));
 	registerProperty("nbPersons", make_property(this, &PresenceModelAPI::nbPersons));
 	registerProperty("nbServices", make_property(this, &PresenceModelAPI::nbServices));
+	registerProperty("activity", make_property(this, &PresenceModelAPI::getActivity));
 
 	if (isConst()) {
 		registerProperty("basicStatus", make_property(this, &PresenceModelAPI::getBasicStatus));
@@ -146,14 +147,18 @@ void PresenceModelAPI::initProxy() {
 		registerProperty("contact", make_property(this, &PresenceModelAPI::getContact, &PresenceModelAPI::setContact));
 	}
 
-	registerMethod("getActivity", make_method(this, &PresenceModelAPI::getActivity));
 	registerMethod("getNote", make_method(this, &PresenceModelAPI::getNote));
+	registerMethod("getNthActivity", make_method(this, &PresenceModelAPI::getNthActivity));
 	registerMethod("getNthPerson", make_method(this, &PresenceModelAPI::getNthPerson));
 	registerMethod("getNthService", make_method(this, &PresenceModelAPI::getNthService));
 
 	if (!isConst()) {
+		registerMethod("addActivity", make_method(this, &PresenceModelAPI::addActivity));
+		registerMethod("addNote", make_method(this, &PresenceModelAPI::addNote));
 		registerMethod("addPerson", make_method(this, &PresenceModelAPI::addPerson));
 		registerMethod("addService", make_method(this, &PresenceModelAPI::addService));
+		registerMethod("clearActivities", make_method(this, &PresenceModelAPI::clearActivities));
+		registerMethod("clearNotes", make_method(this, &PresenceModelAPI::clearNotes));
 		registerMethod("clearPersons", make_method(this, &PresenceModelAPI::clearPersons));
 		registerMethod("clearServices", make_method(this, &PresenceModelAPI::clearServices));
 		registerMethod("setActivity", make_method(this, &PresenceModelAPI::setActivity));
