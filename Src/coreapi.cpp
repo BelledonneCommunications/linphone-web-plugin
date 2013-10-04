@@ -2222,6 +2222,7 @@ void CoreAPI::addFriend(FriendAPIPtr const &f) {
 
 	FBLOG_DEBUG("CoreAPI::addFriend", "this=" << this << "\t" << "f=" << f);
 	linphone_core_add_friend(mCore, f->getRef());
+	f->disOwn();
 }
 
 void CoreAPI::removeFriend(FriendAPIPtr const &f) {
