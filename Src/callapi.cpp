@@ -52,7 +52,7 @@ void CallAPI::initProxy() {
 	registerProperty("currentQuality", FB::make_property(this, &CallAPI::getCurrentQuality));
 	registerProperty("dir", FB::make_property(this, &CallAPI::getDir));
 	registerProperty("duration", FB::make_property(this, &CallAPI::getDuration));
-	registerProperty("echoConcellationEnabled", FB::make_property(this, &CallAPI::echoCancellationEnabled, &CallAPI::enableEchoCancellation));
+	registerProperty("echoCancellationEnabled", FB::make_property(this, &CallAPI::echoCancellationEnabled, &CallAPI::enableEchoCancellation));
 	registerProperty("echoLimiterEnabled", FB::make_property(this, &CallAPI::echoLimiterEnabled, &CallAPI::enableEchoLimiter));
 	registerProperty("playVolume", FB::make_property(this, &CallAPI::getPlayVolume));
 	registerProperty("reason", FB::make_property(this, &CallAPI::getReason));
