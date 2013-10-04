@@ -67,7 +67,7 @@ void CallAPI::initProxy() {
 	registerProperty("state", FB::make_property(this, &CallAPI::getState));
 	registerProperty("transferState", FB::make_property(this, &CallAPI::getTransferState));
 	registerProperty("videoStats", FB::make_property(this, &CallAPI::getVideoStats));
-	registerProperty("inConference", FB::make_property(this, &CallAPI::inConference));
+	registerProperty("isInConference", FB::make_property(this, &CallAPI::inConference));
 
 	registerMethod("askedToAutoanswer", make_method(this, &CallAPI::askedToAutoanswer));
 	registerMethod("hasTransferPending", make_method(this, &CallAPI::hasTransferPending));

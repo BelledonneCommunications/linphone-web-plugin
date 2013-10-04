@@ -52,8 +52,8 @@ void ProxyConfigAPI::initProxy() {
 	registerProperty("error", make_property(this, &ProxyConfigAPI::getError));
 	registerProperty("expires", make_property(this, &ProxyConfigAPI::getExpires, &ProxyConfigAPI::setExpires));
 	registerProperty("identity", make_property(this, &ProxyConfigAPI::getIdentity, &ProxyConfigAPI::setIdentity));
+	registerProperty("isRegistered", make_property(this, &ProxyConfigAPI::isRegistered));
 	registerProperty("publishEnabled", make_property(this, &ProxyConfigAPI::publishEnabled, &ProxyConfigAPI::enablePublish));
-	registerProperty("registered", make_property(this, &ProxyConfigAPI::isRegistered));
 	registerProperty("registerEnabled", make_property(this, &ProxyConfigAPI::registerEnabled, &ProxyConfigAPI::enableRegister));
 	registerProperty("route", make_property(this, &ProxyConfigAPI::getRoute, &ProxyConfigAPI::setRoute));
 	registerProperty("serverAddr", make_property(this, &ProxyConfigAPI::getServerAddr, &ProxyConfigAPI::setServerAddr));
