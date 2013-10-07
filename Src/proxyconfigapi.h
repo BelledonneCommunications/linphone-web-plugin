@@ -67,9 +67,6 @@ public:
 	StringPtr getSipSetup() const;
 	void setSipSetup(StringPtr const &sip_setup);
 
-	bool isRegistered() const;
-	//getSipSetupContext
-
 	void setServerAddr(StringPtr const &server_addr);
 	StringPtr getServerAddr() const;
 

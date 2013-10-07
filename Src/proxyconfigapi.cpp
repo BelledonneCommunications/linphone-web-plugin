@@ -52,13 +52,11 @@ void ProxyConfigAPI::initProxy() {
 	registerProperty("error", make_property(this, &ProxyConfigAPI::getError));
 	registerProperty("expires", make_property(this, &ProxyConfigAPI::getExpires, &ProxyConfigAPI::setExpires));
 	registerProperty("identity", make_property(this, &ProxyConfigAPI::getIdentity, &ProxyConfigAPI::setIdentity));
-	registerProperty("isRegistered", make_property(this, &ProxyConfigAPI::isRegistered));
 	registerProperty("publishEnabled", make_property(this, &ProxyConfigAPI::publishEnabled, &ProxyConfigAPI::enablePublish));
 	registerProperty("registerEnabled", make_property(this, &ProxyConfigAPI::registerEnabled, &ProxyConfigAPI::enableRegister));
 	registerProperty("route", make_property(this, &ProxyConfigAPI::getRoute, &ProxyConfigAPI::setRoute));
 	registerProperty("serverAddr", make_property(this, &ProxyConfigAPI::getServerAddr, &ProxyConfigAPI::setServerAddr));
 	registerProperty("sipSetup", make_property(this, &ProxyConfigAPI::getSipSetup, &ProxyConfigAPI::setSipSetup));
-	//sipSetupContext
 	registerProperty("state", make_property(this, &ProxyConfigAPI::getState));
 
 	registerMethod("edit", make_method(this, &ProxyConfigAPI::edit));
@@ -76,13 +74,6 @@ ProxyConfigAPI::~ProxyConfigAPI() {
 			linphone_proxy_config_destroy(mProxyConfig);
 		}
 	}
-}
-
-bool ProxyConfigAPI::isRegistered() const {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("ProxyConfigAPI::isRegistered", "this=" << this);
-	return linphone_proxy_config_is_registered(mProxyConfig) == TRUE ? true : false;
 }
 
 CoreAPIPtr ProxyConfigAPI::getCore() const {
