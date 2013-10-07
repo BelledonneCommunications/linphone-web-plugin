@@ -52,7 +52,6 @@ public:
 	int sync();
 	bool hasSection(StringPtr const &section) const;
 	void cleanSection(StringPtr const &section);
-	bool needsCommit() const;
 
 	float getFloat(StringPtr const &section, StringPtr const &key, float defaultValue) const;
 	int getInt(StringPtr const &section, StringPtr const &key, int defaultValue) const;

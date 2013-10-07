@@ -57,7 +57,6 @@ void LpConfigAPI::initProxy() {
 	registerMethod("sync", make_method(this, &LpConfigAPI::sync));
 	registerMethod("hasSection", make_method(this, &LpConfigAPI::hasSection));
 	registerMethod("cleanSection", make_method(this, &LpConfigAPI::cleanSection));
-	registerMethod("needsCommit", make_method(this, &LpConfigAPI::needsCommit));
 
 	registerMethod("getFloat", make_method(this, &LpConfigAPI::getFloat));
 	registerMethod("getInt", make_method(this, &LpConfigAPI::getInt));
@@ -105,13 +104,6 @@ void LpConfigAPI::cleanSection(StringPtr const &section) {
 
 	FBLOG_DEBUG("LpConfigAPI::cleanSection", "this=" << this << "\t" << "section=" << section);
 	lp_config_clean_section(mLpConfig, STRING_TO_CHARPTR(section));
-}
-
-bool LpConfigAPI::needsCommit() const {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("LpConfigAPI::needsCommit", "this=" << this);
-	return (lp_config_needs_commit(mLpConfig) == TRUE) ? true : false;
 }
 
 
