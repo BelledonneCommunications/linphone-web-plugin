@@ -135,8 +135,9 @@ PresenceModelAPI::PresenceModelAPI(int acttype, StringPtr const &description, St
 
 void PresenceModelAPI::initProxy() {
 	registerProperty("timestamp", make_property(this, &PresenceModelAPI::getTimestamp));
-	registerProperty("nbPersons", make_property(this, &PresenceModelAPI::nbPersons));
-	registerProperty("nbServices", make_property(this, &PresenceModelAPI::nbServices));
+	registerProperty("nbActivities", make_property(this, &PresenceModelAPI::getNbActivities));
+	registerProperty("nbPersons", make_property(this, &PresenceModelAPI::getNbPersons));
+	registerProperty("nbServices", make_property(this, &PresenceModelAPI::getNbServices));
 	registerProperty("activity", make_property(this, &PresenceModelAPI::getActivity));
 
 	if (isConst()) {
@@ -224,11 +225,11 @@ int PresenceModelAPI::setActivity(int acttype, StringPtr const &description) {
 	return linphone_presence_model_set_activity(mModel, (LinphonePresenceActivityType)acttype, STRING_TO_CHARPTR(description));
 }
 
-int PresenceModelAPI::nbActivities() const {
+int PresenceModelAPI::getNbActivities() const {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("PresenceModelAPI::nbActivities", "this=" << this);
-	return linphone_presence_model_nb_activities(mModel);
+	FBLOG_DEBUG("PresenceModelAPI::getNbActivities", "this=" << this);
+	return linphone_presence_model_get_nb_activities(mModel);
 }
 
 PresenceActivityAPIPtr PresenceModelAPI::getNthActivity(int idx) const {
@@ -275,11 +276,11 @@ int PresenceModelAPI::clearNotes() {
 	return linphone_presence_model_clear_notes(mModel);
 }
 
-int PresenceModelAPI::nbServices() const {
+int PresenceModelAPI::getNbServices() const {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("PresenceModelAPI::nbServices", "this=" << this);
-	return linphone_presence_model_nb_services(mModel);
+	FBLOG_DEBUG("PresenceModelAPI::getNbServices", "this=" << this);
+	return linphone_presence_model_get_nb_services(mModel);
 }
 
 PresenceServiceAPIPtr PresenceModelAPI::getNthService(int idx) const {
@@ -304,11 +305,11 @@ int PresenceModelAPI::clearServices() {
 	return linphone_presence_model_clear_services(mModel);
 }
 
-int PresenceModelAPI::nbPersons() const {
+int PresenceModelAPI::getNbPersons() const {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("PresenceModelAPI::nbPersons", "this=" << this);
-	return linphone_presence_model_nb_persons(mModel);
+	FBLOG_DEBUG("PresenceModelAPI::getNbPersons", "this=" << this);
+	return linphone_presence_model_get_nb_persons(mModel);
 }
 
 PresencePersonAPIPtr PresenceModelAPI::getNthPerson(int idx) const {
@@ -414,9 +415,9 @@ PresencePersonAPI::PresencePersonAPI(StringPtr const &id) :
 
 void PresencePersonAPI::initProxy() {
 	registerProperty("id", make_property(this, &PresencePersonAPI::getId, &PresencePersonAPI::setId));
-	registerProperty("nbActivities", make_property(this, &PresencePersonAPI::nbActivities));
-	registerProperty("nbActivitiesNotes", make_property(this, &PresencePersonAPI::nbActivitiesNotes));
-	registerProperty("nbNotes", make_property(this, &PresencePersonAPI::nbNotes));
+	registerProperty("nbActivities", make_property(this, &PresencePersonAPI::getNbActivities));
+	registerProperty("nbActivitiesNotes", make_property(this, &PresencePersonAPI::getNbActivitiesNotes));
+	registerProperty("nbNotes", make_property(this, &PresencePersonAPI::getNbNotes));
 
 	registerMethod("addActivity", make_method(this, &PresencePersonAPI::addActivity));
 	registerMethod("addActivitiesNote", make_method(this, &PresencePersonAPI::addActivitiesNote));
@@ -451,11 +452,11 @@ StringPtr PresencePersonAPI::getId() const {
 	return CHARPTR_TO_STRING(linphone_presence_person_get_id(mPerson));
 }
 
-int PresencePersonAPI::nbActivities() const {
+int PresencePersonAPI::getNbActivities() const {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("PresencePersonAPI::nbActivities", "this=" << this);
-	return linphone_presence_person_nb_activities(mPerson);
+	FBLOG_DEBUG("PresencePersonAPI::getNbActivities", "this=" << this);
+	return linphone_presence_person_get_nb_activities(mPerson);
 }
 
 PresenceActivityAPIPtr PresencePersonAPI::getNthActivity(int idx) const {
@@ -480,11 +481,11 @@ int PresencePersonAPI::clearActivities() {
 	return linphone_presence_person_clear_activities(mPerson);
 }
 
-int PresencePersonAPI::nbNotes() const {
+int PresencePersonAPI::getNbNotes() const {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("PresencePersonAPI::nbNotes", "this=" << this);
-	return linphone_presence_person_nb_notes(mPerson);
+	FBLOG_DEBUG("PresencePersonAPI::getNbNotes", "this=" << this);
+	return linphone_presence_person_get_nb_notes(mPerson);
 }
 
 PresenceNoteAPIPtr PresencePersonAPI::getNthNote(int idx) const {
@@ -509,11 +510,11 @@ int PresencePersonAPI::clearNotes() {
 	return linphone_presence_person_clear_notes(mPerson);
 }
 
-int PresencePersonAPI::nbActivitiesNotes() const {
+int PresencePersonAPI::getNbActivitiesNotes() const {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("PresencePersonAPI::nbActivitiesNotes", "this=" << this);
-	return linphone_presence_person_nb_activities_notes(mPerson);
+	FBLOG_DEBUG("PresencePersonAPI::getNbActivitiesNotes", "this=" << this);
+	return linphone_presence_person_get_nb_activities_notes(mPerson);
 }
 
 PresenceNoteAPIPtr PresencePersonAPI::getNthActivitiesNote(int idx) const {
@@ -561,7 +562,7 @@ void PresenceServiceAPI::initProxy() {
 	registerProperty("basicStatus", make_property(this, &PresenceServiceAPI::getBasicStatus, &PresenceServiceAPI::setBasicStatus));
 	registerProperty("contact", make_property(this, &PresenceServiceAPI::getContact, &PresenceServiceAPI::setContact));
 	registerProperty("id", make_property(this, &PresenceServiceAPI::getId, &PresenceServiceAPI::setId));
-	registerProperty("nbNotes", make_property(this, &PresenceServiceAPI::nbNotes));
+	registerProperty("nbNotes", make_property(this, &PresenceServiceAPI::getNbNotes));
 
 	registerMethod("addNote", make_method(this, &PresenceServiceAPI::addNote));
 	registerMethod("clearNotes", make_method(this, &PresenceServiceAPI::clearNotes));
@@ -618,11 +619,11 @@ StringPtr PresenceServiceAPI::getContact() const {
 	return CHARPTR_TO_STRING(linphone_presence_service_get_contact(mService));
 }
 
-int PresenceServiceAPI::nbNotes() const {
+int PresenceServiceAPI::getNbNotes() const {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("PresenceServiceAPI::nbNotes", "this=" << this);
-	return linphone_presence_service_nb_notes(mService);
+	FBLOG_DEBUG("PresenceServiceAPI::getNbNotes", "this=" << this);
+	return linphone_presence_service_get_nb_notes(mService);
 }
 
 PresenceNoteAPIPtr PresenceServiceAPI::getNthNote(int idx) const {

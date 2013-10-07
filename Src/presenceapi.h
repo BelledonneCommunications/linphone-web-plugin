@@ -87,7 +87,7 @@ public:
 	void setContact(StringPtr const &contact);
 	PresenceActivityAPIPtr getActivity() const;
 	int setActivity(int acttype, StringPtr const &description);
-	int nbActivities() const;
+	int getNbActivities() const;
 	PresenceActivityAPIPtr getNthActivity(int idx) const;
 	int addActivity(PresenceActivityAPIPtr const &activity);
 	int clearActivities();
@@ -95,11 +95,11 @@ public:
 	int addNote(StringPtr const &content, StringPtr const &lang);
 	int clearNotes();
 
-	int nbServices() const;
+	int getNbServices() const;
 	PresenceServiceAPIPtr getNthService(int idx) const;
 	int addService(PresenceServiceAPIPtr const &service);
 	int clearServices();
-	int nbPersons() const;
+	int getNbPersons() const;
 	PresencePersonAPIPtr getNthPerson(int idx) const;
 	int addPerson(PresencePersonAPIPtr const &person);
 	int clearPersons();
@@ -151,15 +151,15 @@ public:
 
 	StringPtr getId() const;
 	void setId(StringPtr const &id);
-	int nbActivities() const;
+	int getNbActivities() const;
 	PresenceActivityAPIPtr getNthActivity(int idx) const;
 	int addActivity(PresenceActivityAPIPtr const &activity);
 	int clearActivities();
-	int nbNotes() const;
+	int getNbNotes() const;
 	PresenceNoteAPIPtr getNthNote(int idx) const;
 	int addNote(PresenceNoteAPIPtr const &note);
 	int clearNotes();
-	int nbActivitiesNotes() const;
+	int getNbActivitiesNotes() const;
 	PresenceNoteAPIPtr getNthActivitiesNote(int idx) const;
 	int addActivitiesNote(PresenceNoteAPIPtr const &note);
 	int clearActivitiesNotes();
@@ -190,7 +190,7 @@ public:
 	int getBasicStatus() const;
 	void setContact(StringPtr const &contact);
 	StringPtr getContact() const;
-	int nbNotes() const;
+	int getNbNotes() const;
 	PresenceNoteAPIPtr getNthNote(int idx) const;
 	int addNote(PresenceNoteAPIPtr const &note);
 	int clearNotes();
