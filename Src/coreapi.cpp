@@ -247,7 +247,7 @@ void CoreAPI::initProxy() {
 	REGISTER_PROPERTY_FILE(CoreAPI, "zrtpSecretsFile", getZrtpSecretsFile, setZrtpSecretsFile);
 
 	// Initiator bindings
-	registerMethod("getFileManager", make_method(this, &CoreAPI::getFileManager));
+	registerProperty("fileManager", make_property(this, &CoreAPI::getFileManager));
 	registerMethod("newProxyConfig", make_method(this, &CoreAPI::newProxyConfig));
 	registerMethod("newAuthInfo", make_method(this, &CoreAPI::newAuthInfo));
 	registerMethod("newAddress", make_method(this, &CoreAPI::newAddress));
