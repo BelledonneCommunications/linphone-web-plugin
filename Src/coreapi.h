@@ -213,8 +213,6 @@ public:
 	int getMtu() const;
 	void setStunServer(StringPtr const &server);
 	StringPtr getStunServer() const;
-	void setRelayAddr(StringPtr const &addr);
-	StringPtr getRelayAddr() const;
 	void setNatAddress(StringPtr const &address);
 	StringPtr getNatAddress() const;
 	void setGuessHostname(bool guess);
@@ -319,10 +317,6 @@ public:
 	bool echoLimiterEnabled() const;
 	void setStaticPictureFps(float fps);
 	float getStaticPictureFps() const;
-	StringPtr getUserAgentName() const;
-	void setUserAgentName(StringPtr const &name);
-	StringPtr getUserAgentVersion() const;
-	void setUserAgentVersion(StringPtr const &version);
 	AddressAPIPtr interpretUrl(StringPtr const &url) const;
 
 	// File

@@ -94,7 +94,7 @@ void CoreAPI::initProxy() {
 	registerProperty("version", make_property(this, &CoreAPI::getVersion));
 	registerProperty("pluginVersion", make_property(this, &CoreAPI::getPluginVersion));
 
-	// Propery
+	// Property
 	registerProperty("magic", make_property(this, &CoreAPI::getMagic, &CoreAPI::setMagic));
 
 	// Core helpers
@@ -190,6 +190,7 @@ void CoreAPI::initProxy() {
 	registerProperty("proxyConfigList", make_property(this, &CoreAPI::getProxyConfigList));
 	registerProperty("defaultProxy", make_property(this, &CoreAPI::getDefaultProxy, &CoreAPI::setDefaultProxy));
 	registerMethod("refreshRegisters", make_method(this, &CoreAPI::refreshRegisters));
+	registerProperty("primaryContact", make_property(this, &CoreAPI::getPrimaryContact, &CoreAPI::setPrimaryContact));
 
 	// CallLog bindings
 	registerMethod("clearCallLogs", make_method(this, &CoreAPI::clearCallLogs));
@@ -207,7 +208,6 @@ void CoreAPI::initProxy() {
 	registerProperty("uploadPtime", make_property(this, &CoreAPI::getUploadPtime, &CoreAPI::setUploadPtime));
 	registerProperty("mtu", make_property(this, &CoreAPI::getMtu, &CoreAPI::setMtu));
 	registerProperty("stunServer", make_property(this, &CoreAPI::getStunServer, &CoreAPI::setStunServer));
-	registerProperty("relayAddr", make_property(this, &CoreAPI::getRelayAddr, &CoreAPI::setRelayAddr));
 	registerProperty("natAddress", make_property(this, &CoreAPI::getNatAddress, &CoreAPI::setNatAddress));
 	registerProperty("guessHostname", make_property(this, &CoreAPI::getGuessHostname, &CoreAPI::setGuessHostname));
 	registerProperty("ipv6Enabled", make_property(this, &CoreAPI::ipv6Enabled, &CoreAPI::enableIpv6));
@@ -217,10 +217,10 @@ void CoreAPI::initProxy() {
 	registerProperty("videoDscp", make_property(this, &CoreAPI::getVideoDscp, &CoreAPI::setVideoDscp));
 	registerProperty("sipPort", make_property(this, &CoreAPI::getSipPort, &CoreAPI::setSipPort));
 	registerProperty("sipTransports", make_property(this, &CoreAPI::getSipTransports, &CoreAPI::setSipTransports));
-	registerProperty("adaptiveRateControl", make_property(this, &CoreAPI::adaptiveRateControlEnabled, &CoreAPI::enableAdaptiveRateControl));
+	registerProperty("adaptiveRateControlEnabled", make_property(this, &CoreAPI::adaptiveRateControlEnabled, &CoreAPI::enableAdaptiveRateControl));
 	registerProperty("networkReachable", make_property(this, &CoreAPI::isNetworkReachable, &CoreAPI::setNetworkReachable));
-	registerProperty("audioAdaptiveJittcomp", make_property(this, &CoreAPI::audioAdaptiveJittcompEnabled, &CoreAPI::enableAudioAdaptiveJittcomp));
-	registerProperty("videoAdaptiveJittcomp", make_property(this, &CoreAPI::videoAdaptiveJittcompEnabled, &CoreAPI::enableVideoAdaptiveJittcomp));
+	registerProperty("audioAdaptiveJittcompEnabled", make_property(this, &CoreAPI::audioAdaptiveJittcompEnabled, &CoreAPI::enableAudioAdaptiveJittcomp));
+	registerProperty("videoAdaptiveJittcompEnabled", make_property(this, &CoreAPI::videoAdaptiveJittcompEnabled, &CoreAPI::enableVideoAdaptiveJittcomp));
 	registerProperty("audioJittcomp", make_property(this, &CoreAPI::getAudioJittcomp, &CoreAPI::setAudioJittcomp));
 	registerProperty("videoJittcomp", make_property(this, &CoreAPI::getVideoJittcomp, &CoreAPI::setVideoJittcomp));
 	registerProperty("firewallPolicy", make_property(this, &CoreAPI::getFirewallPolicy, &CoreAPI::setFirewallPolicy));
@@ -273,7 +273,7 @@ void CoreAPI::initProxy() {
 	registerMethod("addFriend", make_method(this, &CoreAPI::addFriend));
 	registerMethod("getFriendByAddress", make_method(this, &CoreAPI::getFriendByAddress));
 	registerMethod("getFriendByRefKey", make_method(this, &CoreAPI::getFriendByRefKey));
-	registerMethod("getFriendList", make_method(this, &CoreAPI::getFriendList));
+	registerProperty("friendList", make_property(this, &CoreAPI::getFriendList));
 	registerMethod("rejectSubscriber", make_method(this, &CoreAPI::rejectSubscriber));
 	registerMethod("removeFriend", make_method(this, &CoreAPI::removeFriend));
 
@@ -285,8 +285,6 @@ void CoreAPI::initProxy() {
 	registerProperty("echoCancellationEnabled", make_property(this, &CoreAPI::echoCancellationEnabled, &CoreAPI::enableEchoCancellation));
 	registerProperty("echoLimiterEnabled", make_property(this, &CoreAPI::echoLimiterEnabled, &CoreAPI::enableEchoLimiter));
 	registerProperty("staticPictureFps", make_property(this, &CoreAPI::getStaticPictureFps, &CoreAPI::setStaticPictureFps));
-	registerProperty("userAgentName", make_property(this, &CoreAPI::getUserAgentName, &CoreAPI::setUserAgentName));
-	registerProperty("userAgentVersion", make_property(this, &CoreAPI::getUserAgentVersion, &CoreAPI::setUserAgentVersion));
 	registerMethod("interpretUrl", make_method(this, &CoreAPI::interpretUrl));
 
 	// Log
@@ -1650,22 +1648,6 @@ StringPtr CoreAPI::getStunServer() const {
 	return CHARPTR_TO_STRING(linphone_core_get_stun_server(mCore));
 }
 
-void CoreAPI::setRelayAddr(StringPtr const &addr) {
-	FB_ASSERT_CORE
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CoreAPI::setRelayAddr", "this=" << this << "\t" << "addr=" << addr);
-	linphone_core_set_relay_addr(mCore, STRING_TO_CHARPTR(addr));
-}
-
-StringPtr CoreAPI::getRelayAddr() const {
-	FB_ASSERT_CORE
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CoreAPI::getRelayAddr", "this=" << this);
-	return CHARPTR_TO_STRING(linphone_core_get_relay_addr(mCore));
-}
-
 void CoreAPI::setNatAddress(StringPtr const &address) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
@@ -2368,50 +2350,6 @@ float CoreAPI::getStaticPictureFps() const {
 	return linphone_core_get_static_picture_fps(mCore);
 }
 
-StringPtr CoreAPI::getUserAgentName() const {
-	FB_ASSERT_CORE
-	CORE_MUTEX
-	
-	FBLOG_DEBUG("CoreAPI::getUserAgentName", "this=" << this);
-	FBLOG_ERROR("CoreAPI::getUserAgentName", "NOT IMPLEMENTED");
-	//TODO
-	//return CHARPTR_TO_STRING(linphone_core_get_user_agent_name(mCore));
-	return StringPtr();
-}
-
-void CoreAPI::setUserAgentName(StringPtr const &name) {
-	FB_ASSERT_CORE
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CoreAPI::setUserAgentName", "this=" << this << "\t" << "name=" << name);
-	FBLOG_ERROR("CoreAPI::setUserAgentName", "NOT IMPLEMENTED");
-	//TODO
-	//linphone_core_set_user_agent_name(mCore, name);
-	return;
-}
-
-StringPtr CoreAPI::getUserAgentVersion() const {
-	FB_ASSERT_CORE
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CoreAPI::getUserAgentVersion", "this=" << this);
-	FBLOG_ERROR("CoreAPI::getUserAgentVersion", "NOT IMPLEMENTED");
-	//TODO
-	//return CHARPTR_TO_STRING(linphone_core_get_user_agent_version(mCore));
-	return StringPtr();
-}
-
-void CoreAPI::setUserAgentVersion(StringPtr const &version) {
-	FB_ASSERT_CORE
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CoreAPI::setUserAgentVersion", "this=" << this << "\t" << "version=" << version);
-	FBLOG_ERROR("CoreAPI::setUserAgentVersion", "NOT IMPLEMENTED");
-	//TODO
-	//linphone_core_set_user_agent_version(mCore, name);
-	return;
-}
-	
 AddressAPIPtr CoreAPI::interpretUrl(StringPtr const &url) const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
