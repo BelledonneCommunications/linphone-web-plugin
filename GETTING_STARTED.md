@@ -2,13 +2,17 @@
 
 ## Loading and initializing the plugin
 
+### Accessing the enumeration values from the plugin
+
+To access the enumeration values that need to be passed as arguments and/or returned by the plugin methods and properties you need to include the *linphone.js* file that is delivered in the SDK package in your project.
+
 ### Loading the plugin
 
 **TODO**
 
 ### Initializing the plugin
 
-To initialize the plugin, call the init() method of the core object:
+To initialize the plugin, call the [init method of the core object](external-LinphoneCore.html#init):
 
 	core.init();
 
