@@ -67,7 +67,6 @@ void CallAPI::initProxy() {
 	registerProperty("state", FB::make_property(this, &CallAPI::getState));
 	registerProperty("transferState", FB::make_property(this, &CallAPI::getTransferState));
 	registerProperty("videoStats", FB::make_property(this, &CallAPI::getVideoStats));
-	registerProperty("isInConference", FB::make_property(this, &CallAPI::inConference));
 
 	registerMethod("askedToAutoanswer", make_method(this, &CallAPI::askedToAutoanswer));
 	registerMethod("hasTransferPending", make_method(this, &CallAPI::hasTransferPending));
@@ -248,13 +247,6 @@ CallStatsAPIPtr CallAPI::getVideoStats() const {
 
 	FBLOG_DEBUG("CallAPI::getVideoStats", "this=" << this);
 	return getFactory()->getCallStats(linphone_call_get_video_stats(mCall));
-}
-
-bool CallAPI::inConference() const {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("CallAPI::inConference", "this=" << this);
-	return linphone_call_is_in_conference(mCall) == TRUE ? true : false;
 }
 
 bool CallAPI::cameraEnabled() const {
