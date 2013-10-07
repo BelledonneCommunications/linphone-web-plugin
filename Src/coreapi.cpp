@@ -139,7 +139,7 @@ void CoreAPI::initProxy() {
 	registerMethod("addToConference", make_method(this, &CoreAPI::addToConference));
 	registerMethod("enterConference", make_method(this, &CoreAPI::enterConference));
 	registerProperty("conferenceSize", make_property(this, &CoreAPI::getConferenceSize));
-	registerMethod("isInConference", make_method(this, &CoreAPI::isInConference));
+	registerMethod("inConference", make_method(this, &CoreAPI::isInConference));
 	registerMethod("leaveConference", make_method(this, &CoreAPI::leaveConference));
 	registerMethod("removeFromConference", make_method(this, &CoreAPI::removeFromConference));
 	registerMethod("terminateConference", make_method(this, &CoreAPI::terminateConference));
