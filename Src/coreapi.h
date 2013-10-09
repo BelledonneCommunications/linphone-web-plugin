@@ -342,15 +342,17 @@ public:
 
 public: // Event helpers
 	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const StringPtr&));
-	FB_JSAPI_EVENT(callStateChanged, 4, (CoreAPIPtr, CallAPIPtr, const int&, const StringPtr&));
 	FB_JSAPI_EVENT(registrationStateChanged, 4, (CoreAPIPtr, ProxyConfigAPIPtr, const int&, const StringPtr&));
+	FB_JSAPI_EVENT(callStateChanged, 4, (CoreAPIPtr, CallAPIPtr, const int&, const StringPtr&));
+	FB_JSAPI_EVENT(notifyPresenceReceived, 2, (CoreAPIPtr, FriendAPIPtr));
+	FB_JSAPI_EVENT(newSubscriptionRequested, 3 ,(CoreAPIPtr, FriendAPIPtr, const StringPtr&));
 	FB_JSAPI_EVENT(authInfoRequested, 3, (CoreAPIPtr, const StringPtr&, const StringPtr&));
+	FB_JSAPI_EVENT(callLogUpdated, 2, (CoreAPIPtr, CallLogAPIPtr));
+	FB_JSAPI_EVENT(dtmfReceived, 3, (CoreAPIPtr, CallAPIPtr, const int&));
 	FB_JSAPI_EVENT(referReceived, 2, (CoreAPIPtr, const StringPtr&));
-	FB_JSAPI_EVENT(displayStatus, 2, (CoreAPIPtr, const StringPtr&));
-	FB_JSAPI_EVENT(displayMessage, 2, (CoreAPIPtr, const StringPtr&));
-	FB_JSAPI_EVENT(displayWarning, 2, (CoreAPIPtr, const StringPtr&));
-	FB_JSAPI_EVENT(displayUrl, 3, (CoreAPIPtr, const StringPtr&, const StringPtr&));
-	FB_JSAPI_EVENT(show, 1, (CoreAPIPtr));
+	FB_JSAPI_EVENT(callEncryptionChanged, 4, (CoreAPIPtr, CallAPIPtr, const bool&, const StringPtr&));
+	FB_JSAPI_EVENT(transferStateChanged, 3, (CoreAPIPtr, CallAPIPtr, const int&));
+	FB_JSAPI_EVENT(buddyInfoUpdated, 2, (CoreAPIPtr, FriendAPIPtr));
 
 
 public: // Internal Use
@@ -398,42 +400,42 @@ protected:
 	virtual void onGlobalStateChanged(LinphoneGlobalState gstate, const char *message);
 	virtual void onRegistrationStateChanged(LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message);
 	virtual void onCallStateChanged(LinphoneCall *call, LinphoneCallState cstate, const char *message);
-	virtual void onNotifyPresenceRecv(LinphoneFriend * lf);
-	virtual void onNewSubscriptionRequest(LinphoneFriend *lf, const char *url);
+	virtual void onNotifyPresenceReceived(LinphoneFriend * lf);
+	virtual void onNewSubscriptionRequested(LinphoneFriend *lf, const char *url);
 	virtual void onAuthInfoRequested(const char *realm, const char *username);
 	virtual void onCallLogUpdated(LinphoneCallLog *newcl);
-	virtual void onTextReceived(LinphoneChatRoom *room, const LinphoneAddress *from, const char *message);
+	virtual void onMessageReceived(LinphoneChatRoom *room, LinphoneChatMessage *message);
 	virtual void onDtmfReceived(LinphoneCall *call, int dtmf);
 	virtual void onReferReceived(const char *refer_to);
-	virtual void onBuddyInfoUpdated(LinphoneFriend *lf);
-	//virtual void onNotifyRecv(LinphoneCall *call, const char *from, const char *event);
-	virtual void onDisplayStatus(const char *message);
-	virtual void onDisplayMessage(const char *message);
-	virtual void onDisplayWarning(const char *message);
-	virtual void onDisplayUrl(const char *message, const char *url);
-	virtual void onShow();
 	virtual void onCallEncryptionChanged(LinphoneCall *call, bool_t on, const char *authentication_token);
+	virtual void onTransferStateChanged(LinphoneCall *call, LinphoneCallState state);
+	virtual void onBuddyInfoUpdated(LinphoneFriend *lf);
+	virtual void onCallStatsUpdated(LinphoneCall *call, const LinphoneCallStats *stats);
+	virtual void onInfoReceived(LinphoneCall *call, const LinphoneInfoMessage *info);
+	virtual void onSubscriptionStateChanged(LinphoneEvent *event, LinphoneSubscriptionState state);
+	virtual void onNotifyReceived(LinphoneEvent *event, const char *notified_event, const LinphoneContent *body);
+	virtual void onPublishStateChanged(LinphoneEvent *event, LinphonePublishState state);
 
 private:
 	// C Wrappers
 	static void wrapper_global_state_changed(LinphoneCore *lc, LinphoneGlobalState gstate, const char *message);
 	static void wrapper_registration_state_changed(LinphoneCore *lc, LinphoneProxyConfig *cfg, LinphoneRegistrationState cstate, const char *message);
 	static void wrapper_call_state_changed(LinphoneCore *lc, LinphoneCall *call, LinphoneCallState cstate, const char *message);
-	static void wrapper_notify_presence_recv(LinphoneCore *lc, LinphoneFriend * lf);
-	static void wrapper_new_subscription_request(LinphoneCore *lc, LinphoneFriend *lf, const char *url);
+	static void wrapper_notify_presence_received(LinphoneCore *lc, LinphoneFriend * lf);
+	static void wrapper_new_subscription_requested(LinphoneCore *lc, LinphoneFriend *lf, const char *url);
 	static void wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username);
 	static void wrapper_call_log_updated(LinphoneCore *lc, LinphoneCallLog *newcl);
-	static void wrapper_text_received(LinphoneCore *lc, LinphoneChatRoom *room, const LinphoneAddress *from, const char *message);
+	static void wrapper_message_received(LinphoneCore *lc, LinphoneChatRoom *room, LinphoneChatMessage *message);
 	static void wrapper_dtmf_received(LinphoneCore *lc, LinphoneCall *call, int dtmf);
 	static void wrapper_refer_received(LinphoneCore *lc, const char *refer_to);
-	static void wrapper_buddy_info_updated(LinphoneCore *lc, LinphoneFriend *lf);
-	//static void wrapper_notify_recv(LinphoneCore *lc, LinphoneCall *call, const char *from, const char *event);
-	static void wrapper_display_status(LinphoneCore *lc, const char *message);
-	static void wrapper_display_message(LinphoneCore *lc, const char *message);
-	static void wrapper_display_warning(LinphoneCore *lc, const char *message);
-	static void wrapper_display_url(LinphoneCore *lc, const char *message, const char *url);
-	static void wrapper_show(LinphoneCore *lc);
 	static void wrapper_call_encryption_changed(LinphoneCore *lc, LinphoneCall *call, bool_t on, const char *authentication_token);
+	static void wrapper_transfer_state_changed(LinphoneCore *lc, LinphoneCall *call, LinphoneCallState state);
+	static void wrapper_buddy_info_updated(LinphoneCore *lc, LinphoneFriend *lf);
+	static void wrapper_call_stats_updated(LinphoneCore *lc, LinphoneCall *call, const LinphoneCallStats *stats);
+	static void wrapper_info_received(LinphoneCore *lc, LinphoneCall *call, const LinphoneInfoMessage *info);
+	static void wrapper_subscription_state_changed(LinphoneCore *lc, LinphoneEvent *event, LinphoneSubscriptionState state);
+	static void wrapper_notify_received(LinphoneCore *lc, LinphoneEvent *event, const char *notified_event, const LinphoneContent *body);
+	static void wrapper_publish_state_changed(LinphoneCore *lc, LinphoneEvent *event, LinphonePublishState state);
 };
 
 } // LinphoneWeb
