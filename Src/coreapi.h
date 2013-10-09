@@ -124,8 +124,8 @@ public:
 	int getRecLevel() const;
 	void setRingLevel(int level);
 	int getRingLevel() const;
-	void muteMic(bool muted);
-	bool isMicMuted() const;
+	void enableMic(bool muted);
+	bool micEnabled() const;
 	float getMicGainDb() const;
 	void setMicGainDb(float gain);
 	float getPlaybackGainDb() const;
@@ -133,8 +133,10 @@ public:
 
 	// Video functions
 	bool videoSupported() const;
-	void enableVideo(bool enable);
-	bool videoEnabled() const;
+	void enableVideoCapture(bool enable);
+	bool videoCaptureEnabled() const;
+	void enableVideoDisplay(bool enable);
+	bool videoDisplayEnabled() const;
 	void enableVideoPreview(bool enable);
 	bool videoPreviewEnabled() const;
 	void enableSelfView(bool enable);

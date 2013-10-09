@@ -148,7 +148,7 @@ void CoreAPI::initProxy() {
 	registerProperty("playLevel", make_property(this, &CoreAPI::getPlayLevel, &CoreAPI::setPlayLevel));
 	registerProperty("recLevel", make_property(this, &CoreAPI::getRecLevel, &CoreAPI::setRecLevel));
 	registerProperty("ringLevel", make_property(this, &CoreAPI::getRingLevel, &CoreAPI::setRingLevel));
-	registerProperty("muteMic", make_property(this, &CoreAPI::isMicMuted, &CoreAPI::muteMic));
+	registerProperty("micEnabled", make_property(this, &CoreAPI::micEnabled, &CoreAPI::enableMic));
 	registerProperty("micGainDb", make_property(this, &CoreAPI::getMicGainDb, &CoreAPI::setMicGainDb));
 	registerProperty("playbackGainDb", make_property(this, &CoreAPI::getPlaybackGainDb, &CoreAPI::setPlaybackGainDb));
 
@@ -156,7 +156,8 @@ void CoreAPI::initProxy() {
 	registerMethod("videoSupported", make_method(this, &CoreAPI::videoSupported));
 	registerProperty("videoPreviewEnabled", make_property(this, &CoreAPI::videoPreviewEnabled, &CoreAPI::enableVideoPreview));
 	registerProperty("selfViewEnabled", make_property(this, &CoreAPI::selfViewEnabled, &CoreAPI::enableSelfView));
-	registerProperty("videoEnabled", make_property(this, &CoreAPI::videoEnabled, &CoreAPI::enableVideo));
+	registerProperty("videoCaptureEnabled", make_property(this, &CoreAPI::videoCaptureEnabled, &CoreAPI::enableVideoCapture));
+	registerProperty("videoDisplayEnabled", make_property(this, &CoreAPI::videoDisplayEnabled, &CoreAPI::enableVideoDisplay));
 	registerProperty("nativePreviewWindowId", make_property(this, &CoreAPI::getNativePreviewWindowId, &CoreAPI::setNativePreviewWindowId));
 	registerProperty("nativeVideoWindowId", make_property(this, &CoreAPI::getNativeVideoWindowId, &CoreAPI::setNativeVideoWindowId));
 	registerProperty("usePreviewWindow", make_property(this, &CoreAPI::getUsePreviewWindow, &CoreAPI::setUsePreviewWindow));
@@ -830,20 +831,20 @@ int CoreAPI::getRingLevel() const {
 	return linphone_core_get_ring_level(mCore);
 }
 
-void CoreAPI::muteMic(bool muted) {
+void CoreAPI::enableMic(bool enable) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::muteMic", "this=" << this << "\t" << "muted=" << muted);
-	linphone_core_mute_mic(mCore, muted ? TRUE : FALSE);
+	FBLOG_DEBUG("CoreAPI::enableMic", "this=" << this << "\t" << "enable=" << enable);
+	linphone_core_enable_mic(mCore, enable ? TRUE : FALSE);
 }
 
-bool CoreAPI::isMicMuted() const {
+bool CoreAPI::micEnabled() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::isMicMuted", "this=" << this);
-	return linphone_core_is_mic_muted(mCore) == TRUE ? true : false;
+	FBLOG_DEBUG("CoreAPI::micEnabled", "this=" << this);
+	return linphone_core_mic_enabled(mCore) == TRUE ? true : false;
 }
 
 float CoreAPI::getMicGainDb() const {
@@ -891,20 +892,37 @@ bool CoreAPI::videoSupported() const {
 	FBLOG_DEBUG("CoreAPI::videoSupported", "this=" << this);
 	return linphone_core_video_supported(mCore) == TRUE ? true : false;
 }
-void CoreAPI::enableVideo(bool enable) {
+
+void CoreAPI::enableVideoCapture(bool enable) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::enableVideo", "this=" << this << "\t" << "enable=" << enable);
-	linphone_core_enable_video(mCore, enable ? TRUE : FALSE, enable ? TRUE : FALSE);
+	FBLOG_DEBUG("CoreAPI::enableVideoCapture", "this=" << this << "\t" << "enable=" << enable);
+	linphone_core_enable_video_capture(mCore, enable ? TRUE : FALSE);
 }
 
-bool CoreAPI::videoEnabled() const {
+bool CoreAPI::videoCaptureEnabled() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::videoEnabled", "this=" << this);
-	return linphone_core_video_enabled(mCore) == TRUE ? true : false;
+	FBLOG_DEBUG("CoreAPI::videoCaptureEnabled", "this=" << this);
+	return linphone_core_video_capture_enabled(mCore) == TRUE ? true : false;
+}
+
+void CoreAPI::enableVideoDisplay(bool enable) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::enableVideoDisplay", "this=" << this << "\t" << "enable=" << enable);
+	linphone_core_enable_video_display(mCore, enable ? TRUE : FALSE);
+}
+
+bool CoreAPI::videoDisplayEnabled() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::videoDisplayEnabled", "this=" << this);
+	return linphone_core_video_display_enabled(mCore) == TRUE ? true : false;
 }
 
 void CoreAPI::enableVideoPreview(bool enable) {
