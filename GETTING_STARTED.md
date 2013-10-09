@@ -63,8 +63,72 @@ Here is a simple javascript function to initiate an outgoing call:
 		var address = core.newAddress(addressStr);
 		if (address !== null) {
 			core.inviteAddress(address);
-			console.log("Call: " + address.asString());
 		}
 	}
 
 For more information about calls, look at the documentation of the [LinphoneAddress](external-LinphoneAddress.html) and [LinphoneCall](external-LinphoneCall.html) objects.
+
+### How to initiate an outgoing call with custom SIP headers?
+
+Here is an example showing the use of the custom SIP headers when initiating an outgoing call.
+
+	function callWithCustomHeaders(addressStr) {
+		var core = getCore();
+		var params = core.createDefaultCallParameters();
+		if (params !== null) {
+			params.addCustomHeader("Weather", "bad");
+			params.addCustomHeader("Working", "yes");
+			var headerValue = params.getCustomHeader("Weather"); // headerValue = "bad"
+		}
+		var address = core.newAddress(addressStr);
+		if (address !== null) {
+			core.inviteAddressWithParams(address, params);
+		}
+	}
+
+For more information about custom SIP headers, look at [LinphoneCallParams.addCustomHeader](external-LinphoneCallParams.html#addCustomHeader)
+and [LinphoneCallParams.getCustomHeader](external-LinphoneCallParams.html#getCustomHeader).
+
+### How to handle presence?
+
+Your own presence and the presence of your friends are handled by the [LinphonePresenceModel](external-LinphonePresenceModel.html) object.
+Some helper properties and methods are there to handle the basic cases of presence, that is to say having a single activity.
+
+For example to set your own presence to "on-the-phone":
+
+	function onThePhone() {
+		var core = getCore();
+		core.presenceModel.setActivity(linphone.PresenceActivityType.OnThePhone, null);
+	}
+
+The same can be done with more control by creating the whole presence model manually. Here is the same example but doing everything manually:
+
+	function onThePhone() {
+		var core = getCore();
+		var model = core.newPresenceModel();
+		var service = core.newPresenceService(null, linphone.PresenceBasicStatus.Closed, null);
+		model.addService(service);
+		var person = core.newPresencePerson(null);
+		var activity = core.newPresenceActivity(linphone.PresenceActivityType.OnThePhone, null);
+		person.addActivity(activity);
+		model.addPerson(person);
+		core.presenceModel = model;
+	}
+
+This is basically the same for the presence of your friends except that you cannot modify it.
+So you can access the presence information of a friend with some helper properties and methods:
+
+	function printFriendPresence(lf) {
+		var model = lf.presenceModel;
+		if (model !== null) {
+			console.log("Basic status: " + model.basicStatus);
+			console.log("Activity: " + model.activity);
+		} else {
+			console.log("Friend " + lf.name + " is offline.");
+		}
+	}
+
+But you can also explore the whole presence model manually. To see all the methods and properties to do this, look at the documentation of the
+[LinphonePresenceActivity](external-LinphonePresenceActivity.html), [LinphonePresenceModel](external-LinphonePresenceModel.html),
+[LinphonePresenceNote](external-LinphonePresenceNote.html), [LinphonePresencePerson](external-LinphonePresencePerson.html) and
+[LinphonePresenceService](external-LinphonePresenceService.html) objects.
