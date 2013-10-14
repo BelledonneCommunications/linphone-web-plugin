@@ -98,7 +98,9 @@ For example to set your own presence to "on-the-phone":
 
 	function onThePhone() {
 		var core = getCore();
-		core.presenceModel.setActivity(linphone.PresenceActivityType.OnThePhone, null);
+		var presenceModel = core.presenceModel;
+		presenceModel.setActivity(linphone.PresenceActivityType.OnThePhone, null);
+		core.presenceModel = presenceModel;
 	}
 
 The same can be done with more control by creating the whole presence model manually. Here is the same example but doing everything manually:
