@@ -9,6 +9,7 @@
 					<f n="libmediastreamer-base.3.dylib" p="33261"/>
 					<f n="libmediastreamer-voip.3.dylib" p="33261"/>
 					<f n="libogg.0.dylib" p="33261"/>
+					<f n="libopus.0.dylib" p="33261"/>
 					<f n="libortp.9.dylib" p="33261"/>
 					<f n="libspeex.1.dylib" p="33261"/>
 					<f n="libspeexdsp.1.dylib" p="33261"/>
