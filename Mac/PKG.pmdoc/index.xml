@@ -4,7 +4,7 @@
 		<organization>${FBSTRING_CompanyName}</organization>
 		<userSees ui="easy"/>
 		<min-target os="3"/>
-		<domain user="true" system="true"/>
+		<domain user="true"/>
 	</properties>
 	<distribution>
 		<versions min-spec="1.000000"/>
