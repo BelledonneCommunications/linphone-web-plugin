@@ -371,6 +371,7 @@ function (create_sdk_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 		${CMAKE_CURRENT_SOURCE_DIR}/GETTING_STARTED.md
 		${CMAKE_CURRENT_SOURCE_DIR}/Doc/plugin_specifics.js
 		${DOCUMENTATION}
+		${TUTORIALS}
 	)
 
 	SET(FB_PKG_DIR ${FB_OUT_DIR}/Sdk)
@@ -392,6 +393,8 @@ function (create_sdk_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Doc/plugin_specifics.js ${JSWRAPPER_DIR}/linphone/
 				COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/concat_files.py ${SDK_DIR}/linphone.js ${JSWRAPPER_DIR}/linphone/*.js
 				COMMAND cd ${SDK_DIR} && jsdoc --recurse --destination ${PROJECT_NAME}-${PROJVERSION}-doc ${JSWRAPPER_DIR} ${FB_PKG_DIR}/MAINPAGE.md
+				COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials ${SDK_DIR}/tutorials
+				COMMAND ${CMAKE_COMMAND} -E copy ${SDK_DIR}/linphone.js ${SDK_DIR}/tutorials/
 				COMMAND cd ${FB_PKG_DIR} && zip -r ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-sdk.zip ${PROJECT_NAME}-${PROJVERSION}-sdk
 	)
 	ADD_DEPENDENCIES(${PROJNAME}${FB_SDK_PACKAGE_SUFFIX} ${PROJDEP})

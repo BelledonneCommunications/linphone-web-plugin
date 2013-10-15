@@ -39,6 +39,12 @@ file (GLOB DOCUMENTATION
     Rootfs/share/doc/linphone-[^.]*.[^.]*.[^.]*/xml/[^.]*.xml
     )
 
+file (GLOB TUTORIALS
+    Doc/tutorials/README
+    Doc/tutorials/[^.]*.html
+    Doc/tutorials/[^.]*.js
+    )
+
 include_directories(${PLUGIN_INCLUDE_DIRS})
 include_directories(${FB_UTF8_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
