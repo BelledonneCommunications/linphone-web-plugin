@@ -169,7 +169,7 @@ function (create_rootfs PROJNAME)
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
 			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
 			COMMAND ${CMAKE_CHMOD} +w ${DIR_DEST}/${elem}
-			COMMAND ${CMAKE_CHRPATH} -c -r \\\$$ORIGIN ${DIR_DEST}/${elem} || echo "Error ignored"
+			COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${DIR_DEST}/${elem} || echo "Error ignored"
 			COMMAND ${CMAKE_CHMOD} -w ${DIR_DEST}/${elem}
 		)
 		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
