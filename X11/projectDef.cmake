@@ -93,7 +93,7 @@ function (create_rootfs PROJNAME)
 		libmediastreamer_base.${DEPENDENCY_EXT}.3
 		libmediastreamer_voip.${DEPENDENCY_EXT}.3
 		libogg.${DEPENDENCY_EXT}.0
-		libopus.${DEPENDENCY_EXT}.0.4.0
+		libopus.${DEPENDENCY_EXT}.0
 		libortp.${DEPENDENCY_EXT}.9
 		libspeex.${DEPENDENCY_EXT}.1
 		libspeexdsp.${DEPENDENCY_EXT}.1
