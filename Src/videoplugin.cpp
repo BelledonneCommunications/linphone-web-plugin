@@ -100,7 +100,7 @@ void VideoPlugin::shutdown() {
 /// as it could prevent your plugin class from getting destroyed properly.
 ///////////////////////////////////////////////////////////////////////////////
 FB::JSAPIPtr VideoPlugin::createJSAPI() {
-	FBLOG_DEBUG("VideoPlugin::createJSAPI", this);
+	FBLOG_DEBUG("VideoPlugin::createJSAPI", "this=" << this);
 	FactoryAPIPtr factory = boost::make_shared<FactoryAPI>(FB::ptr_cast<FB::PluginCore>(shared_from_this()), mWhiteBoard);
 	mVideo = factory->getVideo();
 	if (mWindow) {
@@ -121,7 +121,7 @@ bool VideoPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow *win) {
 	return false;
 }
 bool VideoPlugin::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *win) {
-	FBLOG_DEBUG("VideoPlugin::onWindowAttached", this);
+	FBLOG_DEBUG("VideoPlugin::onWindowAttached", "this=" << this << "\t" << "win=" << win);
 	mWindow = win;
 	if (mVideo) {
 		mVideo->setWindow(mWindow);
@@ -130,7 +130,7 @@ bool VideoPlugin::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *win
 }
 
 bool VideoPlugin::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *win) {
-	FBLOG_DEBUG("VideoPlugin::onWindowDetached", this);
+	FBLOG_DEBUG("VideoPlugin::onWindowDetached", "this=" << this << "\t" << "win=" << win);
 	mWindow = NULL;
 	if (mVideo) {
 		mVideo->setWindow(mWindow);
