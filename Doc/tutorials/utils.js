@@ -1,8 +1,9 @@
 /* config of the plugin with the links for downloads and the version of the plugin */
 function getConfig(){  
+	var version = '0.0.2.10';
 	var config = {
+		version : version,
 		files: {
-			version : '0.0.2.8',
 			'Windows' : {
 				'x86' : {
 					'Explorer' : {
