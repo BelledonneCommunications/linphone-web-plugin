@@ -53,6 +53,8 @@
 #include "siptransportsapi.h"
 #include "videopolicyapi.h"
 
+#include <mediastreamer2/mscommon.h>
+
 namespace LinphoneWeb {
 
 #ifndef WIN32
@@ -310,6 +312,11 @@ int CoreAPI::init(StringPtr const &config, StringPtr const &factory) {
 	if(mCore != NULL) {
 		return -1;
 	}
+
+	FileManagerAPIPtr fm = getFileManager();
+	FB::URI pluginsUri("internal:///lib/mediastreamer/plugins");
+	std::string pluginsDir = fm->uriToFile(pluginsUri);
+	ms_set_plugins_dir(pluginsDir.c_str());
 
 	// Initialize callback table
 	memset(&mVtable, 0, sizeof(LinphoneCoreVTable));

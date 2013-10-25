@@ -139,6 +139,16 @@ function (create_rootfs PROJNAME)
 			libxml2-2.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_BELLESIP)
+	IF(LW_USE_G729)
+		SET(ROOTFS_LIB_SOURCES
+			${ROOTFS_LIB_SOURCES}
+			libbcg729-0.${DEPENDENCY_EXT}
+		)
+		SET(ROOTFS_MS_PLUGINS_LIB_SOURCES
+			${ROOTFS_MS_PLUGINS_LIB_SOURCES}
+			libmsbcg729-0.${DEPENDENCY_EXT}
+		)
+	ENDIF(LW_USE_G729)
 
 	SET(ROOTFS_SHARE_SOURCES
 		linphone/rootca.pem
@@ -155,6 +165,17 @@ function (create_rootfs PROJNAME)
 	FOREACH(elem ${ROOTFS_LIB_SOURCES})
 		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/bin)
 		SET(DIR_DEST ${FB_ROOTFS_DIR})
+		GET_FILENAME_COMPONENT(path ${elem} PATH)
+		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
+			DEPENDS ${DIR_SRC}/${elem}
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
+			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+		)
+		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
+	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
+	FOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
+		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/mediastreamer/plugins)
+		SET(DIR_DEST ${FB_ROOTFS_DIR}/lib/mediastreamer/plugins)
 		GET_FILENAME_COMPONENT(path ${elem} PATH)
 		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
 			DEPENDS ${DIR_SRC}/${elem}
@@ -294,6 +315,20 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 ENDIF(LW_USE_BELLESIP)
+IF(LW_USE_G729)
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/libbcg729-0.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/lib/mediastreamer/plugins/libmsbcg729-0.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+ENDIF(LW_USE_G729)
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/liblinphone-5.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"

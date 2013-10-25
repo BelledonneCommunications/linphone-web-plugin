@@ -96,6 +96,9 @@
 								<File Id="libantlr3c" Source="$(var.BINSRC)/libantlr3c-0.dll" />
 								<File Id="libxml2" Source="$(var.BINSRC)/libxml2-2.dll" />
 								${ENDIF}
+								${IF LW_USE_G729}
+								<File Id="libbcg729" Source="$(var.BINSRC)/libbcg729-0.dll" />
+								${ENDIF}
 								<RegistryValue
 									Root="HKCU"
 									Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"
@@ -115,6 +118,45 @@
 										Value="${FBSTRING_PLUGIN_VERSION}"
 										KeyPath="yes" />
 								</Component>
+								<Directory Id="LibDir" Name="lib">
+									<Component Id="LibDirComp" Guid="*">
+										<RemoveFolder Id="RemoveLibDir" On="uninstall" />
+										<RegistryValue
+											Root="HKCU"
+											Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\LibDirComp"
+											Name="Uninstall"
+											Type="string"
+											Value="${FBSTRING_PLUGIN_VERSION}"
+											KeyPath="yes" />
+									</Component>
+									<Directory Id="LibMediastreamerDir" Name="mediastreamer">
+										<Component Id="LibMediastreamerDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6f">
+											<RemoveFolder Id="RemoveLibMediastreamerDir" On="uninstall" />
+											<RegistryValue
+												Root="HKCU"
+												Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\LibMediastreamerDirComp"
+												Name="Uninstall"
+												Type="string"
+												Value="${FBSTRING_PLUGIN_VERSION}"
+												KeyPath="yes" />
+										</Component>
+										<Directory Id="MsPluginsDir" Name="plugins">
+											<Component Id="MsPluginsDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6f">
+												<RemoveFolder Id="RemoveMsPluginsDir" On="uninstall" />
+												${IF LW_USE_G729}
+												<File Id="libmsbcg729" Source="$(var.BINSRC)/libmsbcg729-0.dll" />
+												${ENDIF}
+												<RegistryValue
+													Root="HKCU"
+													Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\MsPluginsDirComp"
+													Name="Uninstall"
+													Type="string"
+													Value="${FBSTRING_PLUGIN_VERSION}"
+													KeyPath="yes" />
+											</Component>
+										</Directory>
+									</Directory>
+								</Directory>
 								<Directory Id="ShareDir" Name="share">
 									<Component Id="ShareDirComp" Guid="*">
 										<RemoveFolder Id="RemoveShareDir" On="uninstall" />
