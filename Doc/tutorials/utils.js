@@ -1,68 +1,90 @@
-	/* Method to create callbacks */
-        function addEvent(obj, name, func){
-			var browser = searchString(getDataBrowser());
-            if (browser !== 'Explorer') {
-                obj.addEventListener(name, func, false); 
-            } else {
-                obj.attachEvent('on' + name, func);
-            }
-        }
-
+/* config of the plugin with the links for downloads and the version of the plugin */
 function getConfig(){  
-	var pluginVersion = '0.0.2.8';
 	var config = {
 		files: {
+			version : '0.0.2.8',
 			'Windows' : {
 				'x86' : {
-					'Explorer': {
-						file: 'http://web.linphone.org/downloads/linphone-web-' + pluginVersion + '-Win32.msi',
-						version: activeXPluginVersion
+					'Explorer' : {
+						file: 'http://web.linphone.org/downloads/linphone-web-' + version + '-Linux-x86.xpi',
+						icon: 'style/img/linphone.ico'
 					},
-					'DEFAULT' : 'http://web.linphone.org/downloads/linphone-web-' + pluginVersion + '-Win32.msi'
+					'DEFAULT' : 'http://web.linphone.org/downloads/linphone-web-' + version + '-Win32.msi'
 				},
 				'x86_64' : {
-					'Explorer': {
-						file: 'http://web.linphone.org/downloads/linphone-web-' + pluginVersion + '-Win32.msi',
-						version: activeXPluginVersion
+					'Explorer' : {
+						file: 'http://web.linphone.org/downloads/linphone-web-' + version + '-Linux-x86.xpi',
+						icon: 'style/img/linphone.ico'
 					},
-					'DEFAULT' : 'downloads/linphone-web-' + pluginVersion + '-Win32.msi'
+					'DEFAULT' : 'http://web.linphone.org/downloads/linphone-web-' + version + '-Win32.msi'
 				}
 			},
 			'Linux' : {
 				'x86' : {
 					'Firefox' : {
-						file: 'http://web.linphone.org/downloads/linphone-web-' + pluginVersion + '-Linux-x86.xpi',
+						file: 'http://web.linphone.org/downloads/linphone-web-' + version + '-Linux-x86.xpi',
 						icon: 'style/img/linphone.ico'
 					},
-					'DEFAULT' : 'downloads/linphone-web-' + pluginVersion + '-Linux-x86.tar.gz'
+					'DEFAULT' : 'http://web.linphone.org/downloads/linphone-web-' + version + '-Linux-x86.tar.gz'
 				}, 
 				'x86_64' : {
 					'Firefox' : {
-						file: 'http://web.linphone.org/downloads/linphone-web-' + pluginVersion + '-Linux-x86_64.xpi',
+						file: 'http://web.linphone.org/downloads/linphone-web-' + version + '-Linux-x86_64.xpi',
 						icon: 'style/img/linphone.ico'
 					},
-					'DEFAULT' : 'downloads/linphone-web-' + pluginVersion + '-Linux-x86_64.tar.gz'
+					'DEFAULT' : 'http://web.linphone.org/downloads/linphone-web-' + version + '-Linux-x86_64.tar.gz'
 				}
 			},
 			'Mac' : {
 				'x86' : {
 					'Firefox' : {
-						file: 'http://web.linphone.org/downloads/linphone-web-' + pluginVersion + '-Mac-x86.xpi',
+						file: 'http://web.linphone.org/downloads/linphone-web-' + version + '-Mac-x86.xpi',
 						icon: 'style/img/linphone.ico'
 					},
-					'DEFAULT' : 'http://web.linphone.org/downloads/linphone-web-' + pluginVersion + '-Mac-x86.pkg'
+					'DEFAULT' : 'http://web.linphone.org/downloads/linphone-web-' + version + '-Mac-x86.pkg'
 				}, 
 				'x86_64' : {
 					'Firefox' : {
-						file: 'http://web.linphone.org/downloads/linphone-web-' + pluginVersion + '-Mac-x86.xpi',
+						file: 'http://web.linphone.org/downloads/linphone-web-' + version + '-Mac-x86.xpi',
 						icon: 'style/img/linphone.ico'
 					},
-					'DEFAULT' : 'http://web.linphone.org/downloads/linphone-web-' + pluginVersion + '-Mac-x86.pkg'
+					'DEFAULT' : 'http://web.linphone.org/downloads/linphone-web-' + version + '-Mac-x86.pkg'
 				}
 			}
 		}
 	};
 	return config;
+}
+
+
+/* Method to create callbacks */
+function addEvent(obj, name, func){
+	var browser = searchString(getDataBrowser());
+    if (browser !== 'Explorer') {
+        obj.addEventListener(name, func, false); 
+    } else {
+        obj.attachEvent('on' + name, func);
+    }
+}
+
+/* Function that display some text in a html element*/
+function updateStatus(id,value){
+	document.getElementById(id).innerHTML= value;
+}
+
+/* Method to set the link for downloaded the correct version of the plugin */
+function setPluginLink(config,det){
+	config.file = {};
+	
+	if (typeof config.files[det.os] !== 'undefined') {
+		if (typeof config.files[det.os][det.arch][det.browser] !== 'undefined') {
+			config.file.description = config.files[det.os][det.browser];
+			config.file.browser = det.browser;
+		} else {
+			config.file.description = config.files[det.os][det.arch].DEFAULT;
+			config.file.browser = 'DEFAULT';
+		}
+	}
 }
 
 function getDataBrowser(){
@@ -166,13 +188,16 @@ function browserDetect() {
 	var object = {
 		browser : null,
 		version : null ,
-		os : null
+		os : null,
+		arch : null
 	};
+
 	object.browser = searchString(dataBrowser) || "An unknown browser";
 	object.version = searchVersion(navigator.userAgent)
 		|| searchVersion(navigator.appVersion)
 		|| "an unknown version";
 	object.os = searchString(dataOS) || "an unknown OS";
+	object.arch = searchArch();
 	
 	return object;
 }
@@ -188,6 +213,15 @@ function searchString(data) {
 		}
 		else if (dataProp)
 			return data[i].identity;
+	}
+}
+
+function searchArch() {
+	var lcua = navigator.userAgent.toLowerCase();
+	if(lcua.indexOf("linux x86_64") != -1 || lcua.indexOf("win64") != -1) {
+		return "x86_64";
+	} else {
+		return "x86";
 	}
 }
 
@@ -220,10 +254,6 @@ function outdated(actual, plugin) {
 		}
 	}
 	return false;
-}
-
-function getCore(name){
-	return document.getElementById(name);
 }
 
 function detect(config,core) {

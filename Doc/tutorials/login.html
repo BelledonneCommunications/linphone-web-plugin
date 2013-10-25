@@ -31,7 +31,7 @@
 			core.defaultProxy = proxy; /*set to default proxy*/
         }
         
-		function loadHandler(){
+		function loadCore(){
 			var core = getCore();
 			core.init();
 				
@@ -47,16 +47,31 @@
 	        core.iterateEnabled = true;
 		}
 	        
-		/* Callback that display call states */
+		/* Callback that display registration states */
 		function onRegistrationStateChanged(event, proxy, state, message){
+			updateStatus('statusR',message);
         	console.log(message);
         }
+        
+        /* Hnadler function */
+        function onRegistration(form1){
+			registration(document.form1.username.value,document.form1.password.value,document.form1.address.value);
+		}
     </script>
     
 </head>
 <body>
 	<object id="core" type="application/x-linphone-web" width="0" height="0">
-	 	<param name="onload" value='main'>
+	 	<param name="onload" value='loadCore'>
 	</object>
+	
+	<form name="form1">
+		<p id="Registration"> 1. Registration</p>
+		<div>Username : <input id="username" type="text" value="" /></div>
+		<div>Password : <input id="password" type="password" value=""/></div>
+		<div>Server : <input id="address" type="text" value="" /></div>
+		<input type="button" OnClick="onRegistration(form1)" value="Register">
+		<div> Status : <span id="statusR">No registration</span></div>
+	</form>
 </body>
 </html>

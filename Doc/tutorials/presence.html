@@ -47,10 +47,12 @@
         	friend.subscribesEnabled = true;  /*configure this friend to emit SUBSCRIBE message after being added to LinphoneCore*/
 			friend.incSubscribePolicy = linphone.SubscribePolicy.Accept;  /* Accept incoming subscription request for this friend*/
 			core.addFriend(friend); /* add my friend to the buddy list, initiate SUBSCRIBE message*/
+			
         }
         
         function printFriendPresence(core, friend){
         	var model = friend.presenceModel;
+        	updateStatus('statusF', model.activity);
         	if(model !== null){
         		console.log("Basic status: " + model.basicStatus);
 				console.log("Activity: " + model.activity);
@@ -65,6 +67,7 @@
 			var presenceModel = core.presenceModel;
 			presenceModel.setActivity(activity, null); /*set my status with my activity*/
 			core.presenceModel = presenceModel; /*set the new presence model*/
+			updateStatus('statusM',presenceModel.activity);
 		}
 		
 		function main(){
@@ -86,15 +89,29 @@
 	             
 		}
 
+		/* Callbacks */
 		function onRegistrationStateChanged(event, proxy, state, message){
+			updateStatus('statusR',message);
         	console.log(message);
         }
         function onNotifyPresenceReceived(core, friend){
         	printFriendPresence(core,friend);
         }
         function onNewSubscriptionRequested(core, friend, url){
-        	console.log();
         }
+        
+        /* Handler function */
+      	function onRegistration(form1){
+			registration(document.form1.username.value,document.form1.password.value,document.form1.address.value);
+		}
+		
+		function onAddFriend(form2){
+			addFriend(document.form2.address.value);
+		}
+
+		function onPresenceChanged(form3){
+			changeActivity(document.form3.presence.value);
+		}  
     </script>
     
 </head>
@@ -102,5 +119,37 @@
 	<object id="core" type="application/x-linphone-web" width="0" height="0">
 	 	<param name="onload" value='main'>
 	</object>
+	
+	<form name="form1">
+		<p id="Registration"> 1. Registration</p>
+		<div>Username : <input id="username" type="text" value="" /></div>
+		<div>Password : <input id="password" type="password" value=""/></div>
+		<div>Server : <input id="address" type="text" value="" /></div>
+		<input type="button" OnClick="onRegistration(form1)" value="Register">
+		<div> Status : <span id="statusR">No registration</span></div>
+	</form>
+	
+	<form class ="form" name="form2">
+		<p id="Friend"> 2. Add a friend</p>
+		<div>Friend address : <input id="address" type="text" value="sip:" /></div>
+		<input type="button" OnClick="onAddFriend(form2)" value="Add">
+	</form>
+	
+	<form class ="form" name="form3">
+		<p id="Presence">3. Presence : </p>
+		<div>Change your presence status: 
+			<select id="presence" size="1">
+				<option value='0'>Offline</option>
+				<option value="1" selected="selected">Online</option>
+				<option value="3">Away</option>
+				<option value="13">On the phone</option>
+				<option value="17">Playing</option>
+				<option value="8">In transit</option>
+			</select>		
+		</div>
+		<input type="button" OnClick="onPresenceChanged(form2)" value="Change">
+		<div> Friend Status : <span id="statusF">No status</span></div>
+		<div> My Status : <span id="statusM">No status</span></div>
+	</form>
 </body>
 </html>
