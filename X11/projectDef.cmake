@@ -79,6 +79,7 @@ IF(NOT DEFINED CMAKE_CHMOD)
 	SET(CMAKE_CHMOD chmod)
 ENDIF(NOT DEFINED CMAKE_CHMOD)
 
+
 ###############################################################################
 # Create Rootfs
 if (NOT FB_ROOTFS_SUFFIX)
@@ -196,10 +197,11 @@ function (create_rootfs PROJNAME)
 	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_OUT_DIR}/Rootfs.updated)
 	SET_TARGET_PROPERTIES(${PROJNAME}${FB_ROOTFS_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 	ADD_DEPENDENCIES(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
-	MESSAGE("-- Successfully added Rootfs step")
+	MESSAGE("-- Successfully added Rootfs creation step")
 endfunction(create_rootfs)
 ###############################################################################
 
+get_core_rootfs(${PLUGIN_NAME})
 create_rootfs(${PLUGIN_NAME})
 
 # Add rpath to generated library
