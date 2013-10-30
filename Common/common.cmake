@@ -2,55 +2,6 @@
 
 find_package(Java)
 
-###############################################################################
-# Get Core Rootfs tarball
-if (NOT FB_CORE_ROOTFS_SUFFIX)
-	SET(FB_CORE_ROOTFS_SUFFIX _CoreRootFS)
-endif()
-
-function (get_core_rootfs PROJNAME OUTDIR)
-	SET(CORE_ROOTFS_GZTARBALL ${OUTDIR}/linphone-web-rootfs.tar.gz)
-	SET(CORE_ROOTFS_TARBALL ${OUTDIR}/linphone-web-rootfs.tar)
-	if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs)
-		FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs)
-	endif()
-	if (NOT EXISTS ${CORE_ROOTFS_GZTARBALL})
-		message("-- Downloading core rootfs")
-		FILE(DOWNLOAD ${CORE_ROOTFS_URL} ${CORE_ROOTFS_GZTARBALL} SHOW_PROGRESS STATUS CORE_ROOTFS_DL_STATUS)
-		list(GET CORE_ROOTFS_DL_STATUS 0 CORE_ROOTFS_DL_STATUS_CODE)
-		if (${CORE_ROOTFS_DL_STATUS_CODE} EQUAL 0)
-			message("     Successful")
-		else()
-			list(GET CORE_ROOTFS_DL_STATUS 1 CORE_ROOTFS_DL_STATUS_MSG)
-			message(FATAL_ERROR "     Failed: ${CORE_ROOTFS_DL_STATUS_CODE} ${CORE_ROOTFS_DL_STATUS_MSG}")
-		endif()
-	endif()
-
-	if (WIN32)
-		ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/Rootfs.VERSION
-			WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs
-			COMMAND ${CMAKE_COMMAND} -E remove -f *
-			COMMAND ${CMAKE_COMMAND} -E 7z x ${CORE_ROOTFS_GZTARBALL}
-			COMMAND ${CMAKE_COMMAND} -E 7z x -o. ${CORE_ROOTFS_TARBALL}
-			COMMAND ${CMAKE_COMMAND} -E remove ${CORE_ROOTFS_TARBALL}
-			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/VERSION ${OUTDIR}/Rootfs.VERSION
-		)
-	else()
-		ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/Rootfs.VERSION
-			WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs
-			COMMAND ${CMAKE_COMMAND} -E remove -f *
-			COMMAND ${CMAKE_COMMAND} -E tar xvzf ${CORE_ROOTFS_GZTARBALL}
-			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/VERSION ${OUTDIR}/Rootfs.VERSION
-		)
-	endif()
-
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CORE_ROOTFS_SUFFIX} ALL DEPENDS ${OUTDIR}/Rootfs.VERSION)
-	SET_TARGET_PROPERTIES(${PROJNAME}${FB_CORE_ROOTFS_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
-	ADD_DEPENDENCIES(${PROJNAME} ${PROJNAME}${FB_CORE_ROOTFS_SUFFIX})
-	MESSAGE("-- Successfully added Core Rootfs extration step")
-endfunction(get_core_rootfs)
-###############################################################################
-
 if (NOT FB_XPI_SIGNED_SUFFIX)
 	set (FB_XPI_SIGNED_SUFFIX _XPI_signed)
 endif()
