@@ -86,7 +86,7 @@ if (NOT FB_ROOTFS_SUFFIX)
 	SET(FB_ROOTFS_SUFFIX _RootFS)
 endif()
 
-function (create_rootfs PROJNAME)
+function (create_rootfs PROJNAME OUTDIR)
 	# Define components
 	SET(ROOTFS_LIB_SOURCES
 		libjpeg.${DEPENDENCY_EXT}.8
@@ -169,7 +169,7 @@ function (create_rootfs PROJNAME)
 
 	# Set Rootfs sources
 	SET(ROOTFS_SOURCES
-		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
+		${OUTDIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
 	)
 
 	FOREACH(elem ${ROOTFS_LIB_SOURCES})
@@ -212,22 +212,22 @@ function (create_rootfs PROJNAME)
 		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_SHARE_SOURCES})
 
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_OUT_DIR}/Rootfs.updated 
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/Rootfs.updated 
 		DEPENDS ${ROOTFS_SOURCES}
-		COMMAND ${CMAKE_COMMAND} -E copy ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT} ${FB_ROOTFS_DIR}/
+		COMMAND ${CMAKE_COMMAND} -E copy ${OUTDIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT} ${FB_ROOTFS_DIR}/
 
-		COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/Rootfs.updated
+		COMMAND ${CMAKE_COMMAND} -E touch ${OUTDIR}/Rootfs.updated
 	)
 	
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_OUT_DIR}/Rootfs.updated)
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${OUTDIR}/Rootfs.updated)
 	SET_TARGET_PROPERTIES(${PROJNAME}${FB_ROOTFS_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 	ADD_DEPENDENCIES(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
 	MESSAGE("-- Successfully added Rootfs creation step")
 endfunction(create_rootfs)
 ###############################################################################
 
-get_core_rootfs(${PLUGIN_NAME})
-create_rootfs(${PLUGIN_NAME})
+get_core_rootfs(${PLUGIN_NAME} ${FB_OUT_DIR})
+create_rootfs(${PLUGIN_NAME} ${FB_OUT_DIR})
 
 # Add rpath to generated library
 SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-rpath,'\$ORIGIN/${PLUGIN_SHAREDIR}'" )

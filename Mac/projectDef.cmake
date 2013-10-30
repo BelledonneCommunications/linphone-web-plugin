@@ -89,7 +89,7 @@ if (NOT FB_ROOTFS_SUFFIX)
 	SET(FB_ROOTFS_SUFFIX _RootFS)
 endif()
 
-function (create_rootfs PROJNAME)
+function (create_rootfs PROJNAME OUTDIR)
 	# Define components
 	SET(ROOTFS_LIB_SOURCES
 		liblinphone.5.${DEPENDENCY_EXT}
@@ -169,11 +169,11 @@ function (create_rootfs PROJNAME)
 
 	# Set Rootfs sources
 	SET(ROOTFS_SOURCES
-		${FB_BUNDLE_DIR}/${FBSTRING_PluginFileName}
+		${OUTDIR}/${FBSTRING_PluginFileName}
 	)
 	FOREACH(elem ${ROOTFS_LIB_SOURCES})
 		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib)
-		SET(DIR_DEST ${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR})
+		SET(DIR_DEST ${OUTDIR}/${PLUGIN_SHAREDIR})
 		GET_FILENAME_COMPONENT(path ${elem} PATH)
 		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
 			DEPENDS ${DIR_SRC}/${elem}
@@ -184,7 +184,7 @@ function (create_rootfs PROJNAME)
 	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
 	FOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
 		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/mediastreamer/plugins)
-		SET(DIR_DEST ${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins)
+		SET(DIR_DEST ${OUTDIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins)
 		GET_FILENAME_COMPONENT(path ${elem} PATH)
 		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
 			DEPENDS ${DIR_SRC}/${elem}
@@ -195,7 +195,7 @@ function (create_rootfs PROJNAME)
 	ENDFOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
 	FOREACH(elem ${ROOTFS_SHARE_SOURCES})
 		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share)
-		SET(DIR_DEST ${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/share)
+		SET(DIR_DEST ${OUTDIR}/${PLUGIN_SHAREDIR}/share)
 		GET_FILENAME_COMPONENT(path ${elem} PATH)
 		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
 			DEPENDS ${DIR_SRC}/${elem}
@@ -210,8 +210,8 @@ function (create_rootfs PROJNAME)
 		DEPENDS ${ROOTFS_SOURCES}
 		
 		# Change rpath
-		COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/
-		COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/ ${FB_BUNDLE_DIR}/${FBSTRING_PluginFileName}
+		COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${OUTDIR}/${PLUGIN_SHAREDIR}/
+		COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${OUTDIR}/${PLUGIN_SHAREDIR}/ ${OUTDIR}/${FBSTRING_PluginFileName}
 
 		COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/Rootfs.updated
 	)
@@ -223,8 +223,8 @@ function (create_rootfs PROJNAME)
 endfunction(create_rootfs)
 ###############################################################################
 
-get_core_rootfs(${PLUGIN_NAME})
-create_rootfs(${PLUGIN_NAME})
+get_core_rootfs(${PLUGIN_NAME} ${FB_BUNDLE_DIR})
+create_rootfs(${PLUGIN_NAME} ${FB_BUNDLE_DIR})
 
 ###############################################################################
 # XPI Package
