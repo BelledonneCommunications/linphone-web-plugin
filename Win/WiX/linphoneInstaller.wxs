@@ -130,7 +130,7 @@
 											KeyPath="yes" />
 									</Component>
 									<Directory Id="LibMediastreamerDir" Name="mediastreamer">
-										<Component Id="LibMediastreamerDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6f">
+										<Component Id="LibMediastreamerDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc70">
 											<RemoveFolder Id="RemoveLibMediastreamerDir" On="uninstall" />
 											<RegistryValue
 												Root="HKCU"
@@ -141,7 +141,7 @@
 												KeyPath="yes" />
 										</Component>
 										<Directory Id="MsPluginsDir" Name="plugins">
-											<Component Id="MsPluginsDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6f">
+											<Component Id="MsPluginsDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc71">
 												<RemoveFolder Id="RemoveMsPluginsDir" On="uninstall" />
 												${IF LW_USE_G729}
 												<File Id="libmsbcg729" Source="$(var.BINSRC)/libmsbcg729-0.dll" />
@@ -248,6 +248,9 @@
 			<ComponentGroupRef Id="PluginDLLGroup"/>
 			<ComponentRef Id="MainLibraries"/>
 			<ComponentRef Id="LinphoneWebDirComp"/>
+			<ComponentRef Id="LibDirComp"/>
+			<ComponentRef Id="LibMediastreamerDirComp"/>
+			<ComponentRef Id="MsPluginsDirComp"/>
 			<ComponentRef Id="ShareDirComp"/>
 			<ComponentRef Id="ShareLinphoneDirComp"/>
 			<ComponentRef Id="ShareImagesDirComp"/>
