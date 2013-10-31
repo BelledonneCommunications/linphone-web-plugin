@@ -195,7 +195,7 @@ function (create_rootfs PROJNAME OUTDIR)
 		)
 		SET(ROOTFS_MS_PLUGINS_LIB_SOURCES
 			${ROOTFS_MS_PLUGINS_LIB_SOURCES}
-			libmsbcg729.0.${DEPENDENCY_EXT}
+			libmsbcg729.0.so
 		)
 	ENDIF(LW_USE_G729)
 	IF(LW_USE_X264)
@@ -205,7 +205,7 @@ function (create_rootfs PROJNAME OUTDIR)
 		)
 		SET(ROOTFS_MS_PLUGINS_LIB_SOURCES
 			${ROOTFS_MS_PLUGINS_LIB_SOURCES}
-			libmsx264.0.${DEPENDENCY_EXT}
+			libmsx264.0.so
 		)
 	ENDIF(LW_USE_X264)
 
