@@ -44,11 +44,17 @@
 					${IF LW_USE_G729}
 					<f n="libbcg729.0.dylib" p="33261"/>
 					${ENDIF}
+					${IF LW_USE_X264}
+					<f n="libx264.136.dylib" p="33261"/>
+					${ENDIF}
 					<f n="lib" p="16877">
 						<f n="mediastreamer" p="16877">
 							<f n="plugins" p="16877">
 								${IF LW_USE_G729}
 								<f n="libmsbcg729.0.dylib" p="33261"/>
+								${ENDIF}
+								${IF LW_USE_X264}
+								<f n="libmsx264.0.dylib" p="33261"/>
 								${ENDIF}
 							</f>
 						</f>

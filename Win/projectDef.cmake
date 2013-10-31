@@ -192,6 +192,16 @@ function (create_rootfs PROJNAME OUTDIR)
 			libmsbcg729-0.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_G729)
+	IF(LW_USE_X264)
+		SET(ROOTFS_LIB_SOURCES
+			${ROOTFS_LIB_SOURCES}
+			libx264-136.${DEPENDENCY_EXT}
+		)
+		SET(ROOTFS_MS_PLUGINS_LIB_SOURCES
+			${ROOTFS_MS_PLUGINS_LIB_SOURCES}
+			libmsx264-0.${DEPENDENCY_EXT}
+		)
+	ENDIF(LW_USE_X264)
 
 	SET(ROOTFS_SHARE_SOURCES
 		linphone/rootca.pem
@@ -371,6 +381,20 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 ENDIF(LW_USE_G729)
+IF(LW_USE_X264)
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/libx264-136.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	"${FB_ROOTFS_DIR}/lib/mediastreamer/plugins/libmsx264-0.${DEPENDENCY_EXT}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"http://timestamp.verisign.com/scripts/timestamp.dll"
+)
+ENDIF(LW_USE_X264)
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/liblinphone-5.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
