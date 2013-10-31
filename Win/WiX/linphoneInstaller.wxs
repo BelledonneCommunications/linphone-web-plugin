@@ -99,6 +99,9 @@
 								${IF LW_USE_G729}
 								<File Id="libbcg729" Source="$(var.BINSRC)/libbcg729-0.dll" />
 								${ENDIF}
+								${IF LW_USE_X264}
+								<File Id="libx264" Source="$(var.BINSRC)/libx264-136.dll" />
+								${ENDIF}
 								<RegistryValue
 									Root="HKCU"
 									Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"
@@ -144,7 +147,10 @@
 											<Component Id="MsPluginsDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc71">
 												<RemoveFolder Id="RemoveMsPluginsDir" On="uninstall" />
 												${IF LW_USE_G729}
-												<File Id="libmsbcg729" Source="$(var.BINSRC)/libmsbcg729-0.dll" />
+												<File Id="libmsbcg729" Source="$(var.BINSRC)/linphoneweb/lib/mediastreamer/plugins/libmsbcg729-0.dll" />
+												${ENDIF}
+												${IF LW_USE_X264}
+												<File Id="libmsx264" Source="$(var.BINSRC)/linphoneweb/lib/mediastreamer/plugins/libmsx264-0.dll" />
 												${ENDIF}
 												<RegistryValue
 													Root="HKCU"
