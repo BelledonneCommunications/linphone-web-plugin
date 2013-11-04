@@ -228,7 +228,7 @@ function (create_rootfs PROJNAME OUTDIR)
 	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
 	FOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
 		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/mediastreamer/plugins)
-		SET(DIR_DEST ${FB_ROOTFS_DIR}/lib/mediastreamer/plugins)
+		SET(DIR_DEST ${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins)
 		GET_FILENAME_COMPONENT(path ${elem} PATH)
 		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
 			DEPENDS ${DIR_SRC}/${elem}
