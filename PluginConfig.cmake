@@ -49,7 +49,7 @@ set(MOZILLA_PLUGINID "belledonne-communications.com/linphone/web")
 set(FBSTRING_CompanyName "Belledonne Communications")
 
 # Company id
-set(FBSTRING_CompanyDomain "com.belledonne-communication")
+set(FBSTRING_CompanyDomain "com.belledonne-communications")
 
 set(FBSTRING_PLUGIN_VERSION "0.0.2.10")
 set(FBSTRING_PLUGIN_VERSION_ACTIVEX "0,0,2,10")
