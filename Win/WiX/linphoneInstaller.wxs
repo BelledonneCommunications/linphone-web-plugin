@@ -96,12 +96,6 @@
 								<File Id="libantlr3c" Source="$(var.BINSRC)/libantlr3c-0.dll" />
 								<File Id="libxml2" Source="$(var.BINSRC)/libxml2-2.dll" />
 								${ENDIF}
-								${IF LW_USE_G729}
-								<File Id="libbcg729" Source="$(var.BINSRC)/libbcg729-0.dll" />
-								${ENDIF}
-								${IF LW_USE_X264}
-								<File Id="libx264" Source="$(var.BINSRC)/libx264-136.dll" />
-								${ENDIF}
 								<RegistryValue
 									Root="HKCU"
 									Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"

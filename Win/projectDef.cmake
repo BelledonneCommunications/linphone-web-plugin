@@ -183,20 +183,12 @@ function (create_rootfs PROJNAME OUTDIR)
 		)
 	ENDIF(LW_USE_BELLESIP)
 	IF(LW_USE_G729)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libbcg729-0.${DEPENDENCY_EXT}
-		)
 		SET(ROOTFS_MS_PLUGINS_LIB_SOURCES
 			${ROOTFS_MS_PLUGINS_LIB_SOURCES}
 			libmsbcg729-0.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_G729)
 	IF(LW_USE_X264)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libx264-136.${DEPENDENCY_EXT}
-		)
 		SET(ROOTFS_MS_PLUGINS_LIB_SOURCES
 			${ROOTFS_MS_PLUGINS_LIB_SOURCES}
 			libmsx264-0.${DEPENDENCY_EXT}
@@ -369,12 +361,6 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 ENDIF(LW_USE_BELLESIP)
 IF(LW_USE_G729)
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libbcg729-0.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsbcg729-0.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
@@ -382,12 +368,6 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 )
 ENDIF(LW_USE_G729)
 IF(LW_USE_X264)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libx264-136.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsx264-0.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"

@@ -27,16 +27,8 @@ The Rootfs is a path containing all the dependencies needed to make works
 linphone project. In order to compile linphone-web we have to use a special
 compiled version of linphone and its dependencies.
 
-Following the used system(GNU/Linux, Windows, Mac OS X) you have to extract the
-matched *rootfs* archive in the `./Rootfs/` directory at the linphone-web
-project root (create it if doesn't exist).
-
-* [GNU/Linux x86](http://www.linphone.org/snapshots/linphone-web/linphone-rootfs-linphone-webplugin-linux-x86-latest.tar.gz)
-* [GNU/Linux x86_64](http://www.linphone.org/snapshots/linphone-web/linphone-rootfs-linphone-webplugin-linux-x86_64-latest.tar.gz)
-* [Windows 32 bits](http://www.linphone.org/snapshots/linphone-web/linphone-rootfs-linphone-webplugin-windows-x86_64-latest.tar.gz)
-* [Mac OS X x86](http://www.linphone.org/snapshots/linphone-web/linphone-rootfs-linphone-webplugin-darwin-x86-latest.tar.gz)
-* [Mac OS X x86_64](http://www.linphone.org/snapshots/linphone-web/linphone-rootfs-linphone-webplugin-darwin-x86_64-latest.tar.gz)
-
+The rootfs corresponding to the used system is downloaded automatically when
+configuring the firebreath plugin for compilation.
 
 ### Generate a Rootfs
 Clone the oe-lite git repository from:

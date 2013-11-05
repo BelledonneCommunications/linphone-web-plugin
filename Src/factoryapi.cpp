@@ -360,6 +360,8 @@ PayloadTypeAPIPtr FactoryAPI::getPayloadType(const PayloadType *payloadType) {
 
 PresenceActivityAPIPtr FactoryAPI::getPresenceActivity(LinphonePresenceActivity *activity) {
 	FBLOG_DEBUG("FactoryAPI::getPresenceActivity", "this=" << this << "\t" << "activity=" << activity);
+	if (activity == NULL)
+		return PresenceActivityAPIPtr();
 
 	PresenceActivityAPIPtr shared_ptr;
 	try {
@@ -399,6 +401,8 @@ PresenceModelAPIPtr FactoryAPI::getPresenceModel() {
 
 PresenceModelAPIPtr FactoryAPI::getPresenceModel(LinphonePresenceModel *model) {
 	FBLOG_DEBUG("FactoryAPI::getPresenceModel", "this=" << this);
+	if (model == NULL)
+		return PresenceModelAPIPtr();
 
 	PresenceModelAPIPtr shared_ptr;
 	try {
@@ -412,6 +416,8 @@ PresenceModelAPIPtr FactoryAPI::getPresenceModel(LinphonePresenceModel *model) {
 
 PresenceModelAPIPtr FactoryAPI::getPresenceModel(const LinphonePresenceModel *model) {
 	FBLOG_DEBUG("FactoryAPI::getPresenceModel", "this=" << this);
+	if (model == NULL)
+		return PresenceModelAPIPtr();
 
 	PresenceModelAPIPtr shared_ptr;
 	try {
@@ -451,6 +457,8 @@ PresenceModelAPIPtr FactoryAPI::getPresenceModel(int acttype, StringPtr const &d
 
 PresenceNoteAPIPtr FactoryAPI::getPresenceNote(LinphonePresenceNote *note) {
 	FBLOG_DEBUG("FactoryAPI::getPresenceNote", "this=" << this << "\t" << "note=" << note);
+	if (note == NULL)
+		return PresenceNoteAPIPtr();
 
 	PresenceNoteAPIPtr shared_ptr;
 	try {
@@ -477,6 +485,8 @@ PresenceNoteAPIPtr FactoryAPI::getPresenceNote(StringPtr const &content, StringP
 
 PresencePersonAPIPtr FactoryAPI::getPresencePerson(LinphonePresencePerson *person) {
 	FBLOG_DEBUG("FactoryAPI::getPresencePerson", "this=" << this << "\t" << "person=" << person);
+	if (person == NULL)
+		return PresencePersonAPIPtr();
 
 	PresencePersonAPIPtr shared_ptr;
 	try {
@@ -503,6 +513,8 @@ PresencePersonAPIPtr FactoryAPI::getPresencePerson(StringPtr const &id) {
 
 PresenceServiceAPIPtr FactoryAPI::getPresenceService(LinphonePresenceService *service) {
 	FBLOG_DEBUG("FactoryAPI::getPresenceService", "this=" << this << "\t" << "service=" << service);
+	if (service == NULL)
+		return PresenceServiceAPIPtr();
 
 	PresenceServiceAPIPtr shared_ptr;
 	try {
