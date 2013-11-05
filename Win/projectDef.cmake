@@ -21,6 +21,11 @@
 # Included from ../CMakeLists.txt
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/Common/common.cmake)
 
+find_program(7ZIP 7z.exe)
+IF(${7ZIP} MATCHES "7ZIP-NOTFOUND")
+	MESSAGE(FATAL_ERROR "7zip is mandatory for compilation on Windows. Please install it and put it in the PATH environment variable.")
+ENDIF()
+
 # remember that the current source dir is the project root; this file is in Win/
 FILE(GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 	Win/[^.]*.cpp

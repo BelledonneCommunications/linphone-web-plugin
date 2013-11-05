@@ -252,8 +252,9 @@ function (create_rootfs PROJNAME OUTDIR)
 		DEPENDS ${ROOTFS_SOURCES}
 		
 		# Change rpath
-		COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${OUTDIR}/${PLUGIN_SHAREDIR}/
-		COMMAND COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${OUTDIR}/${PLUGIN_SHAREDIR}/ ${OUTDIR}/${FBSTRING_PluginFileName}
+		COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${OUTDIR}/${PLUGIN_SHAREDIR}/
+		COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${OUTDIR}/${PLUGIN_SHAREDIR}/ ${OUTDIR}/${FBSTRING_PluginFileName}
+		COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${OUTDIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/ ${OUTDIR}/${FBSTRING_PluginFileName}
 
 		COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/Rootfs.updated
 	)
