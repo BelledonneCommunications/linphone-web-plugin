@@ -73,7 +73,7 @@ def main(argv=None):
       if os.path.isdir(path2):
         file_list2 = list_files(path2)
         for file in file_list2:
-          replace_libraries(os.path.join(path2, file), file, file_list, os.path.relpath(path, os.path.dirname(file)))
+          replace_libraries(os.path.join(path2, file), file, file_list, os.path.relpath(path2, path))
       else:
         file = argv[2]
         replace_libraries(file, os.path.basename(file), file_list, os.path.relpath(path, os.path.dirname(file)))
