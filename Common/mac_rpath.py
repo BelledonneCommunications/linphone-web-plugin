@@ -69,9 +69,14 @@ def main(argv=None):
       for file in file_list:
         replace_libraries(os.path.join(path, file), file, file_list)
     else:
-      file = argv[2]
-      replace_libraries(file, os.path.basename(file), file_list, os.path.relpath(path, os.path.dirname(file)))
-        
+      if os.path.isdir(argv[2]):
+        file_list2 = list_files(argv[2])
+        for file in file_list2:
+          replace_libraries(file, os.path.basename(file), file_list, os.path.relpath(path, os.path.dirname(file)))
+      else
+        file = argv[2]
+        replace_libraries(file, os.path.basename(file), file_list, os.path.relpath(path, os.path.dirname(file)))
+
 
 if __name__ == "__main__":
     sys.exit(main())
