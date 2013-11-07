@@ -95,6 +95,7 @@ void CoreAPI::initProxy() {
 	// Read-only property
 	registerProperty("version", make_property(this, &CoreAPI::getVersion));
 	registerProperty("pluginVersion", make_property(this, &CoreAPI::getPluginVersion));
+	registerProperty("rootfsVersion", make_property(this, &CoreAPI::getRootfsVersion));
 
 	// Property
 	registerProperty("magic", make_property(this, &CoreAPI::getMagic, &CoreAPI::setMagic));
@@ -2309,6 +2310,11 @@ StringPtr CoreAPI::getVersion() const {
 StringPtr CoreAPI::getPluginVersion() const {
 	FBLOG_DEBUG("CoreAPI::getPluginVersion", "this=" << this);
 	return CHARPTR_TO_STRING(FBSTRING_PLUGIN_VERSION);
+}
+
+StringPtr CoreAPI::getRootfsVersion() const {
+	FBLOG_DEBUG("CoreAPI::getRootfsVersion", "this=" << this);
+	return CHARPTR_TO_STRING(CORE_ROOTFS_VERSION);
 }
 
 void CoreAPI::enableEchoCancellation(bool enable) {
