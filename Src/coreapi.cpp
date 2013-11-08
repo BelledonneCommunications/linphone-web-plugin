@@ -2011,12 +2011,12 @@ void CoreAPI::removeAuthInfo(AuthInfoAPIPtr const &authInfo) {
 	linphone_core_remove_auth_info(mCore, authInfo->getRef());
 }
 
-AuthInfoAPIPtr CoreAPI::findAuthInfo(StringPtr const &realm, StringPtr const &username) {
+AuthInfoAPIPtr CoreAPI::findAuthInfo(StringPtr const &realm, StringPtr const &username, StringPtr const &domain) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::findAuthInfo", "this=" << this << "\t" << "realm=" << realm << "\t" << "username=" << username);
-	const LinphoneAuthInfo* authInfo = linphone_core_find_auth_info(mCore, STRING_TO_CHARPTR(realm), STRING_TO_CHARPTR(username));
+	FBLOG_DEBUG("CoreAPI::findAuthInfo", "this=" << this << "\t" << "realm=" << realm << "\t" << "username=" << username << "\t" << "domain=" << domain);
+	const LinphoneAuthInfo* authInfo = linphone_core_find_auth_info(mCore, STRING_TO_CHARPTR(realm), STRING_TO_CHARPTR(username), STRING_TO_CHARPTR(domain));
 	return getFactory()->getAuthInfo(authInfo);
 }
 
@@ -2061,14 +2061,15 @@ ProxyConfigAPIPtr CoreAPI::newProxyConfig() const {
 }
 
 AuthInfoAPIPtr CoreAPI::newAuthInfo(StringPtr const &username, StringPtr const &userid, StringPtr const &passwd, StringPtr const &ha1,
-		StringPtr const &realm) const {
+		StringPtr const &realm, StringPtr const &domain) const {
 	FBLOG_DEBUG("CoreAPI::newAuthInfo", "this=" << this
 				<< "\t" << "username=" << username
 				<< "\t" << "userid=" << userid
 				<< "\t" << "passwd=" << passwd
 				<< "\t" << "ha1=" << ha1
 				<< "\t" << "realm=" << realm);
-	return getFactory()->getAuthInfo(username, userid, passwd, ha1, realm);
+				<< "\t" << "domain=" << domain);
+	return getFactory()->getAuthInfo(username, userid, passwd, ha1, realm, domain);
 }
 	
 AddressAPIPtr CoreAPI::newAddress(StringPtr const &address) const {
@@ -2595,9 +2596,9 @@ void CoreAPI::onNewSubscriptionRequested(LinphoneFriend *lf, const char *url) {
 	fire_newSubscriptionRequested(boost::static_pointer_cast<CoreAPI>(shared_from_this()), getFactory()->getFriend(lf), CHARPTR_TO_STRING(url));
 }
 
-void CoreAPI::onAuthInfoRequested(const char *realm, const char *username) {
-	FBLOG_DEBUG("CoreAPI::onAuthInfoRequested",  "this=" << this << "\t" << "realm=" << realm << "\t" << "username=" << username);
-	fire_authInfoRequested(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(realm), CHARPTR_TO_STRING(username));
+void CoreAPI::onAuthInfoRequested(const char *realm, const char *username, const char *domain) {
+	FBLOG_DEBUG("CoreAPI::onAuthInfoRequested",  "this=" << this << "\t" << "realm=" << realm << "\t" << "username=" << username << "\t" << "domain=" << domain);
+	fire_authInfoRequested(boost::static_pointer_cast<CoreAPI>(shared_from_this()), CHARPTR_TO_STRING(realm), CHARPTR_TO_STRING(username), CHARPTR_TO_STRING(domain));
 }
 
 void CoreAPI::onCallLogUpdated(LinphoneCallLog *newcl) {
@@ -2697,9 +2698,9 @@ void CoreAPI::wrapper_new_subscription_requested(LinphoneCore *lc, LinphoneFrien
 		FBLOG_ERROR("CoreAPI::wrapper_new_subscription_requested", "No proxy defined!");
 	}
 }
-void CoreAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username) {
+void CoreAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username, const char*domain ) {
 	if (GLC_DEFINED()) {
-		GLC_THIS()->onAuthInfoRequested(realm, username);
+		GLC_THIS()->onAuthInfoRequested(realm, username,domain);
 	} else {
 		FBLOG_ERROR("CoreAPI::wrapper_auth_info_requested", "No proxy defined!");
 	}
