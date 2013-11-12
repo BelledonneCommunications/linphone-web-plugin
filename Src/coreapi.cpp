@@ -2698,7 +2698,7 @@ void CoreAPI::wrapper_new_subscription_requested(LinphoneCore *lc, LinphoneFrien
 		FBLOG_ERROR("CoreAPI::wrapper_new_subscription_requested", "No proxy defined!");
 	}
 }
-void CoreAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username, const char*domain ) {
+void CoreAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username, const char*domain) {
 	if (GLC_DEFINED()) {
 		GLC_THIS()->onAuthInfoRequested(realm, username,domain);
 	} else {
