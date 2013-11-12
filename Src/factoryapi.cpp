@@ -127,16 +127,17 @@ AuthInfoAPIPtr FactoryAPI::getAuthInfo(const LinphoneAuthInfo *authInfo) {
 }
 
 AuthInfoAPIPtr FactoryAPI::getAuthInfo(StringPtr const &username, StringPtr const &userid,
-						   StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm) {
+						   StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm, StringPtr const &domain) {
 	FBLOG_DEBUG("FactoryAPI::getAuthInfo", "this=" << this << "\t" << "username=" << username
 				<< "\t" << "userid=" << userid
 				<< "\t" << "passwd=" << passwd
 				<< "\t" << "ha1=" << ha1
-				<< "\t" << "realm=" << realm);
+				<< "\t" << "realm=" << realm
+				<< "\t" << "realm=" << domain);
 	
 	AuthInfoAPIPtr shared_ptr;
 	try {
-		shared_ptr = AuthInfoAPIPtr(new AuthInfoAPI(username, userid, passwd, ha1, realm));
+		shared_ptr = AuthInfoAPIPtr(new AuthInfoAPI(username, userid, passwd, ha1, realm, domain));
 		handle(shared_ptr, true, false);
 	} catch(std::exception &e) {
 		FBLOG_WARN("FactoryAPI::getAuthInfo", "exception: " << e.what());

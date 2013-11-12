@@ -58,6 +58,7 @@ void AuthInfoAPI::initProxy() {
 	registerProperty("userid", make_property(this, &AuthInfoAPI::getUserid, &AuthInfoAPI::setUserid));
 	registerProperty("username", make_property(this, &AuthInfoAPI::getUsername, &AuthInfoAPI::setUsername));
 	registerProperty("passwd", make_property(this, &AuthInfoAPI::getPasswd, &AuthInfoAPI::setPasswd));
+	registerProperty("domain", make_property(this, &AuthInfoAPI::getDomain, &AuthInfoAPI::setDomain));
 }
 
 AuthInfoAPI::~AuthInfoAPI() {
@@ -146,7 +147,7 @@ StringPtr AuthInfoAPI::getDomain() const {
 	return CHARPTR_TO_STRING(linphone_auth_info_get_domain(mAuthInfo));
 }
 
-void AuthInfoAPI::setPasswd(StringPtr const &domain) {
+void AuthInfoAPI::setDomain(StringPtr const &domain) {
 	CORE_MUTEX
 	
 	FBLOG_DEBUG("AuthInfoAPI::setDomain", "this=" << this << "\t" << "domain=" << domain);
