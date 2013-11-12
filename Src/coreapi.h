@@ -269,7 +269,7 @@ public:
 	FileManagerAPIPtr getFileManager() const;
 	ProxyConfigAPIPtr newProxyConfig() const;
 	AuthInfoAPIPtr newAuthInfo(StringPtr const &username, StringPtr const &userid,
-			StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm, , StringPtr const &domain) const;
+			StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm, StringPtr const &domain) const;
 	AddressAPIPtr newAddress(StringPtr const &address) const;
 	LpConfigAPIPtr newLpConfig(StringPtr const &uri) const;
 	FriendAPIPtr newFriend() const;
@@ -349,7 +349,7 @@ public: // Event helpers
 	FB_JSAPI_EVENT(callStateChanged, 4, (CoreAPIPtr, CallAPIPtr, const int&, const StringPtr&));
 	FB_JSAPI_EVENT(notifyPresenceReceived, 2, (CoreAPIPtr, FriendAPIPtr));
 	FB_JSAPI_EVENT(newSubscriptionRequested, 3 ,(CoreAPIPtr, FriendAPIPtr, const StringPtr&));
-	FB_JSAPI_EVENT(authInfoRequested, 3, (CoreAPIPtr, const StringPtr&, const StringPtr&, const StringPtr&));
+	FB_JSAPI_EVENT(authInfoRequested, 4, (CoreAPIPtr, const StringPtr&, const StringPtr&, const StringPtr&));
 	FB_JSAPI_EVENT(callLogUpdated, 2, (CoreAPIPtr, CallLogAPIPtr));
 	FB_JSAPI_EVENT(dtmfReceived, 3, (CoreAPIPtr, CallAPIPtr, const int&));
 	FB_JSAPI_EVENT(referReceived, 2, (CoreAPIPtr, const StringPtr&));
@@ -426,7 +426,7 @@ private:
 	static void wrapper_call_state_changed(LinphoneCore *lc, LinphoneCall *call, LinphoneCallState cstate, const char *message);
 	static void wrapper_notify_presence_received(LinphoneCore *lc, LinphoneFriend * lf);
 	static void wrapper_new_subscription_requested(LinphoneCore *lc, LinphoneFriend *lf, const char *url);
-	static void wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username, , const char *domain);
+	static void wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username, const char *domain);
 	static void wrapper_call_log_updated(LinphoneCore *lc, LinphoneCallLog *newcl);
 	static void wrapper_message_received(LinphoneCore *lc, LinphoneChatRoom *room, LinphoneChatMessage *message);
 	static void wrapper_dtmf_received(LinphoneCore *lc, LinphoneCall *call, int dtmf);

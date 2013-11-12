@@ -2067,7 +2067,7 @@ AuthInfoAPIPtr CoreAPI::newAuthInfo(StringPtr const &username, StringPtr const &
 				<< "\t" << "userid=" << userid
 				<< "\t" << "passwd=" << passwd
 				<< "\t" << "ha1=" << ha1
-				<< "\t" << "realm=" << realm);
+				<< "\t" << "realm=" << realm
 				<< "\t" << "domain=" << domain);
 	return getFactory()->getAuthInfo(username, userid, passwd, ha1, realm, domain);
 }
@@ -2700,7 +2700,7 @@ void CoreAPI::wrapper_new_subscription_requested(LinphoneCore *lc, LinphoneFrien
 }
 void CoreAPI::wrapper_auth_info_requested(LinphoneCore *lc, const char *realm, const char *username, const char*domain) {
 	if (GLC_DEFINED()) {
-		GLC_THIS()->onAuthInfoRequested(realm, username,domain);
+		GLC_THIS()->onAuthInfoRequested(realm, username, domain);
 	} else {
 		FBLOG_ERROR("CoreAPI::wrapper_auth_info_requested", "No proxy defined!");
 	}
