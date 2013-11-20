@@ -91,7 +91,7 @@ public:
 	AuthInfoAPIPtr getAuthInfo(LinphoneAuthInfo *authInfo);
 	AuthInfoAPIPtr getAuthInfo(const LinphoneAuthInfo *authInfo);
 	AuthInfoAPIPtr getAuthInfo(StringPtr const &username, StringPtr const &userid,
-				StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm);
+				StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm, StringPtr const &domain);
 
 	// Call
 	CallAPIPtr getCall(LinphoneCall *call);

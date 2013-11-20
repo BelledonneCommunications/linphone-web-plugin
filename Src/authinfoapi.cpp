@@ -42,11 +42,11 @@ AuthInfoAPI::AuthInfoAPI(const LinphoneAuthInfo *authInfo) :
 }
 
 
-AuthInfoAPI::AuthInfoAPI(StringPtr const &username, StringPtr const &userid, StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm) :
+AuthInfoAPI::AuthInfoAPI(StringPtr const &username, StringPtr const &userid, StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm, StringPtr const &domain) :
 		WrapperAPI(APIDescription(this)) {
 	FBLOG_DEBUG("AuthInfoAPI::AuthInfoAPI",
-			"this=" << this << "\t" << "username=" << username << "\t" << "userid=" << userid << "\t" << "passwd=" << passwd << "\t" << "ha1" << ha1 << "\t" << "realm=" << realm);
-	mAuthInfo = linphone_auth_info_new(STRING_TO_CHARPTR(username), STRING_TO_CHARPTR(userid), STRING_TO_CHARPTR(passwd), STRING_TO_CHARPTR(ha1), STRING_TO_CHARPTR(realm));
+			"this=" << this << "\t" << "username=" << username << "\t" << "userid=" << userid << "\t" << "passwd=" << passwd << "\t" << "ha1" << ha1 << "\t" << "realm=" << realm << "\t" << "domain=" << domain);
+	mAuthInfo = linphone_auth_info_new(STRING_TO_CHARPTR(username), STRING_TO_CHARPTR(userid), STRING_TO_CHARPTR(passwd), STRING_TO_CHARPTR(ha1), STRING_TO_CHARPTR(realm), STRING_TO_CHARPTR(domain));
 	if(mAuthInfo == NULL) {
 		throw std::invalid_argument("one/many parameters is/are invalid");
 	}
@@ -58,6 +58,7 @@ void AuthInfoAPI::initProxy() {
 	registerProperty("userid", make_property(this, &AuthInfoAPI::getUserid, &AuthInfoAPI::setUserid));
 	registerProperty("username", make_property(this, &AuthInfoAPI::getUsername, &AuthInfoAPI::setUsername));
 	registerProperty("passwd", make_property(this, &AuthInfoAPI::getPasswd, &AuthInfoAPI::setPasswd));
+	registerProperty("domain", make_property(this, &AuthInfoAPI::getDomain, &AuthInfoAPI::setDomain));
 }
 
 AuthInfoAPI::~AuthInfoAPI() {
@@ -137,6 +138,20 @@ void AuthInfoAPI::setPasswd(StringPtr const &passwd) {
 	
 	FBLOG_DEBUG("AuthInfoAPI::setPasswd", "this=" << this << "\t" << "passwd=" << passwd);
 	linphone_auth_info_set_passwd(mAuthInfo, STRING_TO_CHARPTR(passwd));
+}
+
+StringPtr AuthInfoAPI::getDomain() const {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("AuthInfoAPI::getDomain", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_auth_info_get_domain(mAuthInfo));
+}
+
+void AuthInfoAPI::setDomain(StringPtr const &domain) {
+	CORE_MUTEX
+	
+	FBLOG_DEBUG("AuthInfoAPI::setDomain", "this=" << this << "\t" << "domain=" << domain);
+	linphone_auth_info_set_domain(mAuthInfo, STRING_TO_CHARPTR(domain));
 }
 	
 } // LinphoneWeb
