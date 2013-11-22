@@ -458,7 +458,7 @@ function (create_sdk_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 				COMMAND ${CMAKE_COMMAND} -E remove_directory ${SDK_DIR}
 				COMMAND ${CMAKE_COMMAND} -E make_directory ${SDK_DIR}
 				COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/concat_files.py ${FB_PKG_DIR}/MAINPAGE.md ${CMAKE_CURRENT_SOURCE_DIR}/GETTING_STARTED.md ${CMAKE_CURRENT_SOURCE_DIR}/README.md ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md
-				COMMAND cd ${JSWRAPPER_DIR} && ${FB_ROOTFS_DIR}/bin/lp-gen-wrappers --output javascript --project linphone ${DOCUMENTATION}
+				COMMAND cd ${JSWRAPPER_DIR} && lp-gen-wrappers --output javascript --project linphone ${DOCUMENTATION}
 				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Doc/plugin_specifics.js ${JSWRAPPER_DIR}/linphone/
 				COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/concat_files.py ${SDK_DIR}/linphone.js ${JSWRAPPER_DIR}/linphone/*.js
 				COMMAND cd ${SDK_DIR} && jsdoc --recurse --destination ${PROJECT_NAME}-${PROJVERSION}-doc ${JSWRAPPER_DIR} ${FB_PKG_DIR}/MAINPAGE.md
