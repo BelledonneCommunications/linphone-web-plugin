@@ -433,6 +433,16 @@ if (NOT FB_SDK_PACKAGE_SUFFIX)
 endif()
 
 function (create_sdk_package PROJNAME PROJVERSION OUTDIR PROJDEP)
+	file (GLOB DOCUMENTATION
+		Rootfs/share/doc/linphone-[^.]*.[^.]*.[^.]*/xml/[^.]*.xml
+		)
+
+	file (GLOB TUTORIALS
+		Doc/tutorials/README
+		Doc/tutorials/[^.]*.html
+		Doc/tutorials/[^.]*.js
+		)
+
 	SET(SDK_SOURCES
 		${FB_OUT_DIR}/Rootfs.updated
 		${CMAKE_CURRENT_SOURCE_DIR}/README.md
