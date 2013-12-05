@@ -208,6 +208,8 @@ public:
 	int getDownloadBandwidth() const;
 	void setUploadBandwidth(int bandwidth);
 	int getUploadBandwidth() const;
+	void enableDnsSrv(bool enable);
+	bool dnsSrvEnabled() const;
 	void setDownloadPtime(int ptime);
 	int getDownloadPtime() const;
 	void setUploadPtime(int ptime);

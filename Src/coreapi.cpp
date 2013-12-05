@@ -208,6 +208,7 @@ void CoreAPI::initProxy() {
 	registerProperty("videoPortRange", make_property(this, &CoreAPI::getVideoPortRange, &CoreAPI::setVideoPortRange));
 	registerProperty("downloadBandwidth", make_property(this, &CoreAPI::getDownloadBandwidth, &CoreAPI::setDownloadBandwidth));
 	registerProperty("uploadBandwidth", make_property(this, &CoreAPI::getUploadBandwidth, &CoreAPI::setUploadBandwidth));
+	registerProperty("dnsSrvEnabled", make_property(this, &CoreAPI::dnsSrvEnabled, &CoreAPI::enableDnsSrv));
 	registerProperty("downloadPtime", make_property(this, &CoreAPI::getDownloadPtime, &CoreAPI::setDownloadPtime));
 	registerProperty("uploadPtime", make_property(this, &CoreAPI::getUploadPtime, &CoreAPI::setUploadPtime));
 	registerProperty("mtu", make_property(this, &CoreAPI::getMtu, &CoreAPI::setMtu));
@@ -1592,6 +1593,22 @@ int CoreAPI::getUploadBandwidth() const {
 
 	FBLOG_DEBUG("CoreAPI::getUploadBandwidth", "this=" << this);
 	return linphone_core_get_upload_bandwidth(mCore);
+}
+
+void CoreAPI::enableDnsSrv(bool enable) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::enableDnsSrv", "this=" << this << "\t" << "enable=" << enable);
+	linphone_core_enable_dns_srv(mCore, enable ? TRUE : FALSE);
+}
+
+bool CoreAPI::dnsSrvEnabled() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::dnsSrvEnabled", "this=" << this);
+	return linphone_core_dns_srv_enabled(mCore) == TRUE ? true : false;
 }
 
 void CoreAPI::setDownloadPtime(int ptime) {
