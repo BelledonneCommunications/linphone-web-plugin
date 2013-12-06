@@ -104,7 +104,7 @@
 									Value="${FBSTRING_PLUGIN_VERSION}"
 									KeyPath="yes" />
 							</Component>
-							<Directory Id="LinphoneWebDir" Name="linphoneweb">
+							<Directory Id="LinphoneWebDir" Name="${PLUGIN_SHAREDIR}">
 								<Component Id="LinphoneWebDirComp" Guid="*">
 									<RemoveFolder Id="RemoveLinphoneWebDir" On="uninstall" />
 									<RegistryValue
@@ -141,10 +141,10 @@
 											<Component Id="MsPluginsDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc71">
 												<RemoveFolder Id="RemoveMsPluginsDir" On="uninstall" />
 												${IF LW_USE_G729}
-												<File Id="libmsbcg729" Source="$(var.BINSRC)/linphoneweb/lib/mediastreamer/plugins/libmsbcg729-0.dll" />
+												<File Id="libmsbcg729" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsbcg729-0.dll" />
 												${ENDIF}
 												${IF LW_USE_X264}
-												<File Id="libmsx264" Source="$(var.BINSRC)/linphoneweb/lib/mediastreamer/plugins/libmsx264-0.dll" />
+												<File Id="libmsx264" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsx264-0.dll" />
 												${ENDIF}
 												<RegistryValue
 													Root="HKCU"
@@ -171,7 +171,7 @@
 									<Directory Id="ShareLinphoneDir" Name="linphone">
 										<Component Id="ShareLinphoneDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6f">
 											<RemoveFolder Id="RemoveShareLinphoneDir" On="uninstall" />
-											<File Id="rootca" Source="$(var.BINSRC)/linphoneweb/share/linphone/rootca.pem" />
+											<File Id="rootca" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/linphone/rootca.pem" />
 											<RegistryValue
 												Root="HKCU"
 												Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareLinphoneDirComp"
@@ -184,7 +184,7 @@
 									<Directory Id="ShareImagesDir" Name="images">
 										<Component Id="ShareImagesDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6e">
 											<RemoveFolder Id="RemoveShareImagesDir" On="uninstall" />
-											<File Id="nowebcamCIF" Source="$(var.BINSRC)/linphoneweb/share/images/nowebcamCIF.jpg" />
+											<File Id="nowebcamCIF" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/images/nowebcamCIF.jpg" />
 											<RegistryValue
 												Root="HKCU"
 												Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareImagesDirComp"
@@ -208,7 +208,7 @@
 										<Directory Id="ShareSoundsLinphoneDir" Name="linphone">
 											<Component Id="ShareSoundsLinphoneDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6b">
 												<RemoveFolder Id="RemoveShareSoundsLinphoneDir" On="uninstall" />
-												<File Id="ringback" Source="$(var.BINSRC)/linphoneweb/share/sounds/linphone/ringback.wav" />
+												<File Id="ringback" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/sounds/linphone/ringback.wav" />
 												<RegistryValue
 													Root="HKCU"
 													Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsLinphoneDirComp"
@@ -220,8 +220,8 @@
 											<Directory Id="ShareSoundsLinphoneRingsDir" Name="rings">
 												<Component Id="ShareSoundsLinphoneRingsDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6c">
 													<RemoveFolder Id="RemoveShareSoundsLinphoneRingsDir" On="uninstall" />
-													<File Id="oldphone" Source="$(var.BINSRC)/linphoneweb/share/sounds/linphone/rings/oldphone.wav" />
-													<File Id="toymono" Source="$(var.BINSRC)/linphoneweb/share/sounds/linphone/rings/toy-mono.wav" />
+													<File Id="oldphone" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/sounds/linphone/rings/oldphone.wav" />
+													<File Id="toymono" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/sounds/linphone/rings/toy-mono.wav" />
 													<RegistryValue
 														Root="HKCU"
 														Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsLinphoneRingsDirComp"
