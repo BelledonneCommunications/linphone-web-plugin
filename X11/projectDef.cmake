@@ -98,24 +98,24 @@ function (get_core_rootfs PROJNAME OUTDIR)
 		list(GET CORE_ROOTFS_DL_STATUS 0 CORE_ROOTFS_DL_STATUS_CODE)
 		if (${CORE_ROOTFS_DL_STATUS_CODE} EQUAL 0)
 			message("     Successful")
+			message("-- Extracting core rootfs")
+			EXECUTE_PROCESS(
+				WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs
+				COMMAND rm -f *
+				COMMAND tar xzf ${CORE_ROOTFS_GZTARBALL}
+				RESULT_VARIABLE CORE_ROOTFS_EXT_STATUS_CODE
+				ERROR_VARIABLE CORE_ROOTFS_EXT_ERROR
+			)
+			if (${CORE_ROOTFS_EXT_STATUS_CODE} EQUAL 0)
+				message("     Done")
+			else()
+				message(FATAL_ERROR "     Failed: ${CORE_ROOTFS_EXT_STATUS_CODE} ${CORE_ROOTFS_EXT_ERROR}")
+			endif()
 		else()
 			list(GET CORE_ROOTFS_DL_STATUS 1 CORE_ROOTFS_DL_STATUS_MSG)
 			message(FATAL_ERROR "     Failed: ${CORE_ROOTFS_DL_STATUS_CODE} ${CORE_ROOTFS_DL_STATUS_MSG}")
 		endif()
 	endif()
-
-	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/Rootfs.VERSION
-		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs
-		DEPENDS ${CORE_ROOTFS_GZTARBALL}
-		COMMAND ${CMAKE_COMMAND} -E remove -f *
-		COMMAND ${CMAKE_COMMAND} -E tar xvzf ${CORE_ROOTFS_GZTARBALL}
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/VERSION ${OUTDIR}/Rootfs.VERSION
-	)
-
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CORE_ROOTFS_SUFFIX} ALL DEPENDS ${OUTDIR}/Rootfs.VERSION)
-	SET_TARGET_PROPERTIES(${PROJNAME}${FB_CORE_ROOTFS_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
-	ADD_DEPENDENCIES(${PROJNAME} ${PROJNAME}${FB_CORE_ROOTFS_SUFFIX})
-	MESSAGE("-- Successfully added Core Rootfs extration step")
 endfunction(get_core_rootfs)
 ###############################################################################
 
@@ -434,13 +434,13 @@ endif()
 
 function (create_sdk_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 	file (GLOB DOCUMENTATION
-		Rootfs/share/doc/linphone-[^.]*.[^.]*.[^.]*/xml/[^.]*.xml
+		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/doc/linphone-[^.]*.[^.]*.[^.]*/xml/[^.]*.xml
 		)
 
 	file (GLOB TUTORIALS
-		Doc/tutorials/README
-		Doc/tutorials/[^.]*.html
-		Doc/tutorials/[^.]*.js
+		${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials/README
+		${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials/[^.]*.html
+		${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials/[^.]*.js
 		)
 
 	SET(SDK_SOURCES
