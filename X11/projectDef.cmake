@@ -87,7 +87,7 @@ if (NOT FB_CORE_ROOTFS_SUFFIX)
 	SET(FB_CORE_ROOTFS_SUFFIX _CoreRootFS)
 endif()
 
-function (get_core_rootfs PROJNAME OUTDIR)
+function (get_core_rootfs OUTDIR)
 	SET(CORE_ROOTFS_GZTARBALL ${OUTDIR}/linphone-web-core-rootfs.tar.gz)
 	if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs)
 		FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs)
@@ -119,7 +119,7 @@ function (get_core_rootfs PROJNAME OUTDIR)
 endfunction(get_core_rootfs)
 ###############################################################################
 
-get_core_rootfs(${PLUGIN_NAME} ${FB_BIN_DIR}/${PLUGIN_NAME})
+get_core_rootfs(${FB_BIN_DIR}/${PLUGIN_NAME})
 
 ###############################################################################
 # Create Rootfs
