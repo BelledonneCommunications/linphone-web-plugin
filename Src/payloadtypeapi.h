@@ -59,12 +59,6 @@ public:
 	int getBitsPerSample() const;
 	void setBitsPerSample(int bps);
 
-	StringPtr getZeroPattern() const;
-	void setZeroPattern(StringPtr const &pattern);
-
-	int getPatternLength() const;
-	void setPatternLength(int length);
-
 	int getNormalBitrate() const;
 	void setNormalBitrate(int bitrate);
 

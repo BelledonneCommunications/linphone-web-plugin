@@ -47,8 +47,6 @@ void PayloadTypeAPI::initProxy() {
 		registerProperty("type", make_property(this, &PayloadTypeAPI::getType));
 		registerProperty("clockRate", make_property(this, &PayloadTypeAPI::getClockRate));
 		registerProperty("bitsPerSample", make_property(this, &PayloadTypeAPI::getBitsPerSample));
-		registerProperty("zeroPattern", make_property(this, &PayloadTypeAPI::getZeroPattern));
-		registerProperty("patternLength", make_property(this, &PayloadTypeAPI::getPatternLength));
 		registerProperty("normalBitrate", make_property(this, &PayloadTypeAPI::getNormalBitrate));
 		registerProperty("mimeType", make_property(this, &PayloadTypeAPI::getMimeType));
 		registerProperty("channels", make_property(this, &PayloadTypeAPI::getChannels));
@@ -59,8 +57,6 @@ void PayloadTypeAPI::initProxy() {
 		registerProperty("type", make_property(this, &PayloadTypeAPI::getType, &PayloadTypeAPI::setType));
 		registerProperty("clockRate", make_property(this, &PayloadTypeAPI::getClockRate, &PayloadTypeAPI::setClockRate));
 		registerProperty("bitsPerSample", make_property(this, &PayloadTypeAPI::getBitsPerSample, &PayloadTypeAPI::setBitsPerSample));
-		registerProperty("zeroPattern", make_property(this, &PayloadTypeAPI::getZeroPattern, &PayloadTypeAPI::setZeroPattern));
-		registerProperty("patternLength", make_property(this, &PayloadTypeAPI::getPatternLength, &PayloadTypeAPI::setPatternLength));
 		registerProperty("normalBitrate", make_property(this, &PayloadTypeAPI::getNormalBitrate, &PayloadTypeAPI::setNormalBitrate));
 		registerProperty("mimeType", make_property(this, &PayloadTypeAPI::getMimeType, &PayloadTypeAPI::setMimeType));
 		registerProperty("channels", make_property(this, &PayloadTypeAPI::getChannels, &PayloadTypeAPI::setChannels));
@@ -115,34 +111,6 @@ void PayloadTypeAPI::setBitsPerSample(int bps) {
 
 	FBLOG_DEBUG("PayloadTypeAPI::setBitsPerSample", "this=" << this << "\t" << "bps=" << bps);
 	mPayloadType->bits_per_sample = bps;
-}
-
-StringPtr PayloadTypeAPI::getZeroPattern() const {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("PayloadTypeAPI::getZeroPattern", "this=" << this);
-	return CHARPTR_TO_STRING(mPayloadType->zero_pattern);
-}
-void PayloadTypeAPI::setZeroPattern(StringPtr const &pattern) {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("PayloadTypeAPI::setZeroPattern", "this=" << this << "\t" << "pattern=" << pattern);
-	if (mPayloadType->zero_pattern != NULL)
-		free(mPayloadType->zero_pattern);
-	mPayloadType->zero_pattern = strdup(STRING_TO_CHARPTR(pattern));
-}
-
-int PayloadTypeAPI::getPatternLength() const {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("PayloadTypeAPI::getPatternLength", "this=" << this);
-	return mPayloadType->pattern_length;
-}
-void PayloadTypeAPI::setPatternLength(int length) {
-	CORE_MUTEX
-
-	FBLOG_DEBUG("PayloadTypeAPI::setPatternLength", "this=" << this << "\t" << "length=" << length);
-	mPayloadType->pattern_length = length;
 }
 
 int PayloadTypeAPI::getNormalBitrate() const {
