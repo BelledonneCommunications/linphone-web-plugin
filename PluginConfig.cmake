@@ -22,7 +22,7 @@ set(PLUGIN_NAME "linphone-web")
 set(PLUGIN_PREFIX "LINWEB")
 set(COMPANY_NAME "belledonne-communications")
 set(PLUGIN_SHAREDIR "linphoneweb")
-set(CORE_ROOTFS_VERSION "master-6a74c0e5496a431789ca02fd7d99234f60529059")
+set(CORE_ROOTFS_VERSION "master-81a6181d8b46a48511b561766bb0e45cf71ed870")
 set(CORE_ROOTFS_URL "http://www.linphone.org/snapshots/linphone-web/rootfs/linphone-web-rootfs")
 
 # ActiveX constants:
