@@ -52,6 +52,24 @@ function (create_signed_crx PROJNAME DIRECTORY OUT_FILE PEMFILE PASSFILE PROJDEP
 	endif()
 endfunction(create_signed_crx)
 
+if (NOT FB_PKG_SIGNED_SUFFIX)
+	set (FB_PKG_SIGNED_SUFFIX _PKG_signed)
+endif()
+function (create_signed_pkg PROJNAME IN_FILE OUT_FILE SIGNING_IDENTITY PROJDEP)
+	set (PKG_SOURCES
+		${IN_FILE}
+	)
+	ADD_CUSTOM_TARGET(${PROJNAME}${FB_PKG_SIGNED_SUFFIX} ALL DEPENDS ${OUT_FILE})
+	ADD_DEPENDENCIES(${PROJNAME}${FB_PKG_SIGNED_SUFFIX} ${PROJDEP})
+	ADD_CUSTOM_COMMAND(OUTPUT ${OUT_FILE}
+				DEPENDS ${PKG_SOURCES}
+				COMMAND ${CMAKE_COMMAND} -E remove ${OUT_FILE}
+				COMMAND productsign --sign ${SIGNING_IDENTITY} ${IN_FILE} ${OUT_FILE}
+	)
+	SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_PKG_SIGNED_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
+	message("-- Successfully added Sign PKG step")
+endfunction(create_signed_pkg)
+
 function(configure_file_ext SRC DEST)
 	configure_file("${SRC}" "${DEST}" COPYONLY)
 	get_cmake_property(_variableNames VARIABLES)

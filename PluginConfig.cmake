@@ -24,6 +24,8 @@ set(COMPANY_NAME "belledonne-communications")
 set(PLUGIN_SHAREDIR "linphoneweb")
 set(CORE_ROOTFS_VERSION "master-81a6181d8b46a48511b561766bb0e45cf71ed870")
 set(CORE_ROOTFS_URL "http://www.linphone.org/snapshots/linphone-web/rootfs/linphone-web-rootfs")
+set(MAC_CODE_SIGNING_IDENTITY "Developer ID Application: Belledonne communications")
+set(MAC_INSTALLER_SIGNING_IDENTITY "Developer ID Installer: Belledonne communications")
 
 # ActiveX constants:
 set(FBTYPELIB_NAME "LinphoneWeb")
