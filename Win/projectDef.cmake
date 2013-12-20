@@ -82,55 +82,57 @@ SET(FB_ROOTFS_DIR ${FB_OUT_DIR}/Rootfs)
 SET(WIX_LINK_FLAGS -dConfiguration=${CMAKE_CFG_INTDIR})
 
 ###############################################################################
-# Get Core Rootfs tarball
-if (NOT FB_CORE_ROOTFS_SUFFIX)
-	SET(FB_CORE_ROOTFS_SUFFIX _CoreRootFS)
+# Get linphone deps tarball
+if (NOT FB_LINPHONE_DEPS_SUFFIX)
+	set(FB_LINPHONE_DEPS_SUFFIX _LinphoneDeps)
 endif()
 
-function (get_core_rootfs OUTDIR)
-	SET(CORE_ROOTFS_GZTARBALL ${OUTDIR}/linphone-web-core-rootfs.tar.gz)
-	SET(CORE_ROOTFS_TARBALL ${OUTDIR}/linphone-web-core-rootfs.tar)
-	if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs)
-		FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs)
-	endif()
-	if (NOT EXISTS ${CORE_ROOTFS_GZTARBALL})
-		message("-- Downloading core rootfs")
-		FILE(DOWNLOAD ${CORE_ROOTFS_URL} ${CORE_ROOTFS_GZTARBALL} SHOW_PROGRESS STATUS CORE_ROOTFS_DL_STATUS)
-		list(GET CORE_ROOTFS_DL_STATUS 0 CORE_ROOTFS_DL_STATUS_CODE)
-		if (${CORE_ROOTFS_DL_STATUS_CODE} EQUAL 0)
+set(LINPHONE_DEPS_DIR ${CMAKE_CURRENT_BINARY_DIR}/linphone-deps)
+function (get_linphone_deps OUTDIR)
+	set(LINPHONE_DEPS_GZTARBALL ${OUTDIR}/linphone-deps-${LINPHONE_DEPS_VERSION}.tar.gz)
+	set(LINPHONE_DEPS_TARBALL ${OUTDIR}/linphone-deps-${LINPHONE_DEPS_VERSION}.tar)
+	if (NOT EXISTS ${LINPHONE_DEPS_GZTARBALL})
+		message("-- Downloading linphone-deps tarball")
+		file(DOWNLOAD ${LINPHONE_DEPS_URL} ${LINPHONE_DEPS_GZTARBALL} SHOW_PROGRESS STATUS DL_STATUS)
+		list(GET DL_STATUS 0 DL_STATUS_CODE)
+		if (${DL_STATUS_CODE} EQUAL 0)
 			message("     Successful")
-			message("-- Extracting core rootfs")
+			if (EXISTS ${LINPHONE_DEPS_TARBALL})
+				file(REMOVE ${LINPHONE_DEPS_TARBALL})
+			endif()
+			if (EXISTS ${LINPHONE_DEPS_DIR})
+				file(REMOVE_RECURSE ${LINPHONE_DEPS_DIR})
+				file(MAKE_DIRECTORY ${LINPHONE_DEPS_DIR})
+			endif()
+			message("-- Extracting linphone deps tarball")
 			EXECUTE_PROCESS(
-				WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs
-				COMMAND ${CMAKE_COMMAND} -E remove -f *
-				COMMAND 7z x -o${OUTDIR} ${CORE_ROOTFS_GZTARBALL}
-				RESULT_VARIABLE CORE_ROOTFS_EXT_GZ_STATUS_CODE
-				ERROR_VARIABLE CORE_ROOTFS_EXT_GZ_ERROR
+				COMMAND 7z x -o${OUTDIR} ${LINPHONE_DEPS_GZTARBALL}
+				RESULT_VARIABLE EXT_GZ_STATUS_CODE
+				ERROR_VARIABLE EXT_GZ_ERROR
 			)
-			if (${CORE_ROOTFS_EXT_GZ_STATUS_CODE} EQUAL 0)
+			if (${EXT_GZ_STATUS_CODE} EQUAL 0)
 				EXECUTE_PROCESS(
-					WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs
-					COMMAND 7z x -o${CMAKE_CURRENT_SOURCE_DIR}/Rootfs ${CORE_ROOTFS_TARBALL}
-					RESULT_VARIABLE CORE_ROOTFS_EXT_STATUS_CODE
-					ERROR_VARIABLE CORE_ROOTFS_EXT_ERROR
+					COMMAND 7z x -o${LINPHONE_DEPS_DIR} ${LINPHONE_DEPS_TARBALL}
+					RESULT_VARIABLE EXT_STATUS_CODE
+					ERROR_VARIABLE EXT_ERROR
 				)
-				if (${CORE_ROOTFS_EXT_STATUS_CODE} EQUAL 0)
+				if (${EXT_STATUS_CODE} EQUAL 0)
 					message("     Done")
 				else()
-					message(FATAL_ERROR "     Failed: ${CORE_ROOTFS_EXT_STATUS_CODE} ${CORE_ROOTFS_EXT_ERROR}")
+					message(FATAL_ERROR "     Failed: ${EXT_STATUS_CODE} ${EXT_ERROR}")
 				endif()
 			else()
-				message(FATAL_ERROR "     Failed: ${CORE_ROOTFS_EXT_GZ_STATUS_CODE} ${CORE_ROOTFS_EXT_GZ_ERROR}")
+				message(FATAL_ERROR "     Failed: ${EXT_GZ_STATUS_CODE} ${EXT_GZ_ERROR}")
 			endif()
 		else()
-			list(GET CORE_ROOTFS_DL_STATUS 1 CORE_ROOTFS_DL_STATUS_MSG)
-			message(FATAL_ERROR "     Failed: ${CORE_ROOTFS_DL_STATUS_CODE} ${CORE_ROOTFS_DL_STATUS_MSG}")
+			list(GET DL_STATUS 1 DL_STATUS_MSG)
+			message(FATAL_ERROR "     Failed: ${DL_STATUS_CODE} ${DL_STATUS_MSG}")
 		endif()
 	endif()
-endfunction(get_core_rootfs)
+endfunction(get_linphone_deps)
 ###############################################################################
 
-get_core_rootfs(${FB_BIN_DIR}/${PLUGIN_NAME})
+get_linphone_deps(${CMAKE_CURRENT_BINARY_DIR})
 
 ###############################################################################
 # Create Rootfs
