@@ -60,14 +60,14 @@
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="nplinphone_web_pdb" Source="$(var.BINSRC)/${FBSTRING_PluginFileName}.pdb" />
 								<?endif ?> 
-								<File Id="liblinphone" Source="$(var.BINSRC)/liblinphone-5.dll" />
-								<File Id="libmediastreamer_base" Source="$(var.BINSRC)/libmediastreamer_base-3.dll" />
-								<File Id="libmediastreamer_voip" Source="$(var.BINSRC)/libmediastreamer_voip-3.dll" />
+								<File Id="liblinphone" Source="$(var.BINSRC)/liblinphone.dll" />
+								<File Id="libmediastreamer_base" Source="$(var.BINSRC)/libmediastreamer_base.dll" />
+								<File Id="libmediastreamer_voip" Source="$(var.BINSRC)/libmediastreamer_voip.dll" />
 								<File Id="libogg" Source="$(var.BINSRC)/libogg-0.dll" />
 								<File Id="libopus" Source="$(var.BINSRC)/libopus-0.dll" />
-								<File Id="libortp" Source="$(var.BINSRC)/libortp-9.dll" />
-								<File Id="libspeex" Source="$(var.BINSRC)/libspeex-1.dll" />
-								<File Id="libspeexdsp" Source="$(var.BINSRC)/libspeexdsp-1.dll" />
+								<File Id="libortp" Source="$(var.BINSRC)/libortp.dll" />
+								<File Id="libspeex" Source="$(var.BINSRC)/libspeex.dll" />
+								<File Id="libspeexdsp" Source="$(var.BINSRC)/libspeexdsp.dll" />
 								<File Id="libtheora" Source="$(var.BINSRC)/libtheora-0.dll" />
 								<File Id="libvpx" Source="$(var.BINSRC)/libvpx-1.dll" />
 								<File Id="libz" Source="$(var.BINSRC)/libz-1.dll" />
@@ -89,12 +89,12 @@
 								<File Id="ssleay32" Source="$(var.BINSRC)/ssleay32.dll" />
 								${ENDIF}
 								${IF LW_USE_POLARSSL}
-								<File Id="libpolarssl" Source="$(var.BINSRC)/libpolarssl-0.dll" />
+								<File Id="libpolarssl" Source="$(var.BINSRC)/libpolarssl.dll" />
 								${ENDIF}
 								${IF LW_USE_BELLESIP}
-								<File Id="libbellesip" Source="$(var.BINSRC)/libbellesip-0.dll" />
-								<File Id="libantlr3c" Source="$(var.BINSRC)/libantlr3c-0.dll" />
-								<File Id="libxml2" Source="$(var.BINSRC)/libxml2-2.dll" />
+								<File Id="libbellesip" Source="$(var.BINSRC)/libbellesip.dll" />
+								<File Id="libantlr3c" Source="$(var.BINSRC)/libantlr3c.dll" />
+								<File Id="libxml2" Source="$(var.BINSRC)/libxml2.dll" />
 								${ENDIF}
 								<RegistryValue
 									Root="HKCU"

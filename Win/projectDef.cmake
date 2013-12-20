@@ -63,10 +63,10 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER ${FBSTRING_ProductName})
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 	${PLUGIN_INTERNAL_DEPS}
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone-5.lib"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base-3.lib"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip-3.lib"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp-9.lib")
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.lib")
 
 SET(FB_PACKAGE_SUFFIX Win)
 IF(FB_PLATFORM_ARCH_64)
@@ -141,14 +141,14 @@ endif()
 function (create_rootfs PROJNAME OUTDIR)
 	# Define components
 	SET(ROOTFS_LIB_SOURCES
-		liblinphone-5.${DEPENDENCY_EXT}
-		libmediastreamer_base-3.${DEPENDENCY_EXT}
-		libmediastreamer_voip-3.${DEPENDENCY_EXT}
+		liblinphone.${DEPENDENCY_EXT}
+		libmediastreamer_base.${DEPENDENCY_EXT}
+		libmediastreamer_voip.${DEPENDENCY_EXT}
 		libogg-0.${DEPENDENCY_EXT}
 		libopus-0.${DEPENDENCY_EXT}
-		libortp-9.${DEPENDENCY_EXT}
-		libspeex-1.${DEPENDENCY_EXT}
-		libspeexdsp-1.${DEPENDENCY_EXT}
+		libortp.${DEPENDENCY_EXT}
+		libspeex.${DEPENDENCY_EXT}
+		libspeexdsp.${DEPENDENCY_EXT}
 		libtheora-0.${DEPENDENCY_EXT}
 		libvpx-1.${DEPENDENCY_EXT}
 		libz-1.${DEPENDENCY_EXT}
@@ -185,15 +185,15 @@ function (create_rootfs PROJNAME OUTDIR)
 	IF(LW_USE_POLARSSL)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
-			libpolarssl-0.${DEPENDENCY_EXT}
+			libpolarssl.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_POLARSSL)
 	IF(LW_USE_BELLESIP)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
-			libbellesip-0.${DEPENDENCY_EXT}
-			libantlr3c-0.${DEPENDENCY_EXT}
-			libxml2-2.${DEPENDENCY_EXT}
+			libbellesip.${DEPENDENCY_EXT}
+			libantlr3c.${DEPENDENCY_EXT}
+			libxml2.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_BELLESIP)
 	IF(LW_USE_G729)
@@ -347,7 +347,7 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 ENDIF(LW_USE_SRTP)
 IF(LW_USE_POLARSSL)
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libpolarssl-0.${DEPENDENCY_EXT}"
+	"${FB_ROOTFS_DIR}/libpolarssl.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
@@ -355,19 +355,19 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 ENDIF(LW_USE_POLARSSL)
 IF(LW_USE_BELLESIP)
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libbellesip-0.${DEPENDENCY_EXT}"
+	"${FB_ROOTFS_DIR}/libbellesip.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libantlr3c-0.${DEPENDENCY_EXT}"
+	"${FB_ROOTFS_DIR}/libantlr3c.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libxml2-2.${DEPENDENCY_EXT}"
+	"${FB_ROOTFS_DIR}/libxml2.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
@@ -390,19 +390,19 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 )
 ENDIF(LW_USE_X264)
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/liblinphone-5.${DEPENDENCY_EXT}"
+	"${FB_ROOTFS_DIR}/liblinphone.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libmediastreamer_base-3.${DEPENDENCY_EXT}"
+	"${FB_ROOTFS_DIR}/libmediastreamer_base.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libmediastreamer_voip-3.${DEPENDENCY_EXT}"
+	"${FB_ROOTFS_DIR}/libmediastreamer_voip.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
@@ -420,19 +420,19 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libortp-9.${DEPENDENCY_EXT}"
+	"${FB_ROOTFS_DIR}/libortp.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libspeex-1.${DEPENDENCY_EXT}"
+	"${FB_ROOTFS_DIR}/libspeex.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libspeexdsp-1.${DEPENDENCY_EXT}"
+	"${FB_ROOTFS_DIR}/libspeexdsp.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
