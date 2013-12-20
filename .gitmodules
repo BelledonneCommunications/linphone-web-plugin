@@ -1,0 +1,18 @@
+[submodule "submodules/linphone"]
+	path = submodules/linphone
+	url = git://git.linphone.org/linphone.git
+[submodule "submodules/polarssl"]
+	path = submodules/polarssl
+	url = git://git.linphone.org/polarssl.git
+[submodule "submodules/libxml2"]
+	path = submodules/libxml2
+	url = git://git.gnome.org/libxml2.git
+[submodule "submodules/antlr3"]
+	path = submodules/antlr3
+	url = git://git.linphone.org/antlr3.git
+[submodule "submodules/belle-sip"]
+	path = submodules/belle-sip
+	url = git://git.linphone.org/belle-sip.git
+[submodule "submodules/speex"]
+	path = submodules/speex
+	url = git://git.linphone.org/speex.git
