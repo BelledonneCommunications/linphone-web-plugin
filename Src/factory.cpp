@@ -22,6 +22,8 @@
  
  */
 
+//#define DEBUG_GENERATES_DUMPS
+
 #include <FactoryBase.h>
 #include <boost/make_shared.hpp>
 #include <global/config.h>
@@ -31,12 +33,12 @@
 
 namespace LinphoneWeb {
 	
-#ifdef DEBUG
-#ifdef WIN32
+#if defined(WIN32) && defined(DEBUG)
 #include <Windows.h>
 #include <Dbghelp.h>
 #include <Strsafe.h>
 
+#ifdef DEBUG_GENERATES_DUMPS
 void GenerateDump(EXCEPTION_POINTERS* pExceptionPointers) {
 	BOOL bMiniDumpSuccessful;
 	CHAR szPath[MAX_PATH]; 
@@ -87,17 +89,15 @@ LONG CALLBACK unhandled_handler(EXCEPTION_POINTERS* e) {
 	GenerateDump(e);
 	return EXCEPTION_EXECUTE_HANDLER;
 }
-#endif //WIN32
-#endif //DEBUG
+#endif // DEBUG_GENERATES_DUMPS
+#endif
 
 class PluginFactory: public FB::FactoryBase {
 private:
 
-#ifdef DEBUG
-#ifdef WIN32
+#if defined(WIN32) && defined(DEBUG) && defined(DEBUG_GENERATES_DUMPS)
 	void *mExceptionHandler;
-#endif //WIN32
-#endif //DEBUG
+#endif
 	
 	WhiteBoardPtr mWhiteBoard;
 	
@@ -125,12 +125,10 @@ public:
 	///////////////////////////////////////////////////////////////////////////////
 	void globalPluginInitialize() {
 		FBLOG_DEBUG("PluginFactory::globalPluginInitialize", "Start");
-#ifdef DEBUG
-#ifdef WIN32
+#if defined(WIN32) && defined(DEBUG) && defined(DEBUG_GENERATES_DUMPS)
 		mExceptionHandler = AddVectoredExceptionHandler(TRUE, unhandled_handler);
 		FBLOG_DEBUG("PluginFactory::globalPluginInitialize", "Add exception handler(" << unhandled_handler << ")=" << mExceptionHandler);
-#endif //WIN32
-#endif //DEBUG
+#endif
 		srand((unsigned int)time(NULL));
 
 		CorePlugin::StaticInitialize();
@@ -147,12 +145,10 @@ public:
 		CorePlugin::StaticDeinitialize();
 		VideoPlugin::StaticDeinitialize();
 
-#ifdef DEBUG
-#ifdef WIN32
+#if defined(WIN32) && defined(DEBUG) && defined(DEBUG_GENERATES_DUMPS)
 		RemoveVectoredExceptionHandler(mExceptionHandler);
 		FBLOG_DEBUG("PluginFactory::globalPluginInitialize", "Remove exception handler=" << mExceptionHandler);
-#endif //WIN32
-#endif //DEBUG
+#endif
 
 		FBLOG_DEBUG("PluginFactory::globalPluginDeinitialize", "End");
 	}

@@ -74,6 +74,9 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	add_definitions("-Wno-unused-private-field")
 endif()
 
+set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/Stage CACHE PATH "Install prefix" FORCE)
+add_subdirectory(submodules)
+
 # This will include Win/projectDef.cmake, X11/projectDef.cmake, Mac/projectDef 
 # depending on the platform
 include_platform()
