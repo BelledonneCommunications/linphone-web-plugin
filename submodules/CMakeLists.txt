@@ -34,6 +34,8 @@ set(INSTALL_COMPONENT_IN_POSTBUILD ON)
 set(USE_INSTALLED_COMPONENTS ON)
 set(LIB_INSTALL_DIR bin)
 
+set(MS2_ENABLE_GSM OFF CACHE BOOL "Build mediastreamer2 with the GSM codec.")
+
 add_subdirectory(cmake/libxml2)
 add_subdirectory(antlr3/runtime/C)
 add_subdirectory(polarssl)
