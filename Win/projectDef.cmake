@@ -150,12 +150,10 @@ function (create_rootfs PROJNAME OUTDIR)
 		liblinphone.${DEPENDENCY_EXT}
 		libmediastreamer_base.${DEPENDENCY_EXT}
 		libmediastreamer_voip.${DEPENDENCY_EXT}
-		libogg-0.${DEPENDENCY_EXT}
 		libopus-0.${DEPENDENCY_EXT}
 		libortp.${DEPENDENCY_EXT}
 		libspeex.${DEPENDENCY_EXT}
 		libspeexdsp.${DEPENDENCY_EXT}
-		libtheora-0.${DEPENDENCY_EXT}
 		libvpx-1.${DEPENDENCY_EXT}
 		libz-1.${DEPENDENCY_EXT}
 	)
@@ -414,12 +412,6 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libogg-0.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/libopus-0.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
@@ -439,12 +431,6 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/libspeexdsp.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libtheora-0.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"

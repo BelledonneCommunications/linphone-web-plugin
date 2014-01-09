@@ -63,12 +63,10 @@
 								<File Id="liblinphone" Source="$(var.BINSRC)/liblinphone.dll" />
 								<File Id="libmediastreamer_base" Source="$(var.BINSRC)/libmediastreamer_base.dll" />
 								<File Id="libmediastreamer_voip" Source="$(var.BINSRC)/libmediastreamer_voip.dll" />
-								<File Id="libogg" Source="$(var.BINSRC)/libogg-0.dll" />
 								<File Id="libopus" Source="$(var.BINSRC)/libopus-0.dll" />
 								<File Id="libortp" Source="$(var.BINSRC)/libortp.dll" />
 								<File Id="libspeex" Source="$(var.BINSRC)/libspeex.dll" />
 								<File Id="libspeexdsp" Source="$(var.BINSRC)/libspeexdsp.dll" />
-								<File Id="libtheora" Source="$(var.BINSRC)/libtheora-0.dll" />
 								<File Id="libvpx" Source="$(var.BINSRC)/libvpx-1.dll" />
 								<File Id="libz" Source="$(var.BINSRC)/libz-1.dll" />
 								${IF LW_USE_EXOSIP}
