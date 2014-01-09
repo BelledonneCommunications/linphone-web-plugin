@@ -21,6 +21,9 @@
 # Included from ../CMakeLists.txt
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/Common/common.cmake)
 
+option(LW_CREATE_MSI "Enable creation of a MSI package of linphoneweb" ON)
+option(LW_CREATE_CAB "Enable creation of a CAB package of linphoneweb" ON)
+
 find_program(7ZIP 7z.exe)
 IF(${7ZIP} MATCHES "7ZIP-NOTFOUND")
 	MESSAGE(FATAL_ERROR "7zip is mandatory for compilation on Windows. Please install it and put it in the PATH environment variable.")
@@ -451,7 +454,7 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 
 ###############################################################################
 # MSI & EXE Package
-if(WIX_FOUND)
+if(LW_CREATE_MSI)
 	SET(WIX_HEAT_FLAGS
 		-gg                  # Generate GUIDs
 		-srd                 # Suppress Root Dir
@@ -491,12 +494,12 @@ if(WIX_FOUND)
 		"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 		"http://timestamp.verisign.com/scripts/timestamp.dll"
 	)
-endif()
+endif(LW_CREATE_MSI)
 ###############################################################################
 
 ###############################################################################
 # CAB Package
-if(WIX_FOUND)
+if(LW_CREATE_CAB)
 	SET(FB_CAB_DEST ${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab)
 	if (NOT FB_CAB_SUFFIX)
 		set (FB_CAB_SUFFIX _CAB)
@@ -516,117 +519,121 @@ if(WIX_FOUND)
 		"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 		"http://timestamp.verisign.com/scripts/timestamp.dll"
 	)
-endif()
+endif(LW_CREATE_CAB)
 ###############################################################################
 
 ###############################################################################
 # XPI Package
-if (NOT FB_XPI_PACKAGE_SUFFIX)
-	SET(FB_XPI_PACKAGE_SUFFIX _XPI)
-endif()
+if(LW_CREATE_XPI)
+	if (NOT FB_XPI_PACKAGE_SUFFIX)
+		SET(FB_XPI_PACKAGE_SUFFIX _XPI)
+	endif()
 
-function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
-	SET(XPI_SOURCES
-		${FB_OUT_DIR}/Rootfs.updated
-		${CMAKE_CURRENT_BINARY_DIR}/install.rdf
-		${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/bootstrap.js
-		${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome.manifest
-		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
-		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png
+	function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
+		SET(XPI_SOURCES
+			${FB_OUT_DIR}/Rootfs.updated
+			${CMAKE_CURRENT_BINARY_DIR}/install.rdf
+			${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/bootstrap.js
+			${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome.manifest
+			${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
+			${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png
+		)
+
+		CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
+
+		SET(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
+
+		ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi)
+		SET_TARGET_PROPERTIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
+		ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
+					DEPENDS ${XPI_SOURCES}
+					COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
+					COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
+					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/install.rdf ${FB_PKG_DIR}/
+					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/bootstrap.js ${FB_PKG_DIR}/
+					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome.manifest ${FB_PKG_DIR}/
+
+					COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/chrome/skin
+					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/chrome/skin/
+					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png ${FB_PKG_DIR}/chrome/skin/
+
+					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}/plugins
+
+					COMMAND ${CMAKE_COMMAND} -E remove ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
+					COMMAND jar cfM ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
+
+					COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/XPI.updated
+		)
+		ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
+		MESSAGE("-- Successfully added XPI package step")
+	endfunction(create_xpi_package)
+
+	create_xpi_package(${PLUGIN_NAME}
+		${FBSTRING_PLUGIN_VERSION}
+		${FB_OUT_DIR}
+		${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	)
 
-	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
-
-	SET(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
-
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi)
-	SET_TARGET_PROPERTIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
-	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
-				DEPENDS ${XPI_SOURCES}
-				COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
-				COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
-				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/install.rdf ${FB_PKG_DIR}/
-				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/bootstrap.js ${FB_PKG_DIR}/
-				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome.manifest ${FB_PKG_DIR}/
-
-				COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/chrome/skin
-				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/chrome/skin/
-				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png ${FB_PKG_DIR}/chrome/skin/
-
-				COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}/plugins
-
-				COMMAND ${CMAKE_COMMAND} -E remove ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
-				COMMAND jar cfM ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi -C ${FB_PKG_DIR} .
-
-				COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/XPI.updated
+	create_signed_xpi(${PLUGIN_NAME}
+		"${FB_OUT_DIR}/XPI/"
+		"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.xpi"
+		"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
+		"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+		${PLUGIN_NAME}${FB_XPI_PACKAGE_SUFFIX}
 	)
-	ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
-	MESSAGE("-- Successfully added XPI package step")
-endfunction(create_xpi_package)
-
-create_xpi_package(${PLUGIN_NAME}
-	${FBSTRING_PLUGIN_VERSION}
-	${FB_OUT_DIR}
-	${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-)
-
-create_signed_xpi(${PLUGIN_NAME}
-	"${FB_OUT_DIR}/XPI/"
-	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.xpi"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	${PLUGIN_NAME}${FB_XPI_PACKAGE_SUFFIX}
-)
+endif(LW_CREATE_XPI)
 ###############################################################################
 
 ###############################################################################
 # CRX Package
-if (NOT FB_CRX_PACKAGE_SUFFIX)
-	SET(FB_CRX_PACKAGE_SUFFIX _CRX)
-endif()
+if(LW_CREATE_CRX)
+	if (NOT FB_CRX_PACKAGE_SUFFIX)
+		SET(FB_CRX_PACKAGE_SUFFIX _CRX)
+	endif()
 
-function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
-	SET(CRX_SOURCES
-		${FB_OUT_DIR}/Rootfs.updated
-		${CMAKE_CURRENT_BINARY_DIR}/manifest.json
-		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png
-		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
+	function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
+		SET(CRX_SOURCES
+			${FB_OUT_DIR}/Rootfs.updated
+			${CMAKE_CURRENT_BINARY_DIR}/manifest.json
+			${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png
+			${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
+		)
+
+		CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Win/CRX/manifest.json ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
+
+		SET(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
+
+		ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx)
+		SET_TARGET_PROPERTIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
+		ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
+					DEPENDS ${CRX_SOURCES}
+					COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
+					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}
+					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/manifest.json ${FB_PKG_DIR}/
+					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png ${FB_PKG_DIR}/
+					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/
+
+					COMMAND ${CMAKE_COMMAND} -E remove ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
+					COMMAND jar cfM ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx -C ${FB_PKG_DIR} .
+
+					COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/CRX.updated
+		)
+		ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJDEP})
+		MESSAGE("-- Successfully added CRX package step")
+	endfunction(create_crx_package)
+
+	create_crx_package(${PLUGIN_NAME}
+		${FBSTRING_PLUGIN_VERSION}
+		${FB_OUT_DIR}
+		${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	)
 
-	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Win/CRX/manifest.json ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
-
-	SET(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
-
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx)
-	SET_TARGET_PROPERTIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
-	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
-				DEPENDS ${CRX_SOURCES}
-				COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
-				COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}
-				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/manifest.json ${FB_PKG_DIR}/
-				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png ${FB_PKG_DIR}/
-				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/
-
-				COMMAND ${CMAKE_COMMAND} -E remove ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
-				COMMAND jar cfM ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx -C ${FB_PKG_DIR} .
-
-				COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/CRX.updated
+	create_signed_crx(${PLUGIN_NAME}
+		"${FB_OUT_DIR}/CRX/"
+		"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.crx"
+		"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
+		"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+		${PLUGIN_NAME}${FB_CRX_PACKAGE_SUFFIX}
 	)
-	ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJDEP})
-	MESSAGE("-- Successfully added CRX package step")
-endfunction(create_crx_package)
-
-create_crx_package(${PLUGIN_NAME}
-	${FBSTRING_PLUGIN_VERSION}
-	${FB_OUT_DIR}
-	${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-)
-
-create_signed_crx(${PLUGIN_NAME}
-	"${FB_OUT_DIR}/CRX/"
-	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.crx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	${PLUGIN_NAME}${FB_CRX_PACKAGE_SUFFIX}
-)
+endif(LW_CREATE_CRX)
 ###############################################################################

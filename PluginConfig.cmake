@@ -180,14 +180,17 @@ endif(FB_PLATFORM_NAME STREQUAL "X11")
 
 ### CONFIGURATIONS ###
 
-set(LW_USE_SRTP 1)
-set(LW_USE_FFMPEG 1)
-set(LW_USE_G729 0)
-set(LW_USE_X264 0)
-set(LW_USE_OPENSSL 0)
-set(LW_USE_EXOSIP 0)
-set(LW_USE_POLARSSL 1)
-set(LW_USE_BELLESIP 1)
+option(LW_CREATE_CRX "Enable creation of a CRX package of linphoneweb" ON)
+option(LW_CREATE_XPI "Enable creation of a XPI package of linphoneweb" ON)
+
+option(LW_USE_SRTP "Enable use of SRTP in linphoneweb" ON)
+option(LW_USE_FFMPEG "Enable use of FFMPEG in linphoneweb" ON)
+option(LW_USE_G729 "Enable use of the G729 codec in linphoneweb" OFF)
+option(LW_USE_X264 "Enable use of the H264 codec via the X264 library in linphoneweb" OFF)
+option(LW_USE_OPENSSL "Enable use of the openssl library in linphoneweb" OFF)
+option(LW_USE_POLARSSL "Enable use of the polarssl library in linphoneweb" ON)
+option(LW_USE_EXOSIP "Enable use of the exosip SIP stack in linphoneweb" OFF)
+option(LW_USE_BELLESIP "Enable use of the belle-sip SIP stack in linphoneweb" ON)
 
 ##
 message("-- Configurations:")
