@@ -22,8 +22,10 @@ set(PLUGIN_NAME "linphone-web")
 set(PLUGIN_PREFIX "LINWEB")
 set(COMPANY_NAME "belledonne-communications")
 set(PLUGIN_SHAREDIR "linphoneweb")
-set(CORE_ROOTFS_VERSION "all_codecs-00685223bef25a6559e2ac3f30cf51bd91219355")
+set(CORE_ROOTFS_VERSION "all_codecs-349056bd1436cfa4dc3588d03891be8710555ef0")
 set(CORE_ROOTFS_URL "http://www.linphone.org/snapshots/linphone-web/rootfs/linphone-web-rootfs")
+set(MAC_CODE_SIGNING_IDENTITY "Developer ID Application: Belledonne communications")
+set(MAC_INSTALLER_SIGNING_IDENTITY "Developer ID Installer: Belledonne communications")
 
 # ActiveX constants:
 set(FBTYPELIB_NAME "LinphoneWeb")
@@ -51,8 +53,8 @@ set(FBSTRING_CompanyName "Belledonne Communications")
 # Company id
 set(FBSTRING_CompanyDomain "com.belledonne-communications")
 
-set(FBSTRING_PLUGIN_VERSION "1.0.0")
-set(FBSTRING_PLUGIN_VERSION_ACTIVEX "1,0,0")
+set(FBSTRING_PLUGIN_VERSION "1.0.1")
+set(FBSTRING_PLUGIN_VERSION_ACTIVEX "1,0,1")
 set(FBSTRING_LegalCopyright "Copyright 2013 Belledonne Communications")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}")
 

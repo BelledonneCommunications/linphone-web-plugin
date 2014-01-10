@@ -13,6 +13,7 @@ Prerequisites
 
 ### Windows platform
 * Visual studio
+* WiX to generate the MSI installer (http://wixtoolset.org/)
 
 ### Linux platform
 * X11 dev
@@ -58,9 +59,7 @@ The generated files can be found in `./build/bin` directory inside
 Firebreath project root. 
 
 ### Windows
-Before compile remove all `.h` files in `./Rootfs/include/` in linphone-web
-project directory. Added to this you have to add python and openssl in the
-PATH
+You have to add python, openssl and WiX in the PATH environment variable.
 
 ### Mac OS X
 Don't use XCode directly it doesn't use corrects environment and target 
