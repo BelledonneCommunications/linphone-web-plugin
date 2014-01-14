@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Product Id="*" Name="${FBSTRING_PluginName}" Language="1033" Version="${FBSTRING_PLUGIN_VERSION}" Manufacturer="${FBSTRING_CompanyName}" UpgradeCode="{${FBControl_WixUpgradeCode_GUID}}">
-		<Package InstallerVersion="200" Compressed="yes" Description="Installer for the ${FBSTRING_PluginName} plugin" InstallScope="perUser" />
+		<Package InstallerVersion="200" Compressed="yes" Description="Installer for the ${FBSTRING_PluginName} plugin" InstallScope="${WIX_INSTALL_SCOPE}" />
 		<Upgrade Id="{${FBControl_WixUpgradeCode_GUID}}">
 			<UpgradeVersion
 				Property="OLD_VERSION_FOUND"
@@ -25,7 +25,7 @@
 					<Component Id="CompanyDirComp" Guid="*">
 						<RemoveFolder Id="RemoveCompanyDir" On="uninstall" />
 						<RegistryValue
-							Root="HKCU"
+							Root="${REGKEY_ROOT}"
 							Key="SOFTWARE\${FBSTRING_CompanyDomain}"
 							Name="Uninstall"
 							Type="string"
@@ -36,7 +36,7 @@
 						<Component Id="PluginNameDirComp" Guid="*">
 							<RemoveFolder Id="RemovePluginNameDir" On="uninstall" />
 							<RegistryValue
-								Root="HKCU"
+								Root="${REGKEY_ROOT}"
 								Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}"
 								Name="Uninstall"
 								Type="string"
@@ -47,7 +47,7 @@
 							<Component Id="InstallDirComp" Guid="*">
 								<RemoveFolder Id="RemoveInstallDir" On="uninstall" />
 								<RegistryValue
-									Root="HKCU"
+									Root="${REGKEY_ROOT}"
 									Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}"
 									Name="Uninstall"
 									Type="string"
@@ -94,7 +94,7 @@
 								<File Id="libxml2" Source="$(var.BINSRC)/libxml2.dll" />
 								${ENDIF}
 								<RegistryValue
-									Root="HKCU"
+									Root="${REGKEY_ROOT}"
 									Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"
 									Name="Uninstall"
 									Type="string"
@@ -105,7 +105,7 @@
 								<Component Id="LinphoneWebDirComp" Guid="*">
 									<RemoveFolder Id="RemoveLinphoneWebDir" On="uninstall" />
 									<RegistryValue
-										Root="HKCU"
+										Root="${REGKEY_ROOT}"
 										Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\LinphoneWebDirComp"
 										Name="Uninstall"
 										Type="string"
@@ -116,7 +116,7 @@
 									<Component Id="LibDirComp" Guid="*">
 										<RemoveFolder Id="RemoveLibDir" On="uninstall" />
 										<RegistryValue
-											Root="HKCU"
+											Root="${REGKEY_ROOT}"
 											Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\LibDirComp"
 											Name="Uninstall"
 											Type="string"
@@ -127,7 +127,7 @@
 										<Component Id="LibMediastreamerDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc70">
 											<RemoveFolder Id="RemoveLibMediastreamerDir" On="uninstall" />
 											<RegistryValue
-												Root="HKCU"
+												Root="${REGKEY_ROOT}"
 												Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\LibMediastreamerDirComp"
 												Name="Uninstall"
 												Type="string"
@@ -144,7 +144,7 @@
 												<File Id="libmsx264" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsx264-0.dll" />
 												${ENDIF}
 												<RegistryValue
-													Root="HKCU"
+													Root="${REGKEY_ROOT}"
 													Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\MsPluginsDirComp"
 													Name="Uninstall"
 													Type="string"
@@ -158,7 +158,7 @@
 									<Component Id="ShareDirComp" Guid="*">
 										<RemoveFolder Id="RemoveShareDir" On="uninstall" />
 										<RegistryValue
-											Root="HKCU"
+											Root="${REGKEY_ROOT}"
 											Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareDirComp"
 											Name="Uninstall"
 											Type="string"
@@ -170,7 +170,7 @@
 											<RemoveFolder Id="RemoveShareLinphoneDir" On="uninstall" />
 											<File Id="rootca" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/linphone/rootca.pem" />
 											<RegistryValue
-												Root="HKCU"
+												Root="${REGKEY_ROOT}"
 												Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareLinphoneDirComp"
 												Name="Uninstall"
 												Type="string"
@@ -183,7 +183,7 @@
 											<RemoveFolder Id="RemoveShareImagesDir" On="uninstall" />
 											<File Id="nowebcamCIF" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/images/nowebcamCIF.jpg" />
 											<RegistryValue
-												Root="HKCU"
+												Root="${REGKEY_ROOT}"
 												Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareImagesDirComp"
 												Name="Uninstall"
 												Type="string"
@@ -195,7 +195,7 @@
 										<Component Id="ShareSoundsDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6d">
 											<RemoveFolder Id="RemoveShareSoundsDir" On="uninstall" />
 											<RegistryValue
-												Root="HKCU"
+												Root="${REGKEY_ROOT}"
 												Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsDirComp"
 												Name="Uninstall"
 												Type="string"
@@ -207,7 +207,7 @@
 												<RemoveFolder Id="RemoveShareSoundsLinphoneDir" On="uninstall" />
 												<File Id="ringback" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/sounds/linphone/ringback.wav" />
 												<RegistryValue
-													Root="HKCU"
+													Root="${REGKEY_ROOT}"
 													Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsLinphoneDirComp"
 													Name="Uninstall"
 													Type="string"
@@ -220,7 +220,7 @@
 													<File Id="oldphone" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/sounds/linphone/rings/oldphone.wav" />
 													<File Id="toymono" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/sounds/linphone/rings/toy-mono.wav" />
 													<RegistryValue
-														Root="HKCU"
+														Root="${REGKEY_ROOT}"
 														Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsLinphoneRingsDirComp"
 														Name="Uninstall"
 														Type="string"
