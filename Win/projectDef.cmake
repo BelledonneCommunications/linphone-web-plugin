@@ -119,11 +119,30 @@ function (get_linphone_deps OUTDIR)
 					ERROR_VARIABLE EXT_ERROR
 				)
 				if (${EXT_STATUS_CODE} EQUAL 0)
-					file(GLOB DEPS_STATIC_LIBS ${LINPHONE_DEPS_DIR}/lib/[^.]*.dll.a)
-					foreach(SOURCE_LIB ${DEPS_STATIC_LIBS})
-						string(REGEX REPLACE ".dll.a" ".lib" DST_LIB ${SOURCE_LIB})
-						file(RENAME ${SOURCE_LIB} ${DST_LIB})
-					endforeach()
+					execute_process(
+						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
+						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/avcodec-53.dll libavcodec.lib
+					)
+					execute_process(
+						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
+						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/avutil-51.dll libavutil.lib
+					)
+					execute_process(
+						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
+						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/swscale-2.dll libswscale.lib
+					)
+					execute_process(
+						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
+						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/libopus-0.dll libopus.lib
+					)
+					execute_process(
+						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
+						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/libsrtp-1.4.5.dll libsrtp.lib
+					)
+					execute_process(
+						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
+						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/libvpx-1.dll libvpx.lib
+					)
 					message("     Done")
 				else()
 					message(FATAL_ERROR "     Failed: ${EXT_STATUS_CODE} ${EXT_ERROR}")
