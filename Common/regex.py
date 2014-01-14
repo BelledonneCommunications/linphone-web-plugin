@@ -1,7 +1,7 @@
 import re, sys
 
 def str2bool(v):
-  return v.lower() in ("yes", "true", "t", "1")
+  return v.lower() in ("yes", "true", "t", "on", "1")
 
 def replace(src, dest, variable, value):
   infile = open(src, "r")
