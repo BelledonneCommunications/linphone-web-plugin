@@ -54,10 +54,12 @@ public:
 	StringPtr getDomain() const;
 	int getPort() const;
 	StringPtr getScheme() const;
+	int getTransport() const;
 	StringPtr getUsername() const;
 	void setDisplayName(StringPtr const &displayname);
 	void setDomain(StringPtr const &domain);
 	void setPort(int port);
+	void setTransport(int transport);
 	void setUsername(StringPtr const &username);
 
 	inline LinphoneAddress *getRef() {

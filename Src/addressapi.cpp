@@ -59,11 +59,13 @@ void AddressAPI::initProxy() {
 		registerProperty("displayName", make_property(this, &AddressAPI::getDisplayName));
 		registerProperty("domain", make_property(this, &AddressAPI::getDomain));
 		registerProperty("port", make_property(this, &AddressAPI::getPort));
+		registerProperty("transport", make_property(this, &AddressAPI::getTransport));
 		registerProperty("username", make_property(this, &AddressAPI::getUsername));
 	} else {
 		registerProperty("displayName", make_property(this, &AddressAPI::getDisplayName, &AddressAPI::setDisplayName));
 		registerProperty("domain", make_property(this, &AddressAPI::getDomain, &AddressAPI::setDomain));
 		registerProperty("port", make_property(this, &AddressAPI::getPort, &AddressAPI::setPort));
+		registerProperty("transport", make_property(this, &AddressAPI::getTransport, &AddressAPI::setTransport));
 		registerProperty("username", make_property(this, &AddressAPI::getUsername, &AddressAPI::setUsername));
 	}
 	registerProperty("scheme", make_property(this, &AddressAPI::getScheme));
@@ -155,6 +157,20 @@ StringPtr AddressAPI::getScheme() const {
 	
 	FBLOG_DEBUG("AddressAPI::getScheme", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_address_get_scheme(mAddress));
+}
+
+int AddressAPI::getTransport() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("AddressAPI::getTransport", "this=" << this);
+	return linphone_address_get_transport(mAddress);
+}
+
+void AddressAPI::setTransport(int transport) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("AddressAPI::setTransport", "this=" << this << "\t" << "transport=" << transport);
+	linphone_address_set_transport(mAddress, (LinphoneTransportType)transport);
 }
 
 StringPtr AddressAPI::getUsername() const {
