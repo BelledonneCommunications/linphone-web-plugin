@@ -180,6 +180,13 @@ endif(FB_PLATFORM_NAME STREQUAL "X11")
 #################
 
 
+### SIGNING ###
+
+set(LW_PFX_FILENAME "linphoneweb.pfx")
+set(LW_PASSPHRASE_FILENAME "passphrase.txt")
+set(LW_TIMESTAMP_URL "http://timestamp.verisign.com/scripts/timestamp.dll")
+
+
 ### CONFIGURATIONS ###
 
 option(LW_CREATE_CRX "Enable creation of a CRX package of linphoneweb" ON)

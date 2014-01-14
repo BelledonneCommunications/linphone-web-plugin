@@ -29,6 +29,42 @@ IF(${7ZIP} MATCHES "7ZIP-NOTFOUND")
 	MESSAGE(FATAL_ERROR "7zip is mandatory for compilation on Windows. Please install it and put it in the PATH environment variable.")
 ENDIF()
 
+# Configuration of code signing
+set(LW_PFX_FILE "${CMAKE_CURRENT_SOURCE_DIR}/sign/${LW_PFX_FILENAME}")
+set(LW_PASSPHRASE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/sign/${LW_PASSPHRASE_FILENAME}")
+GET_FILENAME_COMPONENT(WINSDK_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]" REALPATH CACHE)
+find_program(SIGNTOOL signtool
+	PATHS
+	${WINSDK_DIR}/bin
+)
+set(LW_SIGNTOOL_COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/signtool.py)
+if(EXISTS ${LW_PFX_FILE})
+	if(SIGNTOOL)
+		set(LW_SIGNTOOL_COMMAND ${LW_SIGNTOOL_COMMAND} signtool sign /f "${LW_PFX_FILE}")
+		if (NOT "${LW_PASSPHRASE_FILE}" STREQUAL "")
+			set(LW_SIGNTOOL_COMMAND ${LW_SIGNTOOL_COMMAND} /p ${LW_PASSPHRASE_FILE})
+		endif()
+		if (NOT "${LW_TIMESTAMP_URL}" STREQUAL "")
+			set(LW_SIGNTOOL_COMMAND ${LW_SIGNTOOL_COMMAND} /t "${LW_TIMESTAMP_URL}")
+		endif()
+		message("Found signtool and certificate ${LW_PFX_FILE}")
+	else(SIGNTOOL)
+		message("!! Could not find signtool! Code signing disabled ${SIGNTOOL}")
+	endif(SIGNTOOL)
+else(EXISTS ${LW_PFX_FILE})
+	message(STATUS "No signtool certificate found; assuming development machine (${LW_PFX_FILE})")
+endif(EXISTS ${LW_PFX_FILE})
+macro(my_sign_file PROJNAME _FILENAME)
+	if (EXISTS ${LW_PFX_FILE} AND SIGNTOOL)
+		ADD_CUSTOM_COMMAND(
+			TARGET ${PROJNAME}
+			POST_BUILD
+			COMMAND ${LW_SIGNTOOL_COMMAND} ${_FILENAME}
+		)
+		message(STATUS "Successfully added signtool step to sign ${_FILENAME} with ${LW_PFX_FILE}")
+	endif()
+endmacro(my_sign_file)
+
 # remember that the current source dir is the project root; this file is in Win/
 FILE(GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 	Win/[^.]*.cpp
@@ -169,6 +205,32 @@ if (NOT FB_ROOTFS_SUFFIX)
 	SET(FB_ROOTFS_SUFFIX _RootFS)
 endif()
 
+set(ROOTFS_TARGET_ID 0)
+set(ROOTFS_TARGETS )
+macro(add_rootfs_target VAR_DEPEND DIR_DEST DIR_SRC elem SIGN)
+	GET_FILENAME_COMPONENT(path ${elem} PATH)
+	if(SIGN)
+		add_custom_target("ROOTFS_TARGET_${ROOTFS_TARGET_ID}"
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
+			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+			COMMAND ${LW_SIGNTOOL_COMMAND} ${DIR_DEST}/${elem}
+			COMMENT "Install and sign ${DIR_DEST}/${elem}"
+			VERBATIM
+		)
+	else(SIGN)
+		add_custom_target("ROOTFS_TARGET_${ROOTFS_TARGET_ID}"
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
+			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+			COMMENT "Install ${DIR_DEST}/${elem}"
+			VERBATIM
+		)
+	endif(SIGN)
+	set_target_properties("ROOTFS_TARGET_${ROOTFS_TARGET_ID}" PROPERTIES FOLDER ${FBSTRING_ProductName})
+	add_dependencies("ROOTFS_TARGET_${ROOTFS_TARGET_ID}" ${VAR_DEPEND})
+	list(APPEND ROOTFS_TARGETS "ROOTFS_TARGET_${ROOTFS_TARGET_ID}")
+	math(EXPR ROOTFS_TARGET_ID "${ROOTFS_TARGET_ID}+1")
+endmacro()
+
 function (create_rootfs PROJNAME OUTDIR)
 	# Define components
 	SET(ROOTFS_LIB_SOURCES
@@ -245,226 +307,47 @@ function (create_rootfs PROJNAME OUTDIR)
 		sounds/linphone/rings/toy-mono.wav
 	)
 
-	# Set Rootfs sources
-	SET(ROOTFS_SOURCES
-		${OUTDIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
-	)
+	# Install and sign libraries and files
 	FOREACH(elem ${ROOTFS_LIB_SOURCES})
-		SET(DIR_SRC ${CMAKE_INSTALL_PREFIX}/bin)
-		SET(DIR_DEST ${FB_ROOTFS_DIR})
-		GET_FILENAME_COMPONENT(path ${elem} PATH)
-		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
-			DEPENDS ${DIR_SRC}/${elem}
-			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
-			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+		add_rootfs_target(
+			${PROJNAME}
+			${FB_ROOTFS_DIR}
+			${CMAKE_INSTALL_PREFIX}/bin
+			${elem}
+			TRUE
 		)
-		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
 	FOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
-		SET(DIR_SRC ${CMAKE_INSTALL_PREFIX}/lib/mediastreamer/plugins)
-		SET(DIR_DEST ${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins)
-		GET_FILENAME_COMPONENT(path ${elem} PATH)
-		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
-			DEPENDS ${DIR_SRC}/${elem}
-			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
-			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+		add_rootfs_target(
+			${PROJNAME}
+			${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins
+			${CMAKE_INSTALL_PREFIX}/lib/mediastreamer/plugins
+			${elem}
+			TRUE
 		)
-		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
 	FOREACH(elem ${ROOTFS_SHARE_SOURCES})
-		SET(DIR_SRC ${CMAKE_INSTALL_PREFIX}/share)
-		SET(DIR_DEST ${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/share)
-		GET_FILENAME_COMPONENT(path ${elem} PATH)
-		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
-			DEPENDS ${DIR_SRC}/${elem}
-			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
-			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+		add_rootfs_target(
+			${PROJNAME}
+			${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/share
+			${CMAKE_INSTALL_PREFIX}/share
+			${elem}
+			FALSE
 		)
-		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_SHARE_SOURCES})
 
-	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/Rootfs.updated 
-		DEPENDS ${ROOTFS_SOURCES}
+	add_custom_target(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL
+		DEPENDS ${ROOTFS_TARGETS}
 		COMMAND ${CMAKE_COMMAND} -E copy ${OUTDIR}/${FBSTRING_PluginFileName}.pdb ${FB_ROOTFS_DIR}/ || ${CMAKE_COMMAND} -E echo "No pdb"
 		COMMAND ${CMAKE_COMMAND} -E copy ${OUTDIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT} ${FB_ROOTFS_DIR}/
-
-		COMMAND ${CMAKE_COMMAND} -E touch ${OUTDIR}/Rootfs.updated
+		COMMAND ${LW_SIGNTOOL_COMMAND} ${FB_ROOTFS_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
 	)
-	
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${OUTDIR}/Rootfs.updated)
-	SET_TARGET_PROPERTIES(${PROJNAME}${FB_ROOTFS_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
-	ADD_DEPENDENCIES(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
+	add_dependencies(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
 	MESSAGE("-- Successfully added Rootfs creation step")
 endfunction(create_rootfs)
 ###############################################################################
 
 create_rootfs(${PLUGIN_NAME} ${FB_OUT_DIR})
-
-# Sign generated file
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-
-# Sign dll dependencies
-
-IF(LW_USE_FFMPEG)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/avcodec-53.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/avutil-51.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/swscale-2.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-ENDIF(LW_USE_FFMPEG)
-
-IF(LW_USE_EXOSIP)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libeXosip2-7.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libosip2-7.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libosipparser2-7.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-ENDIF(LW_USE_EXOSIP)
-IF(LW_USE_OPENSSL)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libeay32.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/ssleay32.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-ENDIF(LW_USE_OPENSSL)
-IF(LW_USE_SRTP)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libsrtp-1.4.5.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-ENDIF(LW_USE_SRTP)
-IF(LW_USE_POLARSSL)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libpolarssl.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-ENDIF(LW_USE_POLARSSL)
-IF(LW_USE_BELLESIP)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libbellesip.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libantlr3c.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libxml2.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-ENDIF(LW_USE_BELLESIP)
-IF(LW_USE_G729)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsbcg729-0.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-ENDIF(LW_USE_G729)
-IF(LW_USE_X264)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsx264-0.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-ENDIF(LW_USE_X264)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/liblinphone.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libmediastreamer_base.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libmediastreamer_voip.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libopus-0.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libortp.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libspeex.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libspeexdsp.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libvpx-1.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
 
 
 ###############################################################################
@@ -502,19 +385,8 @@ if(LW_CREATE_MSI)
 	SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_WIX_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 	SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_WIX_EXE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 
-	my_sign_file(${PLUGIN_NAME}${FB_WIX_SUFFIX}
-		"${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.msi"
-		"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-		"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-		"http://timestamp.verisign.com/scripts/timestamp.dll"
-	)
-
-	my_sign_file(${PLUGIN_NAME}${FB_WIX_EXE_SUFFIX}
-		"${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe"
-		"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-		"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-		"http://timestamp.verisign.com/scripts/timestamp.dll"
-	)
+	my_sign_file(${PLUGIN_NAME}${FB_WIX_SUFFIX} "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.msi")
+	my_sign_file(${PLUGIN_NAME}${FB_WIX_EXE_SUFFIX} "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.exe")
 endif(LW_CREATE_MSI)
 ###############################################################################
 
@@ -534,12 +406,7 @@ if(LW_CREATE_CAB)
 	)
 	SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_CAB_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 
-	my_sign_file(${PLUGIN_NAME}${FB_CAB_SUFFIX}
-		"${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab"
-		"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-		"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-		"http://timestamp.verisign.com/scripts/timestamp.dll"
-	)
+	my_sign_file(${PLUGIN_NAME}${FB_CAB_SUFFIX} "${FB_OUT_DIR}/${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}.cab")
 endif(LW_CREATE_CAB)
 ###############################################################################
 
@@ -552,7 +419,6 @@ if(LW_CREATE_XPI)
 
 	function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 		SET(XPI_SOURCES
-			${FB_OUT_DIR}/Rootfs.updated
 			${CMAKE_CURRENT_BINARY_DIR}/install.rdf
 			${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/bootstrap.js
 			${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome.manifest
@@ -564,9 +430,7 @@ if(LW_CREATE_XPI)
 
 		SET(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
 
-		ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi)
-		SET_TARGET_PROPERTIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
-		ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJNAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.xpi
+		ADD_CUSTOM_TARGET(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ALL
 					DEPENDS ${XPI_SOURCES}
 					COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
 					COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
@@ -585,6 +449,7 @@ if(LW_CREATE_XPI)
 
 					COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/XPI.updated
 		)
+		SET_TARGET_PROPERTIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 		ADD_DEPENDENCIES(${PROJNAME}${FB_XPI_PACKAGE_SUFFIX} ${PROJDEP})
 		MESSAGE("-- Successfully added XPI package step")
 	endfunction(create_xpi_package)
@@ -614,7 +479,6 @@ if(LW_CREATE_CRX)
 
 	function (create_crx_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 		SET(CRX_SOURCES
-			${FB_OUT_DIR}/Rootfs.updated
 			${CMAKE_CURRENT_BINARY_DIR}/manifest.json
 			${CMAKE_CURRENT_SOURCE_DIR}/Common/icon16.png
 			${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
@@ -624,9 +488,7 @@ if(LW_CREATE_CRX)
 
 		SET(FB_PKG_DIR ${FB_OUT_DIR}/CRX)
 
-		ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx)
-		SET_TARGET_PROPERTIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
-		ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-unsigned.crx
+		ADD_CUSTOM_TARGET(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX}
 					DEPENDS ${CRX_SOURCES}
 					COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
 					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${FB_ROOTFS_DIR} ${FB_PKG_DIR}
@@ -639,6 +501,7 @@ if(LW_CREATE_CRX)
 
 					COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/CRX.updated
 		)
+		SET_TARGET_PROPERTIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 		ADD_DEPENDENCIES(${PROJNAME}${FB_CRX_PACKAGE_SUFFIX} ${PROJDEP})
 		MESSAGE("-- Successfully added CRX package step")
 	endfunction(create_crx_package)

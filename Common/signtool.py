@@ -11,6 +11,8 @@ class PassFile:
                return line
  
 if __name__ == '__main__':
+  if len(sys.argv) <= 2:
+    sys.exit(0)
   for i,arg in enumerate(sys.argv):
     if arg == "/p":
       if (i + 1) == len(sys.argv):
