@@ -2338,7 +2338,7 @@ StringPtr CoreAPI::getDepsVersion() const {
 
 StringPtr CoreAPI::getRootfsVersion() const {
 	FBLOG_DEBUG("CoreAPI::getRootfsVersion", "this=" << this);
-	FBLOG_WARNING("CoreAPI::getRootfsVersion is deprecated! Use CoreAPI::getDepsVersion instead.");
+	FBLOG_WARN("CoreAPI::getRootfsVersion", "Deprecated! Use CoreAPI::getDepsVersion instead.");
 	return CHARPTR_TO_STRING(LINPHONE_DEPS_VERSION);
 }
 
