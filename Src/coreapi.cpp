@@ -95,6 +95,7 @@ void CoreAPI::initProxy() {
 	// Read-only property
 	registerProperty("version", make_property(this, &CoreAPI::getVersion));
 	registerProperty("pluginVersion", make_property(this, &CoreAPI::getPluginVersion));
+	registerProperty("depsVersion", make_property(this, &CoreAPI::getDepsVersion));
 	registerProperty("rootfsVersion", make_property(this, &CoreAPI::getRootfsVersion));
 
 	// Property
@@ -2330,9 +2331,15 @@ StringPtr CoreAPI::getPluginVersion() const {
 	return CHARPTR_TO_STRING(FBSTRING_PLUGIN_VERSION);
 }
 
+StringPtr CoreAPI::getDepsVersion() const {
+	FBLOG_DEBUG("CoreAPI::getDepsVersion", "this=" << this);
+	return CHARPTR_TO_STRING(LINPHONE_DEPS_VERSION);
+}
+
 StringPtr CoreAPI::getRootfsVersion() const {
 	FBLOG_DEBUG("CoreAPI::getRootfsVersion", "this=" << this);
-	return CHARPTR_TO_STRING(CORE_ROOTFS_VERSION);
+	FBLOG_WARNING("CoreAPI::getRootfsVersion is deprecated! Use CoreAPI::getDepsVersion instead.");
+	return CHARPTR_TO_STRING(LINPHONE_DEPS_VERSION);
 }
 
 void CoreAPI::enableEchoCancellation(bool enable) {

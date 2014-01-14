@@ -69,6 +69,7 @@ public:
 	// Read-only property
 	StringPtr getVersion() const;
 	StringPtr getPluginVersion() const;
+	StringPtr getDepsVersion() const;
 	StringPtr getRootfsVersion() const;
 
 	// Property
