@@ -145,6 +145,7 @@ if(FB_PLATFORM_ARCH_32)
 else(FB_PLATFORM_ARCH_32)
 	set(FBControl_WixUpgradeCode_GUID d04684cd-332b-540f-beca-53826c14d6df)
 endif(FB_PLATFORM_ARCH_32)
+# Set to ON for machine-wide installation and to OFF for user-local installation on Windows
 set(FB_ATLREG_MACHINEWIDE OFF)
 
 # XPI
@@ -183,6 +184,7 @@ endif(FB_PLATFORM_NAME STREQUAL "X11")
 
 option(LW_CREATE_CRX "Enable creation of a CRX package of linphoneweb" ON)
 option(LW_CREATE_XPI "Enable creation of a XPI package of linphoneweb" ON)
+option(LW_DEBUG_GENERATE_DUMPS "Enable creation of dumps when the linphoneweb crashes on the Windows platform" ON)
 
 option(LW_USE_SRTP "Enable use of SRTP in linphoneweb" ON)
 option(LW_USE_FFMPEG "Enable use of FFMPEG in linphoneweb" ON)

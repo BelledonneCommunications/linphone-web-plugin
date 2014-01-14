@@ -22,8 +22,6 @@
  
  */
 
-//#define DEBUG_GENERATES_DUMPS
-
 #include <FactoryBase.h>
 #include <boost/make_shared.hpp>
 #include <global/config.h>
@@ -38,7 +36,7 @@ namespace LinphoneWeb {
 #include <Dbghelp.h>
 #include <Strsafe.h>
 
-#ifdef DEBUG_GENERATES_DUMPS
+#ifdef LW_DEBUG_GENERATE_DUMPS
 void GenerateDump(EXCEPTION_POINTERS* pExceptionPointers) {
 	BOOL bMiniDumpSuccessful;
 	CHAR szPath[MAX_PATH]; 
@@ -89,13 +87,13 @@ LONG CALLBACK unhandled_handler(EXCEPTION_POINTERS* e) {
 	GenerateDump(e);
 	return EXCEPTION_EXECUTE_HANDLER;
 }
-#endif // DEBUG_GENERATES_DUMPS
+#endif // LW_DEBUG_GENERATE_DUMPS
 #endif
 
 class PluginFactory: public FB::FactoryBase {
 private:
 
-#if defined(WIN32) && defined(DEBUG) && defined(DEBUG_GENERATES_DUMPS)
+#if defined(WIN32) && defined(DEBUG) && defined(LW_DEBUG_GENERATE_DUMPS)
 	void *mExceptionHandler;
 #endif
 	
@@ -125,7 +123,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////////
 	void globalPluginInitialize() {
 		FBLOG_DEBUG("PluginFactory::globalPluginInitialize", "Start");
-#if defined(WIN32) && defined(DEBUG) && defined(DEBUG_GENERATES_DUMPS)
+#if defined(WIN32) && defined(DEBUG) && defined(LW_DEBUG_GENERATE_DUMPS)
 		mExceptionHandler = AddVectoredExceptionHandler(TRUE, unhandled_handler);
 		FBLOG_DEBUG("PluginFactory::globalPluginInitialize", "Add exception handler(" << unhandled_handler << ")=" << mExceptionHandler);
 #endif
@@ -145,7 +143,7 @@ public:
 		CorePlugin::StaticDeinitialize();
 		VideoPlugin::StaticDeinitialize();
 
-#if defined(WIN32) && defined(DEBUG) && defined(DEBUG_GENERATES_DUMPS)
+#if defined(WIN32) && defined(DEBUG) && defined(LW_DEBUG_GENERATE_DUMPS)
 		RemoveVectoredExceptionHandler(mExceptionHandler);
 		FBLOG_DEBUG("PluginFactory::globalPluginInitialize", "Remove exception handler=" << mExceptionHandler);
 #endif
