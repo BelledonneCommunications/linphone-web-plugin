@@ -83,15 +83,19 @@ function(configure_file_ext SRC DEST)
 	configure_file("${DEST}" "${DEST}")
 endfunction(configure_file_ext)
 
-macro(my_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
-	if (WIN32)
+if (WIN32)
+	find_program(SIGNTOOL signtool
+		PATHS
+		${WINSDK_DIR}/bin
+	)
+	if(NOT SIGNTOOL)
+		message("!! Could not find signtool! Code signing disabled ${SIGNTOOL}")
+	endif(NOT SIGNTOOL)
+
+	macro(my_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
 		if (EXISTS ${PFXFILE})
 			message("-- ${_FILENAME} will be signed with ${PFXFILE}")
 			GET_FILENAME_COMPONENT(WINSDK_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]" REALPATH CACHE)
-			find_program(SIGNTOOL signtool
-				PATHS
-				${WINSDK_DIR}/bin
-				)
 			if (SIGNTOOL)
 				set(_STCMD signtool sign /f "${PFXFILE}")
 				if (NOT "${PASSFILE}" STREQUAL "")
@@ -107,13 +111,10 @@ macro(my_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
 					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/signtool.py ${_STCMD}
 					)
 				message(STATUS "Successfully added signtool step to sign ${_FILENAME}")
-			else()
-				message("!! Could not find signtool! Code signing disabled ${SIGNTOOL}")
 			endif()
 			set(PASSPHRASE "")
 		else()
 			message(STATUS "No signtool certificate found; assuming development machine (${PFXFILE})")
 		endif()
-	
-	endif()
-endmacro(my_sign_file)
+	endmacro(my_sign_file)
+endif()
