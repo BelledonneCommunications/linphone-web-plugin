@@ -158,7 +158,6 @@ function (create_rootfs PROJNAME OUTDIR)
 		libspeex.${DEPENDENCY_EXT}
 		libspeexdsp.${DEPENDENCY_EXT}
 		libvpx-1.${DEPENDENCY_EXT}
-		libz-1.${DEPENDENCY_EXT}
 	)
 	IF(LW_USE_SRTP)
 		SET(ROOTFS_LIB_SOURCES
@@ -440,12 +439,6 @@ my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 )
 my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	"${FB_ROOTFS_DIR}/libvpx-1.${DEPENDENCY_EXT}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-	"http://timestamp.verisign.com/scripts/timestamp.dll"
-)
-my_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-	"${FB_ROOTFS_DIR}/libz-1.${DEPENDENCY_EXT}"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pfx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 	"http://timestamp.verisign.com/scripts/timestamp.dll"
