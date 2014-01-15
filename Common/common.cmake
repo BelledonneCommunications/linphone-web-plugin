@@ -1,6 +1,7 @@
 #Common cmake function
 
 find_package(Java)
+find_package(PythonInterp)
 
 if (NOT FB_XPI_SIGNED_SUFFIX)
 	set (FB_XPI_SIGNED_SUFFIX _XPI_signed)
