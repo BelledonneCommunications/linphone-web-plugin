@@ -59,14 +59,32 @@
 							<Component Id="MainLibraries" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6a">
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="nplinphone_web_pdb" Source="$(var.BINSRC)/${FBSTRING_PluginFileName}.pdb" />
-								<?endif ?> 
+								<?endif ?>
 								<File Id="liblinphone" Source="$(var.BINSRC)/liblinphone.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="liblinphone_pdb" Source="$(var.BINSRC)/liblinphone.pdb" />
+								<?endif ?>
 								<File Id="libmediastreamer_base" Source="$(var.BINSRC)/libmediastreamer_base.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="libmediastreamer_base_pdb" Source="$(var.BINSRC)/libmediastreamer_base.pdb" />
+								<?endif ?>
 								<File Id="libmediastreamer_voip" Source="$(var.BINSRC)/libmediastreamer_voip.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="libmediastreamer_voip_pdb" Source="$(var.BINSRC)/libmediastreamer_voip.pdb" />
+								<?endif ?>
 								<File Id="libopus" Source="$(var.BINSRC)/libopus-0.dll" />
 								<File Id="libortp" Source="$(var.BINSRC)/libortp.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="libortp_pdb" Source="$(var.BINSRC)/libortp.pdb" />
+								<?endif ?>
 								<File Id="libspeex" Source="$(var.BINSRC)/libspeex.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="libspeex_pdb" Source="$(var.BINSRC)/libspeex.pdb" />
+								<?endif ?>
 								<File Id="libspeexdsp" Source="$(var.BINSRC)/libspeexdsp.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="libspeexdsp_pdb" Source="$(var.BINSRC)/libspeexdsp.pdb" />
+								<?endif ?>
 								<File Id="libvpx" Source="$(var.BINSRC)/libvpx-1.dll" />
 								${IF LW_USE_EXOSIP}
 								<File Id="libexosip2" Source="$(var.BINSRC)/libexosip2-7.dll" />
@@ -87,11 +105,23 @@
 								${ENDIF}
 								${IF LW_USE_POLARSSL}
 								<File Id="libpolarssl" Source="$(var.BINSRC)/libpolarssl.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="libpolarssl_pdb" Source="$(var.BINSRC)/libpolarssl.pdb" />
+								<?endif ?>
 								${ENDIF}
 								${IF LW_USE_BELLESIP}
 								<File Id="libbellesip" Source="$(var.BINSRC)/libbellesip.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="libbellesip_pdb" Source="$(var.BINSRC)/libbellesip.pdb" />
+								<?endif ?>
 								<File Id="libantlr3c" Source="$(var.BINSRC)/libantlr3c.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="libantlr3c_pdb" Source="$(var.BINSRC)/libantlr3c.pdb" />
+								<?endif ?>
 								<File Id="libxml2" Source="$(var.BINSRC)/libxml2.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="libxml2_pdb" Source="$(var.BINSRC)/libxml2.pdb" />
+								<?endif ?>
 								${ENDIF}
 								<RegistryValue
 									Root="${REGKEY_ROOT}"

@@ -208,23 +208,25 @@ endif()
 set(ROOTFS_TARGET_ID 0)
 set(ROOTFS_TARGETS )
 macro(add_rootfs_target VAR_DEPEND DIR_DEST DIR_SRC elem SIGN)
-	GET_FILENAME_COMPONENT(path ${elem} PATH)
-	if(SIGN)
+	get_filename_component(path ${elem} PATH)
+	if(${SIGN})
+		get_filename_component(elem_we ${elem} NAME_WE)
 		add_custom_target("ROOTFS_TARGET_${ROOTFS_TARGET_ID}"
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
 			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem_we}.pdb ${DIR_DEST}/${elem_we}.pdb || ${CMAKE_COMMAND} -E echo "Missing ${DIR_SRC}/${elem_we}.pdb"
 			COMMAND ${LW_SIGNTOOL_COMMAND} ${DIR_DEST}/${elem}
 			COMMENT "Install and sign ${DIR_DEST}/${elem}"
 			VERBATIM
 		)
-	else(SIGN)
+	else(${SIGN})
 		add_custom_target("ROOTFS_TARGET_${ROOTFS_TARGET_ID}"
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
 			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
 			COMMENT "Install ${DIR_DEST}/${elem}"
 			VERBATIM
 		)
-	endif(SIGN)
+	endif(${SIGN})
 	set_target_properties("ROOTFS_TARGET_${ROOTFS_TARGET_ID}" PROPERTIES FOLDER ${FBSTRING_ProductName})
 	add_dependencies("ROOTFS_TARGET_${ROOTFS_TARGET_ID}" ${VAR_DEPEND})
 	list(APPEND ROOTFS_TARGETS "ROOTFS_TARGET_${ROOTFS_TARGET_ID}")
@@ -314,7 +316,7 @@ function (create_rootfs PROJNAME OUTDIR)
 			${FB_ROOTFS_DIR}
 			${CMAKE_INSTALL_PREFIX}/bin
 			${elem}
-			TRUE
+			1
 		)
 	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
 	FOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
@@ -323,7 +325,7 @@ function (create_rootfs PROJNAME OUTDIR)
 			${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins
 			${CMAKE_INSTALL_PREFIX}/lib/mediastreamer/plugins
 			${elem}
-			TRUE
+			1
 		)
 	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
 	FOREACH(elem ${ROOTFS_SHARE_SOURCES})
@@ -332,7 +334,7 @@ function (create_rootfs PROJNAME OUTDIR)
 			${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/share
 			${CMAKE_INSTALL_PREFIX}/share
 			${elem}
-			FALSE
+			0
 		)
 	ENDFOREACH(elem ${ROOTFS_SHARE_SOURCES})
 
