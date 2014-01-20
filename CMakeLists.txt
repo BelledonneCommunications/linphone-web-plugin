@@ -58,8 +58,6 @@ SET(SOURCES
 add_definitions("-DBOOST_FILESYSTEM_VERSION=3")
 add_boost_library(filesystem)
 
-# If you want to register per-machine on Windows, uncomment this line
-#set (FB_ATLREG_MACHINEWIDE 1)
 if(CMAKE_BUILD_TYPE MATCHES Debug)
 	add_firebreath_library(log4cplus)
 	add_definitions("-DDEBUG")
