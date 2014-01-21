@@ -69,20 +69,18 @@ add_definitions(
 set(libs ws2_32)
 endif(WIN32)
 
-add_library(libxml2 SHARED ${src})
-set_target_properties(libxml2 PROPERTIES VERSION 2.9.1 SOVERSION 1)
+add_library(xml2 SHARED ${src})
+set_target_properties(xml2 PROPERTIES VERSION 2.9.1 SOVERSION 1)
 
-target_link_libraries(libxml2 ${libs})
+target_link_libraries(xml2 ${libs})
 
-install(TARGETS libxml2
-	COMPONENT COMP_libxml2
+install(TARGETS xml2
 	DESTINATION ${LIB_INSTALL_DIR}
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 )
 if(WIN32)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/libxml2.pdb
-	COMPONENT COMP_libxml2
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/xml2.pdb
 	DESTINATION ${LIB_INSTALL_DIR}
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 )
@@ -96,13 +94,6 @@ file(GLOB HEADER_FILES
 )
 
 install(FILES ${HEADER_FILES}
-	COMPONENT COMP_libxml2
 	DESTINATION include/libxml2/libxml
 	PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
-
-
-
-if(INSTALL_COMPONENT_IN_POSTBUILD)
-	add_install_target(INSTALL_libxml2 COMP_libxml2 libxml2)
-endif()

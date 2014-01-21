@@ -77,8 +77,6 @@ ADD_DEFINITIONS(
 	/D "PLUGIN_SHAREDIR=\\\"${PLUGIN_SHAREDIR}\\\""
 	/D "LINPHONE_DEPS_VERSION=\\\"${LINPHONE_DEPS_VERSION}\\\""
 	/D "_ATL_STATIC_REGISTRY"
-	/D "_ALLOW_KEYWORD_MACROS"
-	/D "_WIN32_WINNT=0x0501"
 	/wd4355
 )
 if(LW_DEBUG_GENERATE_DUMPS)
@@ -107,8 +105,18 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER ${FBSTRING_ProductName})
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 	${PLUGIN_INTERNAL_DEPS}
-	liblinphone)
-add_dependencies(${PROJECT_NAME} INSTALL_liblinphone)
+	${CMAKE_INSTALL_PREFIX}/bin/antlr3c.lib
+	${CMAKE_INSTALL_PREFIX}/bin/bellesip.lib
+	${CMAKE_INSTALL_PREFIX}/bin/linphone.lib
+	${CMAKE_INSTALL_PREFIX}/bin/mediastreamer_base.lib
+	${CMAKE_INSTALL_PREFIX}/bin/mediastreamer_voip.lib
+	${CMAKE_INSTALL_PREFIX}/bin/ortp.lib
+	${CMAKE_INSTALL_PREFIX}/bin/polarssl.lib
+	${CMAKE_INSTALL_PREFIX}/bin/speex.lib
+	${CMAKE_INSTALL_PREFIX}/bin/speexdsp.lib
+	${CMAKE_INSTALL_PREFIX}/bin/xml2.lib
+)
+add_dependencies(${PROJECT_NAME} EP_linphone)
 
 SET(FB_PACKAGE_SUFFIX Win)
 IF(FB_PLATFORM_ARCH_64)
@@ -161,27 +169,27 @@ function (get_linphone_deps OUTDIR)
 				if (${EXT_STATUS_CODE} EQUAL 0)
 					execute_process(
 						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
-						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/avcodec-53.dll libavcodec.lib
+						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/avcodec-53.dll avcodec.lib
 					)
 					execute_process(
 						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
-						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/avutil-51.dll libavutil.lib
+						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/avutil-51.dll avutil.lib
 					)
 					execute_process(
 						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
-						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/swscale-2.dll libswscale.lib
+						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/swscale-2.dll swscale.lib
 					)
 					execute_process(
 						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
-						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/libopus-0.dll libopus.lib
+						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/libopus-0.dll opus.lib
 					)
 					execute_process(
 						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
-						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/libsrtp-1.4.5.dll libsrtp.lib
+						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/libsrtp-1.4.5.dll srtp.lib
 					)
 					execute_process(
 						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
-						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/libvpx-1.dll libvpx.lib
+						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/libvpx-1.dll vpx.lib
 					)
 					message("     Done")
 				else()
@@ -237,13 +245,13 @@ endmacro()
 function (create_rootfs PROJNAME OUTDIR)
 	# Define components
 	SET(ROOTFS_LIB_SOURCES
-		liblinphone.${DEPENDENCY_EXT}
-		libmediastreamer_base.${DEPENDENCY_EXT}
-		libmediastreamer_voip.${DEPENDENCY_EXT}
+		linphone.${DEPENDENCY_EXT}
+		mediastreamer_base.${DEPENDENCY_EXT}
+		mediastreamer_voip.${DEPENDENCY_EXT}
 		libopus-0.${DEPENDENCY_EXT}
-		libortp.${DEPENDENCY_EXT}
-		libspeex.${DEPENDENCY_EXT}
-		libspeexdsp.${DEPENDENCY_EXT}
+		ortp.${DEPENDENCY_EXT}
+		speex.${DEPENDENCY_EXT}
+		speexdsp.${DEPENDENCY_EXT}
 		libvpx-1.${DEPENDENCY_EXT}
 	)
 	IF(LW_USE_SRTP)
@@ -278,15 +286,15 @@ function (create_rootfs PROJNAME OUTDIR)
 	IF(LW_USE_POLARSSL)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
-			libpolarssl.${DEPENDENCY_EXT}
+			polarssl.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_POLARSSL)
 	IF(LW_USE_BELLESIP)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
-			libbellesip.${DEPENDENCY_EXT}
-			libantlr3c.${DEPENDENCY_EXT}
-			libxml2.${DEPENDENCY_EXT}
+			bellesip.${DEPENDENCY_EXT}
+			antlr3c.${DEPENDENCY_EXT}
+			xml2.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_BELLESIP)
 	IF(LW_USE_G729)

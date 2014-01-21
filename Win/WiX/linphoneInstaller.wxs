@@ -60,30 +60,30 @@
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="nplinphone_web_pdb" Source="$(var.BINSRC)/${FBSTRING_PluginFileName}.pdb" />
 								<?endif ?>
-								<File Id="liblinphone" Source="$(var.BINSRC)/liblinphone.dll" />
+								<File Id="linphone" Source="$(var.BINSRC)/linphone.dll" />
 								<?if $(var.Configuration) = Debug ?>
-								  <File Id="liblinphone_pdb" Source="$(var.BINSRC)/liblinphone.pdb" />
+								  <File Id="linphone_pdb" Source="$(var.BINSRC)/linphone.pdb" />
 								<?endif ?>
-								<File Id="libmediastreamer_base" Source="$(var.BINSRC)/libmediastreamer_base.dll" />
+								<File Id="mediastreamer_base" Source="$(var.BINSRC)/mediastreamer_base.dll" />
 								<?if $(var.Configuration) = Debug ?>
-								  <File Id="libmediastreamer_base_pdb" Source="$(var.BINSRC)/libmediastreamer_base.pdb" />
+								  <File Id="mediastreamer_base_pdb" Source="$(var.BINSRC)/mediastreamer_base.pdb" />
 								<?endif ?>
-								<File Id="libmediastreamer_voip" Source="$(var.BINSRC)/libmediastreamer_voip.dll" />
+								<File Id="mediastreamer_voip" Source="$(var.BINSRC)/mediastreamer_voip.dll" />
 								<?if $(var.Configuration) = Debug ?>
-								  <File Id="libmediastreamer_voip_pdb" Source="$(var.BINSRC)/libmediastreamer_voip.pdb" />
+								  <File Id="mediastreamer_voip_pdb" Source="$(var.BINSRC)/mediastreamer_voip.pdb" />
 								<?endif ?>
 								<File Id="libopus" Source="$(var.BINSRC)/libopus-0.dll" />
-								<File Id="libortp" Source="$(var.BINSRC)/libortp.dll" />
+								<File Id="ortp" Source="$(var.BINSRC)/ortp.dll" />
 								<?if $(var.Configuration) = Debug ?>
-								  <File Id="libortp_pdb" Source="$(var.BINSRC)/libortp.pdb" />
+								  <File Id="ortp_pdb" Source="$(var.BINSRC)/ortp.pdb" />
 								<?endif ?>
-								<File Id="libspeex" Source="$(var.BINSRC)/libspeex.dll" />
+								<File Id="speex" Source="$(var.BINSRC)/speex.dll" />
 								<?if $(var.Configuration) = Debug ?>
-								  <File Id="libspeex_pdb" Source="$(var.BINSRC)/libspeex.pdb" />
+								  <File Id="speex_pdb" Source="$(var.BINSRC)/speex.pdb" />
 								<?endif ?>
-								<File Id="libspeexdsp" Source="$(var.BINSRC)/libspeexdsp.dll" />
+								<File Id="speexdsp" Source="$(var.BINSRC)/speexdsp.dll" />
 								<?if $(var.Configuration) = Debug ?>
-								  <File Id="libspeexdsp_pdb" Source="$(var.BINSRC)/libspeexdsp.pdb" />
+								  <File Id="speexdsp_pdb" Source="$(var.BINSRC)/speexdsp.pdb" />
 								<?endif ?>
 								<File Id="libvpx" Source="$(var.BINSRC)/libvpx-1.dll" />
 								${IF LW_USE_EXOSIP}
@@ -104,23 +104,23 @@
 								<File Id="ssleay32" Source="$(var.BINSRC)/ssleay32.dll" />
 								${ENDIF}
 								${IF LW_USE_POLARSSL}
-								<File Id="libpolarssl" Source="$(var.BINSRC)/libpolarssl.dll" />
+								<File Id="polarssl" Source="$(var.BINSRC)/polarssl.dll" />
 								<?if $(var.Configuration) = Debug ?>
-								  <File Id="libpolarssl_pdb" Source="$(var.BINSRC)/libpolarssl.pdb" />
+								  <File Id="polarssl_pdb" Source="$(var.BINSRC)/polarssl.pdb" />
 								<?endif ?>
 								${ENDIF}
 								${IF LW_USE_BELLESIP}
-								<File Id="libbellesip" Source="$(var.BINSRC)/libbellesip.dll" />
+								<File Id="bellesip" Source="$(var.BINSRC)/bellesip.dll" />
 								<?if $(var.Configuration) = Debug ?>
-								  <File Id="libbellesip_pdb" Source="$(var.BINSRC)/libbellesip.pdb" />
+								  <File Id="bellesip_pdb" Source="$(var.BINSRC)/bellesip.pdb" />
 								<?endif ?>
-								<File Id="libantlr3c" Source="$(var.BINSRC)/libantlr3c.dll" />
+								<File Id="antlr3c" Source="$(var.BINSRC)/antlr3c.dll" />
 								<?if $(var.Configuration) = Debug ?>
-								  <File Id="libantlr3c_pdb" Source="$(var.BINSRC)/libantlr3c.pdb" />
+								  <File Id="antlr3c_pdb" Source="$(var.BINSRC)/antlr3c.pdb" />
 								<?endif ?>
-								<File Id="libxml2" Source="$(var.BINSRC)/libxml2.dll" />
+								<File Id="xml2" Source="$(var.BINSRC)/xml2.dll" />
 								<?if $(var.Configuration) = Debug ?>
-								  <File Id="libxml2_pdb" Source="$(var.BINSRC)/libxml2.pdb" />
+								  <File Id="xml2_pdb" Source="$(var.BINSRC)/xml2.pdb" />
 								<?endif ?>
 								${ENDIF}
 								<RegistryValue
