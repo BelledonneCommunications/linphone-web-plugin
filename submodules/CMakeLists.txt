@@ -219,14 +219,14 @@ else(WIN32)
 	set(EP_xml2_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libxml2)
 	ExternalProject_Add(EP_xml2
 		SOURCE_DIR ${EP_xml2_SOURCE_DIR}
-		CONFIGURE_COMMAND ${EP_xml2_SOURCE_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} --without-legacy --with-catalog --with-docbook --without-python --with-c14n "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
+		CONFIGURE_COMMAND ${EP_xml2_SOURCE_DIR}/autogen.sh && ${EP_xml2_SOURCE_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} --without-legacy --with-catalog --with-docbook --without-python --with-c14n "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
 
 	)
 
 	set(EP_speex_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/speex)
 	ExternalProject_Add(EP_speex
 		SOURCE_DIR ${EP_speex_SOURCE_DIR}
-		CONFIGURE_COMMAND ${EP_speex_SOURCE_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} --enable-fixed-point --disable-float-api --disable-vbr --disable-ogg --disable-oggtest "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
+		CONFIGURE_COMMAND ${EP_speex_SOURCE_DIR}/autogen.sh && ${EP_speex_SOURCE_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} --enable-fixed-point --disable-float-api --disable-vbr --disable-ogg --disable-oggtest "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
 
 	)
 
