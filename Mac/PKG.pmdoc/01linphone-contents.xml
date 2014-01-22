@@ -8,21 +8,14 @@
 					<f n="liblinphone.5.dylib" p="33261"/>
 					<f n="libmediastreamer-base.3.dylib" p="33261"/>
 					<f n="libmediastreamer-voip.3.dylib" p="33261"/>
-					<f n="libogg.0.dylib" p="33261"/>
 					<f n="libopus.0.dylib" p="33261"/>
 					<f n="libortp.9.dylib" p="33261"/>
 					<f n="libspeex.1.dylib" p="33261"/>
 					<f n="libspeexdsp.1.dylib" p="33261"/>
-					<f n="libtheora.0.dylib" p="33261"/>
-					<f n="libvpx.1.dylib" p="33261"/>
-					<f n="libz.1.dylib" p="33261"/>
 					${IF LW_USE_EXOSIP}
 					<f n="libeXosip2.7.dylib" p="33261"/>
 					<f n="libosip2.7.dylib" p="33261"/>
 					<f n="libosipparser2.7.dylib" p="33261"/>
-					${ENDIF}
-					${IF LW_USE_SRTP}
-					<f n="libsrtp.1.4.5.dylib" p="33261"/>
 					${ENDIF}
 					${IF LW_USE_OPENSSL}
 					<f n="libcrypto.1.0.0.dylib" p="33261"/>
@@ -31,14 +24,14 @@
 					${IF LW_USE_FFMPEG}
 					<f n="libavcodec.53.61.100.dylib" p="33261"/>
 					<f n="libavutil.51.35.100.dylib" p="33261"/>
-					<f n="libswscale.2.dylib" p="33261"/>
+					<f n="libswscale.2.1.100.dylib" p="33261"/>
 					${ENDIF}
 					${IF LW_USE_POLARSSL}
-					<f n="libpolarssl.0.dylib" p="33261"/>
+					<f n="libpolarssl.3.dylib" p="33261"/>
 					${ENDIF}
 					${IF LW_USE_BELLESIP}
 					<f n="libbellesip.0.dylib" p="33261"/>
-					<f n="libantlr3c.0.dylib" p="33261"/>
+					<f n="libantlr3c.dylib" p="33261"/>
 					<f n="libxml2.2.dylib" p="33261"/>
 					${ENDIF}
 					<f n="lib" p="16877">
