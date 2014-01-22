@@ -191,6 +191,7 @@ set(LW_TIMESTAMP_URL "http://timestamp.verisign.com/scripts/timestamp.dll")
 
 option(LW_CREATE_CRX "Enable creation of a CRX package of linphoneweb" ON)
 option(LW_CREATE_XPI "Enable creation of a XPI package of linphoneweb" ON)
+option(LW_CREATE_SDK "Enable creation of a SDK of linphoneweb" ON)
 option(LW_DEBUG_GENERATE_DUMPS "Enable creation of dumps when the linphoneweb crashes on the Windows platform" OFF)
 
 option(LW_USE_SRTP "Enable use of SRTP in linphoneweb" ON)

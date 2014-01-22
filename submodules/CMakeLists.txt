@@ -135,17 +135,17 @@ if(WIN32)
 		CMAKE_ARGS ${GENERAL_EP_ARGS}
 	)
 
-	ExternalProject_Add(EP_mediastreamer2
+	ExternalProject_Add(EP_ms2
 		SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/linphone/mediastreamer2
 		CMAKE_ARGS ${GENERAL_EP_ARGS} -DMS2_ENABLE_GSM=0
 	)
-	add_dependencies(EP_mediastreamer2 EP_ortp EP_speex)
+	add_dependencies(EP_ms2 EP_ortp EP_speex)
 
 	ExternalProject_Add(EP_linphone
 		SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/linphone
 		CMAKE_ARGS ${GENERAL_EP_ARGS}
 	)
-	add_dependencies(EP_linphone EP_mediastreamer2 EP_bellesip EP_xml2)
+	add_dependencies(EP_linphone EP_ms2 EP_bellesip EP_xml2)
 else(WIN32)
 	if(APPLE)
 		set(ARCH_CFLAGS "-O3 -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET} -arch ${CMAKE_OSX_ARCHITECTURES}")
@@ -200,6 +200,17 @@ else(WIN32)
 		BUILD_IN_SOURCE 1
 	)
 
+	if(NOT WIN32 AND NOT APPLE)
+		# Compile v4l on Linux platform
+		ExternalProject_Add(EP_v4l
+			URL http://linuxtv.org/downloads/v4l-utils/v4l-utils-0.8.7.tar.bz2
+			CONFIGURE_COMMAND echo ""
+			BUILD_COMMAND cd lib && make "PREFIX=${CMAKE_INSTALL_PREFIX}"
+			INSTALL_COMMAND cd lib && make install "PREFIX=${CMAKE_INSTALL_PREFIX}"
+			BUILD_IN_SOURCE 1
+		)
+	endif(NOT WIN32 AND NOT APPLE)
+
 	set(EP_antlr3c_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/antlr3/runtime/C)
 	ExternalProject_Add(EP_antlr3c
 		SOURCE_DIR ${EP_antlr3c_SOURCE_DIR}
@@ -238,5 +249,8 @@ else(WIN32)
 		BUILD_IN_SOURCE 1
 	)
 	add_dependencies(EP_linphone EP_bellesip EP_xml2 EP_srtp EP_speex EP_opus EP_ffmpeg EP_vpx)
+	if(NOT WIN32 AND NOT APPLE)
+		add_dependencies(EP_linphone EP_v4l)
+	endif(NOT WIN32 AND NOT APPLE)
 endif(WIN32)
 

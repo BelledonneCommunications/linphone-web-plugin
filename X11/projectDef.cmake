@@ -32,12 +32,12 @@ FILE(GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 # GCC options
 ADD_DEFINITIONS(
 	-DPLUGIN_SHAREDIR="${PLUGIN_SHAREDIR}"
-	-DLINPHONE_DEPS_VERSION="${CORE_ROOTFS_VERSION}"
+	-DLINPHONE_DEPS_VERSION=""
 	-std=c++0x
 )
 
 INCLUDE_DIRECTORIES(${GTK_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(Rootfs/include)
+INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/include)
 
 SOURCE_GROUP(X11 FILES ${PLATFORM})
 
@@ -52,11 +52,12 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER ${FBSTRING_ProductName})
 # Add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 	${PLUGIN_INTERNAL_DEPS}
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.so.5"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base.so.3"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip.so.3"
-	"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.so.9"
+	"${CMAKE_INSTALL_PREFIX}/lib/liblinphone.so.5"
+	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_base.so.3"
+	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_voip.so.3"
+	"${CMAKE_INSTALL_PREFIX}/lib/libortp.so.9"
 )
+add_dependencies(${PROJECT_NAME} EP_linphone)
 
 SET(FB_PACKAGE_SUFFIX Linux)
 IF(FB_PLATFORM_ARCH_64)
@@ -70,56 +71,6 @@ SET(PLUGIN_EXT "so")
 SET(FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
 SET(FB_ROOTFS_DIR ${FB_OUT_DIR}/Rootfs)
 
-# Use default chrpath if not defined
-IF(NOT DEFINED CMAKE_CHRPATH)
-	SET(CMAKE_CHRPATH chrpath)
-ENDIF(NOT DEFINED CMAKE_CHRPATH)
-
-# Use default chmod if not defined
-IF(NOT DEFINED CMAKE_CHMOD)
-	SET(CMAKE_CHMOD chmod)
-ENDIF(NOT DEFINED CMAKE_CHMOD)
-
-
-###############################################################################
-# Get Core Rootfs tarball
-if (NOT FB_CORE_ROOTFS_SUFFIX)
-	SET(FB_CORE_ROOTFS_SUFFIX _CoreRootFS)
-endif()
-
-function (get_core_rootfs OUTDIR)
-	SET(CORE_ROOTFS_GZTARBALL ${OUTDIR}/linphone-web-core-rootfs.tar.gz)
-	if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs)
-		FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs)
-	endif()
-	if (NOT EXISTS ${CORE_ROOTFS_GZTARBALL})
-		message("-- Downloading core rootfs")
-		FILE(DOWNLOAD ${CORE_ROOTFS_URL} ${CORE_ROOTFS_GZTARBALL} SHOW_PROGRESS STATUS CORE_ROOTFS_DL_STATUS)
-		list(GET CORE_ROOTFS_DL_STATUS 0 CORE_ROOTFS_DL_STATUS_CODE)
-		if (${CORE_ROOTFS_DL_STATUS_CODE} EQUAL 0)
-			message("     Successful")
-			message("-- Extracting core rootfs")
-			EXECUTE_PROCESS(
-				WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs
-				COMMAND rm -f *
-				COMMAND tar xzf ${CORE_ROOTFS_GZTARBALL}
-				RESULT_VARIABLE CORE_ROOTFS_EXT_STATUS_CODE
-				ERROR_VARIABLE CORE_ROOTFS_EXT_ERROR
-			)
-			if (${CORE_ROOTFS_EXT_STATUS_CODE} EQUAL 0)
-				message("     Done")
-			else()
-				message(FATAL_ERROR "     Failed: ${CORE_ROOTFS_EXT_STATUS_CODE} ${CORE_ROOTFS_EXT_ERROR}")
-			endif()
-		else()
-			list(GET CORE_ROOTFS_DL_STATUS 1 CORE_ROOTFS_DL_STATUS_MSG)
-			message(FATAL_ERROR "     Failed: ${CORE_ROOTFS_DL_STATUS_CODE} ${CORE_ROOTFS_DL_STATUS_MSG}")
-		endif()
-	endif()
-endfunction(get_core_rootfs)
-###############################################################################
-
-get_core_rootfs(${FB_BIN_DIR}/${PLUGIN_NAME})
 
 ###############################################################################
 # Create Rootfs
@@ -130,28 +81,24 @@ endif()
 function (create_rootfs PROJNAME OUTDIR)
 	# Define components
 	SET(ROOTFS_LIB_SOURCES
-		libjpeg.${DEPENDENCY_EXT}.8
+		#libjpeg.${DEPENDENCY_EXT}.8
 		liblinphone.${DEPENDENCY_EXT}.5
 		libmediastreamer_base.${DEPENDENCY_EXT}.3
 		libmediastreamer_voip.${DEPENDENCY_EXT}.3
-		libogg.${DEPENDENCY_EXT}.0
 		libopus.${DEPENDENCY_EXT}.0
 		libortp.${DEPENDENCY_EXT}.9
 		libspeex.${DEPENDENCY_EXT}.1
 		libspeexdsp.${DEPENDENCY_EXT}.1
-		libtheora.${DEPENDENCY_EXT}.0
 		libv4l1.${DEPENDENCY_EXT}.0
 		libv4l2.${DEPENDENCY_EXT}.0
 		libv4lconvert.${DEPENDENCY_EXT}.0
-		libvpx.${DEPENDENCY_EXT}.1
-		libz.${DEPENDENCY_EXT}.1
 	)
-	IF(LW_USE_SRTP)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libsrtp.${DEPENDENCY_EXT}.1.4.5
-		)
-	ENDIF(LW_USE_SRTP)
+	#IF(LW_USE_SRTP)
+	#	SET(ROOTFS_LIB_SOURCES
+	#		${ROOTFS_LIB_SOURCES}
+	#		libsrtp.${DEPENDENCY_EXT}.1.4.5
+	#	)
+	#ENDIF(LW_USE_SRTP)
 	IF(LW_USE_OPENSSL)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
@@ -178,14 +125,14 @@ function (create_rootfs PROJNAME OUTDIR)
 	IF(LW_USE_POLARSSL)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
-			libpolarssl.${DEPENDENCY_EXT}.0
+			libpolarssl.${DEPENDENCY_EXT}.3
 		)
 	ENDIF(LW_USE_POLARSSL)
 	IF(LW_USE_BELLESIP)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
 			libbellesip.${DEPENDENCY_EXT}.0
-			libantlr3c.${DEPENDENCY_EXT}.0
+			libantlr3c.${DEPENDENCY_EXT}
 			libxml2.${DEPENDENCY_EXT}.2
 		)
 	ENDIF(LW_USE_BELLESIP)
@@ -223,9 +170,6 @@ function (create_rootfs PROJNAME OUTDIR)
 			DEPENDS ${DIR_SRC}/${elem}
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
 			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
-			COMMAND ${CMAKE_CHMOD} +w ${DIR_DEST}/${elem}
-			COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${DIR_DEST}/${elem} || echo "Error ignored"
-			COMMAND ${CMAKE_CHMOD} -w ${DIR_DEST}/${elem}
 		)
 		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
@@ -237,9 +181,6 @@ function (create_rootfs PROJNAME OUTDIR)
 			DEPENDS ${DIR_SRC}/${elem}
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
 			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
-			COMMAND ${CMAKE_CHMOD} +w ${DIR_DEST}/${elem}
-			COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${DIR_DEST}/${elem} || echo "Error ignored"
-			COMMAND ${CMAKE_CHMOD} -w ${DIR_DEST}/${elem}
 		)
 		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
@@ -428,61 +369,63 @@ create_signed_crx(${PLUGIN_NAME}
 
 ###############################################################################
 # SDK Package
-if (NOT FB_SDK_PACKAGE_SUFFIX)
-	SET(FB_SDK_PACKAGE_SUFFIX _SDK)
-endif()
+if(LW_CREATE_SDK)
+	if (NOT FB_SDK_PACKAGE_SUFFIX)
+		SET(FB_SDK_PACKAGE_SUFFIX _SDK)
+	endif()
 
-function (create_sdk_package PROJNAME PROJVERSION OUTDIR PROJDEP)
-	file (GLOB DOCUMENTATION
-		${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/doc/linphone-[^.]*.[^.]*.[^.]*/xml/[^.]*.xml
+	function (create_sdk_package PROJNAME PROJVERSION OUTDIR PROJDEP)
+		file (GLOB DOCUMENTATION
+			${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/doc/linphone-[^.]*.[^.]*.[^.]*/xml/[^.]*.xml
+			)
+
+		file (GLOB TUTORIALS
+			${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials/README
+			${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials/[^.]*.html
+			${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials/[^.]*.js
+			)
+
+		SET(SDK_SOURCES
+			${FB_OUT_DIR}/Rootfs.updated
+			${CMAKE_CURRENT_SOURCE_DIR}/README.md
+			${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md
+			${CMAKE_CURRENT_SOURCE_DIR}/GETTING_STARTED.md
+			${CMAKE_CURRENT_SOURCE_DIR}/Doc/plugin_specifics.js
+			${DOCUMENTATION}
+			${TUTORIALS}
 		)
 
-	file (GLOB TUTORIALS
-		${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials/README
-		${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials/[^.]*.html
-		${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials/[^.]*.js
+		SET(FB_PKG_DIR ${FB_OUT_DIR}/Sdk)
+		SET(JSWRAPPER_DIR ${FB_PKG_DIR}/jswrapper)
+		SET(SDK_DIR ${FB_PKG_DIR}/${PROJECT_NAME}-${PROJVERSION}-sdk)
+
+		ADD_CUSTOM_TARGET(${PROJNAME}${FB_SDK_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-sdk.zip)
+		SET_TARGET_PROPERTIES(${PROJNAME}${FB_SDK_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
+		ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-sdk.zip
+					DEPENDS ${SDK_SOURCES}
+					COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
+					COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
+					COMMAND ${CMAKE_COMMAND} -E remove_directory ${JSWRAPPER_DIR}
+					COMMAND ${CMAKE_COMMAND} -E make_directory ${JSWRAPPER_DIR}
+					COMMAND ${CMAKE_COMMAND} -E remove_directory ${SDK_DIR}
+					COMMAND ${CMAKE_COMMAND} -E make_directory ${SDK_DIR}
+					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/concat_files.py ${FB_PKG_DIR}/MAINPAGE.md ${CMAKE_CURRENT_SOURCE_DIR}/GETTING_STARTED.md ${CMAKE_CURRENT_SOURCE_DIR}/README.md ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md
+					COMMAND cd ${JSWRAPPER_DIR} && lp-gen-wrappers --output javascript --project linphone ${DOCUMENTATION}
+					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Doc/plugin_specifics.js ${JSWRAPPER_DIR}/linphone/
+					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/concat_files.py ${SDK_DIR}/linphone.js ${JSWRAPPER_DIR}/linphone/*.js
+					COMMAND cd ${SDK_DIR} && jsdoc --recurse --destination ${PROJECT_NAME}-${PROJVERSION}-doc ${JSWRAPPER_DIR} ${FB_PKG_DIR}/MAINPAGE.md
+					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials ${SDK_DIR}/tutorials
+					COMMAND ${CMAKE_COMMAND} -E copy ${SDK_DIR}/linphone.js ${SDK_DIR}/tutorials/
+					COMMAND cd ${FB_PKG_DIR} && zip -r ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-sdk.zip ${PROJECT_NAME}-${PROJVERSION}-sdk
 		)
+		ADD_DEPENDENCIES(${PROJNAME}${FB_SDK_PACKAGE_SUFFIX} ${PROJDEP})
+		MESSAGE("-- Successfully added SDK package step")
+	endfunction(create_sdk_package)
 
-	SET(SDK_SOURCES
-		${FB_OUT_DIR}/Rootfs.updated
-		${CMAKE_CURRENT_SOURCE_DIR}/README.md
-		${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md
-		${CMAKE_CURRENT_SOURCE_DIR}/GETTING_STARTED.md
-		${CMAKE_CURRENT_SOURCE_DIR}/Doc/plugin_specifics.js
-		${DOCUMENTATION}
-		${TUTORIALS}
+	create_sdk_package(${PLUGIN_NAME}
+		${FBSTRING_PLUGIN_VERSION}
+		${FB_OUT_DIR}
+		${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
 	)
-
-	SET(FB_PKG_DIR ${FB_OUT_DIR}/Sdk)
-	SET(JSWRAPPER_DIR ${FB_PKG_DIR}/jswrapper)
-	SET(SDK_DIR ${FB_PKG_DIR}/${PROJECT_NAME}-${PROJVERSION}-sdk)
-
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_SDK_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-sdk.zip)
-	SET_TARGET_PROPERTIES(${PROJNAME}${FB_SDK_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
-	ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-sdk.zip
-				DEPENDS ${SDK_SOURCES}
-				COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
-				COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
-				COMMAND ${CMAKE_COMMAND} -E remove_directory ${JSWRAPPER_DIR}
-				COMMAND ${CMAKE_COMMAND} -E make_directory ${JSWRAPPER_DIR}
-				COMMAND ${CMAKE_COMMAND} -E remove_directory ${SDK_DIR}
-				COMMAND ${CMAKE_COMMAND} -E make_directory ${SDK_DIR}
-				COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/concat_files.py ${FB_PKG_DIR}/MAINPAGE.md ${CMAKE_CURRENT_SOURCE_DIR}/GETTING_STARTED.md ${CMAKE_CURRENT_SOURCE_DIR}/README.md ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md
-				COMMAND cd ${JSWRAPPER_DIR} && lp-gen-wrappers --output javascript --project linphone ${DOCUMENTATION}
-				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Doc/plugin_specifics.js ${JSWRAPPER_DIR}/linphone/
-				COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/concat_files.py ${SDK_DIR}/linphone.js ${JSWRAPPER_DIR}/linphone/*.js
-				COMMAND cd ${SDK_DIR} && jsdoc --recurse --destination ${PROJECT_NAME}-${PROJVERSION}-doc ${JSWRAPPER_DIR} ${FB_PKG_DIR}/MAINPAGE.md
-				COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials ${SDK_DIR}/tutorials
-				COMMAND ${CMAKE_COMMAND} -E copy ${SDK_DIR}/linphone.js ${SDK_DIR}/tutorials/
-				COMMAND cd ${FB_PKG_DIR} && zip -r ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-sdk.zip ${PROJECT_NAME}-${PROJVERSION}-sdk
-	)
-	ADD_DEPENDENCIES(${PROJNAME}${FB_SDK_PACKAGE_SUFFIX} ${PROJDEP})
-	MESSAGE("-- Successfully added SDK package step")
-endfunction(create_sdk_package)
-
-create_sdk_package(${PLUGIN_NAME}
-	${FBSTRING_PLUGIN_VERSION}
-	${FB_OUT_DIR}
-	${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-)
+endif(LW_CREATE_SDK)
 ###############################################################################
