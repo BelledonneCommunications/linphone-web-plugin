@@ -31,16 +31,16 @@ FILE(GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 ADD_DEFINITIONS(
 	-DPLUGIN_SHAREDIR="${PLUGIN_SHAREDIR}"
-	-DLINPHONE_DEPS_VERSION="${CORE_ROOTFS_VERSION}"
+	-DLINPHONE_DEPS_VERSION=""
 )
-
-INCLUDE_DIRECTORIES(Rootfs/include)
 
 SOURCE_GROUP(Mac FILES ${PLATFORM})
 
 SET(SOURCES
 	${SOURCES}
 	${PLATFORM})
+
+INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/include)
 
 SET(PLIST "Mac/bundle_template/Info.plist")
 SET(STRINGS "Mac/bundle_template/InfoPlist.strings")
@@ -53,15 +53,17 @@ FIND_LIBRARY(OPENGL_FRAMEWORK OpenGL)
 FIND_LIBRARY(QUARTZ_CORE_FRAMEWORK QuartzCore)
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
+SET(DEPENDENCY_EXT "dylib")
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		${PLUGIN_INTERNAL_DEPS}
-		"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/liblinphone.5.dylib"
-		"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_base.3.dylib"
-		"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libmediastreamer_voip.3.dylib"
-		"${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/libortp.9.dylib"
+		${CMAKE_INSTALL_PREFIX}/lib/liblinphone.5.${DEPENDENCY_EXT}
+		${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_base.3.${DEPENDENCY_EXT}
+		${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_voip.3.${DEPENDENCY_EXT}
+		${CMAKE_INSTALL_PREFIX}/lib/libortp.9.${DEPENDENCY_EXT}
 		${OPENGL_FRAMEWORK}
 		${QUARTZ_CORE_FRAMEWORK}
 )
+add_dependencies(${PROJECT_NAME} EP_linphone)
 
 # fix output path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
@@ -72,7 +74,6 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
 		RUNTIME_OUTPUT_DIRECTORY_RELEASE "${FB_BIN_DIR}/${PLUGIN_NAME}/Release"
 		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${FB_BIN_DIR}/${PLUGIN_NAME}/Release"
 )
-SET(DEPENDENCY_EXT "dylib")
 GET_TARGET_PROPERTY(PLUGIN_EXT ${PROJECT_NAME} BUNDLE_EXTENSION)
 SET(FB_PACKAGE_SUFFIX Mac)
 IF(FB_PLATFORM_ARCH_64)
@@ -84,60 +85,67 @@ ENDIF(FB_PLATFORM_ARCH_64)
 SET(FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
 SET(FB_BUNDLE_DIR ${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}/Contents/MacOS)
 
-execute_process(COMMAND certtool y
-		OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/certtool_output)
-execute_process(COMMAND grep "${MAC_CODE_SIGNING_IDENTITY}"
-		INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/certtool_output
-		OUTPUT_VARIABLE CODE_SIGNING_IDENTITY_FOUND)
-execute_process(COMMAND grep "${MAC_INSTALLER_SIGNING_IDENTITY}"
-		INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/certtool_output
-		OUTPUT_VARIABLE INSTALLER_SIGNING_IDENTITY_FOUND)
-
-###############################################################################
-# Get Core Rootfs tarball
-if (NOT FB_CORE_ROOTFS_SUFFIX)
-	SET(FB_CORE_ROOTFS_SUFFIX _CoreRootFS)
+# Configuration of code signing
+find_program(MAC_CERTTOOL certtool)
+find_program(MAC_CODESIGN codesign)
+if(NOT "${MAC_CERTTOOL}" STREQUAL "" AND NOT "${MAC_CODESIGN}" STREQUAL "")
+	execute_process(COMMAND ${MAC_CERTTOOL} y
+			OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/certtool_output)
+	execute_process(COMMAND grep "${MAC_CODE_SIGNING_IDENTITY}"
+			INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/certtool_output
+			OUTPUT_VARIABLE CODE_SIGNING_IDENTITY_FOUND)
+	execute_process(COMMAND grep "${MAC_INSTALLER_SIGNING_IDENTITY}"
+			INPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/certtool_output
+			OUTPUT_VARIABLE INSTALLER_SIGNING_IDENTITY_FOUND)
+	if ("${CODE_SIGNING_IDENTITY_FOUND}" STREQUAL "")
+		message(STATUS "Code signing identity \"${MAC_CODE_SIGNING_IDENTITY}\" not found! Can not sign code.")
+	else()
+		set(LW_CODESIGN_COMMAND "${MAC_CODESIGN}" -s "${MAC_CODE_SIGNING_IDENTITY}")
+	endif()
+	if ("${INSTALLER_SIGNING_IDENTITY_FOUND}" STREQUAL "")
+		message(STATUS "Installer signing identity \"${MAC_INSTALLER_SIGNING_IDENTITY}\" not found! Can not sign installer.")
+	endif()
+else()
+	message(STATUS "certtool or codesign utilities not found! Can not sign code or installer.")
 endif()
-
-function (get_core_rootfs OUTDIR)
-	SET(CORE_ROOTFS_GZTARBALL ${OUTDIR}/linphone-web-core-rootfs.tar.gz)
-	if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs)
-		FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs)
-	endif()
-	if (NOT EXISTS ${CORE_ROOTFS_GZTARBALL})
-		message("-- Downloading core rootfs")
-		FILE(DOWNLOAD ${CORE_ROOTFS_URL} ${CORE_ROOTFS_GZTARBALL} SHOW_PROGRESS STATUS CORE_ROOTFS_DL_STATUS)
-		list(GET CORE_ROOTFS_DL_STATUS 0 CORE_ROOTFS_DL_STATUS_CODE)
-		if (${CORE_ROOTFS_DL_STATUS_CODE} EQUAL 0)
-			message("     Successful")
-			message("-- Extracting core rootfs")
-			EXECUTE_PROCESS(
-				WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs
-				COMMAND rm -f *
-				COMMAND tar xzf ${CORE_ROOTFS_GZTARBALL}
-				RESULT_VARIABLE CORE_ROOTFS_EXT_STATUS_CODE
-				ERROR_VARIABLE CORE_ROOTFS_EXT_ERROR
-			)
-			if (${CORE_ROOTFS_EXT_STATUS_CODE} EQUAL 0)
-				message("     Done")
-			else()
-				message(FATAL_ERROR "     Failed: ${CORE_ROOTFS_EXT_STATUS_CODE} ${CORE_ROOTFS_EXT_ERROR}")
-			endif()
-		else()
-			list(GET CORE_ROOTFS_DL_STATUS 1 CORE_ROOTFS_DL_STATUS_MSG)
-			message(FATAL_ERROR "     Failed: ${CORE_ROOTFS_DL_STATUS_CODE} ${CORE_ROOTFS_DL_STATUS_MSG}")
-		endif()
-	endif()
-endfunction(get_core_rootfs)
-###############################################################################
-
-get_core_rootfs(${FB_BIN_DIR}/${PLUGIN_NAME})
 
 ###############################################################################
 # Create Rootfs
 if (NOT FB_ROOTFS_SUFFIX)
 	SET(FB_ROOTFS_SUFFIX _RootFS)
 endif()
+if (NOT FB_RPATH_SUFFIX)
+	SET(FB_RPATH_SUFFIX _Rpath)
+endif()
+
+set(INSTALL_ROOTFS_TARGET_ID 0)
+set(INSTALL_ROOTFS_TARGETS )
+macro(install_rootfs_target VAR_DEPEND DIR_DEST DIR_SRC elem)
+	get_filename_component(path ${elem} PATH)
+	add_custom_target("INSTALL_ROOTFS_TARGET_${INSTALL_ROOTFS_TARGET_ID}"
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
+		COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+		COMMENT "Install ${DIR_DEST}/${elem}"
+		VERBATIM
+	)
+	set_target_properties("INSTALL_ROOTFS_TARGET_${INSTALL_ROOTFS_TARGET_ID}" PROPERTIES FOLDER ${FBSTRING_ProductName})
+	add_dependencies("INSTALL_ROOTFS_TARGET_${INSTALL_ROOTFS_TARGET_ID}" ${VAR_DEPEND})
+	list(APPEND INSTALL_ROOTFS_TARGETS "INSTALL_ROOTFS_TARGET_${INSTALL_ROOTFS_TARGET_ID}")
+	math(EXPR INSTALL_ROOTFS_TARGET_ID "${INSTALL_ROOTFS_TARGET_ID}+1")
+endmacro()
+set(SIGN_ROOTFS_TARGET_ID 0)
+set(SIGN_ROOTFS_TARGETS )
+macro(sign_rootfs_target VAR_DEPEND DIR_DEST elem)
+	add_custom_target("SIGN_ROOTFS_TARGET_${SIGN_ROOTFS_TARGET_ID}"
+		COMMAND ${LW_CODESIGN_COMMAND} -v ${DIR_DEST}/${elem}
+		COMMENT "Sign ${DIR_DEST}/${elem}"
+		VERBATIM
+	)
+	set_target_properties("SIGN_ROOTFS_TARGET_${SIGN_ROOTFS_TARGET_ID}" PROPERTIES FOLDER ${FBSTRING_ProductName})
+	add_dependencies("SIGN_ROOTFS_TARGET_${SIGN_ROOTFS_TARGET_ID}" ${VAR_DEPEND})
+	list(APPEND SIGN_ROOTFS_TARGETS "SIGN_ROOTFS_TARGET_${SIGN_ROOTFS_TARGET_ID}")
+	math(EXPR SIGN_ROOTFS_TARGET_ID "${SIGN_ROOTFS_TARGET_ID}+1")
+endmacro()
 
 function (create_rootfs PROJNAME OUTDIR)
 	# Define components
@@ -145,21 +153,17 @@ function (create_rootfs PROJNAME OUTDIR)
 		liblinphone.5.${DEPENDENCY_EXT}
 		libmediastreamer_base.3.${DEPENDENCY_EXT}
 		libmediastreamer_voip.3.${DEPENDENCY_EXT}
-		libogg.0.${DEPENDENCY_EXT}
 		libopus.0.${DEPENDENCY_EXT}
 		libortp.9.${DEPENDENCY_EXT}
 		libspeex.1.${DEPENDENCY_EXT}
 		libspeexdsp.1.${DEPENDENCY_EXT}
-		libtheora.0.${DEPENDENCY_EXT}
-		libvpx.1.${DEPENDENCY_EXT}
-		libz.1.${DEPENDENCY_EXT}
 	)
-	IF(LW_USE_SRTP)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libsrtp.1.4.5.${DEPENDENCY_EXT}
-		)
-	ENDIF(LW_USE_SRTP)
+	#IF(LW_USE_SRTP)
+	#	SET(ROOTFS_LIB_SOURCES
+	#		${ROOTFS_LIB_SOURCES}
+	#		libsrtp.1.4.5.${DEPENDENCY_EXT}
+	#	)
+	#ENDIF(LW_USE_SRTP)
 	IF(LW_USE_OPENSSL)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
@@ -186,14 +190,14 @@ function (create_rootfs PROJNAME OUTDIR)
 	IF(LW_USE_POLARSSL)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
-			libpolarssl.0.${DEPENDENCY_EXT}
+			libpolarssl.3.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_POLARSSL)
 	IF(LW_USE_BELLESIP)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
 			libbellesip.0.${DEPENDENCY_EXT}
-			libantlr3c.0.${DEPENDENCY_EXT}
+			libantlr3c.${DEPENDENCY_EXT}
 			libxml2.2.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_BELLESIP)
@@ -218,165 +222,67 @@ function (create_rootfs PROJNAME OUTDIR)
 		sounds/linphone/rings/toy-mono.wav
 	)
 
-	# Set Rootfs sources
-	SET(ROOTFS_SOURCES
-		${OUTDIR}/${FBSTRING_PluginFileName}
-	)
 	FOREACH(elem ${ROOTFS_LIB_SOURCES})
-		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib)
-		SET(DIR_DEST ${OUTDIR}/${PLUGIN_SHAREDIR})
-		GET_FILENAME_COMPONENT(path ${elem} PATH)
-		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
-			DEPENDS ${DIR_SRC}/${elem}
-			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
-			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+		install_rootfs_target(
+			${PROJNAME}
+			${OUTDIR}/${PLUGIN_SHAREDIR}
+			${CMAKE_INSTALL_PREFIX}/lib
+			${elem}
 		)
-		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
 	FOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
-		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/mediastreamer/plugins)
-		SET(DIR_DEST ${OUTDIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins)
-		GET_FILENAME_COMPONENT(path ${elem} PATH)
-		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
-			DEPENDS ${DIR_SRC}/${elem}
-			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
-			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+		install_rootfs_target(
+			${PROJNAME}
+			${OUTDIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins
+			${CMAKE_INSTALL_PREFIX}/lib/mediastreamer/plugins
+			${elem}
 		)
-		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
 	FOREACH(elem ${ROOTFS_SHARE_SOURCES})
-		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share)
-		SET(DIR_DEST ${OUTDIR}/${PLUGIN_SHAREDIR}/share)
-		GET_FILENAME_COMPONENT(path ${elem} PATH)
-		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
-			DEPENDS ${DIR_SRC}/${elem}
-			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
-			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+		install_rootfs_target(
+			${PROJNAME}
+			${OUTDIR}/${PLUGIN_SHAREDIR}/share
+			${CMAKE_INSTALL_PREFIX}/share
+			${elem}
 		)
-		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_SHARE_SOURCES})
 
-
-	ADD_CUSTOM_COMMAND(OUTPUT ${FB_OUT_DIR}/Rootfs.updated 
-		DEPENDS ${ROOTFS_SOURCES}
-		
-		# Change rpath
+	# Change rpath
+	add_custom_target(${PROJNAME}${FB_RPATH_SUFFIX} ALL
+		DEPENDS ${INSTALL_ROOTFS_TARGETS}
 		COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${OUTDIR}/${PLUGIN_SHAREDIR}/
 		COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${OUTDIR}/${PLUGIN_SHAREDIR}/ ${OUTDIR}/${FBSTRING_PluginFileName}
 		COMMAND ${CMAKE_COMMAND} -E make_directory ${OUTDIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins
 		COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/mac_rpath.py ${OUTDIR}/${PLUGIN_SHAREDIR}/ ${OUTDIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/
-
-		COMMAND ${CMAKE_COMMAND} -E touch ${FB_OUT_DIR}/Rootfs.updated
 	)
-	
-	ADD_CUSTOM_TARGET(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL DEPENDS ${FB_OUT_DIR}/Rootfs.updated)
-	SET_TARGET_PROPERTIES(${PROJNAME}${FB_ROOTFS_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
-	ADD_DEPENDENCIES(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
+
+	foreach(elem ${ROOTFS_LIB_SOURCES})
+		sign_rootfs_target(
+			${PROJNAME}${FB_RPATH_SUFFIX}
+			${OUTDIR}/${PLUGIN_SHAREDIR}
+			${elem}
+		)
+	endforeach(elem ${ROOTFS_LIB_SOURCES})
+	foreach(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
+		sign_rootfs_target(
+			${PROJNAME}${FB_RPATH_SUFFIX}
+			${OUTDIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins
+			${elem}
+		)
+	endforeach(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
+
+	add_custom_target(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL
+		DEPENDS ${SIGN_ROOTFS_TARGETS}
+		COMMAND ${LW_CODESIGN_COMMAND} -v ${OUTDIR}/${FBSTRING_PluginFileName}
+
+	)
+	add_dependencies(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
 	MESSAGE("-- Successfully added Rootfs creation step")
 endfunction(create_rootfs)
 ###############################################################################
 
 create_rootfs(${PLUGIN_NAME} ${FB_BUNDLE_DIR})
 
-if (NOT "${CODE_SIGNING_IDENTITY_FOUND}" STREQUAL "")
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${FBSTRING_PluginFileName}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/liblinphone.5.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libmediastreamer_base.3.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libmediastreamer_voip.3.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libogg.0.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libopus.0.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libortp.9.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libspeex.1.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libspeexdsp.1.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libtheora.0.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libvpx.1.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libz.1.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	IF(LW_USE_SRTP)
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libsrtp.1.4.5.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	ENDIF(LW_USE_SRTP)
-	IF(LW_USE_OPENSSL)
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libcrypto.1.0.0.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libssl.1.0.0.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	ENDIF(LW_USE_OPENSSL)
-	IF(LW_USE_EXOSIP)
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libeXosip2.7.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libosip2.7.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libosipparser2.7.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	ENDIF(LW_USE_EXOSIP)
-	IF(LW_USE_FFMPEG)
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libavcodec.53.61.100.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libavutil.51.35.100.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libswscale.2.1.100.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	ENDIF(LW_USE_FFMPEG)
-	IF(LW_USE_POLARSSL)
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libpolarssl.0.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	ENDIF(LW_USE_POLARSSL)
-	IF(LW_USE_BELLESIP)
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libbellesip.0.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libantlr3c.0.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/libxml2.2.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	ENDIF(LW_USE_BELLESIP)
-	IF(LW_USE_G729)
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsbcg729.0.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	ENDIF(LW_USE_G729)
-	IF(LW_USE_X264)
-	firebreath_sign_file(${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
-		"${FB_BUNDLE_DIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsx264.0.${DEPENDENCY_EXT}"
-		${MAC_CODE_SIGNING_IDENTITY})
-	ENDIF(LW_USE_X264)
-endif()
 
 ###############################################################################
 # XPI Package

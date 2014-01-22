@@ -94,6 +94,12 @@ list(APPEND GENERAL_EP_VARS
 	CMAKE_MODULE_LINKER_FLAGS:STRING
 	LIB_INSTALL_DIR:STRING
 )
+if(APPLE)
+	list(APPEND GENERAL_EP_VARS
+		CMAKE_OSX_DEPLOYMENT_TARGET:STRING
+		CMAKE_OSX_ARCHITECTURES:STRING
+	)
+endif(APPLE)
 
 _expand_external_project_vars()
 
@@ -141,35 +147,96 @@ if(WIN32)
 	)
 	add_dependencies(EP_linphone EP_mediastreamer2 EP_bellesip EP_xml2)
 else(WIN32)
+	if(APPLE)
+		set(ARCH_CFLAGS "-O3 -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET} -arch ${CMAKE_OSX_ARCHITECTURES}")
+		set(ARCH_CPPFLAGS "${ARCH_CFLAGS}")
+		set(ARCH_LDFLAGS "-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET} -arch ${CMAKE_OSX_ARCHITECTURES}")
+		set(ARCH_BUILD "i686-apple-darwin")
+		set(ARCH_HOST "i686-apple-darwin")
+	else(APPLE)
+		set(ARCH_CFLAGS "-O3")
+		set(ARCH_CPPFLAGS "")
+		set(ARCH_LDFLAGS "")
+		set(ARCH_BUILD "")
+		set(ARCH_HOST "")
+	endif(APPLE)
+
+	ExternalProject_Add(EP_srtp
+		GIT_REPOSITORY git://git.linphone.org/srtp.git
+		GIT_TAG master
+		CONFIGURE_COMMAND autoconf && ./configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}"
+		BUILD_COMMAND make libsrtp.a
+		BUILD_IN_SOURCE 1
+	)
+
+	set(EP_ffmpeg_ARCH "i386")
+	if(APPLE)
+		set(EP_ffmpeg_TARGET_OS "darwin")
+	else(APPLE)
+		set(EP_ffmpeg_TARGET_OS "linux")
+	endif(APPLE)
+	set(EP_ffmpeg_CONFIGURE_OPTIONS "--enable-shared" "--disable-static" "--enable-pic" "--disable-bzlib" "--disable-mmx" "--disable-ffprobe" "--disable-ffserver" "--disable-avdevice" "--disable-avfilter" "--disable-network" "--disable-avformat" "--disable-everything" "--enable-decoder=mjpeg" "--enable-encoder=mjpeg")
+	ExternalProject_Add(EP_ffmpeg
+		URL http://ffmpeg.org/releases/ffmpeg-0.10.2.tar.gz
+		CONFIGURE_COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX} --arch=${EP_ffmpeg_ARCH} --target-os=${EP_ffmpeg_TARGET_OS} "--extra-cflags=${ARCH_CFLAGS}" "--extra-ldflags=${ARCH_LDFLAGS}" ${EP_ffmpeg_CONFIGURE_OPTIONS}
+		BUILD_IN_SOURCE 1
+	)
+
+	ExternalProject_Add(EP_opus
+		URL http://downloads.xiph.org/releases/opus/opus-1.0.3.tar.gz
+		CONFIGURE_COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
+		BUILD_IN_SOURCE 1
+	)
+
+	if(APPLE)
+		set(EP_vpx_TARGET "x86-darwin10-gcc")
+	else(APPLE)
+		set(EP_vpx_TARGET "generic-gnu")
+	endif(APPLE)
+	ExternalProject_Add(EP_vpx
+		GIT_REPOSITORY https://chromium.googlesource.com/webm/libvpx
+		GIT_TAG v1.3.0
+		CONFIGURE_COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX} --target=${EP_vpx_TARGET} --enable-static --disable-shared --enable-pic --enable-error-concealment --enable-realtime-only --enable-spatial-resampling --enable-vp8 --disable-vp9 --enable-libs --disable-install-docs --disable-debug-libs --disable-examples --disable-unit-tests "--extra-cflags=-O3"
+		BUILD_IN_SOURCE 1
+	)
+
 	set(EP_antlr3c_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/antlr3/runtime/C)
 	ExternalProject_Add(EP_antlr3c
 		SOURCE_DIR ${EP_antlr3c_SOURCE_DIR}
-		CONFIGURE_COMMAND ${EP_antlr3c_SOURCE_DIR}/autogen.sh && ${EP_antlr3c_SOURCE_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX}
+		CONFIGURE_COMMAND ./autogen.sh && ./configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
+		BUILD_IN_SOURCE 1
 	)
 
 	set(EP_bellesip_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/belle-sip)
 	ExternalProject_Add(EP_bellesip
 		SOURCE_DIR ${EP_bellesip_SOURCE_DIR}
-		CONFIGURE_COMMAND ${EP_bellesip_SOURCE_DIR}/autogen.sh && ${EP_bellesip_SOURCE_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX}
+		CONFIGURE_COMMAND ./autogen.sh && ./configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
+
+		BUILD_IN_SOURCE 1
 	)
 	add_dependencies(EP_bellesip EP_antlr3c EP_polarssl)
 
 	set(EP_xml2_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libxml2)
 	ExternalProject_Add(EP_xml2
 		SOURCE_DIR ${EP_xml2_SOURCE_DIR}
-		CONFIGURE_COMMAND ${EP_xml2_SOURCE_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} --without-legacy --with-catalog --with-docbook --without-python --with-c14n
+		CONFIGURE_COMMAND ${EP_xml2_SOURCE_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} --without-legacy --with-catalog --with-docbook --without-python --with-c14n "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
+
 	)
 
 	set(EP_speex_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/speex)
 	ExternalProject_Add(EP_speex
 		SOURCE_DIR ${EP_speex_SOURCE_DIR}
-		CONFIGURE_COMMAND ${EP_speex_SOURCE_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} --enable-fixed-point --disable-float-api --disable-vbr --disable-ogg --disable-oggtest
+		CONFIGURE_COMMAND ${EP_speex_SOURCE_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} --enable-fixed-point --disable-float-api --disable-vbr --disable-ogg --disable-oggtest "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
+
 	)
 
 	set(EP_linphone_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/linphone)
 	ExternalProject_Add(EP_linphone
 		SOURCE_DIR ${EP_linphone_SOURCE_DIR}
-		CONFIGURE_COMMAND ${EP_linphone_SOURCE_DIR}/autogen.sh && ${EP_linphone_SOURCE_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} --disable-nls --enable-console_ui=no --enable-gtk_ui=no --enable-assistant=no --enable-debug=yes --enable-x11=no --disable-glx --disable-zrtp
+		CONFIGURE_COMMAND ./autogen.sh && ./configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} --disable-nls --enable-console_ui=no --enable-gtk_ui=no --enable-assistant=no --enable-debug=yes --enable-x11=no --disable-glx --disable-zrtp --enable-relativeprefix "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
+
+		BUILD_IN_SOURCE 1
 	)
-	add_dependencies(EP_linphone EP_bellesip EP_xml2 EP_speex)
+	add_dependencies(EP_linphone EP_bellesip EP_xml2 EP_srtp EP_speex EP_opus EP_ffmpeg EP_vpx)
 endif(WIN32)
+
