@@ -90,7 +90,6 @@ endif()
 function (create_rootfs PROJNAME OUTDIR)
 	# Define components
 	SET(ROOTFS_LIB_SOURCES
-		libjpeg.${DEPENDENCY_EXT}.8
 		liblinphone.${DEPENDENCY_EXT}.5
 		libmediastreamer_base.${DEPENDENCY_EXT}.3
 		libmediastreamer_voip.${DEPENDENCY_EXT}.3

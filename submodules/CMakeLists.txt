@@ -201,22 +201,12 @@ else(WIN32)
 	)
 
 	if(NOT WIN32 AND NOT APPLE)
-		# Compile libjpeg on Linux platform
-		ExternalProject_Add(EP_jpeg
-			URL http://www.ijg.org/files/jpegsrc.v8c.tar.gz
-			CONFIGURE_COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} --enable-static --enable-shared "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
-			BUILD_IN_SOURCE 1
-		)
-
 		# Compile v4l on Linux platform
 		ExternalProject_Add(EP_v4l
-			URL http://linuxtv.org/downloads/v4l-utils/v4l-utils-0.8.7.tar.bz2
-			CONFIGURE_COMMAND echo ""
-			BUILD_COMMAND cd lib && make "PREFIX=${CMAKE_INSTALL_PREFIX}" CPPFLAGS=${CMAKE_INSTALL_PREFIX}/include
-			INSTALL_COMMAND cd lib && make install "PREFIX=${CMAKE_INSTALL_PREFIX}"
+			URL http://linuxtv.org/downloads/v4l-utils/v4l-utils-1.0.0.tar.bz2
+			CONFIGURE_COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} --disable-v4l-utils --disable-libdvbv5 --with-udevdir=${CMAKE_INSTALL_PREFIX}/etc --without-jpeg "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
 			BUILD_IN_SOURCE 1
 		)
-		add_dependencies(EP_v4l EP_jpeg)
 	endif(NOT WIN32 AND NOT APPLE)
 
 	set(EP_antlr3c_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/antlr3/runtime/C)
