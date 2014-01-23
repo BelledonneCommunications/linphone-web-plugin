@@ -212,7 +212,7 @@ else(WIN32)
 		ExternalProject_Add(EP_v4l
 			URL http://linuxtv.org/downloads/v4l-utils/v4l-utils-0.8.7.tar.bz2
 			CONFIGURE_COMMAND echo ""
-			BUILD_COMMAND cd lib && make "PREFIX=${CMAKE_INSTALL_PREFIX}"
+			BUILD_COMMAND cd lib && make "PREFIX=${CMAKE_INSTALL_PREFIX}" CPPFLAGS=${CMAKE_INSTALL_PREFIX}/include
 			INSTALL_COMMAND cd lib && make install "PREFIX=${CMAKE_INSTALL_PREFIX}"
 			BUILD_IN_SOURCE 1
 		)
