@@ -71,6 +71,15 @@ SET(PLUGIN_EXT "so")
 SET(FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
 SET(FB_ROOTFS_DIR ${FB_OUT_DIR}/Rootfs)
 
+# Use default chrpath if not defined
+IF(NOT DEFINED CMAKE_CHRPATH)
+	find_program(CMAKE_CHRPATH chrpath)
+ENDIF(NOT DEFINED CMAKE_CHRPATH)
+
+# Use default chmod if not defined
+IF(NOT DEFINED CMAKE_CHMOD)
+	find_program(CMAKE_CHMOD chmod)
+ENDIF(NOT DEFINED CMAKE_CHMOD)
 
 ###############################################################################
 # Create Rootfs
@@ -81,7 +90,7 @@ endif()
 function (create_rootfs PROJNAME OUTDIR)
 	# Define components
 	SET(ROOTFS_LIB_SOURCES
-		#libjpeg.${DEPENDENCY_EXT}.8
+		libjpeg.${DEPENDENCY_EXT}.8
 		liblinphone.${DEPENDENCY_EXT}.5
 		libmediastreamer_base.${DEPENDENCY_EXT}.3
 		libmediastreamer_voip.${DEPENDENCY_EXT}.3
@@ -163,29 +172,35 @@ function (create_rootfs PROJNAME OUTDIR)
 	)
 
 	FOREACH(elem ${ROOTFS_LIB_SOURCES})
-		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib)
+		SET(DIR_SRC ${CMAKE_INSTALL_PREFIX}/lib)
 		SET(DIR_DEST ${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR})
 		GET_FILENAME_COMPONENT(path ${elem} PATH)
 		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
 			DEPENDS ${DIR_SRC}/${elem}
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
 			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+			COMMAND ${CMAKE_CHMOD} +w ${DIR_DEST}/${elem}
+			COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${DIR_DEST}/${elem} || echo "Error ignored"
+			COMMAND ${CMAKE_CHMOD} -w ${DIR_DEST}/${elem}
 		)
 		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
 	FOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
-		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/lib/mediastreamer/plugins)
+		SET(DIR_SRC ${CMAKE_INSTALL_PREFIX}/lib/mediastreamer/plugins)
 		SET(DIR_DEST ${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins)
 		GET_FILENAME_COMPONENT(path ${elem} PATH)
 		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
 			DEPENDS ${DIR_SRC}/${elem}
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DIR_DEST}/${path}
 			COMMAND ${CMAKE_COMMAND} -E copy ${DIR_SRC}/${elem} ${DIR_DEST}/${elem}
+			COMMAND ${CMAKE_CHMOD} +w ${DIR_DEST}/${elem}
+			COMMAND ${CMAKE_CHRPATH} -r \\\$$ORIGIN ${DIR_DEST}/${elem} || echo "Error ignored"
+			COMMAND ${CMAKE_CHMOD} -w ${DIR_DEST}/${elem}
 		)
 		LIST(APPEND ROOTFS_SOURCES ${DIR_DEST}/${elem})
 	ENDFOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
 	FOREACH(elem ${ROOTFS_SHARE_SOURCES})
-		SET(DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share)
+		SET(DIR_SRC ${CMAKE_INSTALL_PREFIX}/share)
 		SET(DIR_DEST ${FB_ROOTFS_DIR}/${PLUGIN_SHAREDIR}/share)
 		GET_FILENAME_COMPONENT(path ${elem} PATH)
 		ADD_CUSTOM_COMMAND(OUTPUT ${DIR_DEST}/${elem} 
