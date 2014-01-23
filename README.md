@@ -10,6 +10,9 @@ Prerequisites
 * cmake
 * java (used for packaging)
 * openssl
+* Make sure you have cloned the linphone-web-plugin repository recursively.
+  If this is not the case, get the submodules:
+    git submodules update --recursive --init
 
 ### Windows platform
 * Visual studio
@@ -17,21 +20,21 @@ Prerequisites
 
 ### Linux platform
 * X11 dev
+* chrpath
 
 ### Mac OS X platform
 * Xcode
 * Mac ports (for python and modules)
 
-Rootfs
+Linphone Deps
 ------
-The Rootfs is a path containing all the dependencies needed to make works 
-linphone project. In order to compile linphone-web we have to use a special
-compiled version of linphone and its dependencies.
+The Linphone deps are a package containing all the dependencies needed to be
+able to compile the linphone-web project on the Windows platform. Therefore
+it is only needed when compiling the plugin on Windows. It will be downloaded
+automatically from the linphone website when configuring the plugin so you
+should not need to build it yourself.
 
-The rootfs corresponding to the used system is downloaded automatically when
-configuring the firebreath plugin for compilation.
-
-### Generate a Rootfs
+### Generate the Linphone deps
 Clone the oe-lite git repository from:
 
 	git clone git://git.linphone.org/oe-lite.git --recursive
@@ -65,13 +68,13 @@ You have to add python, openssl and WiX in the PATH environment variable.
 Don't use XCode directly it doesn't use corrects environment and target 
 architectures. For configuring the firebreath, use the following command: 
 
-    ./prepmac.sh -DCMAKE_OSX_DEPLOYMENT_TARGET="10.5" -DCMAKE_OSX_ARCHITECTURES="x86_64"
+    ./prepmac.sh -DCMAKE_OSX_DEPLOYMENT_TARGET="10.6" -DCMAKE_OSX_ARCHITECTURES="i386"
 
 This is permit the plugin to run on older version of Mac OS X than the one
 you use and force only one architecture. After enter in `./build/` directory 
 of Firebreath and run the following command:
 
-    xcodebuild -arch x86_64
+    xcodebuild -arch i386
 
 
 Sign
