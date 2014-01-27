@@ -388,58 +388,13 @@ if(LW_CREATE_SDK)
 		SET(FB_SDK_PACKAGE_SUFFIX _SDK)
 	endif()
 
-	function (create_sdk_package PROJNAME PROJVERSION OUTDIR PROJDEP)
-		file (GLOB DOCUMENTATION
-			${CMAKE_CURRENT_SOURCE_DIR}/Rootfs/share/doc/linphone-[^.]*.[^.]*.[^.]*/xml/[^.]*.xml
-			)
-
-		file (GLOB TUTORIALS
-			${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials/README
-			${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials/[^.]*.html
-			${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials/[^.]*.js
-			)
-
-		SET(SDK_SOURCES
-			${FB_OUT_DIR}/Rootfs.updated
-			${CMAKE_CURRENT_SOURCE_DIR}/README.md
-			${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md
-			${CMAKE_CURRENT_SOURCE_DIR}/GETTING_STARTED.md
-			${CMAKE_CURRENT_SOURCE_DIR}/Doc/plugin_specifics.js
-			${DOCUMENTATION}
-			${TUTORIALS}
-		)
-
-		SET(FB_PKG_DIR ${FB_OUT_DIR}/Sdk)
-		SET(JSWRAPPER_DIR ${FB_PKG_DIR}/jswrapper)
-		SET(SDK_DIR ${FB_PKG_DIR}/${PROJECT_NAME}-${PROJVERSION}-sdk)
-
-		ADD_CUSTOM_TARGET(${PROJNAME}${FB_SDK_PACKAGE_SUFFIX} ALL DEPENDS ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-sdk.zip)
-		SET_TARGET_PROPERTIES(${PROJNAME}${FB_SDK_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
-		ADD_CUSTOM_COMMAND(OUTPUT ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-sdk.zip
-					DEPENDS ${SDK_SOURCES}
-					COMMAND ${CMAKE_COMMAND} -E remove_directory ${FB_PKG_DIR}
-					COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
-					COMMAND ${CMAKE_COMMAND} -E remove_directory ${JSWRAPPER_DIR}
-					COMMAND ${CMAKE_COMMAND} -E make_directory ${JSWRAPPER_DIR}
-					COMMAND ${CMAKE_COMMAND} -E remove_directory ${SDK_DIR}
-					COMMAND ${CMAKE_COMMAND} -E make_directory ${SDK_DIR}
-					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/concat_files.py ${FB_PKG_DIR}/MAINPAGE.md ${CMAKE_CURRENT_SOURCE_DIR}/GETTING_STARTED.md ${CMAKE_CURRENT_SOURCE_DIR}/README.md ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md
-					COMMAND cd ${JSWRAPPER_DIR} && lp-gen-wrappers --output javascript --project linphone ${DOCUMENTATION}
-					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Doc/plugin_specifics.js ${JSWRAPPER_DIR}/linphone/
-					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/concat_files.py ${SDK_DIR}/linphone.js ${JSWRAPPER_DIR}/linphone/*.js
-					COMMAND cd ${SDK_DIR} && jsdoc --recurse --destination ${PROJECT_NAME}-${PROJVERSION}-doc ${JSWRAPPER_DIR} ${FB_PKG_DIR}/MAINPAGE.md
-					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/copy.py ${CMAKE_CURRENT_SOURCE_DIR}/Doc/tutorials ${SDK_DIR}/tutorials
-					COMMAND ${CMAKE_COMMAND} -E copy ${SDK_DIR}/linphone.js ${SDK_DIR}/tutorials/
-					COMMAND cd ${FB_PKG_DIR} && zip -r ${OUTDIR}/${PROJECT_NAME}-${PROJVERSION}-${FB_PACKAGE_SUFFIX}-sdk.zip ${PROJECT_NAME}-${PROJVERSION}-sdk
-		)
-		ADD_DEPENDENCIES(${PROJNAME}${FB_SDK_PACKAGE_SUFFIX} ${PROJDEP})
-		MESSAGE("-- Successfully added SDK package step")
-	endfunction(create_sdk_package)
-
-	create_sdk_package(${PLUGIN_NAME}
-		${FBSTRING_PLUGIN_VERSION}
-		${FB_OUT_DIR}
-		${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+	add_custom_target(${PLUGIN_NAME}${FB_SDK_PACKAGE_SUFFIX} ALL
+		COMMAND ${CMAKE_COMMAND} "-DSDK_STAGE_DIR=${CMAKE_INSTALL_PREFIX}" "-DSDK_FILENAME=${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_VERSION}-${FB_PACKAGE_SUFFIX}-sdk.zip" "-DSDK_PROJECT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}" "-DSDK_PROJECT_NAME=${PROJECT_NAME}" "-DSDK_PROJECT_VERSION=${FBSTRING_PLUGIN_VERSION}" -P ${CMAKE_CURRENT_SOURCE_DIR}/Common/sdk.cmake
+		DEPENDS ${PLUGIN_NAME}${FB_ROOTFS_SUFFIX}
+		COMMENT "Generating SDK"
+		VERBATIM
 	)
+	set_target_properties(${PLUGIN_NAME}${FB_SDK_PACKAGE_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
+	message("-- Successfully added SDK package step")
 endif(LW_CREATE_SDK)
 ###############################################################################
