@@ -10,9 +10,12 @@ Prerequisites
 * cmake
 * java (used for packaging)
 * openssl
+* awk (on Windows get it from http://gnuwin32.sourceforge.net/packages/gawk.htm
+  and add it to your PATH environment variable)
 * Make sure you have cloned the linphone-web-plugin repository recursively.
   If this is not the case, get the submodules:
-    git submodules update --recursive --init
+
+	git submodules update --recursive --init
 
 ### Windows platform
 * Visual studio
@@ -63,6 +66,12 @@ Firebreath project root.
 
 ### Windows
 You have to add python, openssl and WiX in the PATH environment variable.
+Make sure you are building with Visual Studio 2010 (using the prep2010.cmd
+or prep2010debug.cmd scripts) and that you are using the configuration you
+used during the CMake configuration. So if you prepared the build with
+prep2010.cmd, compile with the Release configuration in Visual Studio. If
+you prepared the build with prep2010debug.cmd, compile with the Debug
+configuration in Visual Studio.
 
 ### Mac OS X
 Don't use XCode directly it doesn't use corrects environment and target 
