@@ -71,9 +71,11 @@ set(FBSTRING_PluginDomain "linphone-web")
 set(FBSTRING_FileDescription "Web plugin of Linphone")
 
 set(FBSTRING_FileExtents "")
+set(FBSTRING_MIMEType_Core "application/x-linphone-web")
+set(FBSTRING_MIMEType_Video "application/x-linphone-web-video")
 set(FBSTRING_MIMEType 
-	"application/x-linphone-web"
-	"application/x-linphone-web-video")
+	${FBSTRING_MIMEType_Core}
+	${FBSTRING_MIMEType_Video})
 set(ACTIVEX_PROGID 
 	"com.belledonne-communications.linphone.web"
 	"com.belledonne-communications.linphone.web.video")
