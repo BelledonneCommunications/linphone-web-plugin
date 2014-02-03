@@ -163,8 +163,7 @@ else(WIN32)
 	ExternalProject_Add(EP_srtp
 		GIT_REPOSITORY git://git.linphone.org/srtp.git
 		GIT_TAG master
-		CONFIGURE_COMMAND autoconf && ./configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}"
-		BUILD_COMMAND make libsrtp.a
+		CONFIGURE_COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} "--enable-shared" "--enable-pic" "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}"
 		BUILD_IN_SOURCE 1
 	)
 
@@ -244,7 +243,7 @@ else(WIN32)
 	set(EP_linphone_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/linphone)
 	ExternalProject_Add(EP_linphone
 		SOURCE_DIR ${EP_linphone_SOURCE_DIR}
-		CONFIGURE_COMMAND ./autogen.sh && ./configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} --disable-nls --enable-console_ui=no --enable-gtk_ui=no --enable-assistant=no --enable-debug=yes --enable-x11=no --disable-glx --disable-zrtp --enable-relativeprefix "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
+		CONFIGURE_COMMAND ./autogen.sh && ./configure --prefix=${CMAKE_INSTALL_PREFIX} --build=${ARCH_BUILD} --host=${ARCH_HOST} --disable-nls --enable-console_ui=no --enable-gtk_ui=no --enable-assistant=no --enable-debug=yes --enable-x11=no --disable-glx --disable-zrtp --enable-relativeprefix "--with-srtp=${CMAKE_INSTALL_PREFIX}" "CFLAGS=${ARCH_CFLAGS}" "CPPFLAGS=${ARCH_CPPFLAGS}" "LDFLAGS=${ARCH_LDFLAGS}" "PKG_CONFIG_LIBDIR=${CMAKE_INSTALL_PREFIX}/lib/pkgconfig"
 
 		BUILD_IN_SOURCE 1
 	)
