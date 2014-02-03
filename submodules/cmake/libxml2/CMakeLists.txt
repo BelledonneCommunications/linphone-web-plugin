@@ -61,10 +61,7 @@ set(src
 )
 
 if(WIN32)
-add_definitions(
-	-DHAVE_WIN32_THREADS
-	-DHAVE_COMPILER_TLS
-)
+add_definitions(-DHAVE_WIN32_THREADS)
 
 set(libs ws2_32)
 endif(WIN32)
