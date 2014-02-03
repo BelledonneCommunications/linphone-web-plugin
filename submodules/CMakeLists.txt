@@ -171,12 +171,15 @@ else(WIN32)
 	set(EP_ffmpeg_ARCH "i386")
 	if(APPLE)
 		set(EP_ffmpeg_TARGET_OS "darwin")
+		set(EP_ffmpeg_PATCH_COMMAND "patch" "-p1" "<" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/ffmpeg/configure-osx.patch")
 	else(APPLE)
 		set(EP_ffmpeg_TARGET_OS "linux")
+		set(EP_ffmpeg_PATCH_COMMAND "")
 	endif(APPLE)
 	set(EP_ffmpeg_CONFIGURE_OPTIONS "--enable-shared" "--disable-static" "--enable-pic" "--disable-bzlib" "--disable-mmx" "--disable-ffprobe" "--disable-ffserver" "--disable-avdevice" "--disable-avfilter" "--disable-network" "--disable-avformat" "--disable-everything" "--enable-decoder=mjpeg" "--enable-encoder=mjpeg")
 	ExternalProject_Add(EP_ffmpeg
 		URL http://ffmpeg.org/releases/ffmpeg-0.10.2.tar.gz
+		PATCH_COMMAND ${EP_ffmpeg_PATCH_COMMAND}
 		CONFIGURE_COMMAND ./configure --prefix=${CMAKE_INSTALL_PREFIX} --arch=${EP_ffmpeg_ARCH} --target-os=${EP_ffmpeg_TARGET_OS} "--extra-cflags=${ARCH_CFLAGS}" "--extra-ldflags=${ARCH_LDFLAGS}" ${EP_ffmpeg_CONFIGURE_OPTIONS}
 		BUILD_IN_SOURCE 1
 	)
