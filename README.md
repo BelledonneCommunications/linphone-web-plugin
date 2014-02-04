@@ -66,12 +66,18 @@ Firebreath project root.
 
 ### Windows
 You have to add python, openssl and WiX in the PATH environment variable.
-Make sure you are building with Visual Studio 2010 (using the prep2010.cmd
-or prep2010debug.cmd scripts) and that you are using the configuration you
-used during the CMake configuration. So if you prepared the build with
-prep2010.cmd, compile with the Release configuration in Visual Studio. If
-you prepared the build with prep2010debug.cmd, compile with the Debug
-configuration in Visual Studio.
+Make sure you are building with Visual Studio 2010, using the prep2010.cmd
+script.
+If you want to compile in Debug mode, use the command line:
+
+	prep2010.cmd projects\linphone-web-plugin build "-DWITH_DYNAMIC_MSVC_RUNTIME=1" "-DCMAKE_BUILD_TYPE=Debug"
+
+and then use the Debug configuration in Visual Studio.
+If you want to compile in Release mode, use the command line:
+
+	prep2010.cmd projects\linphone-web-plugin build "-DWITH_DYNAMIC_MSVC_RUNTIME=1"
+
+and then use the Release configuration in Visual Studio.
 
 ### Mac OS X
 Don't use XCode directly it doesn't use corrects environment and target 
