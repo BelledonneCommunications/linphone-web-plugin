@@ -175,7 +175,7 @@ else(WIN32)
 		set(EP_ffmpeg_TARGET_OS "linux")
 		set(EP_ffmpeg_PATCH_COMMAND "")
 	endif(APPLE)
-	set(EP_ffmpeg_CONFIGURE_OPTIONS "--enable-shared" "--disable-static" "--enable-pic" "--disable-bzlib" "--disable-mmx" "--disable-ffprobe" "--disable-ffserver" "--disable-avdevice" "--disable-avfilter" "--disable-network" "--disable-avformat" "--disable-everything" "--enable-decoder=mjpeg" "--enable-encoder=mjpeg")
+	set(EP_ffmpeg_CONFIGURE_OPTIONS "--enable-shared" "--disable-static" "--enable-pic" "--disable-zlib" "--disable-bzlib" "--disable-mmx" "--disable-ffplay" "--disable-ffprobe" "--disable-ffserver" "--disable-avdevice" "--disable-avfilter" "--disable-network" "--disable-avformat" "--disable-everything" "--enable-decoder=mjpeg" "--enable-encoder=mjpeg")
 	ExternalProject_Add(EP_ffmpeg
 		URL http://ffmpeg.org/releases/ffmpeg-0.10.2.tar.gz
 		PATCH_COMMAND ${EP_ffmpeg_PATCH_COMMAND}
