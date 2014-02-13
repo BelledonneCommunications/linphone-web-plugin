@@ -175,7 +175,8 @@ else(WIN32)
 	else(APPLE)
 		set(EP_ffmpeg_TARGET_OS "linux")
 	endif(APPLE)
-	set(EP_ffmpeg_CONFIGURE_OPTIONS "--enable-shared" "--disable-static" "--enable-pic" "--disable-zlib" "--disable-bzlib" "--disable-mmx" "--disable-ffplay" "--disable-ffprobe" "--disable-ffserver" "--disable-avdevice" "--disable-avfilter" "--disable-network" "--disable-avformat" "--disable-everything" "--enable-decoder=mjpeg" "--enable-encoder=mjpeg")
+	# Disable video acceleration support for compatibility with older Mac OS X versions (vda, vaapi, vdpau).
+	set(EP_ffmpeg_CONFIGURE_OPTIONS "--enable-shared" "--disable-static" "--enable-pic" "--disable-zlib" "--disable-bzlib" "--disable-mmx" "--disable-ffplay" "--disable-ffprobe" "--disable-ffserver" "--disable-avdevice" "--disable-avfilter" "--disable-network" "--disable-avformat" "--disable-everything" "--enable-decoder=mjpeg" "--enable-encoder=mjpeg --disable-vda --disable-vaapi --disable-vdpau")
 	ExternalProject_Add(EP_ffmpeg
 		URL http://ffmpeg.org/releases/ffmpeg-0.10.2.tar.gz
 		PATCH_COMMAND ${EP_ffmpeg_PATCH_COMMAND}
