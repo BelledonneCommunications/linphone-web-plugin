@@ -433,12 +433,13 @@ if(LW_CREATE_XPI)
 		SET(XPI_SOURCES
 			${CMAKE_CURRENT_BINARY_DIR}/install.rdf
 			${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/bootstrap.js
-			${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome.manifest
+			${CMAKE_CURRENT_BINARY_DIR}/chrome.manifest
 			${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
 			${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png
 		)
 
 		CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
+		CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome.manifest ${CMAKE_CURRENT_BINARY_DIR}/chrome.manifest)
 
 		SET(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
 
@@ -448,7 +449,7 @@ if(LW_CREATE_XPI)
 					COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
 					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/install.rdf ${FB_PKG_DIR}/
 					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/bootstrap.js ${FB_PKG_DIR}/
-					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Win/XPI/chrome.manifest ${FB_PKG_DIR}/
+					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/chrome.manifest ${FB_PKG_DIR}/
 
 					COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/chrome/skin
 					COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/chrome/skin/

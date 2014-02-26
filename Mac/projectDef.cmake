@@ -296,12 +296,13 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 		${FB_OUT_DIR}/${FBSTRING_PluginFileName}.${PLUGIN_EXT}
 		${CMAKE_CURRENT_BINARY_DIR}/install.rdf
 		${CMAKE_CURRENT_SOURCE_DIR}/Mac/XPI/bootstrap.js
-		${CMAKE_CURRENT_SOURCE_DIR}/Mac/XPI/chrome.manifest
+		${CMAKE_CURRENT_BINARY_DIR}/chrome.manifest
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png
 		${CMAKE_CURRENT_SOURCE_DIR}/Common/icon64.png
 	)
 
 	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Mac/XPI/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
+	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Mac/XPI/chrome.manifest ${CMAKE_CURRENT_BINARY_DIR}/chrome.manifest)
 
 	SET(FB_PKG_DIR ${FB_OUT_DIR}/XPI)
 	GET_TARGET_PROPERTY(ONAME ${PROJNAME} OUTPUT_NAME)
@@ -314,7 +315,7 @@ function (create_xpi_package PROJNAME PROJVERSION OUTDIR PROJDEP)
 				COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}
 				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/install.rdf ${FB_PKG_DIR}/
 				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Mac/XPI/bootstrap.js ${FB_PKG_DIR}/
-				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Mac/XPI/chrome.manifest ${FB_PKG_DIR}/
+				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/chrome.manifest ${FB_PKG_DIR}/
 
 				COMMAND ${CMAKE_COMMAND} -E make_directory ${FB_PKG_DIR}/chrome/skin
 				COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Common/icon48.png ${FB_PKG_DIR}/chrome/skin/

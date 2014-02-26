@@ -27,8 +27,8 @@
     <em:type>2</em:type>
     <em:description>${FBSTRING_FileDescription}</em:description>
 
-	<em:icon64URL>chrome://linphoneweb/skin/icon64.png</em:icon64URL>
-	<em:iconURL>chrome://linphoneweb/skin/icon48.png</em:iconURL>
+	<em:icon64URL>chrome://${PLUGIN_SHAREDIR}/skin/icon64.png</em:icon64URL>
+	<em:iconURL>chrome://${PLUGIN_SHAREDIR}/skin/icon48.png</em:iconURL>
 	
     <em:targetApplication>
       <!-- Firefox -->
