@@ -73,9 +73,13 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif()
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/Stage CACHE PATH "Install prefix" FORCE)
+set(CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} CACHE PATH "Prefix path" FORCE)
 
 # This will include Win/projectDef.cmake, X11/projectDef.cmake, Mac/projectDef 
 # depending on the platform
 include_platform()
 
-add_subdirectory(submodules)
+set(LINPHONE_BUILDER_TOOLCHAIN "webplugin" CACHE STRING "Toolchain to use to build linphone core library." FORCE)
+set(LINPHONE_BUILDER_WORK_DIR "${CMAKE_BINARY_DIR}/Core" CACHE PATH "Working directory to build linphone core library." FORCE)
+add_subdirectory(Core)
+

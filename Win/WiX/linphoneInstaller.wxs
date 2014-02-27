@@ -60,6 +60,14 @@
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="nplinphone_web_pdb" Source="$(var.BINSRC)/${FBSTRING_PluginFileName}.pdb" />
 								<?endif ?>
+								<File Id="antlr3c" Source="$(var.BINSRC)/antlr3c.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="antlr3c_pdb" Source="$(var.BINSRC)/antlr3c.pdb" />
+								<?endif ?>
+								<File Id="bellesip" Source="$(var.BINSRC)/bellesip.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="bellesip_pdb" Source="$(var.BINSRC)/bellesip.pdb" />
+								<?endif ?>
 								<File Id="linphone" Source="$(var.BINSRC)/linphone.dll" />
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="linphone_pdb" Source="$(var.BINSRC)/linphone.pdb" />
@@ -77,6 +85,11 @@
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="ortp_pdb" Source="$(var.BINSRC)/ortp.pdb" />
 								<?endif ?>
+								<File Id="libvpx" Source="$(var.BINSRC)/libvpx-1.dll" />
+								<File Id="polarssl" Source="$(var.BINSRC)/polarssl.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="polarssl_pdb" Source="$(var.BINSRC)/polarssl.pdb" />
+								<?endif ?>
 								<File Id="speex" Source="$(var.BINSRC)/speex.dll" />
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="speex_pdb" Source="$(var.BINSRC)/speex.pdb" />
@@ -85,12 +98,10 @@
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="speexdsp_pdb" Source="$(var.BINSRC)/speexdsp.pdb" />
 								<?endif ?>
-								<File Id="libvpx" Source="$(var.BINSRC)/libvpx-1.dll" />
-								${IF LW_USE_EXOSIP}
-								<File Id="libexosip2" Source="$(var.BINSRC)/libexosip2-7.dll" />
-								<File Id="libosip2" Source="$(var.BINSRC)/libosip2-7.dll" />
-								<File Id="libosipparser2" Source="$(var.BINSRC)/libosipparser2-7.dll" />
-								${ENDIF}
+								<File Id="xml2" Source="$(var.BINSRC)/xml2.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="xml2_pdb" Source="$(var.BINSRC)/xml2.pdb" />
+								<?endif ?>
 								${IF LW_USE_SRTP}
 								<File Id="libsrtp" Source="$(var.BINSRC)/libsrtp-1.4.5.dll" />
 								${ENDIF}
@@ -98,30 +109,6 @@
 								<File Id="avcodec" Source="$(var.BINSRC)/avcodec-53.dll" />
 								<File Id="avutil" Source="$(var.BINSRC)/avutil-51.dll" />
 								<File Id="swscale" Source="$(var.BINSRC)/swscale-2.dll" />
-								${ENDIF}
-								${IF LW_USE_OPENSSL}
-								<File Id="libeay32" Source="$(var.BINSRC)/libeay32.dll" />
-								<File Id="ssleay32" Source="$(var.BINSRC)/ssleay32.dll" />
-								${ENDIF}
-								${IF LW_USE_POLARSSL}
-								<File Id="polarssl" Source="$(var.BINSRC)/polarssl.dll" />
-								<?if $(var.Configuration) = Debug ?>
-								  <File Id="polarssl_pdb" Source="$(var.BINSRC)/polarssl.pdb" />
-								<?endif ?>
-								${ENDIF}
-								${IF LW_USE_BELLESIP}
-								<File Id="bellesip" Source="$(var.BINSRC)/bellesip.dll" />
-								<?if $(var.Configuration) = Debug ?>
-								  <File Id="bellesip_pdb" Source="$(var.BINSRC)/bellesip.pdb" />
-								<?endif ?>
-								<File Id="antlr3c" Source="$(var.BINSRC)/antlr3c.dll" />
-								<?if $(var.Configuration) = Debug ?>
-								  <File Id="antlr3c_pdb" Source="$(var.BINSRC)/antlr3c.pdb" />
-								<?endif ?>
-								<File Id="xml2" Source="$(var.BINSRC)/xml2.dll" />
-								<?if $(var.Configuration) = Debug ?>
-								  <File Id="xml2_pdb" Source="$(var.BINSRC)/xml2.pdb" />
-								<?endif ?>
 								${ENDIF}
 								<RegistryValue
 									Root="${REGKEY_ROOT}"

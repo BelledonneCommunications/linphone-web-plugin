@@ -151,13 +151,17 @@ endmacro()
 function (create_rootfs PROJNAME OUTDIR)
 	# Define components
 	SET(ROOTFS_LIB_SOURCES
-		liblinphone.5.${DEPENDENCY_EXT}
+		libantlr3c.${DEPENDENCY_EXT}
+		libbellesip.0.${DEPENDENCY_EXT}
+		liblinphone.6.${DEPENDENCY_EXT}
 		libmediastreamer_base.3.${DEPENDENCY_EXT}
 		libmediastreamer_voip.3.${DEPENDENCY_EXT}
 		libopus.0.${DEPENDENCY_EXT}
 		libortp.9.${DEPENDENCY_EXT}
+		libpolarssl.3.${DEPENDENCY_EXT}
 		libspeex.1.${DEPENDENCY_EXT}
 		libspeexdsp.1.${DEPENDENCY_EXT}
+		libxml2.2.${DEPENDENCY_EXT}
 	)
 	IF(LW_USE_SRTP)
 		SET(ROOTFS_LIB_SOURCES
@@ -165,21 +169,6 @@ function (create_rootfs PROJNAME OUTDIR)
 			libsrtp.1.4.5.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_SRTP)
-	IF(LW_USE_OPENSSL)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libcrypto.1.0.0.${DEPENDENCY_EXT}
-			libssl.1.0.0.${DEPENDENCY_EXT}
-		)
-	ENDIF(LW_USE_OPENSSL)
-	IF(LW_USE_EXOSIP)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libeXosip2.7.${DEPENDENCY_EXT}
-			libosip2.7.${DEPENDENCY_EXT}
-			libosipparser2.7.${DEPENDENCY_EXT}
-		)
-	ENDIF(LW_USE_EXOSIP)
 	IF(LW_USE_FFMPEG)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
@@ -188,20 +177,6 @@ function (create_rootfs PROJNAME OUTDIR)
 			libswscale.2.1.100.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_FFMPEG)
-	IF(LW_USE_POLARSSL)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libpolarssl.3.${DEPENDENCY_EXT}
-		)
-	ENDIF(LW_USE_POLARSSL)
-	IF(LW_USE_BELLESIP)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libbellesip.0.${DEPENDENCY_EXT}
-			libantlr3c.${DEPENDENCY_EXT}
-			libxml2.2.${DEPENDENCY_EXT}
-		)
-	ENDIF(LW_USE_BELLESIP)
 	IF(LW_USE_G729)
 		SET(ROOTFS_MS_PLUGINS_LIB_SOURCES
 			${ROOTFS_MS_PLUGINS_LIB_SOURCES}

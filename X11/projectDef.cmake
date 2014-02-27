@@ -53,7 +53,7 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER ${FBSTRING_ProductName})
 # Add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 	${PLUGIN_INTERNAL_DEPS}
-	"${CMAKE_INSTALL_PREFIX}/lib/liblinphone.so.5"
+	"${CMAKE_INSTALL_PREFIX}/lib/liblinphone.so.6"
 	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_base.so.3"
 	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_voip.so.3"
 	"${CMAKE_INSTALL_PREFIX}/lib/libortp.so.9"
@@ -91,38 +91,27 @@ endif()
 function (create_rootfs PROJNAME OUTDIR)
 	# Define components
 	SET(ROOTFS_LIB_SOURCES
-		liblinphone.${DEPENDENCY_EXT}.5
+		libantlr3c.${DEPENDENCY_EXT}
+		libbellesip.${DEPENDENCY_EXT}.0
+		liblinphone.${DEPENDENCY_EXT}.6
 		libmediastreamer_base.${DEPENDENCY_EXT}.3
 		libmediastreamer_voip.${DEPENDENCY_EXT}.3
 		libopus.${DEPENDENCY_EXT}.0
 		libortp.${DEPENDENCY_EXT}.9
-		libspeex.${DEPENDENCY_EXT}.1
-		libspeexdsp.${DEPENDENCY_EXT}.1
+		libpolarssl.${DEPENDENCY_EXT}.3
+		libspeex.${DEPENDENCY_EXT}.6
+		libspeexdsp.${DEPENDENCY_EXT}.6
 		libv4l1.${DEPENDENCY_EXT}.0
 		libv4l2.${DEPENDENCY_EXT}.0
 		libv4lconvert.${DEPENDENCY_EXT}.0
+		libxml2.${DEPENDENCY_EXT}.2
 	)
 	IF(LW_USE_SRTP)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
-			libsrtp.${DEPENDENCY_EXT}.1.4.5
+			libsrtp.${DEPENDENCY_EXT}.1
 		)
 	ENDIF(LW_USE_SRTP)
-	IF(LW_USE_OPENSSL)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libcrypto.${DEPENDENCY_EXT}.1.0.0
-			libssl.${DEPENDENCY_EXT}.1.0.0
-		)
-	ENDIF(LW_USE_OPENSSL)
-	IF(LW_USE_EXOSIP)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libeXosip2.${DEPENDENCY_EXT}.7
-			libosip2.${DEPENDENCY_EXT}.7
-			libosipparser2.${DEPENDENCY_EXT}.7
-		)
-	ENDIF(LW_USE_EXOSIP)
 	IF(LW_USE_FFMPEG)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
@@ -131,20 +120,6 @@ function (create_rootfs PROJNAME OUTDIR)
 			libswscale.${DEPENDENCY_EXT}.2
 		)
 	ENDIF(LW_USE_FFMPEG)
-	IF(LW_USE_POLARSSL)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libpolarssl.${DEPENDENCY_EXT}.3
-		)
-	ENDIF(LW_USE_POLARSSL)
-	IF(LW_USE_BELLESIP)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libbellesip.${DEPENDENCY_EXT}.0
-			libantlr3c.${DEPENDENCY_EXT}
-			libxml2.${DEPENDENCY_EXT}.2
-		)
-	ENDIF(LW_USE_BELLESIP)
 	IF(LW_USE_G729)
 		SET(ROOTFS_MS_PLUGINS_LIB_SOURCES
 			${ROOTFS_MS_PLUGINS_LIB_SOURCES}

@@ -5,34 +5,21 @@
 			<f n="MacOS" p="16877">
 				<f n="${FBSTRING_PluginFileName}" p="33261"/>
 				<f n="linphoneweb" p="16877">
-					<f n="liblinphone.5.dylib" p="33261"/>
+					<f n="libantlr3c.dylib" p="33261"/>
+					<f n="libbellesip.0.dylib" p="33261"/>
+					<f n="liblinphone.6.dylib" p="33261"/>
 					<f n="libmediastreamer-base.3.dylib" p="33261"/>
 					<f n="libmediastreamer-voip.3.dylib" p="33261"/>
 					<f n="libopus.0.dylib" p="33261"/>
 					<f n="libortp.9.dylib" p="33261"/>
+					<f n="libpolarssl.3.dylib" p="33261"/>
 					<f n="libspeex.1.dylib" p="33261"/>
 					<f n="libspeexdsp.1.dylib" p="33261"/>
-					${IF LW_USE_EXOSIP}
-					<f n="libeXosip2.7.dylib" p="33261"/>
-					<f n="libosip2.7.dylib" p="33261"/>
-					<f n="libosipparser2.7.dylib" p="33261"/>
-					${ENDIF}
-					${IF LW_USE_OPENSSL}
-					<f n="libcrypto.1.0.0.dylib" p="33261"/>
-					<f n="libssl.1.0.0.dylib" p="33261"/>
-					${ENDIF}
+					<f n="libxml2.2.dylib" p="33261"/>
 					${IF LW_USE_FFMPEG}
 					<f n="libavcodec.53.61.100.dylib" p="33261"/>
 					<f n="libavutil.51.35.100.dylib" p="33261"/>
 					<f n="libswscale.2.1.100.dylib" p="33261"/>
-					${ENDIF}
-					${IF LW_USE_POLARSSL}
-					<f n="libpolarssl.3.dylib" p="33261"/>
-					${ENDIF}
-					${IF LW_USE_BELLESIP}
-					<f n="libbellesip.0.dylib" p="33261"/>
-					<f n="libantlr3c.dylib" p="33261"/>
-					<f n="libxml2.2.dylib" p="33261"/>
 					${ENDIF}
 					<f n="lib" p="16877">
 						<f n="mediastreamer" p="16877">
