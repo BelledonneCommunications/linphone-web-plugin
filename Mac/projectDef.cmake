@@ -57,7 +57,7 @@ FIND_LIBRARY(QUARTZ_CORE_FRAMEWORK QuartzCore)
 SET(DEPENDENCY_EXT "dylib")
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		${PLUGIN_INTERNAL_DEPS}
-		${CMAKE_INSTALL_PREFIX}/lib/liblinphone.5.${DEPENDENCY_EXT}
+		${CMAKE_INSTALL_PREFIX}/lib/liblinphone.6.${DEPENDENCY_EXT}
 		${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_base.3.${DEPENDENCY_EXT}
 		${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_voip.3.${DEPENDENCY_EXT}
 		${CMAKE_INSTALL_PREFIX}/lib/libortp.9.${DEPENDENCY_EXT}
@@ -159,14 +159,14 @@ function (create_rootfs PROJNAME OUTDIR)
 		libopus.0.${DEPENDENCY_EXT}
 		libortp.9.${DEPENDENCY_EXT}
 		libpolarssl.3.${DEPENDENCY_EXT}
-		libspeex.1.${DEPENDENCY_EXT}
-		libspeexdsp.1.${DEPENDENCY_EXT}
+		libspeex.6.${DEPENDENCY_EXT}
+		libspeexdsp.6.${DEPENDENCY_EXT}
 		libxml2.2.${DEPENDENCY_EXT}
 	)
 	IF(LW_USE_SRTP)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
-			libsrtp.1.4.5.${DEPENDENCY_EXT}
+			libsrtp.1.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_SRTP)
 	IF(LW_USE_FFMPEG)
