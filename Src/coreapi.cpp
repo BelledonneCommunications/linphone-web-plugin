@@ -2333,13 +2333,14 @@ StringPtr CoreAPI::getPluginVersion() const {
 
 StringPtr CoreAPI::getDepsVersion() const {
 	FBLOG_DEBUG("CoreAPI::getDepsVersion", "this=" << this);
-	return CHARPTR_TO_STRING(LINPHONE_DEPS_VERSION);
+	FBLOG_WARN("CoreAPI::getDepsVersion", "Deprecated!");
+	return CHARPTR_TO_STRING("");
 }
 
 StringPtr CoreAPI::getRootfsVersion() const {
 	FBLOG_DEBUG("CoreAPI::getRootfsVersion", "this=" << this);
-	FBLOG_WARN("CoreAPI::getRootfsVersion", "Deprecated! Use CoreAPI::getDepsVersion instead.");
-	return CHARPTR_TO_STRING(LINPHONE_DEPS_VERSION);
+	FBLOG_WARN("CoreAPI::getRootfsVersion", "Deprecated!");
+	return CHARPTR_TO_STRING("");
 }
 
 void CoreAPI::enableEchoCancellation(bool enable) {

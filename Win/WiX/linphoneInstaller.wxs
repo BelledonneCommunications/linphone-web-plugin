@@ -86,6 +86,7 @@
 								  <File Id="ortp_pdb" Source="$(var.BINSRC)/ortp.pdb" />
 								<?endif ?>
 								<File Id="libvpx" Source="$(var.BINSRC)/libvpx-1.dll" />
+								<File Id="libxml2" Source="$(var.BINSRC)/libxml2-2.dll" />
 								<File Id="polarssl" Source="$(var.BINSRC)/polarssl.dll" />
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="polarssl_pdb" Source="$(var.BINSRC)/polarssl.pdb" />
@@ -98,12 +99,8 @@
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="speexdsp_pdb" Source="$(var.BINSRC)/speexdsp.pdb" />
 								<?endif ?>
-								<File Id="xml2" Source="$(var.BINSRC)/xml2.dll" />
-								<?if $(var.Configuration) = Debug ?>
-								  <File Id="xml2_pdb" Source="$(var.BINSRC)/xml2.pdb" />
-								<?endif ?>
 								${IF LW_USE_SRTP}
-								<File Id="libsrtp" Source="$(var.BINSRC)/libsrtp-1.4.5.dll" />
+								<File Id="srtp" Source="$(var.BINSRC)/srtp.dll" />
 								${ENDIF}
 								${IF LW_USE_FFMPEG}
 								<File Id="avcodec" Source="$(var.BINSRC)/avcodec-53.dll" />

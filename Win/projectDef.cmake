@@ -24,11 +24,6 @@ INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/Common/common.cmake)
 option(LW_CREATE_MSI "Enable creation of a MSI package of linphoneweb" ON)
 option(LW_CREATE_CAB "Enable creation of a CAB package of linphoneweb" ON)
 
-find_program(7ZIP 7z.exe)
-IF(${7ZIP} MATCHES "7ZIP-NOTFOUND")
-	MESSAGE(FATAL_ERROR "7zip is mandatory for compilation on Windows. Please install it and put it in the PATH environment variable.")
-ENDIF()
-
 # Configuration of code signing
 set(LW_PFX_FILE "${CMAKE_CURRENT_SOURCE_DIR}/sign/${LW_PFX_FILENAME}")
 set(LW_PASSPHRASE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/sign/${LW_PASSPHRASE_FILENAME}")
@@ -76,7 +71,6 @@ FILE(GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 ADD_DEFINITIONS(
 	/D "FBSTRING_MIMEType_Video=\\\"${FBSTRING_MIMEType_Video}\\\""
 	/D "PLUGIN_SHAREDIR=\\\"${PLUGIN_SHAREDIR}\\\""
-	/D "LINPHONE_DEPS_VERSION=\\\"${LINPHONE_DEPS_VERSION}\\\""
 	/D "_ATL_STATIC_REGISTRY"
 	/wd4355
 )
@@ -106,16 +100,10 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER ${FBSTRING_ProductName})
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 	${PLUGIN_INTERNAL_DEPS}
-	${CMAKE_INSTALL_PREFIX}/bin/antlr3c.lib
-	${CMAKE_INSTALL_PREFIX}/bin/bellesip.lib
-	${CMAKE_INSTALL_PREFIX}/bin/linphone.lib
-	${CMAKE_INSTALL_PREFIX}/bin/mediastreamer_base.lib
-	${CMAKE_INSTALL_PREFIX}/bin/mediastreamer_voip.lib
-	${CMAKE_INSTALL_PREFIX}/bin/ortp.lib
-	${CMAKE_INSTALL_PREFIX}/bin/polarssl.lib
-	${CMAKE_INSTALL_PREFIX}/bin/speex.lib
-	${CMAKE_INSTALL_PREFIX}/bin/speexdsp.lib
-	${CMAKE_INSTALL_PREFIX}/bin/xml2.lib
+	${CMAKE_INSTALL_PREFIX}/lib/linphone.lib
+	${CMAKE_INSTALL_PREFIX}/lib/mediastreamer_base.lib
+	${CMAKE_INSTALL_PREFIX}/lib/mediastreamer_voip.lib
+	${CMAKE_INSTALL_PREFIX}/lib/ortp.lib
 )
 add_dependencies(${PROJECT_NAME} EP_linphone)
 
@@ -131,83 +119,6 @@ SET(PLUGIN_EXT "dll")
 SET(FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
 SET(FB_ROOTFS_DIR ${FB_OUT_DIR}/Rootfs)
 SET(WIX_LINK_FLAGS -dConfiguration=${CMAKE_CFG_INTDIR})
-
-###############################################################################
-# Get linphone deps tarball
-if (NOT FB_LINPHONE_DEPS_SUFFIX)
-	set(FB_LINPHONE_DEPS_SUFFIX _LinphoneDeps)
-endif()
-
-set(LINPHONE_DEPS_DIR ${CMAKE_INSTALL_PREFIX})
-function (get_linphone_deps OUTDIR)
-	set(LINPHONE_DEPS_GZTARBALL ${OUTDIR}/linphone-deps-${LINPHONE_DEPS_VERSION}.tar.gz)
-	set(LINPHONE_DEPS_TARBALL ${OUTDIR}/linphone-deps-${LINPHONE_DEPS_VERSION}.tar)
-	if (NOT EXISTS ${LINPHONE_DEPS_GZTARBALL})
-		message("-- Downloading linphone-deps tarball")
-		file(DOWNLOAD ${LINPHONE_DEPS_URL} ${LINPHONE_DEPS_GZTARBALL} SHOW_PROGRESS STATUS DL_STATUS)
-		list(GET DL_STATUS 0 DL_STATUS_CODE)
-		if (${DL_STATUS_CODE} EQUAL 0)
-			message("     Successful")
-			if (EXISTS ${LINPHONE_DEPS_TARBALL})
-				file(REMOVE ${LINPHONE_DEPS_TARBALL})
-			endif()
-			if (EXISTS ${LINPHONE_DEPS_DIR})
-				file(REMOVE_RECURSE ${LINPHONE_DEPS_DIR})
-				file(MAKE_DIRECTORY ${LINPHONE_DEPS_DIR})
-			endif()
-			message("-- Extracting linphone deps tarball")
-			EXECUTE_PROCESS(
-				COMMAND 7z x -o${OUTDIR} ${LINPHONE_DEPS_GZTARBALL}
-				RESULT_VARIABLE EXT_GZ_STATUS_CODE
-				ERROR_VARIABLE EXT_GZ_ERROR
-			)
-			if (${EXT_GZ_STATUS_CODE} EQUAL 0)
-				EXECUTE_PROCESS(
-					COMMAND 7z x -o${LINPHONE_DEPS_DIR} ${LINPHONE_DEPS_TARBALL}
-					RESULT_VARIABLE EXT_STATUS_CODE
-					ERROR_VARIABLE EXT_ERROR
-				)
-				if (${EXT_STATUS_CODE} EQUAL 0)
-					execute_process(
-						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
-						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/avcodec-53.dll avcodec.lib
-					)
-					execute_process(
-						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
-						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/avutil-51.dll avutil.lib
-					)
-					execute_process(
-						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
-						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/swscale-2.dll swscale.lib
-					)
-					execute_process(
-						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
-						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/libopus-0.dll opus.lib
-					)
-					execute_process(
-						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
-						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/libsrtp-1.4.5.dll srtp.lib
-					)
-					execute_process(
-						WORKING_DIRECTORY ${LINPHONE_DEPS_DIR}/lib
-						COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/importlib.py ${LINPHONE_DEPS_DIR}/bin/libvpx-1.dll vpx.lib
-					)
-					message("     Done")
-				else()
-					message(FATAL_ERROR "     Failed: ${EXT_STATUS_CODE} ${EXT_ERROR}")
-				endif()
-			else()
-				message(FATAL_ERROR "     Failed: ${EXT_GZ_STATUS_CODE} ${EXT_GZ_ERROR}")
-			endif()
-		else()
-			list(GET DL_STATUS 1 DL_STATUS_MSG)
-			message(FATAL_ERROR "     Failed: ${DL_STATUS_CODE} ${DL_STATUS_MSG}")
-		endif()
-	endif()
-endfunction(get_linphone_deps)
-###############################################################################
-
-get_linphone_deps(${CMAKE_CURRENT_BINARY_DIR})
 
 ###############################################################################
 # Create Rootfs
@@ -257,12 +168,12 @@ function (create_rootfs PROJNAME OUTDIR)
 		polarssl.${DEPENDENCY_EXT}
 		speex.${DEPENDENCY_EXT}
 		speexdsp.${DEPENDENCY_EXT}
-		xml2.${DEPENDENCY_EXT}
+		libxml2-2.${DEPENDENCY_EXT}
 	)
 	IF(LW_USE_SRTP)
 		SET(ROOTFS_LIB_SOURCES
 			${ROOTFS_LIB_SOURCES}
-			libsrtp-1.4.5.${DEPENDENCY_EXT}
+			srtp.${DEPENDENCY_EXT}
 		)
 	ENDIF(LW_USE_SRTP)
 	IF(LW_USE_FFMPEG)
