@@ -47,6 +47,8 @@ void CallParamsAPI::initProxy() {
 	registerMethod("copy", make_method(this, &CallParamsAPI::copy));
 	registerMethod("getCustomHeader", make_method(this, &CallParamsAPI::getCustomHeader));
 	registerProperty("localConferenceMode", make_property(this, &CallParamsAPI::localConferenceMode));
+	registerProperty("receivedVideoSize", make_property(this, &CallParamsAPI::getReceivedVideoSize));
+	registerProperty("sentVideoSize", make_property(this, &CallParamsAPI::getSentVideoSize));
 	registerProperty("usedAudioCodec", make_property(this, &CallParamsAPI::getUsedAudioCodec));
 	registerProperty("usedVideoCodec", make_property(this, &CallParamsAPI::getUsedVideoCodec));
 
@@ -133,6 +135,20 @@ void CallParamsAPI::setMediaEncryption(int encryption) {
 
 	FBLOG_DEBUG("CallParamsAPI::setMediaEncryption", "this=" << this << "\t" << "encryption=" << encryption);
 	linphone_call_params_set_media_encryption(mCallParams, (LinphoneMediaEncryption)encryption);
+}
+
+MSVideoSizeAPIPtr CallParamsAPI::getReceivedVideoSize() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CallParamsAPI::getReceivedVideoSize", "this=" << this);
+	return getFactory()->getMSVideoSize(linphone_call_params_get_received_video_size(mCallParams));
+}
+
+MSVideoSizeAPIPtr CallParamsAPI::getSentVideoSize() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CallParamsAPI::getSentVideoSize", "this=" << this);
+	return getFactory()->getMSVideoSize(linphone_call_params_get_sent_video_size(mCallParams));
 }
 
 PayloadTypeAPIPtr CallParamsAPI::getUsedAudioCodec() const {

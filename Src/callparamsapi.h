@@ -30,6 +30,7 @@
 
 namespace LinphoneWeb {
 
+FB_FORWARD_PTR(MSVideoSizeAPI)
 FB_FORWARD_PTR(PayloadTypeAPI)
 	
 FB_FORWARD_PTR(CallParamsAPI)
@@ -56,6 +57,8 @@ public:
 	void enableLowBandwidth(bool enable);
 	int getMediaEncryption() const;
 	void setMediaEncryption(int encryption);
+	MSVideoSizeAPIPtr getReceivedVideoSize() const;
+	MSVideoSizeAPIPtr getSentVideoSize() const;
 	PayloadTypeAPIPtr getUsedAudioCodec() const;
 	PayloadTypeAPIPtr getUsedVideoCodec() const;
 	StringPtr getRecordFile() const;

@@ -42,6 +42,7 @@
 #include "coreapi.h"
 #include "friendapi.h"
 #include "lpconfigapi.h"
+#include "msvideosizeapi.h"
 #include "payloadtypeapi.h"
 #include "presenceapi.h"
 #include "proxyconfigapi.h"
@@ -117,6 +118,9 @@ public:
 	// LpConfig
 	LpConfigAPIPtr getLpConfig(LpConfig *config);
 	LpConfigAPIPtr getLpConfig(StringPtr const &configFilename);
+
+	// MSVideoSize
+	MSVideoSizeAPIPtr getMSVideoSize(MSVideoSize vs);
 
 	// PayloadType
 	PayloadTypeAPIPtr getPayloadType(PayloadType *payloadType);

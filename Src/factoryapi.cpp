@@ -319,6 +319,19 @@ LpConfigAPIPtr FactoryAPI::getLpConfig(StringPtr const &configFilename) {
 	return shared_ptr;
 }
 
+MSVideoSizeAPIPtr FactoryAPI::getMSVideoSize(MSVideoSize vs) {
+	FBLOG_DEBUG("FactoryAPI::getMSVideoSize", "this=" << this << "\t" << "vs.width=" << vs.width << "\t" << "vs.height=" << vs.height);
+
+	MSVideoSizeAPIPtr shared_ptr;
+	try {
+		shared_ptr = MSVideoSizeAPIPtr(new MSVideoSizeAPI(vs));
+		handle(shared_ptr, false, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getMSVideoSize", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
 PayloadTypeAPIPtr FactoryAPI::getPayloadType(PayloadType *payloadType) {
 	FBLOG_DEBUG("FactoryAPI::getPayloadType", "this=" << this << "\t" << "payloadType=" << payloadType);
 	if (payloadType == NULL)
