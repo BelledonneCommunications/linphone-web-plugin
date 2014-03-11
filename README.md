@@ -7,7 +7,7 @@ Prerequisites
 ### Common
 * python (2.7)
 * python-M2Crypto (for python 2.7): Used for signing
-* cmake
+* cmake (2.8.2 or greater)
 * java (used for packaging)
 * openssl
 * awk (on Windows get it from http://gnuwin32.sourceforge.net/packages/gawk.htm
@@ -18,8 +18,12 @@ Prerequisites
 	git submodules update --recursive --init
 
 ### Windows platform
-* Visual studio
-* WiX to generate the MSI installer (http://wixtoolset.org/)
+* Visual studio C++ 2010
+* Windows Driver Kit Version 7.1.0 (http://www.microsoft.com/en-us/download/details.aspx?id=11800)
+* WiX to generate the MSI installer (http://wixtoolset.org/). Use the version 3.7, newer versions do not work as of now.
+* MinGW32 (http://mingw.org/).
+  You need to install mingw-developer-toolkit, mingw32-base, mingw32-gcc-g++ and msys-base in the "Basic Setup".
+  Make sure to follow the post-installation instruction from http://mingw.org/wiki/Getting_Started#toc2.
 
 ### Linux platform
 * X11 dev
@@ -28,22 +32,6 @@ Prerequisites
 ### Mac OS X platform
 * Xcode
 * Mac ports (for python and modules)
-
-Linphone Deps
-------
-The Linphone deps are a package containing all the dependencies needed to be
-able to compile the linphone-web project on the Windows platform. Therefore
-it is only needed when compiling the plugin on Windows. It will be downloaded
-automatically from the linphone website when configuring the plugin so you
-should not need to build it yourself.
-
-### Generate the Linphone deps
-Clone the oe-lite git repository from:
-
-	git clone git://git.linphone.org/oe-lite.git --recursive
-
-Follow the README.md file from this repository.
-
 
 Firebreath
 ----------
