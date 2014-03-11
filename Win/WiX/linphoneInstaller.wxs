@@ -68,6 +68,10 @@
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="bellesip_pdb" Source="$(var.BINSRC)/bellesip.pdb" />
 								<?endif ?>
+								<File Id="gsm" Source="$(var.BINSRC)/gsm.dll" />
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="gsm_pdb" Source="$(var.BINSRC)/gsm.pdb" />
+								<?endif ?>
 								<File Id="linphone" Source="$(var.BINSRC)/linphone.dll" />
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="linphone_pdb" Source="$(var.BINSRC)/linphone.pdb" />
