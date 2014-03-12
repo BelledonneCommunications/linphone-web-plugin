@@ -5,8 +5,9 @@
 			<f n="MacOS" p="16877">
 				<f n="${FBSTRING_PluginFileName}" p="33261"/>
 				<f n="linphoneweb" p="16877">
-					<f n="libantlr3c.dylib" p="33261"/>
+					<f n="libantlr3c.1.dylib" p="33261"/>
 					<f n="libbellesip.0.dylib" p="33261"/>
+					<f n="libgsm.dylib" p="33261"/>
 					<f n="liblinphone.6.dylib" p="33261"/>
 					<f n="libmediastreamer-base.3.dylib" p="33261"/>
 					<f n="libmediastreamer-voip.3.dylib" p="33261"/>
