@@ -12,6 +12,8 @@ Prerequisites
 * openssl
 * awk (on Windows get it from http://gnuwin32.sourceforge.net/packages/gawk.htm
   and add it to your PATH environment variable)
+* patch (on Windows get it from http://gnuwin32.sourceforge.net/packages/patch.htm
+  and add it to your PATH environment variable)
 * Make sure you have cloned the linphone-web-plugin repository recursively.
   If this is not the case, get the submodules:
 
@@ -21,9 +23,10 @@ Prerequisites
 * Visual studio C++ 2010
 * Windows Driver Kit Version 7.1.0 (http://www.microsoft.com/en-us/download/details.aspx?id=11800)
 * WiX to generate the MSI installer (http://wixtoolset.org/). Use the version 3.7, newer versions do not work as of now.
-* MinGW32 (http://mingw.org/).
+* MinGW32 (http://mingw.org/)
   You need to install mingw-developer-toolkit, mingw32-base, mingw32-gcc-g++ and msys-base in the "Basic Setup".
   Make sure to follow the post-installation instruction from http://mingw.org/wiki/Getting_Started#toc2.
+* nasm (http://www.nasm.us/)
 
 ### Linux platform
 * X11 dev
