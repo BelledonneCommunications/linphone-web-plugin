@@ -111,6 +111,8 @@
 								<File Id="avutil" Source="$(var.BINSRC)/avutil-51.dll" />
 								<File Id="swscale" Source="$(var.BINSRC)/swscale-2.dll" />
 								${ENDIF}
+								<File Id="msvcp100" Source="$(var.BINSRC)/msvcp100.dll" />
+								<File Id="msvcr100" Source="$(var.BINSRC)/msvcr100.dll" />
 								<RegistryValue
 									Root="${REGKEY_ROOT}"
 									Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"

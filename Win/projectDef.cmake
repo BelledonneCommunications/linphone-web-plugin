@@ -120,6 +120,12 @@ SET(FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
 SET(FB_ROOTFS_DIR ${FB_OUT_DIR}/Rootfs)
 SET(WIX_LINK_FLAGS -dConfiguration=${CMAKE_CFG_INTDIR})
 
+find_file(MSVCP_LIB msvcp100.dll PATHS "C:/Windows/System32")
+find_file(MSVCR_LIB msvcr100.dll PATHS "C:/Windows/System32")
+if(NOT MSVCP_LIB OR NOT MSVCR_LIB)
+	message(FATAL_ERROR "You need to install the Visual Studio C++ 2010 Redistributable package!")
+endif(NOT MSVCP_LIB OR NOT MSVCR_LIB)
+
 ###############################################################################
 # Create Rootfs
 if (NOT FB_ROOTFS_SUFFIX)
@@ -156,6 +162,10 @@ endmacro()
 
 function (create_rootfs PROJNAME OUTDIR)
 	# Define components
+	set(REDISTRIBUTABLE_LIB_SOURCES
+		msvcp100.dll
+		msvcr100.dll
+	)
 	SET(ROOTFS_LIB_SOURCES
 		antlr3c.${DEPENDENCY_EXT}
 		bellesip.${DEPENDENCY_EXT}
@@ -207,6 +217,15 @@ function (create_rootfs PROJNAME OUTDIR)
 	)
 
 	# Install and sign libraries and files
+	foreach(elem ${REDISTRIBUTABLE_LIB_SOURCES})
+		add_rootfs_target(
+			${PROJNAME}
+			${FB_ROOTFS_DIR}
+			"C:/Windows/System32"
+			${elem}
+			1
+		)
+	endforeach(elem)
 	FOREACH(elem ${ROOTFS_LIB_SOURCES})
 		add_rootfs_target(
 			${PROJNAME}
