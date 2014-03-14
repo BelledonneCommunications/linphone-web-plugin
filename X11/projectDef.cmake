@@ -92,7 +92,6 @@ function (create_rootfs PROJNAME OUTDIR)
 	SET(ROOTFS_LIB_SOURCES
 		libantlr3c.${DEPENDENCY_EXT}.1
 		libbellesip.${DEPENDENCY_EXT}.0
-		libgsm.${DEPENDENCY_EXT}
 		liblinphone.${DEPENDENCY_EXT}.6
 		libmediastreamer_base.${DEPENDENCY_EXT}.3
 		libmediastreamer_voip.${DEPENDENCY_EXT}.3

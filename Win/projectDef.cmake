@@ -169,7 +169,6 @@ function (create_rootfs PROJNAME OUTDIR)
 	SET(ROOTFS_LIB_SOURCES
 		antlr3c.${DEPENDENCY_EXT}
 		bellesip.${DEPENDENCY_EXT}
-		gsm.${DEPENDENCY_EXT}
 		linphone.${DEPENDENCY_EXT}
 		mediastreamer_base.${DEPENDENCY_EXT}
 		mediastreamer_voip.${DEPENDENCY_EXT}
