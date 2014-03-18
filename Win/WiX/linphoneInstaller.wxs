@@ -107,8 +107,15 @@
 								<File Id="avutil" Source="$(var.BINSRC)/avutil-51.dll" />
 								<File Id="swscale" Source="$(var.BINSRC)/swscale-2.dll" />
 								${ENDIF}
-								<File Id="msvcp100" Source="$(var.BINSRC)/msvcp100.dll" />
-								<File Id="msvcr100" Source="$(var.BINSRC)/msvcr100.dll" />
+								${IF WITH_DYNAMIC_MSVC_RUNTIME}
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="msvcp100d" Source="$(var.BINSRC)/msvcp100d.dll" />
+								  <File Id="msvcr100d" Source="$(var.BINSRC)/msvcr100d.dll" />
+								<?else ?>
+								  <File Id="msvcp100" Source="$(var.BINSRC)/msvcp100.dll" />
+								  <File Id="msvcr100" Source="$(var.BINSRC)/msvcr100.dll" />
+								<?endif ?>
+								${ENDIF}
 								<RegistryValue
 									Root="${REGKEY_ROOT}"
 									Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\MainLibraries"
