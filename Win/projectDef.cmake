@@ -120,11 +120,18 @@ SET(FB_OUT_DIR ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR})
 SET(FB_ROOTFS_DIR ${FB_OUT_DIR}/Rootfs)
 SET(WIX_LINK_FLAGS -dConfiguration=${CMAKE_CFG_INTDIR})
 
-find_file(MSVCP_LIB msvcp100.dll PATHS "C:/Windows/System32")
-find_file(MSVCR_LIB msvcr100.dll PATHS "C:/Windows/System32")
-if(NOT MSVCP_LIB OR NOT MSVCR_LIB)
-	message(FATAL_ERROR "You need to install the Visual Studio C++ 2010 Redistributable package!")
-endif(NOT MSVCP_LIB OR NOT MSVCR_LIB)
+if(WITH_DYNAMIC_MSVC_RUNTIME)
+	if("${CMAKE_DEBUG_TYPE}" STREQUAL "Debug")
+		find_file(MSVCP_LIB msvcp100d.dll PATHS "C:/Windows/System32")
+		find_file(MSVCR_LIB msvcr100d.dll PATHS "C:/Windows/System32")
+	else("${CMAKE_DEBUG_TYPE}" STREQUAL "Debug")
+		find_file(MSVCP_LIB msvcp100.dll PATHS "C:/Windows/System32")
+		find_file(MSVCR_LIB msvcr100.dll PATHS "C:/Windows/System32")
+	endif("${CMAKE_DEBUG_TYPE}" STREQUAL "Debug")
+	if(NOT MSVCP_LIB OR NOT MSVCR_LIB)
+		message(FATAL_ERROR "You need to install the Visual Studio C++ 2010 Redistributable package!")
+	endif(NOT MSVCP_LIB OR NOT MSVCR_LIB)
+endif(WITH_DYNAMIC_MSVC_RUNTIME)
 
 ###############################################################################
 # Create Rootfs
@@ -162,10 +169,20 @@ endmacro()
 
 function (create_rootfs PROJNAME OUTDIR)
 	# Define components
-	set(REDISTRIBUTABLE_LIB_SOURCES
-		msvcp100.dll
-		msvcr100.dll
-	)
+	set(REDISTRIBUTABLE_LIB_SOURCES )
+	if(WITH_DYNAMIC_MSVC_RUNTIME)
+		if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+			list(APPEND REDISTRIBUTABLE_LIB_SOURCES
+				msvcp100d.dll
+				msvcr100d.dll
+			)
+		else("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+			list(APPEND REDISTRIBUTABLE_LIB_SOURCES
+				msvcp100.dll
+				msvcr100.dll
+			)
+		endif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+	endif(WITH_DYNAMIC_MSVC_RUNTIME)
 	SET(ROOTFS_LIB_SOURCES
 		antlr3c.${DEPENDENCY_EXT}
 		bellesip.${DEPENDENCY_EXT}
