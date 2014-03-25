@@ -191,6 +191,7 @@ void CoreAPI::initProxy() {
 	// ProxyConfig bindings
 	registerMethod("addProxyConfig", make_method(this, &CoreAPI::addProxyConfig));
 	registerMethod("clearProxyConfig", make_method(this, &CoreAPI::clearProxyConfig));
+	registerMethod("createProxyConfig", make_method(this, &CoreAPI::createProxyConfig));
 	registerMethod("removeProxyConfig", make_method(this, &CoreAPI::removeProxyConfig));
 	registerProperty("proxyConfigList", make_property(this, &CoreAPI::getProxyConfigList));
 	registerProperty("defaultProxy", make_property(this, &CoreAPI::getDefaultProxy, &CoreAPI::setDefaultProxy));
@@ -1341,6 +1342,14 @@ void CoreAPI::clearProxyConfig() {
 	linphone_core_clear_proxy_config(mCore);
 }
 
+ProxyConfigAPIPtr CoreAPI::createProxyConfig() {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::createProxyConfig", "this=" << this);
+	return getFactory()->getProxyConfig(linphone_core_create_proxy_config(mCore));
+}
+
 void CoreAPI::removeProxyConfig(ProxyConfigAPIPtr const &config) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
@@ -2075,6 +2084,7 @@ FileManagerAPIPtr CoreAPI::getFileManager() const {
 
 ProxyConfigAPIPtr CoreAPI::newProxyConfig() const {
 	FBLOG_DEBUG("CoreAPI::newProxyConfig", "this=" << this);
+	FBLOG_WARN("CoreAPI::newProxyConfig", "Deprecated! Use createProxyConfig instead.");
 	return getFactory()->getProxyConfig();
 }
 

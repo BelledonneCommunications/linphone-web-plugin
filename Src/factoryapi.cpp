@@ -572,7 +572,7 @@ ProxyConfigAPIPtr FactoryAPI::getProxyConfig(LinphoneProxyConfig *proxyConfig) {
 	}
 	return shared_ptr;
 }
-	
+
 ProxyConfigAPIPtr FactoryAPI::getProxyConfig() {
 	FBLOG_DEBUG("FactoryAPI::getProxyConfig", "this=" << this);
 	ProxyConfigAPIPtr shared_ptr;

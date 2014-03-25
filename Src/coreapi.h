@@ -183,6 +183,7 @@ public:
 	// ProxyConfig functions
 	int addProxyConfig(ProxyConfigAPIPtr const &config);
 	void clearProxyConfig();
+	ProxyConfigAPIPtr createProxyConfig();
 	void removeProxyConfig(ProxyConfigAPIPtr const &config);
 	std::vector<ProxyConfigAPIPtr> getProxyConfigList() const;
 	void setDefaultProxy(ProxyConfigAPIPtr const &config);
