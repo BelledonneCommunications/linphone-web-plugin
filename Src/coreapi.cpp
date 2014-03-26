@@ -2672,6 +2672,7 @@ void CoreAPI::onBuddyInfoUpdated(LinphoneFriend *lf) {
 
 void CoreAPI::onCallStatsUpdated(LinphoneCall *call, const LinphoneCallStats *stats) {
 	FBLOG_DEBUG("CoreAPI::onCallStatsUpdated",  "this=" << this << "\t" << "call=" << call << "\t" << "stats=" << stats);
+	fire_callStatsUpdated(boost::static_pointer_cast<CoreAPI>(shared_from_this()), getFactory()->getCall(call), getFactory()->getCallStats(stats));
 }
 
 void CoreAPI::onInfoReceived(LinphoneCall *call, const LinphoneInfoMessage *info) {

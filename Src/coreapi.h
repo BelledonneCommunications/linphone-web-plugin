@@ -43,7 +43,7 @@ FB_FORWARD_PTR(AuthInfoAPI)
 FB_FORWARD_PTR(CallAPI)
 FB_FORWARD_PTR(CallLogAPI)
 FB_FORWARD_PTR(CallParamsAPI)
-FB_FORWARD_PTR(CallStatsParamsAPI)
+FB_FORWARD_PTR(CallStatsAPI)
 FB_FORWARD_PTR(CoreAPI)
 FB_FORWARD_PTR(FileManagerAPI)
 FB_FORWARD_PTR(FriendAPI)
@@ -360,6 +360,7 @@ public: // Event helpers
 	FB_JSAPI_EVENT(callEncryptionChanged, 4, (CoreAPIPtr, CallAPIPtr, const bool&, const StringPtr&));
 	FB_JSAPI_EVENT(transferStateChanged, 3, (CoreAPIPtr, CallAPIPtr, const int&));
 	FB_JSAPI_EVENT(buddyInfoUpdated, 2, (CoreAPIPtr, FriendAPIPtr));
+	FB_JSAPI_EVENT(callStatsUpdated, 3, (CoreAPIPtr, CallAPIPtr, CallStatsAPIPtr));
 
 
 public: // Internal Use
