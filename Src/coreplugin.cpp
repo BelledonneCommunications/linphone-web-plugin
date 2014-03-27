@@ -86,10 +86,9 @@ void CorePlugin::log(OrtpLogLevel lev, const char *fmt, va_list args) {
 void CorePlugin::enableLog() {
 #ifdef DEBUG
 #ifdef WIN32
-	WCHAR szPath[MAX_PATH]; 
-	WCHAR szFileName[MAX_PATH]; 
+	WCHAR szPath[MAX_PATH];
+	WCHAR szFileName[MAX_PATH];
 	WCHAR* szAppName = TEXT(FBSTRING_PluginFileName);
-	WCHAR* szVersion = TEXT(FBSTRING_PLUGIN_VERSION);
 	DWORD dwBufferSize = MAX_PATH;
 	SYSTEMTIME stLocalTime;
 
@@ -98,8 +97,8 @@ void CorePlugin::enableLog() {
 	//ExpandEnvironmentStrings(L"%SYSTEMDRIVE%", szPath, MAX_PATH);
 	//StringCchCat(szPath, MAX_PATH, L"\\TEMP\\");
 
-	StringCchPrintf(szFileName, MAX_PATH, L"%s\\%s-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.log", 
-		szPath, szAppName, szVersion, 
+	StringCchPrintf(szFileName, MAX_PATH, L"%s\\%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.log",
+		szPath, szAppName,
 		stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay,
 		stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond,
 		GetCurrentProcessId(), GetCurrentThreadId());
