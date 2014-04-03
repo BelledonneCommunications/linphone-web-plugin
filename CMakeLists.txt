@@ -79,7 +79,7 @@ set(CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} CACHE PATH "Prefix path" FORCE)
 # depending on the platform
 include_platform()
 
-set(LINPHONE_BUILDER_TOOLCHAIN "webplugin" CACHE STRING "Toolchain to use to build linphone core library." FORCE)
+set(LINPHONE_BUILDER_CONFIG_FILE "configs/config-webplugin.cmake" CACHE STRING "Path to the linphone builder configuration file to build linphone core library." FORCE)
 set(LINPHONE_BUILDER_WORK_DIR "${CMAKE_BINARY_DIR}/Core" CACHE PATH "Working directory to build linphone core library." FORCE)
 add_subdirectory(Core)
 
