@@ -103,6 +103,7 @@ function (create_rootfs PROJNAME OUTDIR)
 		libv4l1.${DEPENDENCY_EXT}.0
 		libv4l2.${DEPENDENCY_EXT}.0
 		libv4lconvert.${DEPENDENCY_EXT}.0
+		libvpx.${DEPENDENCY_EXT}.1
 		libxml2.${DEPENDENCY_EXT}.2
 	)
 	IF(LW_USE_SRTP)
