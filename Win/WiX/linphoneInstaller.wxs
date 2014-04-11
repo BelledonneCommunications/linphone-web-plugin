@@ -86,7 +86,6 @@
 								  <File Id="ortp_pdb" Source="$(var.BINSRC)/ortp.pdb" />
 								<?endif ?>
 								<File Id="libvpx" Source="$(var.BINSRC)/libvpx-1.dll" />
-								<File Id="libxml2" Source="$(var.BINSRC)/libxml2-2.dll" />
 								<File Id="polarssl" Source="$(var.BINSRC)/polarssl.dll" />
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="polarssl_pdb" Source="$(var.BINSRC)/polarssl.pdb" />

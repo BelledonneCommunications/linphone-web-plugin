@@ -161,7 +161,6 @@ function (create_rootfs PROJNAME OUTDIR)
 		libspeex.6.${DEPENDENCY_EXT}
 		libspeexdsp.6.${DEPENDENCY_EXT}
 		libvpx.1.${DEPENDENCY_EXT}
-		libxml2.2.${DEPENDENCY_EXT}
 	)
 	IF(LW_USE_SRTP)
 		SET(ROOTFS_LIB_SOURCES

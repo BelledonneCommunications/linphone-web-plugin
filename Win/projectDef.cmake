@@ -195,7 +195,6 @@ function (create_rootfs PROJNAME OUTDIR)
 		polarssl.${DEPENDENCY_EXT}
 		speex.${DEPENDENCY_EXT}
 		speexdsp.${DEPENDENCY_EXT}
-		libxml2-2.${DEPENDENCY_EXT}
 	)
 	IF(LW_USE_SRTP)
 		SET(ROOTFS_LIB_SOURCES
