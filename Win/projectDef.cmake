@@ -190,7 +190,6 @@ function (create_rootfs PROJNAME OUTDIR)
 		mediastreamer_base.${DEPENDENCY_EXT}
 		mediastreamer_voip.${DEPENDENCY_EXT}
 		libopus-0.${DEPENDENCY_EXT}
-		libvpx-1.${DEPENDENCY_EXT}
 		ortp.${DEPENDENCY_EXT}
 		polarssl.${DEPENDENCY_EXT}
 		speex.${DEPENDENCY_EXT}

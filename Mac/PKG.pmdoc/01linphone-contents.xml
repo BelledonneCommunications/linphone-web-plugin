@@ -15,7 +15,6 @@
 					<f n="libpolarssl.3.dylib" p="33261"/>
 					<f n="libspeex.1.dylib" p="33261"/>
 					<f n="libspeexdsp.1.dylib" p="33261"/>
-					<f n="libvpx.1.dylib" p="33261"/>
 					${IF LW_USE_FFMPEG}
 					<f n="libavcodec.53.61.100.dylib" p="33261"/>
 					<f n="libavutil.51.35.100.dylib" p="33261"/>

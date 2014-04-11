@@ -160,7 +160,6 @@ function (create_rootfs PROJNAME OUTDIR)
 		libpolarssl.3.${DEPENDENCY_EXT}
 		libspeex.6.${DEPENDENCY_EXT}
 		libspeexdsp.6.${DEPENDENCY_EXT}
-		libvpx.1.${DEPENDENCY_EXT}
 	)
 	IF(LW_USE_SRTP)
 		SET(ROOTFS_LIB_SOURCES
