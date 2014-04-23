@@ -95,7 +95,6 @@ function (create_rootfs PROJNAME OUTDIR)
 		liblinphone.${DEPENDENCY_EXT}.6
 		libmediastreamer_base.${DEPENDENCY_EXT}.3
 		libmediastreamer_voip.${DEPENDENCY_EXT}.3
-		libopus.${DEPENDENCY_EXT}.0
 		libortp.${DEPENDENCY_EXT}.9
 		libpolarssl.${DEPENDENCY_EXT}.3
 		libspeex.${DEPENDENCY_EXT}.6
