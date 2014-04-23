@@ -78,6 +78,8 @@ public:
 
 	void setExpires(int expires);
 	int getExpires() const;
+	void setPublishExpires(int expires);
+	int getPublishExpires() const;
 
 	void enableRegister(bool val);
 	bool registerEnabled() const;

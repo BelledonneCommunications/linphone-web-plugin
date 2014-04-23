@@ -53,6 +53,7 @@ void ProxyConfigAPI::initProxy() {
 	registerProperty("expires", make_property(this, &ProxyConfigAPI::getExpires, &ProxyConfigAPI::setExpires));
 	registerProperty("identity", make_property(this, &ProxyConfigAPI::getIdentity, &ProxyConfigAPI::setIdentity));
 	registerProperty("publishEnabled", make_property(this, &ProxyConfigAPI::publishEnabled, &ProxyConfigAPI::enablePublish));
+	registerProperty("publishExpires", make_property(this, &ProxyConfigAPI::getPublishExpires, &ProxyConfigAPI::setPublishExpires));
 	registerProperty("registerEnabled", make_property(this, &ProxyConfigAPI::registerEnabled, &ProxyConfigAPI::enableRegister));
 	registerProperty("route", make_property(this, &ProxyConfigAPI::getRoute, &ProxyConfigAPI::setRoute));
 	registerProperty("serverAddr", make_property(this, &ProxyConfigAPI::getServerAddr, &ProxyConfigAPI::setServerAddr));
@@ -213,8 +214,8 @@ StringPtr ProxyConfigAPI::getRoute() const {
 void ProxyConfigAPI::setExpires(int expires) {
 	CORE_MUTEX
 
-	FBLOG_DEBUG("ProxyConfigAPI::expires", "this=" << this << "\t" << "expires=" << expires);
-	return linphone_proxy_config_expires(mProxyConfig, expires);
+	FBLOG_DEBUG("ProxyConfigAPI::setExpires", "this=" << this << "\t" << "expires=" << expires);
+	return linphone_proxy_config_set_expires(mProxyConfig, expires);
 }
 
 int ProxyConfigAPI::getExpires() const {
@@ -222,6 +223,20 @@ int ProxyConfigAPI::getExpires() const {
 
 	FBLOG_DEBUG("ProxyConfigAPI::getExpires", "this=" << this);
 	return linphone_proxy_config_get_expires(mProxyConfig);
+}
+
+void ProxyConfigAPI::setPublishExpires(int expires) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("ProxyConfigAPI::setPublishExpires", "this=" << this << "\t" << "expires=" << expires);
+	return linphone_proxy_config_set_publish_expires(mProxyConfig, expires);
+}
+
+int ProxyConfigAPI::getPublishExpires() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("ProxyConfigAPI::getPublishExpires", "this=" << this);
+	return linphone_proxy_config_get_publish_expires(mProxyConfig);
 }
 
 void ProxyConfigAPI::enableRegister(bool val) {
