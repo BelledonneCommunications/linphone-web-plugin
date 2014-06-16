@@ -1315,7 +1315,7 @@ PayloadTypeAPIPtr CoreAPI::findPayloadType(StringPtr const &type, int rate, int 
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::enablePayloadType", "this=" << this << "\t" << "type=" << type << "\t" << "rate=" << rate << "\t" << "channels=" << channels);
+	FBLOG_DEBUG("CoreAPI::findPayloadType", "this=" << this << "\t" << "type=" << type << "\t" << "rate=" << rate << "\t" << "channels=" << channels);
 	return getFactory()->getPayloadType(linphone_core_find_payload_type(mCore, STRING_TO_CHARPTR(type), rate, channels));
 }
 
