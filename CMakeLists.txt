@@ -75,11 +75,11 @@ endif()
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/Stage CACHE PATH "Install prefix" FORCE)
 set(CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} CACHE PATH "Prefix path" FORCE)
 
-# This will include Win/projectDef.cmake, X11/projectDef.cmake, Mac/projectDef 
-# depending on the platform
-include_platform()
-
+# Include linphone-cmake-builder
 set(LINPHONE_BUILDER_CONFIG_FILE "configs/config-webplugin.cmake" CACHE STRING "Path to the linphone builder configuration file to build linphone core library." FORCE)
 set(LINPHONE_BUILDER_WORK_DIR "${CMAKE_BINARY_DIR}/Core" CACHE PATH "Working directory to build linphone core library." FORCE)
 add_subdirectory(Core)
 
+# This will include Win/projectDef.cmake, X11/projectDef.cmake, Mac/projectDef 
+# depending on the platform
+include_platform()

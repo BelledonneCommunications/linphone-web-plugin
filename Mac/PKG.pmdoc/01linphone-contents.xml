@@ -14,7 +14,7 @@
 					<f n="libpolarssl.3.dylib" p="33261"/>
 					<f n="libspeex.1.dylib" p="33261"/>
 					<f n="libspeexdsp.1.dylib" p="33261"/>
-					${IF LW_USE_FFMPEG}
+					${IF ENABLE_FFMPEG}
 					<f n="libavcodec.53.61.100.dylib" p="33261"/>
 					<f n="libavutil.51.35.100.dylib" p="33261"/>
 					<f n="libswscale.2.1.100.dylib" p="33261"/>
@@ -22,10 +22,13 @@
 					<f n="lib" p="16877">
 						<f n="mediastreamer" p="16877">
 							<f n="plugins" p="16877">
-								${IF LW_USE_G729}
+								${IF ENABLE_G729}
 								<f n="libmsbcg729.0.so" p="33261"/>
 								${ENDIF}
-								${IF LW_USE_X264}
+								${IF ENABLE_OPENH264}
+								<f n="libmsopenh264.0.so" p="33261"/>
+								${ENDIF}
+								${IF ENABLE_X264}
 								<f n="libmsx264.0.so" p="33261"/>
 								${ENDIF}
 							</f>

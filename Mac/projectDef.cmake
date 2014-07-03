@@ -64,6 +64,16 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		${QUARTZ_CORE_FRAMEWORK}
 )
 add_dependencies(${PROJECT_NAME} EP_linphone)
+if(ENABLE_G729)
+	add_dependencies(${PROJECT_NAME} EP_bcg729)
+endif()
+if(ENABLE_OPENH264)
+	add_dependencies(${PROJECT_NAME} EP_msopenh264)
+endif()
+if(ENABLE_X264)
+	add_dependencies(${PROJECT_NAME} EP_msx264)
+endif()
+
 
 # fix output path
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
@@ -149,7 +159,8 @@ endmacro()
 
 function (create_rootfs PROJNAME OUTDIR)
 	# Define components
-	SET(ROOTFS_LIB_SOURCES
+	set(ROOTFS_MS_PLUGINS_LIB_SOURCES )
+	set(ROOTFS_LIB_SOURCES
 		libantlr3c.1.${DEPENDENCY_EXT}
 		libbellesip.0.${DEPENDENCY_EXT}
 		liblinphone.6.${DEPENDENCY_EXT}
@@ -160,34 +171,27 @@ function (create_rootfs PROJNAME OUTDIR)
 		libspeex.6.${DEPENDENCY_EXT}
 		libspeexdsp.6.${DEPENDENCY_EXT}
 	)
-	IF(LW_USE_SRTP)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
-			libsrtp.1.${DEPENDENCY_EXT}
-		)
-	ENDIF(LW_USE_SRTP)
-	IF(LW_USE_FFMPEG)
-		SET(ROOTFS_LIB_SOURCES
-			${ROOTFS_LIB_SOURCES}
+	if(ENABLE_SRTP)
+		list(APPEND ROOTFS_LIB_SOURCES libsrtp.1.${DEPENDENCY_EXT})
+	endif()
+	if(ENABLE_FFMPEG)
+		list(APPEND ROOTFS_LIB_SOURCES
 			libavcodec.53.61.100.${DEPENDENCY_EXT}
 			libavutil.51.35.100.${DEPENDENCY_EXT}
 			libswscale.2.1.100.${DEPENDENCY_EXT}
 		)
-	ENDIF(LW_USE_FFMPEG)
-	IF(LW_USE_G729)
-		SET(ROOTFS_MS_PLUGINS_LIB_SOURCES
-			${ROOTFS_MS_PLUGINS_LIB_SOURCES}
-			libmsbcg729.0.so
-		)
-	ENDIF(LW_USE_G729)
-	IF(LW_USE_X264)
-		SET(ROOTFS_MS_PLUGINS_LIB_SOURCES
-			${ROOTFS_MS_PLUGINS_LIB_SOURCES}
-			libmsx264.0.so
-		)
-	ENDIF(LW_USE_X264)
+	endif()
+	if(ENABLE_G729)
+		list(APPEND ROOTFS_MS_PLUGINS_LIB_SOURCES libmsbcg729.0.so)
+	endif()
+	if(ENABLE_OPENH264)
+		list(APPEND ROOTFS_MS_PLUGINS_LIB_SOURCES libmsopenh264.0.so)
+	endif()
+	if(ENABLE_X264)
+		list(APPEND ROOTFS_MS_PLUGINS_LIB_SOURCES libmsx264.0.so)
+	endif()
 
-	SET(ROOTFS_SHARE_SOURCES
+	set(ROOTFS_SHARE_SOURCES
 		linphone/rootca.pem
 		images/nowebcamCIF.jpg
 		sounds/linphone/ringback.wav

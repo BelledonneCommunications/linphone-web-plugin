@@ -187,25 +187,6 @@ option(LW_CREATE_XPI "Enable creation of a XPI package of linphoneweb" ON)
 option(LW_CREATE_SDK "Enable creation of a SDK of linphoneweb" ON)
 option(LW_DEBUG_GENERATE_DUMPS "Enable creation of dumps when the linphoneweb crashes on the Windows platform" OFF)
 
-option(LW_USE_SRTP "Enable use of SRTP in linphoneweb" ON)
-option(LW_USE_FFMPEG "Enable use of FFMPEG in linphoneweb" ON)
-option(LW_USE_G729 "Enable use of the G729 codec in linphoneweb" OFF)
-option(LW_USE_X264 "Enable use of the H264 codec via the X264 library in linphoneweb" OFF)
-
-##
-message("-- Configurations:")
-if(LW_USE_SRTP)
-message("    + SRTP")
-endif(LW_USE_SRTP)
-if(LW_USE_FFMPEG)
-message("    + FFMPEG")
-endif(LW_USE_FFMPEG)
-if(LW_USE_G729)
-message("    + G729")
-endif(LW_USE_G729)
-if(LW_USE_X264)
-message("    + X264")
-endif(LW_USE_X264)
 
 ######################
 

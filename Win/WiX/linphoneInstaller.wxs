@@ -97,10 +97,10 @@
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="speexdsp_pdb" Source="$(var.BINSRC)/speexdsp.pdb" />
 								<?endif ?>
-								${IF LW_USE_SRTP}
+								${IF ENABLE_SRTP}
 								<File Id="srtp" Source="$(var.BINSRC)/srtp.dll" />
 								${ENDIF}
-								${IF LW_USE_FFMPEG}
+								${IF ENABLE_FFMPEG}
 								<File Id="avcodec" Source="$(var.BINSRC)/avcodec-53.dll" />
 								<File Id="avutil" Source="$(var.BINSRC)/avutil-51.dll" />
 								<File Id="swscale" Source="$(var.BINSRC)/swscale-2.dll" />
@@ -158,10 +158,13 @@
 										<Directory Id="MsPluginsDir" Name="plugins">
 											<Component Id="MsPluginsDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc71">
 												<RemoveFolder Id="RemoveMsPluginsDir" On="uninstall" />
-												${IF LW_USE_G729}
+												${IF ENABLE_G729}
 												<File Id="libmsbcg729" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsbcg729-0.dll" />
 												${ENDIF}
-												${IF LW_USE_X264}
+												${IF ENABLE_OPENH264}
+												<File Id="libmsopenh264" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsopenh264-0.dll" />
+												${ENDIF}
+												${IF ENABLE_X264}
 												<File Id="libmsx264" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsx264-0.dll" />
 												${ENDIF}
 												<RegistryValue
