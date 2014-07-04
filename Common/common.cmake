@@ -80,6 +80,8 @@ function(configure_file_ext SRC DEST)
 			execute_process(COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/Common/regex.py" "${DEST}" "${DEST}" "${VAR}" "${VALUE}")
 		endif()
 	endforeach()
+	# Remove IF references that have not been replaced by previous calls to regex.py
+	execute_process(COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/Common/regex.py" "${DEST}" "${DEST}")
 	
 	configure_file("${DEST}" "${DEST}")
 endfunction(configure_file_ext)

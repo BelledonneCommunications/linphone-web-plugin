@@ -3,12 +3,15 @@ import re, sys
 def str2bool(v):
   return v.lower() in ("yes", "true", "t", "on", "1")
 
-def replace(src, dest, variable, value):
+def replace(src, dest, variable = '', value = ''):
   infile = open(src, "r")
   intext = infile.read()
   infile.close()
-  match = r"\${IF " + variable + r"}(.*?)\${ENDIF}"
-  if str2bool(value):
+  if variable == '':
+    match = r"\${IF .*}(.*?)\${ENDIF}"
+  else:
+    match = r"\${IF " + variable + r"}(.*?)\${ENDIF}"
+  if value != '' and str2bool(value):
     replace = r"\1"
   else:
     replace = r""
@@ -19,7 +22,9 @@ def replace(src, dest, variable, value):
   outfile.close() 
 
 if __name__ == '__main__':
-  if len(sys.argv) != 5:
-    sys.exit(5)
-  replace(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
-    
+  if len(sys.argv) == 3:
+	replace(sys.argv[1], sys.argv[2])
+  elif len(sys.argv) == 5:
+    replace(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+  else:
+    sys.exit(5)  
