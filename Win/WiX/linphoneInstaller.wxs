@@ -162,7 +162,7 @@
 												<File Id="libmsbcg729" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsbcg729-0.dll" />
 												${ENDIF}
 												${IF ENABLE_OPENH264}
-												<File Id="libmsopenh264" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsopenh264-0.dll" />
+												<File Id="libmsopenh264" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsopenh264.dll" />
 												${ENDIF}
 												${IF ENABLE_X264}
 												<File Id="libmsx264" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsx264-0.dll" />
