@@ -293,8 +293,6 @@ FriendAPIPtr FactoryAPI::getFriend(StringPtr const &address) {
 
 LpConfigAPIPtr FactoryAPI::getLpConfig(LpConfig *config) {
 	FBLOG_DEBUG("FactoryAPI::getLpConfig", "this=" << this << "\t" << "config=" << config);
-	if (config == NULL)
-		return LpConfigAPIPtr();
 
 	LpConfigAPIPtr shared_ptr;
 	try {

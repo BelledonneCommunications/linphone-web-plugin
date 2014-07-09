@@ -310,6 +310,7 @@ public:
 
 	// Core helpers
 	int init(StringPtr const &config, StringPtr const &factory);
+	int initFromConfig(LpConfigAPIPtr const &config);
 	int uninit();
 	void setIterateInterval(int ms);
 	int getIterateInterval() const;
@@ -382,6 +383,8 @@ private:
 	FB::JSObjectPtr mLogHandler;
 	StringPtr mMagic;
 
+	void prepareInit();
+	void finishInit();
 	VideoAPIWeakPtr mVideoWindow;
 	static void videoWindowEventHandler(const CoreAPIWeakPtr &corePtr, void *ptr);
 	void setVideoWindow(void *ptr);

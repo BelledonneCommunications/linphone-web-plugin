@@ -103,6 +103,7 @@ void CoreAPI::initProxy() {
 
 	// Core helpers
 	registerMethod("init", make_method(this, &CoreAPI::init));
+	registerMethod("initFromConfig", make_method(this, &CoreAPI::initFromConfig));
 	registerMethod("uninit", make_method(this, &CoreAPI::uninit));
 	registerProperty("iterateEnabled", make_property(this, &CoreAPI::iterateEnabled, &CoreAPI::enableIterate));
 	registerProperty("iterateInterval", make_property(this, &CoreAPI::getIterateInterval, &CoreAPI::setIterateInterval));
@@ -306,17 +307,7 @@ void CoreAPI::initProxy() {
 	registerProperty("tunnelAvailable", make_property(this, &CoreAPI::tunnelAvailable));
 }
 
-int CoreAPI::init(StringPtr const &config, StringPtr const &factory) {
-	FBLOG_DEBUG("CoreAPI::init", "this=" << this << "\t" << "config=" << config << "\t" << "factory=" << factory);
-	StringPtr realConfig = config;
-	StringPtr realFactory = factory;
-	GET_FILE("CoreAPI::init", realConfig);
-	GET_FILE("CoreAPI::init", realFactory);
-
-	if(mCore != NULL) {
-		return -1;
-	}
-
+void CoreAPI::prepareInit() {
 	FileManagerAPIPtr fm = getFileManager();
 	FB::URI pluginsUri("internal:///lib/mediastreamer/plugins");
 	std::string pluginsDir = fm->uriToFile(pluginsUri);
@@ -342,20 +333,53 @@ int CoreAPI::init(StringPtr const &config, StringPtr const &factory) {
 	mVtable.subscription_state_changed = CoreAPI::wrapper_subscription_state_changed;
 	mVtable.notify_received = CoreAPI::wrapper_notify_received;
 	mVtable.publish_state_changed = CoreAPI::wrapper_publish_state_changed;
+}
 
+void CoreAPI::finishInit() {
+	// Specific Linphone Web behaviour
+	linphone_core_set_native_preview_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
+	linphone_core_set_native_video_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
+}
+
+int CoreAPI::init(StringPtr const &config, StringPtr const &factory) {
+	FBLOG_DEBUG("CoreAPI::init", "this=" << this << "\t" << "config=" << config << "\t" << "factory=" << factory);
+	StringPtr realConfig = config;
+	StringPtr realFactory = factory;
+	GET_FILE("CoreAPI::init", realConfig);
+	GET_FILE("CoreAPI::init", realFactory);
+
+	if(mCore != NULL) {
+		return -1;
+	}
+
+	prepareInit();
 	mCore = linphone_core_new(&mVtable, STRING_TO_CHARPTR(realConfig), STRING_TO_CHARPTR(realFactory), (void *) this);
 	if (linphone_core_get_user_data(mCore) != this) {
 		FBLOG_ERROR("CoreAPI::init", "Too old version of linphone core!");
 		return 1;
 	}
-
-	// Specific Linphone Web behaviour
-	linphone_core_set_native_preview_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
-	linphone_core_set_native_video_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
+	finishInit();
 
 	return 0;
 }
 
+int CoreAPI::initFromConfig(LpConfigAPIPtr const &config) {
+	FBLOG_DEBUG("CoreAPI::init", "this=" << this << "\t" << "config=" << config);
+
+	if(mCore != NULL) {
+		return -1;
+	}
+
+	prepareInit();
+	mCore = linphone_core_new_with_config(&mVtable, config->getRef(), (void *) this);
+	if (linphone_core_get_user_data(mCore) != this) {
+		FBLOG_ERROR("CoreAPI::init", "Too old version of linphone core!");
+		return 1;
+	}
+	finishInit();
+
+	return 0;
+}
 
 int CoreAPI::uninit() {
 	CORE_MUTEX
