@@ -2362,7 +2362,7 @@ StringPtr CoreAPI::getVersion() const {
 
 StringPtr CoreAPI::getPluginVersion() const {
 	FBLOG_DEBUG("CoreAPI::getPluginVersion", "this=" << this);
-	return CHARPTR_TO_STRING(FBSTRING_PLUGIN_VERSION);
+	return CHARPTR_TO_STRING(FBSTRING_PLUGIN_GIT_REVISION);
 }
 
 StringPtr CoreAPI::getDepsVersion() const {

@@ -42,7 +42,7 @@ void GenerateDump(EXCEPTION_POINTERS* pExceptionPointers) {
 	CHAR szPath[MAX_PATH]; 
 	CHAR szFileName[MAX_PATH]; 
 	CHAR* szAppName = FBSTRING_PluginFileName;
-	CHAR* szVersion = FBSTRING_PLUGIN_VERSION;
+	CHAR* szVersion = FBSTRING_PLUGIN_GIT_REVISION;
 	DWORD dwBufferSize = MAX_PATH;
 	HANDLE hDumpFile;
 	SYSTEMTIME stLocalTime;
@@ -160,7 +160,7 @@ public:
 		CHAR szPath[MAX_PATH]; 
 		CHAR szFileName[MAX_PATH]; 
 		CHAR* szAppName = FBSTRING_PluginFileName;
-		CHAR* szVersion = FBSTRING_PLUGIN_VERSION;
+		CHAR* szVersion = FBSTRING_PLUGIN_GIT_REVISION;
 		DWORD dwBufferSize = MAX_PATH;
 		SYSTEMTIME stLocalTime;
 

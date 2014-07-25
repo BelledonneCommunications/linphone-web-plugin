@@ -17,6 +17,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
 
+find_package(Git REQUIRED)
+
 # Project build properties
 set(PLUGIN_NAME "linphone-web")
 set(PLUGIN_PREFIX "LINWEB")
@@ -51,8 +53,12 @@ set(FBSTRING_CompanyName "Belledonne Communications")
 # Company id
 set(FBSTRING_CompanyDomain "com.belledonne-communications")
 
-set(FBSTRING_PLUGIN_VERSION "1.0.6")
-set(FBSTRING_PLUGIN_VERSION_ACTIVEX "1,0,6")
+execute_process(WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+	COMMAND ${GIT_EXECUTABLE} "describe" "--always"
+	OUTPUT_VARIABLE FBSTRING_PLUGIN_GIT_REVISION
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+string(REGEX REPLACE "^([0-9.]+)-.*$" "\\1" FBSTRING_PLUGIN_VERSION ${FBSTRING_PLUGIN_GIT_REVISION})
+string(REPLACE "." "," FBSTRING_PLUGIN_VERSION_ACTIVEX ${FBSTRING_PLUGIN_VERSION})
 set(FBSTRING_LegalCopyright "Copyright 2013 Belledonne Communications")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}-${FBSTRING_PLUGIN_VERSION}")
 
