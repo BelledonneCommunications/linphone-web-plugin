@@ -110,10 +110,10 @@ void CoreAPI::initProxy() {
 	registerProperty("config", make_property(this, &CoreAPI::getConfig));
 
 	// Call bindings
-	REGISTER_SYNC_N_ASYNC(CoreAPI, "invite", invite);
-	REGISTER_SYNC_N_ASYNC(CoreAPI, "inviteAddress", inviteAddress);
-	REGISTER_SYNC_N_ASYNC(CoreAPI, "inviteWithParams", inviteWithParams);
-	REGISTER_SYNC_N_ASYNC(CoreAPI, "inviteAddressWithParams", inviteAddressWithParams);
+	registerMethod("invite", make_method(this, &CoreAPI::invite));
+	registerMethod("inviteAddress", make_method(this, &CoreAPI::inviteAddress));
+	registerMethod("inviteWithParams", make_method(this, &CoreAPI::inviteWithParams));
+	registerMethod("inviteAddressWithParams", make_method(this, &CoreAPI::inviteAddressWithParams));
 	registerMethod("acceptCall", make_method(this, &CoreAPI::acceptCall));
 	registerMethod("acceptCallWithParams", make_method(this, &CoreAPI::acceptCallWithParams));
 	registerProperty("currentCall", make_property(this, &CoreAPI::getCurrentCall));
@@ -474,8 +474,6 @@ void CoreAPI::setMagic(StringPtr const &magic) {
  *
  */
 
-IMPLEMENT_SYNC_N_ASYNC(CoreAPI, invite, 1, (StringPtr const &), CallAPIPtr);
-
 CallAPIPtr CoreAPI::invite(StringPtr const &url) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
@@ -485,8 +483,6 @@ CallAPIPtr CoreAPI::invite(StringPtr const &url) {
 	CallAPIPtr shared_call = getFactory()->getCall(call);
 	return shared_call;
 }
-
-IMPLEMENT_SYNC_N_ASYNC(CoreAPI, inviteAddress, 1, (AddressAPIPtr const &), CallAPIPtr);
 
 CallAPIPtr CoreAPI::inviteAddress(AddressAPIPtr const &address) {
 	FB_ASSERT_CORE
@@ -498,8 +494,6 @@ CallAPIPtr CoreAPI::inviteAddress(AddressAPIPtr const &address) {
 	return shared_call;
 }
 
-IMPLEMENT_SYNC_N_ASYNC(CoreAPI, inviteWithParams, 2, (StringPtr const &, CallParamsAPIPtr const &), CallAPIPtr);
-
 CallAPIPtr CoreAPI::inviteWithParams(StringPtr const &url, CallParamsAPIPtr const &params) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
@@ -509,8 +503,6 @@ CallAPIPtr CoreAPI::inviteWithParams(StringPtr const &url, CallParamsAPIPtr cons
 	CallAPIPtr shared_call = getFactory()->getCall(call);
 	return shared_call;
 }
-
-IMPLEMENT_SYNC_N_ASYNC(CoreAPI, inviteAddressWithParams, 2, (AddressAPIPtr const &, CallParamsAPIPtr const &), CallAPIPtr);
 
 CallAPIPtr CoreAPI::inviteAddressWithParams(AddressAPIPtr const &address, CallParamsAPIPtr const &params) {
 	FB_ASSERT_CORE

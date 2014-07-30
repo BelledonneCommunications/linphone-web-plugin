@@ -77,10 +77,10 @@ public:
 	void setMagic(StringPtr const &magic);
 
 	// Call functions
-	DECLARE_SYNC_N_ASYNC(CoreAPI, invite, 1, (StringPtr const &), CallAPIPtr);
-	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteAddress, 1, (AddressAPIPtr const &), CallAPIPtr);
-	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteWithParams, 2, (StringPtr const &, CallParamsAPIPtr const &), CallAPIPtr);
-	DECLARE_SYNC_N_ASYNC(CoreAPI, inviteAddressWithParams, 2, (AddressAPIPtr const &, CallParamsAPIPtr const &), CallAPIPtr);
+	CallAPIPtr invite(StringPtr const &url);
+	CallAPIPtr inviteAddress(AddressAPIPtr const &address);
+	CallAPIPtr inviteWithParams(StringPtr const &url, CallParamsAPIPtr const &params);
+	CallAPIPtr inviteAddressWithParams(AddressAPIPtr const &address, CallParamsAPIPtr const &params);
 	int acceptCall(CallAPIPtr const &call);
 	int acceptCallWithParams(CallAPIPtr const &call, CallParamsAPIPtr const &params);
 	CallAPIPtr getCurrentCall();

@@ -33,42 +33,6 @@
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/mpl/aux_/preprocessor/token_equal.hpp>
 
-#define __DECLARE_SYNC_N_ASYNC_PARAMMACRO(z, n, data) BOOST_PP_ARRAY_ELEM(n, data) paramater_##n
-#define __DECLARE_SYNC_N_ASYNC_USEMACRO(z, n, data) paramater_##n
-
-#define REGISTER_SYNC_N_ASYNC(class, name, funct_name)                                            \
-	registerMethod(name, make_method(this, &class::funct_name));                                  \
-	registerMethod(name "_async", make_method(this, &class::BOOST_PP_CAT(funct_name, _async)));   \
-
-#define DECLARE_SYNC_N_ASYNC_SYNC_FCT(class, name, argCount, argList, ret)                        \
-	ret name (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)));   \
-
-#define DECLARE_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList, ret)                                                                                         \
-	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
-			void BOOST_PP_CAT(name, _async) (boost::optional<FB::JSObjectPtr> callback);,                                                                           \
-			void BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)),                                       \
-											boost::optional<FB::JSObjectPtr> callback);)                                                                            \
-
-#define IMPLEMENT_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList, ret)                                                                                       \
-	BOOST_PP_IF(BOOST_PP_EQUAL(argCount, 0),                                                                                                                        \
-			void class::BOOST_PP_CAT(name, _async) (boost::optional<FB::JSObjectPtr> callback) {,                                                                   \
-			void class::BOOST_PP_CAT(name, _async) (BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_PARAMMACRO, (argCount, argList)),                                \
-													boost::optional<FB::JSObjectPtr> callback) {)                                                                   \
-	try {BOOST_PP_IF(BOOST_MPL_PP_TOKEN_EQUAL(ret, void),                                                                                                           \
-		name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList)));                                                                        \
-		if(callback)(*callback)->InvokeAsync("", FB::variant_list_of(shared_from_this()));,                                                                         \
-		ret value = name(BOOST_PP_ENUM(argCount, __DECLARE_SYNC_N_ASYNC_USEMACRO, (argCount, argList)));                                                            \
-		if(callback)(*callback)->InvokeAsync("", FB::variant_list_of(shared_from_this())(value));)                                                                  \
-		} catch(std::runtime_error&) {}                                                                                                                             \
-	}                                                                                                                                                               \
-
-#define DECLARE_SYNC_N_ASYNC(class, name, argCount, argList, ret)          \
-	DECLARE_SYNC_N_ASYNC_SYNC_FCT(class, name, argCount, argList, ret)     \
-	DECLARE_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList, ret)    \
-
-#define IMPLEMENT_SYNC_N_ASYNC(class, name, argCount, argList, ret)          \
-	IMPLEMENT_SYNC_N_ASYNC_ASYNC_FCT(class, name, argCount, argList, ret)    \
-
 
 //
 // PROPERTY FILE
