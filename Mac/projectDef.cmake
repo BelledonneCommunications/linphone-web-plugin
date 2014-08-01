@@ -21,6 +21,8 @@
 # Included from ../CMakeLists.txt
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/Common/common.cmake)
 
+set(LW_PASSPHRASE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/sign/${LW_PASSPHRASE_FILENAME}")
+
 # remember that the current source dir is the project root; this file is in Mac/
 FILE(GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 	Mac/[^.]*.cpp
@@ -318,7 +320,7 @@ create_signed_xpi(${PLUGIN_NAME}
 	"${FB_OUT_DIR}/XPI/"
 	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_GIT_REVISION}-${FB_PACKAGE_SUFFIX}.xpi"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"${LW_PASSPHRASE_FILE}"
 	${PLUGIN_NAME}${FB_XPI_PACKAGE_SUFFIX}
 )
 ###############################################################################
@@ -369,7 +371,7 @@ create_signed_crx(${PLUGIN_NAME}
 	"${FB_OUT_DIR}/CRX/"
 	"${FB_OUT_DIR}/${PROJECT_NAME}-${FBSTRING_PLUGIN_GIT_REVISION}-${FB_PACKAGE_SUFFIX}.crx"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/linphoneweb.pem"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+	"${LW_PASSPHRASE_FILE}"
 	${PLUGIN_NAME}${FB_CRX_PACKAGE_SUFFIX}
 )
 ###############################################################################
