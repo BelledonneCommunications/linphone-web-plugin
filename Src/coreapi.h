@@ -48,6 +48,7 @@ FB_FORWARD_PTR(CoreAPI)
 FB_FORWARD_PTR(FileManagerAPI)
 FB_FORWARD_PTR(FriendAPI)
 FB_FORWARD_PTR(LpConfigAPI)
+FB_FORWARD_PTR(MSVideoSizeAPI)
 FB_FORWARD_PTR(PayloadTypeAPI)
 FB_FORWARD_PTR(PointerAPI)
 FB_FORWARD_PTR(PresenceActivityAPI)
@@ -151,6 +152,10 @@ public:
 	void setUsePreviewWindow(bool enable);
 	VideoPolicyAPIPtr getVideoPolicy() const;
 	void setVideoPolicy(VideoPolicyAPIPtr const &videoPolicy);
+	MSVideoSizeAPIPtr getPreferredVideoSize() const;
+	void setPreferredVideoSize(MSVideoSizeAPIPtr const &videoSize);
+	MSVideoSizeAPIPtr getPreferredVideoSizeByName() const;
+	void setPreferredVideoSizeByName(StringPtr const &videoSize);
 
 	// Sound device functions
 	void reloadSoundDevices();

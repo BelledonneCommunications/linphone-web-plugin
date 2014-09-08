@@ -48,6 +48,7 @@
 #include "callstatsapi.h"
 #include "coreapi.h"
 #include "friendapi.h"
+#include "msvideosizeapi.h"
 #include "payloadtypeapi.h"
 #include "proxyconfigapi.h"
 #include "siptransportsapi.h"
@@ -167,6 +168,8 @@ void CoreAPI::initProxy() {
 	registerProperty("nativeVideoWindowId", make_property(this, &CoreAPI::getNativeVideoWindowId, &CoreAPI::setNativeVideoWindowId));
 	registerProperty("usePreviewWindow", make_property(this, &CoreAPI::getUsePreviewWindow, &CoreAPI::setUsePreviewWindow));
 	registerProperty("videoPolicy", make_property(this, &CoreAPI::getVideoPolicy, &CoreAPI::setVideoPolicy));
+	registerProperty("preferredVideoSize", make_property(this, &CoreAPI::getPreferredVideoSize, &CoreAPI::setPreferredVideoSize));
+	registerProperty("preferredVideoSizeByName", make_property(this, &CoreAPI::getPreferredVideoSizeByName, &CoreAPI::setPreferredVideoSizeByName));
 
 	// Sound device bindings
 	registerMethod("reloadSoundDevices", make_method(this, &CoreAPI::reloadSoundDevices));
@@ -1113,6 +1116,42 @@ void CoreAPI::setVideoPolicy(VideoPolicyAPIPtr const &videoPolicy) {
 
 	FBLOG_DEBUG("CoreAPI::setVideoPolicy", "this=" << this << "\t" << "policy=" << videoPolicy);
 	linphone_core_set_video_policy(mCore, videoPolicy->getRef());
+}
+
+MSVideoSizeAPIPtr CoreAPI::getPreferredVideoSize() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getPreferredVideoSize", "this=" << this);
+	return getFactory()->getMSVideoSize(linphone_core_get_preferred_video_size(mCore));
+}
+
+void CoreAPI::setPreferredVideoSize(MSVideoSizeAPIPtr const &videoSize) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setPreferredVideoSize", "this=" << this << "\t" << "videoSize=" << videoSize);
+	MSVideoSize vs;
+	vs.width = videoSize->getWidth();
+	vs.height = videoSize->getHeight();
+	linphone_core_set_preferred_video_size(mCore, vs);
+}
+
+MSVideoSizeAPIPtr CoreAPI::getPreferredVideoSizeByName() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getPreferredVideoSizeByName", "this=" << this);
+	FBLOG_ERROR("CoreAPI::getPreferredVideoSizeByName", "NOT IMPLEMENTED");
+	return MSVideoSizeAPIPtr(); // TODO Don't have API yet
+}
+
+void CoreAPI::setPreferredVideoSizeByName(StringPtr const &videoSize) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setPreferredVideoSizeByName", "this=" << this << "\t" << "videoSize=" << videoSize);
+	linphone_core_set_preferred_video_size_by_name(mCore, STRING_TO_CHARPTR(videoSize));
 }
 
 /*
