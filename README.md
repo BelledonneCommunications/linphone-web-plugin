@@ -82,6 +82,29 @@ of Firebreath and run the following command:
 
     xcodebuild -arch i386
 
+### Support for additional features
+If you want to activate/deactivate some features, you can add some "-D{option}=0|1" options to the
+preparation command described above. Here is a list of some available features:
+* ENABLE_VIDEO
+* ENABLE_GPL_THIRD_PARTIES
+* ENABLE_SRTP
+* ENABLE_AMRNB
+* ENABLE_AMRWB
+* ENABLE_G729
+* ENABLE_GSM
+* ENABLE_OPUS
+* ENABLE_SPEEX
+* ENABLE_FFMPEG
+* ENABLE_H263
+* ENABLE_H263P
+* ENABLE_MPEG4
+* ENABLE_VPX
+* ENABLE_X264
+* ENABLE_OPENH264
+
+For example, if you want to activate OpenH264 support, add the "-DENABLE_OPENH264=1" option to
+the preparation command.
+
 
 Sign
 ---
