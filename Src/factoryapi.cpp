@@ -378,7 +378,7 @@ PresenceActivityAPIPtr FactoryAPI::getPresenceActivity(LinphonePresenceActivity 
 	PresenceActivityAPIPtr shared_ptr;
 	try {
 		shared_ptr = PresenceActivityAPIPtr(new PresenceActivityAPI(activity));
-		handle(shared_ptr, true, false);
+		handle(shared_ptr, false, false);
 	} catch(std::exception &e) {
 		FBLOG_WARN("FactoryAPI::getPresenceActivity", "exception: " << e.what());
 	}
@@ -419,7 +419,7 @@ PresenceModelAPIPtr FactoryAPI::getPresenceModel(LinphonePresenceModel *model) {
 	PresenceModelAPIPtr shared_ptr;
 	try {
 		shared_ptr = PresenceModelAPIPtr(new PresenceModelAPI(model));
-		handle(shared_ptr, true, false);
+		handle(shared_ptr, false, false);
 	} catch(std::exception &e) {
 		FBLOG_WARN("FactoryAPI::getPresenceModel", "exception: " << e.what());
 	}
@@ -475,7 +475,7 @@ PresenceNoteAPIPtr FactoryAPI::getPresenceNote(LinphonePresenceNote *note) {
 	PresenceNoteAPIPtr shared_ptr;
 	try {
 		shared_ptr = PresenceNoteAPIPtr(new PresenceNoteAPI(note));
-		handle(shared_ptr, true, false);
+		handle(shared_ptr, false, false);
 	} catch(std::exception &e) {
 		FBLOG_WARN("FactoryAPI::getPresenceNote", "exception: " << e.what());
 	}
@@ -503,7 +503,7 @@ PresencePersonAPIPtr FactoryAPI::getPresencePerson(LinphonePresencePerson *perso
 	PresencePersonAPIPtr shared_ptr;
 	try {
 		shared_ptr = PresencePersonAPIPtr(new PresencePersonAPI(person));
-		handle(shared_ptr, true, false);
+		handle(shared_ptr, false, false);
 	} catch(std::exception &e) {
 		FBLOG_WARN("FactoryAPI::getPresencePerson", "exception: " << e.what());
 	}
@@ -531,7 +531,7 @@ PresenceServiceAPIPtr FactoryAPI::getPresenceService(LinphonePresenceService *se
 	PresenceServiceAPIPtr shared_ptr;
 	try {
 		shared_ptr = PresenceServiceAPIPtr(new PresenceServiceAPI(service));
-		handle(shared_ptr, true, false);
+		handle(shared_ptr, false, false);
 	} catch(std::exception &e) {
 		FBLOG_WARN("FactoryAPI::getPresenceService", "exception: " << e.what());
 	}
