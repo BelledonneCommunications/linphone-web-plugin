@@ -105,6 +105,9 @@
 								<File Id="avutil" Source="$(var.BINSRC)/avutil-51.dll" />
 								<File Id="swscale" Source="$(var.BINSRC)/swscale-2.dll" />
 								${ENDIF}
+								${IF ENABLE_TUNNEL}
+								<File Id="tunnel" Source="$(var.BINSRC)/tunnel.dll" />
+								${ENDIF}
 								${IF WITH_DYNAMIC_MSVC_RUNTIME}
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="msvcp100d" Source="$(var.BINSRC)/msvcp100d.dll" />
