@@ -314,6 +314,7 @@ void CoreAPI::prepareInit() {
 	FileManagerAPIPtr fm = getFileManager();
 	FB::URI pluginsUri("internal:///lib/mediastreamer/plugins");
 	std::string pluginsDir = fm->uriToFile(pluginsUri);
+	ms_init();
 	ms_set_plugins_dir(pluginsDir.c_str());
 
 	// Initialize callback table
@@ -393,6 +394,7 @@ int CoreAPI::uninit() {
 		linphone_core_set_user_data(mCore, NULL);
 		linphone_core_destroy(mCore);
 		mCore = NULL;
+		ms_exit();
 		return 0;
 	}
 	return -1;
