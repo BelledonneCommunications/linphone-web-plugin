@@ -308,6 +308,7 @@ void CoreAPI::initProxy() {
 
 	// Tunnel
 	registerProperty("tunnelAvailable", make_property(this, &CoreAPI::tunnelAvailable));
+	registerProperty("tunnel", make_property(this, &CoreAPI::getTunnel));
 }
 
 void CoreAPI::prepareInit() {
@@ -2653,6 +2654,15 @@ LinphoneUpnpState CoreAPI::getUpnpState() const {
 bool CoreAPI::tunnelAvailable() const {
 	FBLOG_DEBUG("CoreAPI::tunnelAvailable", "this=" << this);
 	return linphone_core_tunnel_available() == TRUE ? true : false;
+}
+
+TunnelAPIPtr CoreAPI::getTunnel() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::tunnel", "this=" << this);
+	LinphoneTunnel *t = linphone_core_get_tunnel(mCore);
+	return getFactory()->getTunnel(t);
 }
 
 

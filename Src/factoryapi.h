@@ -31,6 +31,7 @@
 #include <linphone/linphonecore.h>
 #include <linphone/linphonefriend.h>
 #include <linphone/linphonepresence.h>
+#include <linphone/linphone_tunnel.h>
 #include <linphone/lpconfig.h>
 
 #include "addressapi.h"
@@ -47,6 +48,8 @@
 #include "presenceapi.h"
 #include "proxyconfigapi.h"
 #include "siptransportsapi.h"
+#include "tunnelapi.h"
+#include "tunnelconfigapi.h"
 #include "videoapi.h"
 #include "videopolicyapi.h"
 
@@ -147,6 +150,10 @@ public:
 
 	// SipTransports
 	SipTransportsAPIPtr getSipTransports();
+
+	// Tunnel
+	TunnelAPIPtr getTunnel(LinphoneTunnel *tunnel);
+	TunnelConfigAPIPtr getTunnelConfig(LinphoneTunnelConfig *tunnelConfig);
 
 	// Video getVideo
 	VideoAPIPtr getVideo();

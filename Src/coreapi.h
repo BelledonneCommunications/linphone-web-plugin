@@ -58,6 +58,7 @@ FB_FORWARD_PTR(PresencePersonAPI)
 FB_FORWARD_PTR(PresenceServiceAPI)
 FB_FORWARD_PTR(ProxyConfigAPI)
 FB_FORWARD_PTR(SipTransportsAPI)
+FB_FORWARD_PTR(TunnelAPI)
 FB_FORWARD_PTR(VideoAPI)
 FB_FORWARD_PTR(VideoPolicyAPI)
 
@@ -352,6 +353,7 @@ public:
 
 	// Tunnel
 	bool tunnelAvailable() const;
+	TunnelAPIPtr getTunnel() const;
 
 public: // Event helpers
 	FB_JSAPI_EVENT(globalStateChanged, 3, (CoreAPIPtr, const int&, const StringPtr&));

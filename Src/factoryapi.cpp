@@ -595,6 +595,36 @@ SipTransportsAPIPtr FactoryAPI::getSipTransports() {
 	return shared_ptr;
 }
 
+TunnelAPIPtr FactoryAPI::getTunnel(LinphoneTunnel *tunnel) {
+	FBLOG_DEBUG("FactoryAPI::getTunnel", "this=" << this << "\t" << "tunnel=" << tunnel);
+	if (tunnel == NULL)
+		return TunnelAPIPtr();
+	
+	TunnelAPIPtr shared_ptr;
+	try {
+		shared_ptr = TunnelAPIPtr(new TunnelAPI(tunnel));
+		handle(shared_ptr, false, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getTunnel", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+TunnelConfigAPIPtr FactoryAPI::getTunnelConfig(LinphoneTunnelConfig *tunnelConfig) {
+	FBLOG_DEBUG("FactoryAPI::getTunnelConfig", "this=" << this << "\t" << "tunnelConfig=" << tunnelConfig);
+	if (tunnelConfig == NULL)
+		return TunnelConfigAPIPtr();
+	
+	TunnelConfigAPIPtr shared_ptr;
+	try {
+		shared_ptr = TunnelConfigAPIPtr(new TunnelConfigAPI(tunnelConfig));
+		handle(shared_ptr, false, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getTunnelConfig", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
 VideoAPIPtr FactoryAPI::getVideo() {
 	FBLOG_DEBUG("FactoryAPI::getVideo", "this=" << this);
 	VideoAPIPtr shared_ptr;
