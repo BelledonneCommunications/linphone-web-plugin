@@ -204,30 +204,30 @@ function (create_rootfs PROJNAME OUTDIR)
 		sounds/linphone/rings/toy-mono.wav
 	)
 
-	FOREACH(elem ${ROOTFS_LIB_SOURCES})
+	foreach(elem ${ROOTFS_LIB_SOURCES})
 		install_rootfs_target(
 			${PROJNAME}
 			${OUTDIR}/${PLUGIN_SHAREDIR}
 			${CMAKE_INSTALL_PREFIX}/lib
 			${elem}
 		)
-	ENDFOREACH(elem ${ROOTFS_LIB_SOURCES})
-	FOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
+	endforeach()
+	foreach(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
 		install_rootfs_target(
 			${PROJNAME}
 			${OUTDIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins
 			${CMAKE_INSTALL_PREFIX}/lib/mediastreamer/plugins
 			${elem}
 		)
-	ENDFOREACH(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
-	FOREACH(elem ${ROOTFS_SHARE_SOURCES})
+	endforeach()
+	foreach(elem ${ROOTFS_SHARE_SOURCES})
 		install_rootfs_target(
 			${PROJNAME}
 			${OUTDIR}/${PLUGIN_SHAREDIR}/share
 			${CMAKE_INSTALL_PREFIX}/share
 			${elem}
 		)
-	ENDFOREACH(elem ${ROOTFS_SHARE_SOURCES})
+	endforeach()
 
 	# Change rpath
 	add_custom_target(${PROJNAME}${FB_RPATH_SUFFIX} ALL
@@ -244,14 +244,21 @@ function (create_rootfs PROJNAME OUTDIR)
 			${OUTDIR}/${PLUGIN_SHAREDIR}
 			${elem}
 		)
-	endforeach(elem ${ROOTFS_LIB_SOURCES})
+	endforeach()
 	foreach(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
 		sign_rootfs_target(
 			${PROJNAME}${FB_RPATH_SUFFIX}
 			${OUTDIR}/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins
 			${elem}
 		)
-	endforeach(elem ${ROOTFS_MS_PLUGINS_LIB_SOURCES})
+	endforeach()
+	foreach(elem ${ROOTFS_SHARE_SOURCES})
+		sign_rootfs_target(
+			${PROJNAME}${FB_RPATH_SUFFIX}
+			${OUTDIR}/${PLUGIN_SHAREDIR}/share
+			${elem}
+		)
+	endforeach()
 
 	add_custom_target(${PROJNAME}${FB_ROOTFS_SUFFIX} ALL
 		DEPENDS ${SIGN_ROOTFS_TARGETS}
@@ -259,8 +266,8 @@ function (create_rootfs PROJNAME OUTDIR)
 
 	)
 	add_dependencies(${PROJNAME}${FB_ROOTFS_SUFFIX} ${PROJNAME})
-	MESSAGE("-- Successfully added Rootfs creation step")
-endfunction(create_rootfs)
+	message("-- Successfully added Rootfs creation step")
+endfunction()
 ###############################################################################
 
 create_rootfs(${PLUGIN_NAME} ${FB_BUNDLE_DIR})
