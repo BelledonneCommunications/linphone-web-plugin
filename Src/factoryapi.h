@@ -154,6 +154,7 @@ public:
 	// Tunnel
 	TunnelAPIPtr getTunnel(LinphoneTunnel *tunnel);
 	TunnelConfigAPIPtr getTunnelConfig(LinphoneTunnelConfig *tunnelConfig);
+	TunnelConfigAPIPtr getTunnelConfig();
 
 	// Video getVideo
 	VideoAPIPtr getVideo();

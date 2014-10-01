@@ -272,6 +272,7 @@ void CoreAPI::initProxy() {
 	registerMethod("newPresenceNote", make_method(this, &CoreAPI::newPresenceNote));
 	registerMethod("newPresencePerson", make_method(this, &CoreAPI::newPresencePerson));
 	registerMethod("newPresenceService", make_method(this, &CoreAPI::newPresenceService));
+	registerMethod("newTunnelConfig", make_method(this, &CoreAPI::newTunnelConfig));
 
 	// Dtmf
 	registerMethod("sendDtmf", make_method(this, &CoreAPI::sendDtmf));
@@ -2222,6 +2223,11 @@ PresenceServiceAPIPtr CoreAPI::newPresenceService(StringPtr const &id, int basic
 	return getFactory()->getPresenceService(id, basicStatus, contact);
 }
 
+TunnelConfigAPIPtr CoreAPI::newTunnelConfig() const {
+	FBLOG_DEBUG("CoreAPI::newTunnelConfig", "this=" << this);
+	return getFactory()->getTunnelConfig();
+}
+
 
 /*
  *
@@ -2660,7 +2666,7 @@ TunnelAPIPtr CoreAPI::getTunnel() const {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::tunnel", "this=" << this);
+	FBLOG_DEBUG("CoreAPI::getTunnel", "this=" << this);
 	LinphoneTunnel *t = linphone_core_get_tunnel(mCore);
 	return getFactory()->getTunnel(t);
 }

@@ -59,6 +59,7 @@ FB_FORWARD_PTR(PresenceServiceAPI)
 FB_FORWARD_PTR(ProxyConfigAPI)
 FB_FORWARD_PTR(SipTransportsAPI)
 FB_FORWARD_PTR(TunnelAPI)
+FB_FORWARD_PTR(TunnelConfigAPI)
 FB_FORWARD_PTR(VideoAPI)
 FB_FORWARD_PTR(VideoPolicyAPI)
 
@@ -291,6 +292,7 @@ public:
 	PresenceNoteAPIPtr newPresenceNote(StringPtr const &content, StringPtr const &lang) const;
 	PresencePersonAPIPtr newPresencePerson(StringPtr const &id) const;
 	PresenceServiceAPIPtr newPresenceService(StringPtr const &id, int basicStatus, StringPtr const &contact) const;
+	TunnelConfigAPIPtr newTunnelConfig() const;
 
 	// Dtmf
 	void sendDtmf(std::string const &dtmf);

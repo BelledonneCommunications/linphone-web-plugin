@@ -625,6 +625,18 @@ TunnelConfigAPIPtr FactoryAPI::getTunnelConfig(LinphoneTunnelConfig *tunnelConfi
 	return shared_ptr;
 }
 
+TunnelConfigAPIPtr FactoryAPI::getTunnelConfig() {
+	FBLOG_DEBUG("FactoryAPI::getTunnelConfig", "this=" << this);
+	TunnelConfigAPIPtr shared_ptr;
+	try {
+		shared_ptr = TunnelConfigAPIPtr(new TunnelConfigAPI());
+		handle(shared_ptr, true, false);
+	} catch (std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getTunnelConfig", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
 VideoAPIPtr FactoryAPI::getVideo() {
 	FBLOG_DEBUG("FactoryAPI::getVideo", "this=" << this);
 	VideoAPIPtr shared_ptr;
