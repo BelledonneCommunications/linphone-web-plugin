@@ -622,7 +622,8 @@ int CoreAPI::updateCall(CallAPIPtr const &call, CallParamsAPIPtr const &params) 
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::updateCall", "this=" << this << "\t" << "call=" << call << "\t" << "params=" << params);
-	return linphone_core_update_call(mCore, call->getRef(), params->getRef());
+	LinphoneCallParams *lcparams = (params == NULL) ? NULL : params->getRef();
+	return linphone_core_update_call(mCore, call->getRef(), lcparams);
 }
 
 int CoreAPI::deferCallUpdate(CallAPIPtr const &call) {
