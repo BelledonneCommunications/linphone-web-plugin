@@ -44,6 +44,8 @@ ProxyConfigAPI::ProxyConfigAPI():
 }
 
 void ProxyConfigAPI::initProxy() {
+	registerProperty("avpfMode", make_property(this, &ProxyConfigAPI::getAvpfMode, &ProxyConfigAPI::setAvpfMode));
+	registerProperty("avpfRrInterval", make_property(this, &ProxyConfigAPI::getAvpfRrInterval, &ProxyConfigAPI::setAvpfRrInterval));
 	registerProperty("core", make_property(this, &ProxyConfigAPI::getCore));
 	registerProperty("contactParameters", make_property(this, &ProxyConfigAPI::getContactParameters, &ProxyConfigAPI::setContactParameters));
 	registerProperty("dialEscapePlus", make_property(this, &ProxyConfigAPI::getDialEscapePlus, &ProxyConfigAPI::setDialEscapePlus));
@@ -75,6 +77,34 @@ ProxyConfigAPI::~ProxyConfigAPI() {
 			linphone_proxy_config_destroy(mProxyConfig);
 		}
 	}
+}
+
+int ProxyConfigAPI::getAvpfMode() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("ProxyConfigAPI::getAvpfMode", "this=" << this);
+	return (int)linphone_proxy_config_get_avpf_mode(mProxyConfig);
+}
+
+void ProxyConfigAPI::setAvpfMode(int mode) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("ProxyConfigAPI::setAvpfMode", "this=" << this << "\t" << "mode=" << mode);
+	linphone_proxy_config_set_avpf_mode(mProxyConfig, (LinphoneAVPFMode)mode);
+}
+
+int ProxyConfigAPI::getAvpfRrInterval() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("ProxyConfigAPI::getAvpfRrInterval", "this=" << this);
+	return linphone_proxy_config_get_avpf_rr_interval(mProxyConfig);
+}
+
+void ProxyConfigAPI::setAvpfRrInterval(int interval) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("ProxyConfigAPI::setAvpfRrInterval", "this=" << this << "\t" << "interval=" << interval);
+	linphone_proxy_config_set_avpf_rr_interval(mProxyConfig, interval);
 }
 
 CoreAPIPtr ProxyConfigAPI::getCore() const {

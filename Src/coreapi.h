@@ -327,6 +327,10 @@ public:
 	LpConfigAPIPtr getConfig() const;
 
 	// Miscs
+	int getAvpfMode() const;
+	void setAvpfMode(int mode);
+	int getAvpfRrInterval() const;
+	void setAvpfRrInterval(int interval);
 	void enableEchoCancellation(bool enable);
 	bool echoCancellationEnabled() const;
 	void enableEchoLimiter(bool enable);

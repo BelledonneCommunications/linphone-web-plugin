@@ -294,6 +294,8 @@ void CoreAPI::initProxy() {
 	registerMethod("notifyAllFriends", make_method(this, &CoreAPI::notifyAllFriends));
 
 	// Miscs
+	registerProperty("avpfMode", make_property(this, &CoreAPI::getAvpfMode, &CoreAPI::setAvpfMode));
+	registerProperty("avpfRrInterval", make_property(this, &CoreAPI::getAvpfRrInterval, &CoreAPI::setAvpfRrInterval));
 	registerProperty("echoCancellationEnabled", make_property(this, &CoreAPI::echoCancellationEnabled, &CoreAPI::enableEchoCancellation));
 	registerProperty("echoLimiterEnabled", make_property(this, &CoreAPI::echoLimiterEnabled, &CoreAPI::enableEchoLimiter));
 	registerProperty("staticPictureFps", make_property(this, &CoreAPI::getStaticPictureFps, &CoreAPI::setStaticPictureFps));
@@ -2416,6 +2418,34 @@ StringPtr CoreAPI::getRootfsVersion() const {
 	FBLOG_DEBUG("CoreAPI::getRootfsVersion", "this=" << this);
 	FBLOG_WARN("CoreAPI::getRootfsVersion", "Deprecated!");
 	return CHARPTR_TO_STRING("");
+}
+
+int CoreAPI::getAvpfMode() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getAvpfMode", "this=" << this);
+	return (int)linphone_core_get_avpf_mode(mCore);
+}
+
+void CoreAPI::setAvpfMode(int mode) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setAvpfMode", "this=" << this << "\t" << "mode=" << mode);
+	linphone_core_set_avpf_mode(mCore, (LinphoneAVPFMode)mode);
+}
+
+int CoreAPI::getAvpfRrInterval() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getAvpfRrInterval", "this=" << this);
+	return linphone_core_get_avpf_rr_interval(mCore);
+}
+
+void CoreAPI::setAvpfRrInterval(int interval) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setAvpfRrInterval", "this=" << this << "\t" << "interval=" << interval);
+	linphone_core_set_avpf_rr_interval(mCore, interval);
 }
 
 void CoreAPI::enableEchoCancellation(bool enable) {

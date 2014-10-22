@@ -47,6 +47,11 @@ protected:
 public:
 	virtual ~ProxyConfigAPI();
 
+	int getAvpfMode() const;
+	void setAvpfMode(int mode);
+	int getAvpfRrInterval() const;
+	void setAvpfRrInterval(int interval);
+
 	CoreAPIPtr getCore() const;
 
 	StringPtr getContactParameters() const;
