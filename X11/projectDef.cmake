@@ -108,7 +108,7 @@ function (create_rootfs PROJNAME OUTDIR)
 		libmediastreamer_base.${DEPENDENCY_EXT}.3
 		libmediastreamer_voip.${DEPENDENCY_EXT}.3
 		libortp.${DEPENDENCY_EXT}.9
-		libpolarssl.${DEPENDENCY_EXT}.3
+		libpolarssl.${DEPENDENCY_EXT}.5
 		libspeex.${DEPENDENCY_EXT}.6
 		libspeexdsp.${DEPENDENCY_EXT}.6
 	)
