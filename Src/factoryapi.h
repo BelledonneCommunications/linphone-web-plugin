@@ -41,6 +41,7 @@
 #include "callparamsapi.h"
 #include "callstatsapi.h"
 #include "coreapi.h"
+#include "errorinfoapi.h"
 #include "friendapi.h"
 #include "lpconfigapi.h"
 #include "msvideosizeapi.h"
@@ -112,6 +113,9 @@ public:
 
 	// Core
 	CoreAPIPtr getCore(LinphoneCore *core);
+
+	// ErrorInfo
+	ErrorInfoAPIPtr getErrorInfo(const LinphoneErrorInfo *ei);
 
 	// Friend
 	FriendAPIPtr getFriend();

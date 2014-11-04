@@ -52,6 +52,7 @@ void ProxyConfigAPI::initProxy() {
 	registerProperty("dialPrefix", make_property(this, &ProxyConfigAPI::getDialPrefix, &ProxyConfigAPI::setDialPrefix));
 	registerProperty("domain", make_property(this, &ProxyConfigAPI::getDomain));
 	registerProperty("error", make_property(this, &ProxyConfigAPI::getError));
+	registerProperty("errorInfo", make_property(this, &ProxyConfigAPI::getErrorInfo));
 	registerProperty("expires", make_property(this, &ProxyConfigAPI::getExpires, &ProxyConfigAPI::setExpires));
 	registerProperty("identity", make_property(this, &ProxyConfigAPI::getIdentity, &ProxyConfigAPI::setIdentity));
 	registerProperty("publishEnabled", make_property(this, &ProxyConfigAPI::publishEnabled, &ProxyConfigAPI::enablePublish));
@@ -197,6 +198,13 @@ int ProxyConfigAPI::getError() const {
 
 	FBLOG_DEBUG("ProxyConfigAPI::getError", "this=" << this);
 	return linphone_proxy_config_get_error(mProxyConfig);
+}
+
+ErrorInfoAPIPtr ProxyConfigAPI::getErrorInfo() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("ProxyConfigAPI::getErrorInfo", "this=" << this);
+	return getFactory()->getErrorInfo(linphone_proxy_config_get_error_info(mProxyConfig));
 }
 
 void ProxyConfigAPI::setServerAddr(StringPtr const &server_addr) {

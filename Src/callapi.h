@@ -35,6 +35,7 @@ FB_FORWARD_PTR(CallParamsAPI)
 FB_FORWARD_PTR(CallStatsAPI)
 FB_FORWARD_PTR(AddressAPI)
 FB_FORWARD_PTR(CoreAPI)
+FB_FORWARD_PTR(ErrorInfoAPI)
 
 FB_FORWARD_PTR(CallAPI)
 class CallAPI: public WrapperAPI {
@@ -60,6 +61,7 @@ public:
 	float getCurrentQuality() const;
 	int getDir() const;
 	int getDuration() const;
+	ErrorInfoAPIPtr getErrorInfo() const;
 	float getPlayVolume() const;
 	int getReason() const;
 	float getRecordVolume() const;

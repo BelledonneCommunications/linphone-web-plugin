@@ -31,6 +31,7 @@
 namespace LinphoneWeb {
 
 FB_FORWARD_PTR(CoreAPI)
+FB_FORWARD_PTR(ErrorInfoAPI)
 
 FB_FORWARD_PTR(ProxyConfigAPI)
 class ProxyConfigAPI: public WrapperAPI {
@@ -65,6 +66,7 @@ public:
 
 	StringPtr getDomain() const;
 	int getError() const;
+	ErrorInfoAPIPtr getErrorInfo() const;
 
 	bool publishEnabled() const;
 	void enablePublish(bool enable);

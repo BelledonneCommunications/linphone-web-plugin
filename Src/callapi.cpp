@@ -54,6 +54,7 @@ void CallAPI::initProxy() {
 	registerProperty("duration", FB::make_property(this, &CallAPI::getDuration));
 	registerProperty("echoCancellationEnabled", FB::make_property(this, &CallAPI::echoCancellationEnabled, &CallAPI::enableEchoCancellation));
 	registerProperty("echoLimiterEnabled", FB::make_property(this, &CallAPI::echoLimiterEnabled, &CallAPI::enableEchoLimiter));
+	registerProperty("errorInfo", FB::make_property(this, &CallAPI::getErrorInfo));
 	registerProperty("playVolume", FB::make_property(this, &CallAPI::getPlayVolume));
 	registerProperty("reason", FB::make_property(this, &CallAPI::getReason));
 	registerProperty("recordVolume", FB::make_property(this, &CallAPI::getRecordVolume));
@@ -156,6 +157,13 @@ int CallAPI::getDuration() const {
 
 	FBLOG_DEBUG("CallAPI::getDir", "this=" << this);
 	return linphone_call_get_duration(mCall);
+}
+
+ErrorInfoAPIPtr CallAPI::getErrorInfo() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CallAPI::getErrorInfo", "this=" << this);
+	return getFactory()->getErrorInfo(linphone_call_get_error_info(mCall));
 }
 
 float CallAPI::getPlayVolume() const {
