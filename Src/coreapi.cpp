@@ -318,8 +318,10 @@ void CoreAPI::prepareInit() {
 	FileManagerAPIPtr fm = getFileManager();
 	FB::URI pluginsUri("internal:///lib/mediastreamer/plugins");
 	std::string pluginsDir = fm->uriToFile(pluginsUri);
-	ms_init();
+	ms_base_init();
+	ms_voip_init();
 	ms_set_plugins_dir(pluginsDir.c_str());
+	ms_plugins_init();
 
 	// Initialize callback table
 	memset(&mVtable, 0, sizeof(LinphoneCoreVTable));
