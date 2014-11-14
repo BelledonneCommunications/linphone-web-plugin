@@ -46,6 +46,8 @@
 #include "calllogapi.h"
 #include "callparamsapi.h"
 #include "callstatsapi.h"
+#include "chatmessageapi.h"
+#include "chatroomapi.h"
 #include "coreapi.h"
 #include "friendapi.h"
 #include "msvideosizeapi.h"
@@ -149,6 +151,15 @@ void CoreAPI::initProxy() {
 	registerMethod("leaveConference", make_method(this, &CoreAPI::leaveConference));
 	registerMethod("removeFromConference", make_method(this, &CoreAPI::removeFromConference));
 	registerMethod("terminateConference", make_method(this, &CoreAPI::terminateConference));
+
+	// Chat bindings
+	registerProperty("chatDatabasePath", make_property(this, &CoreAPI::getChatDatabasePath, &CoreAPI::setChatDatabasePath));
+	registerProperty("chatEnabled", make_property(this, &CoreAPI::chatEnabled));
+	registerProperty("chatRooms", make_property(this, &CoreAPI::getChatRooms));
+	registerMethod("disableChat", make_method(this, &CoreAPI::disableChat));
+	registerMethod("enableChat", make_method(this, &CoreAPI::enableChat));
+	registerMethod("getChatRoom", make_method(this, &CoreAPI::getChatRoom));
+	registerMethod("getChatRoomFromUri", make_method(this, &CoreAPI::getChatRoomFromUri));
 
 	// Levels bindings
 	registerProperty("playLevel", make_property(this, &CoreAPI::getPlayLevel, &CoreAPI::setPlayLevel));
@@ -814,6 +825,73 @@ int CoreAPI::terminateConference() {
 
 	FBLOG_DEBUG("CoreAPI::terminateConference", "this=" << this);
 	return linphone_core_terminate_conference(mCore);
+}
+
+/*
+ *
+ * Chat functions
+ *
+ */
+
+StringPtr CoreAPI::getChatDatabasePath() const {
+	FBLOG_DEBUG("CoreAPI::getChatDatabasePath", "this=" << this);
+	FBLOG_ERROR("CoreAPI::getChatDatabasePath", "NOT IMPLEMENTED");
+	return StringPtr(); // TODO Don't have API yet
+}
+
+void CoreAPI::setChatDatabasePath(StringPtr const &path) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	FBLOG_DEBUG("CoreAPI::setChatDatabasePath", "this=" << this << "\t" << "path=" << path);
+	linphone_core_set_chat_database_path(mCore, STRING_TO_CHARPTR(path));
+}
+
+bool CoreAPI::chatEnabled() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	FBLOG_DEBUG("CoreAPI::chatEnabled", "this=" << this);
+	return (linphone_core_chat_enabled(mCore) == TRUE);
+}
+
+std::vector<ChatRoomAPIPtr> CoreAPI::getChatRooms() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	FBLOG_DEBUG("CoreAPI::getChatRooms", "this=" << this);
+	std::vector<ChatRoomAPIPtr> list;
+	for (const MSList *node = linphone_core_get_chat_rooms(mCore); node != NULL; node = ms_list_next(node)) {
+		list.push_back(getFactory()->getChatRoom(reinterpret_cast<LinphoneChatRoom *>(node->data)));
+	}
+	return list;
+}
+
+void CoreAPI::disableChat(int denyReason) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	FBLOG_DEBUG("CoreAPI::disableChat", "this=" << this << "\t" << "denyReason=" << denyReason);
+	linphone_core_disable_chat(mCore, (LinphoneReason)denyReason);
+}
+
+void CoreAPI::enableChat() {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	FBLOG_DEBUG("CoreAPI::enableChat", "this=" << this);
+	linphone_core_enable_chat(mCore);
+}
+
+ChatRoomAPIPtr CoreAPI::getChatRoom(AddressAPIPtr const &addr) const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	FBLOG_DEBUG("CoreAPI::getChatRoom", "this=" << this << "\t" << "addr=" << addr);
+	LinphoneChatRoom *chatRoom = linphone_core_get_chat_room(mCore, addr->getRef());
+	return getFactory()->getChatRoom(chatRoom);
+}
+
+ChatRoomAPIPtr CoreAPI::getChatRoomFromUri(StringPtr const &to) const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	FBLOG_DEBUG("CoreAPI::getChatRoomFromUri", "this=" << this << "\t" << "to=" << to);
+	LinphoneChatRoom *chatRoom = linphone_core_get_chat_room_from_uri(mCore, STRING_TO_CHARPTR(to));
+	return getFactory()->getChatRoom(chatRoom);
 }
 
 /*

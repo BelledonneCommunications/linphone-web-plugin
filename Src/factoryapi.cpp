@@ -231,6 +231,36 @@ CallStatsAPIPtr FactoryAPI::getCallStats(const LinphoneCallStats *callStats) {
 	return shared_ptr;
 }
 
+ChatMessageAPIPtr FactoryAPI::getChatMessage(LinphoneChatMessage *chatMessage) {
+	FBLOG_DEBUG("FactoryAPI::getChatMessage", "this=" << this << "\t" << "chatMessage=" << chatMessage);
+	if (chatMessage == NULL)
+		return ChatMessageAPIPtr();
+
+	ChatMessageAPIPtr shared_ptr;
+	try {
+		shared_ptr = ChatMessageAPIPtr(new ChatMessageAPI(chatMessage));
+		handle(shared_ptr, false, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getChatMessage", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+ChatRoomAPIPtr FactoryAPI::getChatRoom(LinphoneChatRoom *chatRoom) {
+	FBLOG_DEBUG("FactoryAPI::getChatRoom", "this=" << this << "\t" << "chatRoom=" << chatRoom);
+	if (chatRoom == NULL)
+		return ChatRoomAPIPtr();
+
+	ChatRoomAPIPtr shared_ptr;
+	try {
+		shared_ptr = ChatRoomAPIPtr(new ChatRoomAPI(chatRoom));
+		handle(shared_ptr, false, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getChatRoom", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
 CoreAPIPtr FactoryAPI::getCore(LinphoneCore *core) {
 	FBLOG_DEBUG("FactoryAPI::getCore", "this=" << this << "\t" << "core=" << core);
 	if (core == NULL) {

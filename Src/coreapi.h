@@ -44,6 +44,8 @@ FB_FORWARD_PTR(CallAPI)
 FB_FORWARD_PTR(CallLogAPI)
 FB_FORWARD_PTR(CallParamsAPI)
 FB_FORWARD_PTR(CallStatsAPI)
+FB_FORWARD_PTR(ChatMessageAPI)
+FB_FORWARD_PTR(ChatRoomAPI)
 FB_FORWARD_PTR(CoreAPI)
 FB_FORWARD_PTR(FileManagerAPI)
 FB_FORWARD_PTR(FriendAPI)
@@ -121,6 +123,16 @@ public:
 	int leaveConference();
 	int removeFromConference(CallAPIPtr const &call);
 	int terminateConference();
+
+	// Chat functions
+	StringPtr getChatDatabasePath() const;
+	void setChatDatabasePath(StringPtr const &path);
+	bool chatEnabled() const;
+	std::vector<ChatRoomAPIPtr> getChatRooms() const;
+	void disableChat(int denyReason);
+	void enableChat();
+	ChatRoomAPIPtr getChatRoom(AddressAPIPtr const &addr) const;
+	ChatRoomAPIPtr getChatRoomFromUri(StringPtr const &to) const;
 
 	// Level functions
 	void setPlayLevel(int level);
