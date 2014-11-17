@@ -57,11 +57,21 @@ namespace LinphoneWeb {
 		int getHistorySize() const;
 		AddressAPIPtr getPeerAddress() const;
 		bool remoteComposing() const;
-		// TODO: sendMessage2();
+		void sendMessage(ChatMessageAPIPtr chatMessage);
 
 		inline LinphoneChatRoom *getRef() {
 			return mChatRoom;
 		}
+
+	public: // Event helpers
+		FB_JSAPI_EVENT(messageStateChanged, 3, (ChatRoomAPIPtr, ChatMessageAPIPtr, const int&));
+
+	protected:
+		virtual void onMessageStateChanged(LinphoneChatMessage *msg, LinphoneChatMessageState state);
+
+	private:
+		// C Wrappers
+		static void wrapper_message_state_changed(LinphoneChatMessage *msg, LinphoneChatMessageState state, void *ud);
 	};
 } // LinphoneWeb
 	

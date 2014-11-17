@@ -52,6 +52,7 @@ void ChatRoomAPI::initProxy() {
 	registerMethod("getHistoryRange", make_method(this, &ChatRoomAPI::getHistoryRange));
 	registerMethod("newMessage", make_method(this, &ChatRoomAPI::createMessage));
 	registerMethod("newMessage2", make_method(this, &ChatRoomAPI::createMessage2));
+	registerMethod("sendMessage", make_method(this, &ChatRoomAPI::sendMessage));
 }
 
 void ChatRoomAPI::compose() {
@@ -107,6 +108,28 @@ bool ChatRoomAPI::remoteComposing() const {
 	CORE_MUTEX
 	FBLOG_DEBUG("ChatRoomAPI::remoteComposing", "this=" << this);
 	return (linphone_chat_room_is_remote_composing(mChatRoom) == TRUE);
+}
+
+void ChatRoomAPI::sendMessage(ChatMessageAPIPtr chatMessage) {
+	CORE_MUTEX
+	FBLOG_DEBUG("ChatRoomAPI::sendMessage", "this=" << this << "\t" << "chatMessage=" << chatMessage);
+	linphone_chat_room_send_message2(mChatRoom, chatMessage->getRef(), ChatRoomAPI::wrapper_message_state_changed, mChatRoom);
+}
+
+
+
+void ChatRoomAPI::onMessageStateChanged(LinphoneChatMessage *msg, LinphoneChatMessageState state) {
+	FBLOG_DEBUG("ChatRoomAPI::onMessageStateChanged",  "this=" << this << "\t" << "msg=" << msg << "\t" << "state=" << state);
+	fire_messageStateChanged(boost::static_pointer_cast<ChatRoomAPI>(shared_from_this()), getFactory()->getChatMessage(msg), state);
+}
+
+void ChatRoomAPI::wrapper_message_state_changed(LinphoneChatMessage *msg, LinphoneChatMessageState state, void *ud) {
+	LinphoneChatRoom *room = (LinphoneChatRoom *)ud;
+	if (linphone_chat_room_get_user_data(room) != NULL) {
+		((ChatRoomAPI *)linphone_chat_room_get_user_data(room))->onMessageStateChanged(msg, state);
+	} else {
+		FBLOG_ERROR("ChatRoomAPI::wrapper_message_state_changed", "No proxy defined!");
+	}
 }
 
 } // LinphoneWeb
