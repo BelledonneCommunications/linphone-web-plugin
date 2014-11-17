@@ -344,6 +344,7 @@ void CoreAPI::prepareInit() {
 	mVtable.auth_info_requested = CoreAPI::wrapper_auth_info_requested;
 	mVtable.call_log_updated = CoreAPI::wrapper_call_log_updated;
 	mVtable.message_received = CoreAPI::wrapper_message_received;
+	mVtable.is_composing_received = CoreAPI::wrapper_is_composing_received;
 	mVtable.dtmf_received = CoreAPI::wrapper_dtmf_received;
 	mVtable.refer_received = CoreAPI::wrapper_refer_received;
 	mVtable.call_encryption_changed = CoreAPI::wrapper_call_encryption_changed;
@@ -354,6 +355,13 @@ void CoreAPI::prepareInit() {
 	mVtable.subscription_state_changed = CoreAPI::wrapper_subscription_state_changed;
 	mVtable.notify_received = CoreAPI::wrapper_notify_received;
 	mVtable.publish_state_changed = CoreAPI::wrapper_publish_state_changed;
+	mVtable.configuring_status = CoreAPI::wrapper_configuring_status;
+	mVtable.file_transfer_recv = CoreAPI::wrapper_file_transfer_recv;
+	mVtable.file_transfer_send = CoreAPI::wrapper_file_transfer_send;
+	mVtable.file_transfer_progress_indication = CoreAPI::wrapper_file_transfer_progress_indication;
+	mVtable.network_reachable = CoreAPI::wrapper_network_reachable;
+	mVtable.log_collection_upload_state_changed = CoreAPI::wrapper_log_collection_upload_state_changed;
+	mVtable.log_collection_upload_progress_indication = CoreAPI::wrapper_log_collection_upload_progress_indication;
 }
 
 void CoreAPI::finishInit() {
@@ -2827,6 +2835,12 @@ void CoreAPI::onCallLogUpdated(LinphoneCallLog *newcl) {
 
 void CoreAPI::onMessageReceived(LinphoneChatRoom *room, LinphoneChatMessage *message) {
 	FBLOG_DEBUG("CoreAPI::onMessageReceived", "this=" << this << "\t" << "room=" << room << "\t" << "message=" << message);
+	fire_messageReceived(boost::static_pointer_cast<CoreAPI>(shared_from_this()), getFactory()->getChatRoom(room), getFactory()->getChatMessage(message));
+}
+
+void CoreAPI::onIsComposingReceived(LinphoneChatRoom *room) {
+	FBLOG_DEBUG("CoreAPI::onIsComposingReceived", "this=" << this << "\t" << "room=" << room);
+	fire_isComposingReceived(boost::static_pointer_cast<CoreAPI>(shared_from_this()), getFactory()->getChatRoom(room));
 }
 
 void CoreAPI::onDtmfReceived(LinphoneCall *call, int dtmf) {
@@ -2873,6 +2887,38 @@ void CoreAPI::onNotifyReceived(LinphoneEvent *event, const char *notified_event,
 
 void CoreAPI::onPublishStateChanged(LinphoneEvent *event, LinphonePublishState state) {
 	FBLOG_DEBUG("CoreAPI::onPublishStateChanged",  "this=" << this << "\t" << "event=" << event << "\t" << "state=" << state);
+}
+
+void CoreAPI::onConfiguringStatus(LinphoneConfiguringState status, const char *message) {
+	FBLOG_DEBUG("CoreAPI::onConfiguringStatus", "this=" << this << "\t" << "status=" << status << "\t" << "message=" << message);
+	fire_configuringStatus(boost::static_pointer_cast<CoreAPI>(shared_from_this()), status, CHARPTR_TO_STRING(message));
+}
+
+void CoreAPI::onFileTransferRecv(LinphoneChatMessage *message, const LinphoneContent* content, const char* buff, size_t size) {
+	FBLOG_DEBUG("CoreAPI::onFileTransferRecv", "this=" << this << "\t" << "message=" << message << "\t" << "content=" << content << "\t" << "buff=" << buff << "\t" << "size=" << size);
+}
+
+void CoreAPI::onFileTransferSend(LinphoneChatMessage *message,  const LinphoneContent* content, char* buff, size_t* size) {
+	FBLOG_DEBUG("CoreAPI::onFileTransferSend", "this=" << this << "\t" << "message=" << message << "\t" << "content=" << content << "\t" << "buff=" << buff << "\t" << "size=" << size);
+}
+
+void CoreAPI::onFileTransferProgressIndication(LinphoneChatMessage *message, const LinphoneContent* content, size_t offset, size_t total) {
+	FBLOG_DEBUG("CoreAPI::onFileTransferProgressIndication", "this=" << this << "\t" << "message=" << message << "\t" << "content=" << content << "\t" << "offset=" << offset << "\t" << "total=" << total);
+}
+
+void CoreAPI::onNetworkReachable(bool_t reachable) {
+	FBLOG_DEBUG("CoreAPI::onNeworkReachable", "this=" << this << "\t" << "reachable=" << reachable);
+	fire_networkReachable(boost::static_pointer_cast<CoreAPI>(shared_from_this()), (reachable == TRUE));
+}
+
+void CoreAPI::onLogCollectionUploadStateChanged(LinphoneCoreLogCollectionUploadState state, const char *info) {
+	FBLOG_DEBUG("CoreAPI::onLogCollectionUploadStateChanged", "this=" << this << "\t" << "state=" << state << "\t" << "info=" << info);
+	fire_logCollectionUploadStateChanged(boost::static_pointer_cast<CoreAPI>(shared_from_this()), state, CHARPTR_TO_STRING(info));
+}
+
+void CoreAPI::onLogCollectionUploadProgressIndication(size_t offset, size_t total) {
+	FBLOG_DEBUG("CoreAPI::onLogCollectionUploadProgressIndication", "this=" << this << "\t" << "offset=" << offset << "\t" << "total=" << total);
+	fire_logCollectionUploadProgressIndication(boost::static_pointer_cast<CoreAPI>(shared_from_this()), offset, total);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2937,6 +2983,13 @@ void CoreAPI::wrapper_message_received(LinphoneCore *lc, LinphoneChatRoom *room,
 		GLC_THIS()->onMessageReceived(room, message);
 	} else {
 		FBLOG_ERROR("CoreAPI::wrapper_message_received", "No proxy defined!");
+	}
+}
+void CoreAPI::wrapper_is_composing_received(LinphoneCore *lc, LinphoneChatRoom *room) {
+	if (GLC_DEFINED()) {
+		GLC_THIS()->onIsComposingReceived(room);
+	} else {
+		FBLOG_ERROR("CoreAPI::wrapper_is_composing_received", "No proxy defined!");
 	}
 }
 void CoreAPI::wrapper_dtmf_received(LinphoneCore *lc, LinphoneCall *call, int dtmf) {
@@ -3007,6 +3060,55 @@ void CoreAPI::wrapper_publish_state_changed(LinphoneCore *lc, LinphoneEvent *eve
 		GLC_THIS()->onPublishStateChanged(event, state);
 	} else {
 		FBLOG_ERROR("CoreAPI::wrapper_publish_state_changed", "No proxy defined!");
+	}
+}
+void CoreAPI::wrapper_configuring_status(LinphoneCore *lc, LinphoneConfiguringState status, const char *message) {
+	if (GLC_DEFINED()) {
+		GLC_THIS()->onConfiguringStatus(status, message);
+	} else {
+		FBLOG_ERROR("CoreAPI::wrapper_configuring_status", "No proxy defined!");
+	}
+}
+void CoreAPI::wrapper_file_transfer_recv(LinphoneCore *lc, LinphoneChatMessage *message, const LinphoneContent* content, const char* buff, size_t size) {
+	if (GLC_DEFINED()) {
+		GLC_THIS()->onFileTransferRecv(message, content, buff, size);
+	} else {
+		FBLOG_ERROR("CoreAPI::wrapper_file_transfer_recv", "No proxy defined!");
+	}
+}
+void CoreAPI::wrapper_file_transfer_send(LinphoneCore *lc, LinphoneChatMessage *message,  const LinphoneContent* content, char* buff, size_t* size) {
+	if (GLC_DEFINED()) {
+		GLC_THIS()->onFileTransferSend(message, content, buff, size);
+	} else {
+		FBLOG_ERROR("CoreAPI::wrapper_file_transfer_send", "No proxy defined!");
+	}
+}
+void CoreAPI::wrapper_file_transfer_progress_indication(LinphoneCore *lc, LinphoneChatMessage *message, const LinphoneContent* content, size_t offset, size_t total) {
+	if (GLC_DEFINED()) {
+		GLC_THIS()->onFileTransferProgressIndication(message, content, offset, total);
+	} else {
+		FBLOG_ERROR("CoreAPI::wrapper_file_transfer_progress_indication", "No proxy defined!");
+	}
+}
+void CoreAPI::wrapper_network_reachable(LinphoneCore *lc, bool_t reachable) {
+	if (GLC_DEFINED()) {
+		GLC_THIS()->onNetworkReachable(reachable);
+	} else {
+		FBLOG_ERROR("CoreAPI::wrapper_network_reachable", "No proxy defined!");
+	}
+}
+void CoreAPI::wrapper_log_collection_upload_state_changed(LinphoneCore *lc, LinphoneCoreLogCollectionUploadState state, const char *info) {
+	if (GLC_DEFINED()) {
+		GLC_THIS()->onLogCollectionUploadStateChanged(state, info);
+	} else {
+		FBLOG_ERROR("CoreAPI::wrapper_log_collection_upload_state_changed", "No proxy defined!");
+	}
+}
+void CoreAPI::wrapper_log_collection_upload_progress_indication(LinphoneCore *lc, size_t offset, size_t total) {
+	if (GLC_DEFINED()) {
+		GLC_THIS()->onLogCollectionUploadProgressIndication(offset, total);
+	} else {
+		FBLOG_ERROR("CoreAPI::wrapper_log_collection_upload_progress_indication", "No proxy defined!");
 	}
 }
 
