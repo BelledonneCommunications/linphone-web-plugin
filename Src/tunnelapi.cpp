@@ -100,6 +100,7 @@ void TunnelAPI::addServer(TunnelConfigAPIPtr const &server) {
 
 	FBLOG_DEBUG("TunnelAPI::addServer", "this=" << this << "\t" << "server=" << server);
 	linphone_tunnel_add_server(mTunnel, server->getRef());
+	server->disOwn();
 }
 
 void TunnelAPI::cleanServers() {

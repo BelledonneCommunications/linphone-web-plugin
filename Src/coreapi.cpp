@@ -2890,7 +2890,7 @@ void CoreAPI::onPublishStateChanged(LinphoneEvent *event, LinphonePublishState s
 }
 
 void CoreAPI::onConfiguringStatus(LinphoneConfiguringState status, const char *message) {
-	FBLOG_DEBUG("CoreAPI::onConfiguringStatus", "this=" << this << "\t" << "status=" << status << "\t" << "message=" << message);
+	FBLOG_DEBUG("CoreAPI::onConfiguringStatus", "this=" << this << "\t" << "status=" << status << "\t" << "message=" << (message ? message : ""));
 	fire_configuringStatus(boost::static_pointer_cast<CoreAPI>(shared_from_this()), status, CHARPTR_TO_STRING(message));
 }
 
