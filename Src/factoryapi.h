@@ -42,6 +42,7 @@
 #include "callstatsapi.h"
 #include "chatmessageapi.h"
 #include "chatroomapi.h"
+#include "contentapi.h"
 #include "coreapi.h"
 #include "errorinfoapi.h"
 #include "friendapi.h"
@@ -118,6 +119,10 @@ public:
 
 	// ChatRoom
 	ChatRoomAPIPtr getChatRoom(LinphoneChatRoom *chatRoom);
+
+	// Content
+	ContentAPIPtr getContent(LinphoneContent *content);
+	ContentAPIPtr getContent(const LinphoneContent *content);
 
 	// Core
 	CoreAPIPtr getCore(LinphoneCore *core);

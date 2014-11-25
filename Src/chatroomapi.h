@@ -32,6 +32,7 @@ namespace LinphoneWeb {
 	FB_FORWARD_PTR(AddressAPI)
 	FB_FORWARD_PTR(ChatMessageAPI)
 	FB_FORWARD_PTR(ChatRoomAPI)
+	FB_FORWARD_PTR(ContentAPI)
 	FB_FORWARD_PTR(CoreAPI)
 
 	class ChatRoomAPI: public WrapperAPI {
@@ -50,28 +51,18 @@ namespace LinphoneWeb {
 
 		void compose();
 		CoreAPIPtr getCore() const;
-		// TODO: createFileTransferMessage();
+		ChatMessageAPIPtr createFileTransferMessage(ContentAPIPtr const &content);
 		ChatMessageAPIPtr createMessage(StringPtr const &message);
 		ChatMessageAPIPtr createMessage2(StringPtr const &message, StringPtr const &externalBodyUrl, int state, time_t time, bool isRead, bool isIncoming);
 		std::vector<ChatMessageAPIPtr> getHistoryRange(int begin, int end) const;
 		int getHistorySize() const;
 		AddressAPIPtr getPeerAddress() const;
 		bool remoteComposing() const;
-		void sendMessage(ChatMessageAPIPtr chatMessage);
+		void sendChatMessage(ChatMessageAPIPtr const &chatMessage);
 
 		inline LinphoneChatRoom *getRef() {
 			return mChatRoom;
 		}
-
-	public: // Event helpers
-		FB_JSAPI_EVENT(messageStateChanged, 3, (ChatRoomAPIPtr, ChatMessageAPIPtr, const int&));
-
-	protected:
-		virtual void onMessageStateChanged(LinphoneChatMessage *msg, LinphoneChatMessageState state);
-
-	private:
-		// C Wrappers
-		static void wrapper_message_state_changed(LinphoneChatMessage *msg, LinphoneChatMessageState state, void *ud);
 	};
 } // LinphoneWeb
 	

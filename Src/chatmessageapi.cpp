@@ -32,6 +32,9 @@ ChatMessageAPI::ChatMessageAPI(LinphoneChatMessage *chatMessage) :
 	FBLOG_DEBUG("ChatMessageAPI::ChatMessageAPI", "this=" << this << "\t" << "chatMessage=" << chatMessage);
 	linphone_chat_message_ref(mChatMessage);
 	linphone_chat_message_set_user_data(mChatMessage, this);
+	LinphoneChatMessageCbs *cbs = linphone_chat_message_get_callbacks(mChatMessage);
+	linphone_chat_message_cbs_set_msg_state_changed(cbs, ChatMessageAPI::wrapper_msg_state_changed);
+	linphone_chat_message_cbs_set_file_transfer_progress_indication(cbs, ChatMessageAPI::wrapper_file_transfer_progress_indication);
 }
 
 ChatMessageAPI::~ChatMessageAPI() {
@@ -48,6 +51,7 @@ void ChatMessageAPI::initProxy() {
 	registerProperty("errorInfo", make_property(this, &ChatMessageAPI::getErrorInfo));
 	registerProperty("externalBodyUrl", make_property(this, &ChatMessageAPI::getExternalBodyUrl));
 	registerProperty("fileTransferFilePath", make_property(this, &ChatMessageAPI::getFileTransferFilepath));
+	registerProperty("fileTransferInformation", make_property(this, &ChatMessageAPI::getFileTransferInformation));
 	registerProperty("fromAddress", make_property(this, &ChatMessageAPI::getFromAddress));
 	registerProperty("localAddress", make_property(this, &ChatMessageAPI::getLocalAddress));
 	registerProperty("outgoing", make_property(this, &ChatMessageAPI::outgoing));
@@ -122,6 +126,13 @@ StringPtr ChatMessageAPI::getFileTransferFilepath() const {
 	return CHARPTR_TO_STRING(linphone_chat_message_get_file_transfer_filepath(mChatMessage));
 }
 
+ContentAPIPtr ChatMessageAPI::getFileTransferInformation() const {
+	CORE_MUTEX
+	FBLOG_DEBUG("ChatMessageAPI::getFileTransferInformation", "this=" << this);
+	const LinphoneContent *content = linphone_chat_message_get_file_transfer_information(mChatMessage);
+	return getFactory()->getContent(content);
+}
+
 AddressAPIPtr ChatMessageAPI::getFromAddress() const {
 	CORE_MUTEX
 	FBLOG_DEBUG("ChatMessageAPI::getFromAddress", "this=" << this);
@@ -191,6 +202,40 @@ AddressAPIPtr ChatMessageAPI::getToAddress() const {
 	FBLOG_DEBUG("ChatMessageAPI::getToAddress", "this=" << this);
 	const LinphoneAddress *toAddress = linphone_chat_message_get_to_address(mChatMessage);
 	return getFactory()->getAddress(toAddress);
+}
+
+void ChatMessageAPI::downloadFile() {
+	CORE_MUTEX
+	FBLOG_DEBUG("ChatMessageAPI::downloadFile", "this=" << this);
+	linphone_chat_message_download_file(mChatMessage);
+}
+
+
+
+void ChatMessageAPI::onMsgStateChanged(LinphoneChatMessageState state) {
+	FBLOG_DEBUG("ChatMessageAPI::onMsgStateChanged",  "this=" << this << "\t" << "state=" << state);
+	fire_msgStateChanged(boost::static_pointer_cast<ChatMessageAPI>(shared_from_this()), state);
+}
+
+void ChatMessageAPI::onFileTransferProgressIndication(const LinphoneContent *content, size_t offset, size_t total) {
+	FBLOG_DEBUG("ChatMessageAPI::onFileTransferProgressIndication",  "this=" << this << "\t" << "content=" << content << "\t" << "offset=" << offset << "\t" << "total=" << total);
+	fire_fileTransferProgressIndication(boost::static_pointer_cast<ChatMessageAPI>(shared_from_this()), getFactory()->getContent(content), offset, total);
+}
+
+void ChatMessageAPI::wrapper_msg_state_changed(LinphoneChatMessage *msg, LinphoneChatMessageState state) {
+	if (linphone_chat_message_get_user_data(msg) != NULL) {
+		((ChatMessageAPI *)linphone_chat_message_get_user_data(msg))->onMsgStateChanged(state);
+	} else {
+		FBLOG_ERROR("ChatMessageAPI::wrapper_msg_state_changed", "No proxy defined!");
+	}
+}
+
+void ChatMessageAPI::wrapper_file_transfer_progress_indication(LinphoneChatMessage *msg, const LinphoneContent *content, size_t offset, size_t total) {
+	if (linphone_chat_message_get_user_data(msg) != NULL) {
+		((ChatMessageAPI *)linphone_chat_message_get_user_data(msg))->onFileTransferProgressIndication(content, offset, total);
+	} else {
+		FBLOG_ERROR("ChatMessageAPI::wrapper_file_transfer_progress_indication", "No proxy defined!");
+	}
 }
 
 } // LinphoneWeb

@@ -32,6 +32,7 @@ namespace LinphoneWeb {
 	FB_FORWARD_PTR(AddressAPI)
 	FB_FORWARD_PTR(ChatMessageAPI)
 	FB_FORWARD_PTR(ChatRoomAPI)
+	FB_FORWARD_PTR(ContentAPI)
 	FB_FORWARD_PTR(ErrorInfoAPI)
 
 	class ChatMessageAPI: public WrapperAPI {
@@ -57,6 +58,7 @@ namespace LinphoneWeb {
 		ErrorInfoAPIPtr getErrorInfo() const;
 		StringPtr getExternalBodyUrl() const;
 		StringPtr getFileTransferFilepath() const;
+		ContentAPIPtr getFileTransferInformation() const;
 		AddressAPIPtr getFromAddress() const;
 		StringPtr getCustomHeader(StringPtr const &headerName);
 		AddressAPIPtr getLocalAddress() const;
@@ -68,11 +70,24 @@ namespace LinphoneWeb {
 		StringPtr getText() const;
 		time_t getTime() const;
 		AddressAPIPtr getToAddress() const;
-		// TODO: startFileDownload();
+		void downloadFile();
 
 		inline LinphoneChatMessage *getRef() {
 			return mChatMessage;
 		}
+
+	public: // Event helpers
+		FB_JSAPI_EVENT(msgStateChanged, 2, (ChatMessageAPIPtr, const int&));
+		FB_JSAPI_EVENT(fileTransferProgressIndication, 4, (ChatMessageAPIPtr, ContentAPIPtr, size_t, size_t));
+
+	protected:
+		virtual void onMsgStateChanged(LinphoneChatMessageState state);
+		virtual void onFileTransferProgressIndication(const LinphoneContent *content, size_t offset, size_t total);
+
+	private:
+		// C Wrappers
+		static void wrapper_msg_state_changed(LinphoneChatMessage *msg, LinphoneChatMessageState state);
+		static void wrapper_file_transfer_progress_indication(LinphoneChatMessage *message, const LinphoneContent* content, size_t offset, size_t total);
 	};
 } // LinphoneWeb
 	

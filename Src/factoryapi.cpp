@@ -261,6 +261,36 @@ ChatRoomAPIPtr FactoryAPI::getChatRoom(LinphoneChatRoom *chatRoom) {
 	return shared_ptr;
 }
 
+ContentAPIPtr FactoryAPI::getContent(LinphoneContent *content) {
+	FBLOG_DEBUG("FactoryAPI::getContent", "this=" << this << "\t" << "content=" << content);
+	if (content == NULL)
+		return ContentAPIPtr();
+
+	ContentAPIPtr shared_ptr;
+	try {
+		shared_ptr = ContentAPIPtr(new ContentAPI(content));
+		handle(shared_ptr, false, false);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getContent", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
+ContentAPIPtr FactoryAPI::getContent(const LinphoneContent *content) {
+	FBLOG_DEBUG("FactoryAPI::getContent", "this=" << this << "\t" << "content=" << content);
+	if (content == NULL)
+		return ContentAPIPtr();
+
+	ContentAPIPtr shared_ptr;
+	try {
+		shared_ptr = ContentAPIPtr(new ContentAPI(content));
+		handle(shared_ptr, false, true);
+	} catch(std::exception &e) {
+		FBLOG_WARN("FactoryAPI::getContent", "exception: " << e.what());
+	}
+	return shared_ptr;
+}
+
 CoreAPIPtr FactoryAPI::getCore(LinphoneCore *core) {
 	FBLOG_DEBUG("FactoryAPI::getCore", "this=" << this << "\t" << "core=" << core);
 	if (core == NULL) {

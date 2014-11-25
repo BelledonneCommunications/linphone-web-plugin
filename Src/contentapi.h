@@ -36,6 +36,7 @@ namespace LinphoneWeb {
 		LinphoneContent *mContent;
 
 		ContentAPI(LinphoneContent *content);
+		ContentAPI(const LinphoneContent *content);
 
 	protected:
 		virtual void initProxy();

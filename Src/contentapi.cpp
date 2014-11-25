@@ -34,6 +34,12 @@ ContentAPI::ContentAPI(LinphoneContent *content) :
 	linphone_content_set_user_data(mContent, this);
 }
 
+ContentAPI::ContentAPI(const LinphoneContent *content) :
+		WrapperAPI(APIDescription(this)), mContent(const_cast<LinphoneContent *>(content)) {
+	linphone_content_ref(mContent);
+	linphone_content_set_user_data(mContent, this);
+}
+
 ContentAPI::~ContentAPI() {
 	FBLOG_DEBUG("ContentAPI::~ContentAPI", "this=" << this);
 	if (mContent != NULL) {

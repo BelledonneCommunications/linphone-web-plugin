@@ -23,6 +23,7 @@
  */
 
 #include "chatroomapi.h"
+#include "contentapi.h"
 #include "factoryapi.h"
 
 namespace LinphoneWeb {
@@ -50,9 +51,10 @@ void ChatRoomAPI::initProxy() {
 
 	registerMethod("compose", make_method(this, &ChatRoomAPI::compose));
 	registerMethod("getHistoryRange", make_method(this, &ChatRoomAPI::getHistoryRange));
+	registerMethod("newFileTransferMessage", make_method(this, &ChatRoomAPI::createFileTransferMessage));
 	registerMethod("newMessage", make_method(this, &ChatRoomAPI::createMessage));
 	registerMethod("newMessage2", make_method(this, &ChatRoomAPI::createMessage2));
-	registerMethod("sendMessage", make_method(this, &ChatRoomAPI::sendMessage));
+	registerMethod("sendChatMessage", make_method(this, &ChatRoomAPI::sendChatMessage));
 }
 
 void ChatRoomAPI::compose() {
@@ -65,6 +67,13 @@ CoreAPIPtr ChatRoomAPI::getCore() const {
 	CORE_MUTEX
 	FBLOG_DEBUG("ChatRoomAPI::getCore", "this=" << this);
 	return getFactory()->getCore(linphone_chat_room_get_core(mChatRoom));
+}
+
+ChatMessageAPIPtr ChatRoomAPI::createFileTransferMessage(ContentAPIPtr const &content) {
+	CORE_MUTEX
+	FBLOG_DEBUG("ChatRoomAPI::createFileTransferMessage", "this=" << this << "\t" << "content=" << content);
+	LinphoneChatMessage *chatMessage = linphone_chat_room_create_file_transfer_message(mChatRoom, content->getRef());
+	return getFactory()->getChatMessage(chatMessage);
 }
 
 ChatMessageAPIPtr ChatRoomAPI::createMessage(StringPtr const &message) {
@@ -110,26 +119,10 @@ bool ChatRoomAPI::remoteComposing() const {
 	return (linphone_chat_room_is_remote_composing(mChatRoom) == TRUE);
 }
 
-void ChatRoomAPI::sendMessage(ChatMessageAPIPtr chatMessage) {
+void ChatRoomAPI::sendChatMessage(ChatMessageAPIPtr const &chatMessage) {
 	CORE_MUTEX
-	FBLOG_DEBUG("ChatRoomAPI::sendMessage", "this=" << this << "\t" << "chatMessage=" << chatMessage);
-	linphone_chat_room_send_message2(mChatRoom, chatMessage->getRef(), ChatRoomAPI::wrapper_message_state_changed, mChatRoom);
-}
-
-
-
-void ChatRoomAPI::onMessageStateChanged(LinphoneChatMessage *msg, LinphoneChatMessageState state) {
-	FBLOG_DEBUG("ChatRoomAPI::onMessageStateChanged",  "this=" << this << "\t" << "msg=" << msg << "\t" << "state=" << state);
-	fire_messageStateChanged(boost::static_pointer_cast<ChatRoomAPI>(shared_from_this()), getFactory()->getChatMessage(msg), state);
-}
-
-void ChatRoomAPI::wrapper_message_state_changed(LinphoneChatMessage *msg, LinphoneChatMessageState state, void *ud) {
-	LinphoneChatRoom *room = (LinphoneChatRoom *)ud;
-	if (linphone_chat_room_get_user_data(room) != NULL) {
-		((ChatRoomAPI *)linphone_chat_room_get_user_data(room))->onMessageStateChanged(msg, state);
-	} else {
-		FBLOG_ERROR("ChatRoomAPI::wrapper_message_state_changed", "No proxy defined!");
-	}
+	FBLOG_DEBUG("ChatRoomAPI::sendChatMessage", "this=" << this << "\t" << "chatMessage=" << chatMessage);
+	linphone_chat_room_send_chat_message(mChatRoom, chatMessage->getRef());
 }
 
 } // LinphoneWeb
