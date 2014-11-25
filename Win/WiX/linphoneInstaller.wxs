@@ -100,6 +100,9 @@
 								${IF ENABLE_SRTP}
 								<File Id="srtp" Source="$(var.BINSRC)/srtp.dll" />
 								${ENDIF}
+								${IF ENABLE_ZRTP}
+								<File Id="bzrtp" Source="$(var.BINSRC)/bzrtp.dll" />
+								${ENDIF}
 								${IF ENABLE_FFMPEG}
 								<File Id="avcodec" Source="$(var.BINSRC)/avcodec-53.dll" />
 								<File Id="avutil" Source="$(var.BINSRC)/avutil-51.dll" />

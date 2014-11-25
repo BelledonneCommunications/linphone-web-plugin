@@ -176,6 +176,9 @@ function (create_rootfs PROJNAME OUTDIR)
 	if(ENABLE_SRTP)
 		list(APPEND ROOTFS_LIB_SOURCES libsrtp.1.${DEPENDENCY_EXT})
 	endif()
+	if(ENABLE_ZRTP)
+		list(APPEND ROOTFS_LIB_SOURCES libbzrtp.0.${DEPENDENCY_EXT})
+	endif()
 	if(ENABLE_FFMPEG)
 		list(APPEND ROOTFS_LIB_SOURCES
 			libavcodec.53.61.100.${DEPENDENCY_EXT}
