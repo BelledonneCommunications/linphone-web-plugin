@@ -56,6 +56,7 @@ execute_process(COMMAND ${SDK_STAGE_DIR}/bin/lp-gen-wrappers --output javascript
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${SDK_PROJECT_SOURCE_DIR}/Doc/plugin_specifics.js ${JSWRAPPER_DIR}/linphone/)
 file(GLOB JSWRAPPER_SOURCES	${JSWRAPPER_DIR}/linphone/[^.]*.js)
 execute_process(COMMAND python ${SDK_PROJECT_SOURCE_DIR}/Common/concat_files.py ${SDK_DIR}/linphone.js ${JSWRAPPER_SOURCES})
+execute_process(COMMAND python ${SDK_PROJECT_SOURCE_DIR}/Common/clean_js.py ${SDK_DIR}/linphone.js)
 execute_process(COMMAND ${JSDOC_PROGRAM} --recurse --destination ${SDK_PROJECT_NAME}-${SDK_PROJECT_VERSION}-doc ${JSWRAPPER_DIR} ${SDK_WORK_DIR}/MAINPAGE.md
 	WORKING_DIRECTORY ${SDK_DIR})
 execute_process(COMMAND python ${SDK_PROJECT_SOURCE_DIR}/Common/copy.py ${SDK_PROJECT_SOURCE_DIR}/Doc/tutorials ${SDK_DIR}/tutorials)
