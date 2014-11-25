@@ -1,0 +1,119 @@
+<!--
+ Linphone Web - Web plugin of Linphone an audio/video SIP phone
+ Copyright (c) 2013-2014 Belledonne Communications
+ All rights reserved.
+-->
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script type="text/javascript">
+			var linphone = {};
+
+			/* Return the core object */
+			function getCore() {
+				return document.getElementById('core');
+			}
+
+			/* Registration */
+			function register(username, password, server) {
+				var core = getCore();
+
+				/* Create the proxy config */
+				var proxy = core.newProxyConfig();
+
+				/* Create the authentication structure from identity. */
+				var authinfo = core.newAuthInfo(username, null, password, null, null);
+				/* Add the authentication info to LinphoneCore */
+				core.addAuthInfo(authinfo);
+
+				/* Configure the proxy config */
+				proxy.identity = 'sip:' + username + '@' + server; /*set identity with user name and domain*/
+				proxy.serverAddr = 'sip:' + server; /* we assume domain = proxy server address*/
+				proxy.registerEnabled = true; /*activate registration for this proxy config*/
+				core.addProxyConfig(proxy); /*add proxy config to linphone core*/
+				core.defaultProxy = proxy; /*set to default proxy*/
+			}
+
+			/* Basic chat message sending */
+			function sendMessage(username, server, msg) {
+				var core = getCore();
+
+				/* Get the chat room */
+				var chatRoom = core.getChatRoomFromUri('sip:' + username + '@' + server);
+				/* Create the chat message, */
+				var chatMsg = chatRoom.newMessage(msg);
+				/* add the callback for message state change, */
+				addEvent(chatMsg, "msgStateChanged", onMsgStateChanged);
+				/* and sent it */
+				chatRoom.sendChatMessage(chatMsg);
+			}
+
+			function loadCore(){
+				var core = getCore();
+				core.init();
+
+				/* Add the callback for registration state change and message reception */
+				addEvent(core, "registrationStateChanged", onRegistrationStateChanged);
+				addEvent(core, "messageReceived", onMessageReceived);
+
+				/* Display logs information in the console */
+				core.logHandler = function(level, message) {
+					window.console.log(message);
+				}
+
+				/* Start main loop for receiving notifications and doing background linphonecore work */
+				core.iterateEnabled = true;
+			}
+
+			/* Callback that displays registration states */
+			function onRegistrationStateChanged(core, proxy, state, message) {
+				updateStatus('registrationStatus', message);
+				console.log(message);
+			}
+
+			/* Callback that displays the send chat message states */
+			function onMsgStateChanged(chatMsg, state) {
+				updateStatus('msgStatus', linphone.getChatMessageStateText(state));
+				console.log(linphone.getChatMessageStateText(state));
+			}
+
+			/* Callback that displays the received chat message */
+			function onMessageReceived(core, chatRoom, chatMsg) {
+				updateStatus('receivedMsg', chatMsg.text);
+				console.log(chatMsg.text);
+			}
+
+			/* Handler function */
+			function onRegistration(form1) {
+				register(document.form1.username.value, document.form1.password.value, document.form1.server.value);
+			}
+
+			function onSendMessage(form1, form2) {
+				sendMessage(document.form1.username.value, document.form1.server.value, document.form2.message.value);
+			}
+		</script>
+		<script type="text/javascript" src="utils.js"></script>
+		<script type="text/javascript" src="linphone.js"></script>
+	</head>
+	<body>
+		<object id="core" type="application/x-linphone-web" width="0" height="0">
+			<param name="onload" value='loadCore'>
+		</object>
+		<form name="form1">
+			<p id="Registration"> 1. Registration</p>
+			<div>Username: <input id="username" type="text" value="" /></div>
+			<div>Password: <input id="password" type="password" value=""/></div>
+			<div>Server: <input id="server" type="text" value="" /></div>
+			<input type="button" OnClick="onRegistration(form1)" value="Register">
+			<div>Status: <span id="registrationStatus">No registration</span></div>
+		</form>
+		<form class ="form" name="form2">
+			<p id="Chat"> 2. Chat</p>
+			<div>Message to send: <input id="message" type="text" value="" /></div>
+			<input type="button" OnClick="onSendMessage(form1, form2)" value="Send">
+			<div>Sent message status: <span id="msgStatus"></span></div>
+			<div>Received message: <span id="receivedMsg"></span></div>
+		</form>
+	</body>
+</html>
