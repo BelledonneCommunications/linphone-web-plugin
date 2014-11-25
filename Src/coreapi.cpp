@@ -119,6 +119,8 @@ void CoreAPI::initProxy() {
 	registerMethod("inviteAddressWithParams", make_method(this, &CoreAPI::inviteAddressWithParams));
 	registerMethod("acceptCall", make_method(this, &CoreAPI::acceptCall));
 	registerMethod("acceptCallWithParams", make_method(this, &CoreAPI::acceptCallWithParams));
+	registerMethod("acceptEarlyMedia", make_method(this, &CoreAPI::acceptEarlyMedia));
+	registerMethod("acceptEarlyMediaWithParams", make_method(this, &CoreAPI::acceptEarlyMediaWithParams));
 	registerProperty("currentCall", make_property(this, &CoreAPI::getCurrentCall));
 	registerMethod("terminateCall", make_method(this, &CoreAPI::terminateCall));
 	registerMethod("terminateAllCalls", make_method(this, &CoreAPI::terminateAllCalls));
@@ -558,6 +560,22 @@ int CoreAPI::acceptCallWithParams(CallAPIPtr const &call, CallParamsAPIPtr const
 
 	FBLOG_DEBUG("CoreAPI::acceptCallWithParams", "this=" << this << "\t" << "call=" << call << "\t" << "params=" << params);
 	return linphone_core_accept_call_with_params(mCore, call->getRef(), params->getRef());
+}
+
+int CoreAPI::acceptEarlyMedia(CallAPIPtr const &call) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::acceptEarlyMedia", "this=" << this << "\t" << "call=" << call);
+	return linphone_core_accept_early_media(mCore, call->getRef());
+}
+
+int CoreAPI::acceptEarlyMediaWithParams(CallAPIPtr const &call, CallParamsAPIPtr const &params) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::acceptEarlyMediaWithParams", "this=" << this << "\t" << "call=" << call << "\t" << "params=" << params);
+	return linphone_core_accept_early_media_with_params(mCore, call->getRef(), params->getRef());
 }
 
 CallAPIPtr CoreAPI::getCurrentCall() {

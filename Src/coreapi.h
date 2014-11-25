@@ -88,6 +88,8 @@ public:
 	CallAPIPtr inviteAddressWithParams(AddressAPIPtr const &address, CallParamsAPIPtr const &params);
 	int acceptCall(CallAPIPtr const &call);
 	int acceptCallWithParams(CallAPIPtr const &call, CallParamsAPIPtr const &params);
+	int acceptEarlyMedia(CallAPIPtr const &call);
+	int acceptEarlyMediaWithParams(CallAPIPtr const &call, CallParamsAPIPtr const &params);
 	CallAPIPtr getCurrentCall();
 	int terminateCall(CallAPIPtr const &call);
 	int terminateAllCalls();
