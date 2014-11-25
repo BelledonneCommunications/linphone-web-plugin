@@ -3,34 +3,31 @@ Linphone Web Ui Tutorials
 
 
 Call
--------------
+----
 
-*Prerequisites : plugin installed
+*Prerequisites: installed plugin
 
-1. Launch call.html
-2. In the JavaScript Console
+1. Open call.html in a web browser
+2. Fill the first form to register to a SIP proxy
+3. Fill the second form to perform an outgoing call
 
-	- register with your sip account : 
-		registration("username","password","domain");
-	
-	- place a call :
-		call("address sip of your contact"); 
+
+Chat
+----
+
+*Prerequisites: installed plugin
+
+1. Open chat.html in a web browser
+2. Fill the first form to register to a SIP proxy
+3. Fill the second form to send a chat message to yourself
 
 
 Presence
--------------
+--------
 
-*Prerequisites : plugin installed
+*Prerequisites: installed plugin
 
-1. Launch presence.html
-2. In the JavaScript Console
-
-	- register with your sip account : 
-		registration("username","password","domain");
-	
-	- add a friend :
-		addFriend("sip:Friend address");
-	
-	- change your presence 
-		changeActivity(activity) for example linphone.PresenceActivityType.Working 
-		(All the activities are present in the file linphone.js)
+1. Open presence.html in a web browser
+2. Fill the first form to register to a SIP proxy
+3. Fill the second form to add a friend
+4. Change your status in the third form
