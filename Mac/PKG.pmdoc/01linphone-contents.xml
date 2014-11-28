@@ -32,13 +32,13 @@
 						<f n="mediastreamer" p="16877">
 							<f n="plugins" p="16877">
 								${IF ENABLE_G729}
-								<f n="libmsbcg729.0.so" p="33261"/>
+								<f n="libmsbcg729.0.dylib" p="33261"/>
 								${ENDIF}
 								${IF ENABLE_OPENH264}
-								<f n="libmsopenh264.0.so" p="33261"/>
+								<f n="libmsopenh264.0.dylib" p="33261"/>
 								${ENDIF}
 								${IF ENABLE_X264}
-								<f n="libmsx264.0.so" p="33261"/>
+								<f n="libmsx264.0.dylib" p="33261"/>
 								${ENDIF}
 							</f>
 						</f>
