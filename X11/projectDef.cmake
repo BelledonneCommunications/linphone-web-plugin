@@ -59,16 +59,7 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_voip.so.3"
 	"${CMAKE_INSTALL_PREFIX}/lib/libortp.so.9"
 )
-add_dependencies(${PROJECT_NAME} EP_linphone)
-if(ENABLE_G729)
-	add_dependencies(${PROJECT_NAME} EP_bcg729)
-endif()
-if(ENABLE_OPENH264)
-	add_dependencies(${PROJECT_NAME} EP_msopenh264)
-endif()
-if(ENABLE_X264)
-	add_dependencies(${PROJECT_NAME} EP_msx264)
-endif()
+add_dependencies(${PROJECT_NAME} TARGET_linphone_builder)
 
 SET(FB_PACKAGE_SUFFIX Linux)
 IF(FB_PLATFORM_ARCH_64)

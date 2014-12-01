@@ -65,16 +65,7 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		${OPENGL_FRAMEWORK}
 		${QUARTZ_CORE_FRAMEWORK}
 )
-add_dependencies(${PROJECT_NAME} EP_linphone)
-if(ENABLE_G729)
-	add_dependencies(${PROJECT_NAME} EP_bcg729)
-endif()
-if(ENABLE_OPENH264)
-	add_dependencies(${PROJECT_NAME} EP_msopenh264)
-endif()
-if(ENABLE_X264)
-	add_dependencies(${PROJECT_NAME} EP_msx264)
-endif()
+add_dependencies(${PROJECT_NAME} TARGET_linphone_builder)
 
 
 # fix output path
