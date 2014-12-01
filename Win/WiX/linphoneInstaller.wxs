@@ -164,6 +164,9 @@
 										<Directory Id="MsPluginsDir" Name="plugins">
 											<Component Id="MsPluginsDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc71">
 												<RemoveFolder Id="RemoveMsPluginsDir" On="uninstall" />
+												${IF ENABLE_AMR}
+												<File Id="libmsamr" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsamr.dll" />
+												${ENDIF}
 												${IF ENABLE_G729}
 												<File Id="libmsbcg729" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsbcg729.dll" />
 												${ENDIF}

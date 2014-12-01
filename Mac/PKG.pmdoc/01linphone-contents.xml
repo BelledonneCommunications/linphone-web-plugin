@@ -31,6 +31,9 @@
 					<f n="lib" p="16877">
 						<f n="mediastreamer" p="16877">
 							<f n="plugins" p="16877">
+								${IF ENABLE_AMR}
+								<f n="libmsamr.0.dylib" p="33261"/>
+								${ENDIF}
 								${IF ENABLE_G729}
 								<f n="libmsbcg729.0.dylib" p="33261"/>
 								${ENDIF}
