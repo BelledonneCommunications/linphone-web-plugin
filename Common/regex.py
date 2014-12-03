@@ -8,7 +8,7 @@ def replace(src, dest, variable = '', value = ''):
   intext = infile.read()
   infile.close()
   if variable == '':
-    match = r"\${IF .*}(.*?)\${ENDIF}"
+    match = r"\${IF .*?}(.*?)\${ENDIF}"
   else:
     match = r"\${IF " + variable + r"}(.*?)\${ENDIF}"
   if value != '' and str2bool(value):
