@@ -17,9 +17,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ##
 
-find_package(PythonInterp)
-find_program(ZIP_PROGRAM zip)
-find_program(JSDOC_PROGRAM jsdoc)
+find_package(PythonInterp REQUIRED)
+find_program(ZIP_PROGRAM zip REQUIRED)
+find_program(JSDOC_PROGRAM jsdoc REQUIRED)
 
 file(GLOB DOCUMENTATION
 	${SDK_STAGE_DIR}/share/doc/linphone-[^.]*.[^.]*.[^.]*/xml/[^.]*.xml
@@ -50,16 +50,16 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${JSWRAPPER_DIR})
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${JSWRAPPER_DIR})
 execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${SDK_DIR})
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${SDK_DIR})
-execute_process(COMMAND python ${SDK_PROJECT_SOURCE_DIR}/Common/concat_files.py ${SDK_WORK_DIR}/MAINPAGE.md ${SDK_PROJECT_SOURCE_DIR}/GETTING_STARTED.md ${SDK_PROJECT_SOURCE_DIR}/README.md ${SDK_PROJECT_SOURCE_DIR}/LICENSE.md)
+execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SDK_PROJECT_SOURCE_DIR}/Common/concat_files.py ${SDK_WORK_DIR}/MAINPAGE.md ${SDK_PROJECT_SOURCE_DIR}/GETTING_STARTED.md ${SDK_PROJECT_SOURCE_DIR}/README.md ${SDK_PROJECT_SOURCE_DIR}/LICENSE.md)
 execute_process(COMMAND ${SDK_STAGE_DIR}/bin/lp-gen-wrappers --output javascript --project linphone ${DOCUMENTATION}
 	WORKING_DIRECTORY ${JSWRAPPER_DIR})
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${SDK_PROJECT_SOURCE_DIR}/Doc/plugin_specifics.js ${JSWRAPPER_DIR}/linphone/)
 file(GLOB JSWRAPPER_SOURCES	${JSWRAPPER_DIR}/linphone/[^.]*.js)
-execute_process(COMMAND python ${SDK_PROJECT_SOURCE_DIR}/Common/concat_files.py ${SDK_DIR}/linphone.js ${JSWRAPPER_SOURCES})
-execute_process(COMMAND python ${SDK_PROJECT_SOURCE_DIR}/Common/clean_js.py ${SDK_DIR}/linphone.js)
+execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SDK_PROJECT_SOURCE_DIR}/Common/concat_files.py ${SDK_DIR}/linphone.js ${JSWRAPPER_SOURCES})
+execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SDK_PROJECT_SOURCE_DIR}/Common/clean_js.py ${SDK_DIR}/linphone.js)
 execute_process(COMMAND ${JSDOC_PROGRAM} --recurse --destination ${SDK_PROJECT_NAME}-${SDK_PROJECT_VERSION}-doc ${JSWRAPPER_DIR} ${SDK_WORK_DIR}/MAINPAGE.md
 	WORKING_DIRECTORY ${SDK_DIR})
-execute_process(COMMAND python ${SDK_PROJECT_SOURCE_DIR}/Common/copy.py ${SDK_PROJECT_SOURCE_DIR}/Doc/tutorials ${SDK_DIR}/tutorials)
+execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SDK_PROJECT_SOURCE_DIR}/Common/copy.py ${SDK_PROJECT_SOURCE_DIR}/Doc/tutorials ${SDK_DIR}/tutorials)
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${SDK_DIR}/linphone.js ${SDK_DIR}/tutorials/)
 execute_process(COMMAND ${ZIP_PROGRAM} -r ${SDK_FILENAME} ${SDK_PROJECT_NAME}-${SDK_PROJECT_VERSION}-sdk
 	WORKING_DIRECTORY ${SDK_WORK_DIR})
