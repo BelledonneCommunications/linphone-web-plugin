@@ -1,7 +1,7 @@
 #Common cmake function
 
-find_package(Java)
-find_package(PythonInterp)
+find_package(Java REQUIRED)
+find_package(PythonInterp REQUIRED)
 
 if (NOT FB_XPI_SIGNED_SUFFIX)
 	set (FB_XPI_SIGNED_SUFFIX _XPI_signed)
@@ -19,7 +19,7 @@ function (create_signed_xpi PROJNAME DIRECTORY OUT_FILE PEMFILE PASSFILE PROJDEP
 		ADD_CUSTOM_COMMAND(OUTPUT ${OUT_FILE}
 					DEPENDS ${XPI_SOURCES}
 					COMMAND ${CMAKE_COMMAND} -E remove ${OUT_FILE}
-					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/xpisign.py ${DIRECTORY} ${OUT_FILE} ${PEMFILE} ${PASSFILE}
+					COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Common/xpisign.py ${DIRECTORY} ${OUT_FILE} ${PEMFILE} ${PASSFILE}
 		)
 		SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_XPI_SIGNED_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 		message("-- Successfully added Sign XPI step")
@@ -44,7 +44,7 @@ function (create_signed_crx PROJNAME DIRECTORY OUT_FILE PEMFILE PASSFILE PROJDEP
 		ADD_CUSTOM_COMMAND(OUTPUT ${OUT_FILE}
 					DEPENDS ${CRX_SOURCES}
 					COMMAND ${CMAKE_COMMAND} -E remove ${OUT_FILE}
-					COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/Common/crxmake.py ${DIRECTORY} ${OUT_FILE} ${PEMFILE} ${PASSFILE}
+					COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Common/crxmake.py ${DIRECTORY} ${OUT_FILE} ${PEMFILE} ${PASSFILE}
 		)
 		SET_TARGET_PROPERTIES(${PLUGIN_NAME}${FB_CRX_SIGNED_SUFFIX} PROPERTIES FOLDER ${FBSTRING_ProductName})
 		message("-- Successfully added Sign CRX step")
@@ -77,11 +77,11 @@ function(configure_file_ext SRC DEST)
 	foreach(VAR ${_variableNames})
 		if(VAR MATCHES "^ENABLE_.*$" OR VAR MATCHES "^WITH_DYNAMIC_MSVC_RUNTIME$")
 			set(VALUE "${${VAR}}")
-			execute_process(COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/Common/regex.py" "${DEST}" "${DEST}" "${VAR}" "${VALUE}")
+			execute_process(COMMAND ${PYTHON_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Common/regex.py" "${DEST}" "${DEST}" "${VAR}" "${VALUE}")
 		endif()
 	endforeach()
 	# Remove IF references that have not been replaced by previous calls to regex.py
-	execute_process(COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/Common/regex.py" "${DEST}" "${DEST}")
+	execute_process(COMMAND ${PYTHON_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Common/regex.py" "${DEST}" "${DEST}")
 	
 	configure_file("${DEST}" "${DEST}")
 endfunction(configure_file_ext)
