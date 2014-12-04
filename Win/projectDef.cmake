@@ -190,7 +190,6 @@ function (create_rootfs PROJNAME OUTDIR)
 		linphone.${DEPENDENCY_EXT}
 		mediastreamer_base.${DEPENDENCY_EXT}
 		mediastreamer_voip.${DEPENDENCY_EXT}
-		libopus-0.${DEPENDENCY_EXT}
 		ortp.${DEPENDENCY_EXT}
 		polarssl.${DEPENDENCY_EXT}
 		speex.${DEPENDENCY_EXT}
@@ -220,6 +219,9 @@ function (create_rootfs PROJNAME OUTDIR)
 	endif()
 	if(ENABLE_OPENH264)
 		list(APPEND ROOTFS_MS_PLUGINS_LIB_SOURCES libmsopenh264.${DEPENDENCY_EXT})
+	endif()
+	if(ENABLE_OPUS)
+		list(APPEND ROOTFS_LIB_SOURCES libopus-0.${DEPENDENCY_EXT})
 	endif()
 	if(ENABLE_X264)
 		list(APPEND ROOTFS_MS_PLUGINS_LIB_SOURCES libmsx264-0.${DEPENDENCY_EXT})
