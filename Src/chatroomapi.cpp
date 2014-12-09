@@ -48,9 +48,13 @@ void ChatRoomAPI::initProxy() {
 	registerProperty("historySize", make_property(this, &ChatRoomAPI::getHistorySize));
 	registerProperty("peerAddress", make_property(this, &ChatRoomAPI::getPeerAddress));
 	registerProperty("remoteComposing", make_property(this, &ChatRoomAPI::remoteComposing));
+	registerProperty("unreadMessagesCount", make_property(this, &ChatRoomAPI::getUnreadMessagesCount));
 
 	registerMethod("compose", make_method(this, &ChatRoomAPI::compose));
+	registerMethod("deleteHistory", make_method(this, &ChatRoomAPI::deleteHistory));
+	registerMethod("deleteMessage", make_method(this, &ChatRoomAPI::deleteMessage));
 	registerMethod("getHistoryRange", make_method(this, &ChatRoomAPI::getHistoryRange));
+	registerMethod("markAsRead", make_method(this, &ChatRoomAPI::markAsRead));
 	registerMethod("newFileTransferMessage", make_method(this, &ChatRoomAPI::createFileTransferMessage));
 	registerMethod("newMessage", make_method(this, &ChatRoomAPI::createMessage));
 	registerMethod("newMessage2", make_method(this, &ChatRoomAPI::createMessage2));
@@ -61,6 +65,18 @@ void ChatRoomAPI::compose() {
 	CORE_MUTEX
 	FBLOG_DEBUG("ChatRoomAPI::compose", "this=" << this);
 	linphone_chat_room_compose(mChatRoom);
+}
+
+void ChatRoomAPI::deleteHistory() {
+	CORE_MUTEX
+	FBLOG_DEBUG("ChatRoomAPI::deleteHistory", "this=" << this);
+	linphone_chat_room_delete_history(mChatRoom);
+}
+
+void ChatRoomAPI::deleteMessage(ChatMessageAPIPtr const &chatMessage) {
+	CORE_MUTEX
+	FBLOG_DEBUG("ChatRoomAPI::deleteMessage", "this=" << this << "\t" << "chatMessage=" << chatMessage);
+	linphone_chat_room_delete_message(mChatRoom, chatMessage->getRef());
 }
 
 CoreAPIPtr ChatRoomAPI::getCore() const {
@@ -111,6 +127,18 @@ AddressAPIPtr ChatRoomAPI::getPeerAddress() const {
 	FBLOG_DEBUG("ChatRoomAPI::getPeerAddress", "this=" << this);
 	const LinphoneAddress *peerAddress = linphone_chat_room_get_peer_address(mChatRoom);
 	return getFactory()->getAddress(peerAddress);
+}
+
+int ChatRoomAPI::getUnreadMessagesCount() const {
+	CORE_MUTEX
+	FBLOG_DEBUG("ChatRoomAPI::getUnreadMessagesCount", "this=" << this);
+	return linphone_chat_room_get_unread_messages_count(mChatRoom);
+}
+
+void ChatRoomAPI::markAsRead() {
+	CORE_MUTEX
+	FBLOG_DEBUG("ChatRoomAPI::markAsRead", "this=" << this);
+	linphone_chat_room_mark_as_read(mChatRoom);
 }
 
 bool ChatRoomAPI::remoteComposing() const {

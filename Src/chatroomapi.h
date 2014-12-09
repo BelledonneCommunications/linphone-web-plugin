@@ -54,9 +54,13 @@ namespace LinphoneWeb {
 		ChatMessageAPIPtr createFileTransferMessage(ContentAPIPtr const &content);
 		ChatMessageAPIPtr createMessage(StringPtr const &message);
 		ChatMessageAPIPtr createMessage2(StringPtr const &message, StringPtr const &externalBodyUrl, int state, time_t time, bool isRead, bool isIncoming);
+		void deleteHistory();
+		void deleteMessage(ChatMessageAPIPtr const &chatMessage);
 		std::vector<ChatMessageAPIPtr> getHistoryRange(int begin, int end) const;
 		int getHistorySize() const;
 		AddressAPIPtr getPeerAddress() const;
+		int getUnreadMessagesCount() const;
+		void markAsRead();
 		bool remoteComposing() const;
 		void sendChatMessage(ChatMessageAPIPtr const &chatMessage);
 
