@@ -127,8 +127,7 @@ public:
 	int terminateConference();
 
 	// Chat functions
-	StringPtr getChatDatabasePath() const;
-	void setChatDatabasePath(StringPtr const &path);
+	DECLARE_PROPERTY_FILE(CoreAPI, getChatDatabasePath, setChatDatabasePath);
 	bool chatEnabled() const;
 	std::vector<ChatRoomAPIPtr> getChatRooms() const;
 	void disableChat(int denyReason);

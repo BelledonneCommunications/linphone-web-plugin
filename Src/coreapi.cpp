@@ -155,7 +155,7 @@ void CoreAPI::initProxy() {
 	registerMethod("terminateConference", make_method(this, &CoreAPI::terminateConference));
 
 	// Chat bindings
-	registerProperty("chatDatabasePath", make_property(this, &CoreAPI::getChatDatabasePath, &CoreAPI::setChatDatabasePath));
+	REGISTER_PROPERTY_FILE(CoreAPI, "chatDatabasePath", getChatDatabasePath, setChatDatabasePath);
 	registerProperty("chatEnabled", make_property(this, &CoreAPI::chatEnabled));
 	registerProperty("chatRooms", make_property(this, &CoreAPI::getChatRooms));
 	registerMethod("disableChat", make_method(this, &CoreAPI::disableChat));
@@ -858,6 +858,8 @@ int CoreAPI::terminateConference() {
  * Chat functions
  *
  */
+
+IMPLEMENT_PROPERTY_FILE(CoreAPI, getChatDatabasePath, setChatDatabasePath);
 
 StringPtr CoreAPI::getChatDatabasePath() const {
 	FBLOG_DEBUG("CoreAPI::getChatDatabasePath", "this=" << this);
