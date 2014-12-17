@@ -158,6 +158,7 @@ void CoreAPI::initProxy() {
 	REGISTER_PROPERTY_FILE(CoreAPI, "chatDatabasePath", getChatDatabasePath, setChatDatabasePath);
 	registerProperty("chatEnabled", make_property(this, &CoreAPI::chatEnabled));
 	registerProperty("chatRooms", make_property(this, &CoreAPI::getChatRooms));
+	registerProperty("fileTransferServer", make_property(this, &CoreAPI::getFileTransferServer, &CoreAPI::setFileTransferServer));
 	registerMethod("disableChat", make_method(this, &CoreAPI::disableChat));
 	registerMethod("enableChat", make_method(this, &CoreAPI::enableChat));
 	registerMethod("getChatRoom", make_method(this, &CoreAPI::getChatRoom));
@@ -275,6 +276,7 @@ void CoreAPI::initProxy() {
 	registerMethod("newProxyConfig", make_method(this, &CoreAPI::newProxyConfig));
 	registerMethod("newAuthInfo", make_method(this, &CoreAPI::newAuthInfo));
 	registerMethod("newAddress", make_method(this, &CoreAPI::newAddress));
+	registerMethod("createContent", make_method(this, &CoreAPI::createContent));
 	registerMethod("newLpConfig", make_method(this, &CoreAPI::newLpConfig));
 	registerMethod("newFriend", make_method(this, &CoreAPI::newFriend));
 	registerMethod("newFriendWithAddress", make_method(this, &CoreAPI::newFriendWithAddress));
@@ -872,6 +874,20 @@ void CoreAPI::setChatDatabasePath(StringPtr const &path) {
 	CORE_MUTEX
 	FBLOG_DEBUG("CoreAPI::setChatDatabasePath", "this=" << this << "\t" << "path=" << path);
 	linphone_core_set_chat_database_path(mCore, STRING_TO_CHARPTR(path));
+}
+
+StringPtr CoreAPI::getFileTransferServer() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	FBLOG_DEBUG("CoreAPI::getFileTransferServer", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_core_get_file_transfer_server(mCore));
+}
+
+void CoreAPI::setFileTransferServer(StringPtr const &server) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+	FBLOG_DEBUG("CoreAPI::setFileTransferServer", "this=" << this << "\t" << "server=" << server);
+	linphone_core_set_file_transfer_server(mCore, STRING_TO_CHARPTR(server));
 }
 
 bool CoreAPI::chatEnabled() const {
@@ -2273,6 +2289,14 @@ AuthInfoAPIPtr CoreAPI::newAuthInfo(StringPtr const &username, StringPtr const &
 AddressAPIPtr CoreAPI::newAddress(StringPtr const &address) const {
 	FBLOG_DEBUG("CoreAPI::newAddress", "this=" << this << "\t" << "address=" << address);
 	return getFactory()->getAddress(address);
+}
+
+ContentAPIPtr CoreAPI::createContent() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::createContent", "this=" << this);
+	return getFactory()->getContent(linphone_core_create_content(mCore));
 }
 
 LpConfigAPIPtr CoreAPI::newLpConfig(StringPtr const &uri) const {

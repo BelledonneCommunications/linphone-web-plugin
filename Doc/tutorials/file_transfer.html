@@ -1,0 +1,177 @@
+<!--
+ Linphone Web - Web plugin of Linphone an audio/video SIP phone
+ Copyright (c) 2013-2014 Belledonne Communications
+ All rights reserved.
+-->
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script type="text/javascript">
+			var linphone = {};
+
+			/* Return the core object */
+			function getCore() {
+				return document.getElementById('core');
+			}
+
+			/* Registration */
+			function register(username, password, server) {
+				var core = getCore();
+
+				/* Create the proxy config */
+				var proxy = core.newProxyConfig();
+
+				/* Create the authentication structure from identity. */
+				var authinfo = core.newAuthInfo(username, null, password, null, null);
+				/* Add the authentication info to LinphoneCore */
+				core.addAuthInfo(authinfo);
+
+				/* Configure the proxy config */
+				proxy.identity = 'sip:' + username + '@' + server; /*set identity with user name and domain*/
+				proxy.serverAddr = 'sip:' + server; /* we assume domain = proxy server address*/
+				proxy.registerEnabled = true; /*activate registration for this proxy config*/
+				core.addProxyConfig(proxy); /*add proxy config to linphone core*/
+				core.defaultProxy = proxy; /*set to default proxy*/
+			}
+
+			/* File uploading */
+			function startFileUpload(username, server, file) {
+				var reader = new FileReader();
+				reader.onload = function(e) {
+					var core = getCore();
+
+					/* Get the chat room */
+					var chatRoom = core.getChatRoomFromUri('sip:' + username + '@' + server);
+					/* Create the chat content. */
+					var content = core.createContent();
+					var splitted_type = file.type.split("/");
+					content.name = file.name;
+					content.type = splitted_type[0];
+					content.subtype = splitted_type[1];
+					content.buffer = window.btoa(reader.result); /* Put the file content in base64. */
+					/* Create the chat message, */
+					var chatMsg = chatRoom.newFileTransferMessage(content);
+					/* add the callback for message state change, */
+					addEvent(chatMsg, "msgStateChanged", onSendMsgStateChanged);
+					addEvent(chatMsg, "fileTransferProgressIndication", onSendFileTransferProgressIndication);
+					/* and sent it */
+					chatRoom.sendChatMessage(chatMsg);
+				}
+				reader.readAsBinaryString(file);
+			}
+
+			/* File downloading */
+			function startFileDownload(chatMsg) {
+				/* Set the path where to download the file, */
+				chatMsg.fileTransferFilepath = "local:///" + chatMsg.externalBodyUrl.substring(chatMsg.externalBodyUrl.lastIndexOf('/') + 1);
+				/* add the callback for message state change, */
+				addEvent(chatMsg, "msgStateChanged", onRecvMsgStateChanged);
+				addEvent(chatMsg, "fileTransferProgressIndication", onRecvFileTransferProgressIndication);
+				/* and download it */
+				chatMsg.downloadFile();
+			}
+
+			function loadCore(){
+				var core = getCore();
+				core.init();
+				core.fileTransferServer = "https://www.linphone.org:444/lft.php";
+
+				/* Add the callback for registration state change and message reception */
+				addEvent(core, "registrationStateChanged", onRegistrationStateChanged);
+				addEvent(core, "messageReceived", onMessageReceived);
+
+				/* Display logs information in the console */
+				core.logHandler = function(level, message) {
+					window.console.log(message);
+				}
+
+				/* Start main loop for receiving notifications and doing background linphonecore work */
+				core.iterateEnabled = true;
+			}
+
+			/* Callback that displays registration states */
+			function onRegistrationStateChanged(core, proxy, state, message) {
+				updateStatus('registrationStatus', message);
+				console.log(message);
+			}
+
+			/* Callback that displays the send chat message states */
+			function onSendMsgStateChanged(chatMsg, state) {
+				updateStatus('sendMsgStatus', linphone.getChatMessageStateText(state));
+				console.log(linphone.getChatMessageStateText(state));
+			}
+
+			/* Callback that displays the file upload progress indication */
+			function onSendFileTransferProgressIndication(chatMsg, content, offset, total) {
+				document.getElementById('sendProgress').innerHTML = Math.round((offset * 100.0) / total) + "%";
+			}
+
+			/* Callback that displays the receive chat message states */
+			function onRecvMsgStateChanged(chatMsg, state) {
+				updateStatus('recvMsgStatus', linphone.getChatMessageStateText(state));
+				console.log(linphone.getChatMessageStateText(state));
+				if (state == linphone.ChatMessageState.FileTransferDone) {
+					if (chatMsg.fileTransferInformation.type == "image") {
+						document.getElementById('downloadedFile').innerHTML = "<image src=\"" + chatMsg.fileTransferFilepathOnFilesystem + "\"/>"
+					} else {
+						document.getElementById('downloadedFile').innerHTML = "<a href=\"" + chatMsg.fileTransferFilepathOnFilesystem + "\">" + chatMsg.fileTransferInformation.name + "</a>";
+					}
+				}
+			}
+
+			/* Callback that displays the file upload progress indication */
+			function onRecvFileTransferProgressIndication(chatMsg, content, offset, total) {
+				alert(offset);
+				alert(total);
+				document.getElementById('recvProgress').innerHTML = Math.round((offset * 100.0) / total) + "%";
+			}
+
+			/* Callback that displays the received chat message */
+			function onMessageReceived(core, chatRoom, chatMsg) {
+				if (chatMsg.externalBodyUrl) {
+					updateStatus('receivedMsg', chatMsg.externalBodyUrl);
+					startFileDownload(chatMsg);
+				} else {
+					updateStatus('receivedMsg', chatMsg.text);
+					console.log(chatMsg.text);
+				}
+			}
+
+			/* Handler function */
+			function onRegistration(form1) {
+				register(document.form1.username.value, document.form1.password.value, document.form1.server.value);
+			}
+
+			function onUploadFile(form2) {
+				startFileUpload(document.form1.username.value, document.form1.server.value, document.form2.uploadFile.files[0]);
+			}
+		</script>
+		<script type="text/javascript" src="utils.js"></script>
+		<script type="text/javascript" src="linphone.js"></script>
+	</head>
+	<body>
+		<object id="core" type="application/x-linphone-web" width="0" height="0">
+			<param name="onload" value='loadCore'>
+		</object>
+		<form name="form1">
+			<p id="Registration">1. Registration</p>
+			<div>Username: <input id="username" type="text" value=""/></div>
+			<div>Password: <input id="password" type="password" value=""/></div>
+			<div>Server: <input id="server" type="text" value=""/></div>
+			<input type="button" OnClick="onRegistration(form1)" value="Register">
+			<div>Status: <span id="registrationStatus">No registration</span></div>
+		</form>
+		<form class ="form" name="form2">
+			<p id="Upload">2. Upload file / Download file</p>
+			<div>File to upload: <input id="uploadFile" type="file"/></div>
+			<input type="button" OnClick="onUploadFile(form2)" value="Upload">
+			<div>Sent message status: <span id="sendMsgStatus"></span></div>
+			<div>Send progression: <span id="sendProgress">0%</span></div>
+			<div>Upload URL: <span id="receivedMsg"></span></div>
+			<div>Received message status: <span id="recvMsgStatus"></span></div>
+			<div>Received progression: <span id="recvProgress">0%</span></div>
+			<div id="downloadedFile"></div>
+		</form>
+	</body>
+</html>

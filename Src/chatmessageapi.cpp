@@ -50,7 +50,8 @@ void ChatMessageAPI::initProxy() {
 	registerProperty("chatRoom", make_property(this, &ChatMessageAPI::getChatRoom));
 	registerProperty("errorInfo", make_property(this, &ChatMessageAPI::getErrorInfo));
 	registerProperty("externalBodyUrl", make_property(this, &ChatMessageAPI::getExternalBodyUrl));
-	registerProperty("fileTransferFilePath", make_property(this, &ChatMessageAPI::getFileTransferFilepath));
+	REGISTER_PROPERTY_FILE(ChatMessageAPI, "fileTransferFilepath", getFileTransferFilepath, setFileTransferFilepath);
+	registerProperty("fileTransferFilepathOnFilesystem", make_property(this, &ChatMessageAPI::getFileTransferFilepathOnFilesystem));
 	registerProperty("fileTransferInformation", make_property(this, &ChatMessageAPI::getFileTransferInformation));
 	registerProperty("fromAddress", make_property(this, &ChatMessageAPI::getFromAddress));
 	registerProperty("localAddress", make_property(this, &ChatMessageAPI::getLocalAddress));
@@ -66,7 +67,26 @@ void ChatMessageAPI::initProxy() {
 	registerMethod("addCustomHeader", make_method(this, &ChatMessageAPI::addCustomHeader));
 	registerMethod("cancelFileTransfer", make_method(this, &ChatMessageAPI::cancelFileTransfer));
 	registerMethod("clone", make_method(this, &ChatMessageAPI::clone));
+	registerMethod("downloadFile", make_method(this, &ChatMessageAPI::downloadFile));
 	registerMethod("getCustomHeader", make_method(this, &ChatMessageAPI::getCustomHeader));
+}
+
+IMPLEMENT_PROPERTY_FILE(ChatMessageAPI, getFileTransferFilepath, setFileTransferFilepath);
+
+StringPtr ChatMessageAPI::getFileTransferFilepath() const {
+	CORE_MUTEX
+	FBLOG_DEBUG("ChatMessageAPI::getFileTransferFilepath", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_chat_message_get_file_transfer_filepath(mChatMessage));
+}
+
+void ChatMessageAPI::setFileTransferFilepath(StringPtr const &path) {
+	CORE_MUTEX
+	FBLOG_DEBUG("ChatMessageAPI::setFileTransferFilepath", "this=" << this << "\t" << "path=" << path);
+	linphone_chat_message_set_file_transfer_filepath(mChatMessage, STRING_TO_CHARPTR(path));
+}
+
+StringPtr ChatMessageAPI::getFileTransferFilepathOnFilesystem() const {
+	return getFileTransferFilepath();
 }
 
 void ChatMessageAPI::addCustomHeader(StringPtr const &headerName, StringPtr const &headerValue) {
@@ -118,12 +138,6 @@ StringPtr ChatMessageAPI::getExternalBodyUrl() const {
 	CORE_MUTEX
 	FBLOG_DEBUG("ChatMessageAPI::getExternalBodyUrl", "this=" << this);
 	return CHARPTR_TO_STRING(linphone_chat_message_get_external_body_url(mChatMessage));
-}
-
-StringPtr ChatMessageAPI::getFileTransferFilepath() const {
-	CORE_MUTEX
-	FBLOG_DEBUG("ChatMessageAPI::getFileTransferFilepath", "this=" << this);
-	return CHARPTR_TO_STRING(linphone_chat_message_get_file_transfer_filepath(mChatMessage));
 }
 
 ContentAPIPtr ChatMessageAPI::getFileTransferInformation() const {

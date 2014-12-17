@@ -44,8 +44,8 @@ namespace LinphoneWeb {
 	public:
 		virtual ~ContentAPI();
 
-		std::vector<unsigned char> getBuffer() const;
-		void setBuffer(std::vector<unsigned char> buffer);
+		StringPtr getBuffer() const;
+		void setBuffer(StringPtr const &b64String);
 		StringPtr getEncoding() const;
 		void setEncoding(StringPtr const &encoding);
 		StringPtr getName() const;

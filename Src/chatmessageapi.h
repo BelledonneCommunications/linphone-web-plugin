@@ -49,6 +49,8 @@ namespace LinphoneWeb {
 	public:
 		virtual ~ChatMessageAPI();
 
+		DECLARE_PROPERTY_FILE(ChatMessageAPI, getFileTransferFilepath, setFileTransferFilepath);
+		StringPtr getFileTransferFilepathOnFilesystem() const;
 		void addCustomHeader(StringPtr const &headerName, StringPtr const &headerValue);
 		StringPtr getAppdata() const;
 		void setAppdata(StringPtr const &data);
@@ -57,7 +59,6 @@ namespace LinphoneWeb {
 		ChatMessageAPIPtr clone() const;
 		ErrorInfoAPIPtr getErrorInfo() const;
 		StringPtr getExternalBodyUrl() const;
-		StringPtr getFileTransferFilepath() const;
 		ContentAPIPtr getFileTransferInformation() const;
 		AddressAPIPtr getFromAddress() const;
 		StringPtr getCustomHeader(StringPtr const &headerName);

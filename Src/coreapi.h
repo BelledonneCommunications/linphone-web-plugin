@@ -46,6 +46,7 @@ FB_FORWARD_PTR(CallParamsAPI)
 FB_FORWARD_PTR(CallStatsAPI)
 FB_FORWARD_PTR(ChatMessageAPI)
 FB_FORWARD_PTR(ChatRoomAPI)
+FB_FORWARD_PTR(ContentAPI)
 FB_FORWARD_PTR(CoreAPI)
 FB_FORWARD_PTR(FileManagerAPI)
 FB_FORWARD_PTR(FriendAPI)
@@ -128,6 +129,8 @@ public:
 
 	// Chat functions
 	DECLARE_PROPERTY_FILE(CoreAPI, getChatDatabasePath, setChatDatabasePath);
+	StringPtr getFileTransferServer() const;
+	void setFileTransferServer(StringPtr const &server);
 	bool chatEnabled() const;
 	std::vector<ChatRoomAPIPtr> getChatRooms() const;
 	void disableChat(int denyReason);
@@ -295,6 +298,7 @@ public:
 	AuthInfoAPIPtr newAuthInfo(StringPtr const &username, StringPtr const &userid,
 			StringPtr const &passwd, StringPtr const &ha1, StringPtr const &realm, StringPtr const &domain) const;
 	AddressAPIPtr newAddress(StringPtr const &address) const;
+	ContentAPIPtr createContent() const;
 	LpConfigAPIPtr newLpConfig(StringPtr const &uri) const;
 	FriendAPIPtr newFriend() const;
 	FriendAPIPtr newFriendWithAddress(StringPtr const &address) const;

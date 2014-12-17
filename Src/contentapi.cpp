@@ -24,6 +24,7 @@
 
 #include "contentapi.h"
 #include "factoryapi.h"
+#include <ortp/b64.h>
 
 namespace LinphoneWeb {
 
@@ -58,17 +59,28 @@ void ContentAPI::initProxy() {
 	registerProperty("type", make_property(this, &ContentAPI::getType, &ContentAPI::setType));
 }
 
-std::vector<unsigned char> ContentAPI::getBuffer() const {
+StringPtr ContentAPI::getBuffer() const {
 	CORE_MUTEX
 	FBLOG_DEBUG("ContentAPI::getBuffer", "this=" << this);
 	const unsigned char *buffer = reinterpret_cast<unsigned char *>(linphone_content_get_buffer(mContent));
-	return std::vector<unsigned char>(buffer, buffer + linphone_content_get_size(mContent));
+	size_t b64Size = b64::b64_encode(NULL, linphone_content_get_size(mContent), NULL, 0);
+	char *b64Buffer = (char *)ms_malloc(b64Size);
+	b64::b64_encode(linphone_content_get_buffer(mContent), linphone_content_get_size(mContent), b64Buffer, b64Size);
+	StringPtr b64String = CHARPTR_TO_STRING(b64Buffer);
+	ms_free(b64Buffer);
+	return b64String;
 }
 
-void ContentAPI::setBuffer(std::vector<unsigned char> buffer) {
+void ContentAPI::setBuffer(StringPtr const &b64String) {
 	CORE_MUTEX
-	FBLOG_DEBUG("ContentAPI::setBuffer", "this=" << this << "\t" << "buffer.size()=" << buffer.size());
-	linphone_content_set_buffer(mContent, &buffer[0], buffer.size());
+	size_t b64Size = b64String ? b64String->length() : 0;
+	FBLOG_DEBUG("ContentAPI::setBuffer", "this=" << this << "\t" << "b64String.length()=" << b64Size);
+	const char *b64Buffer = STRING_TO_CHARPTR(b64String);
+	size_t bufferSize = b64::b64_decode(b64Buffer, b64Size, NULL, 0);
+	uint8_t *buffer = (uint8_t *)ms_malloc(bufferSize);
+	bufferSize = b64::b64_decode(b64Buffer, b64Size, buffer, bufferSize);
+	linphone_content_set_buffer(mContent, &buffer[0], bufferSize);
+	ms_free(buffer);
 }
 
 StringPtr ContentAPI::getEncoding() const {
