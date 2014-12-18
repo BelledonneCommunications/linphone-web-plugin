@@ -62,7 +62,6 @@ void ContentAPI::initProxy() {
 StringPtr ContentAPI::getBuffer() const {
 	CORE_MUTEX
 	FBLOG_DEBUG("ContentAPI::getBuffer", "this=" << this);
-	const unsigned char *buffer = reinterpret_cast<unsigned char *>(linphone_content_get_buffer(mContent));
 	size_t b64Size = b64::b64_encode(NULL, linphone_content_get_size(mContent), NULL, 0);
 	char *b64Buffer = (char *)ms_malloc(b64Size);
 	b64::b64_encode(linphone_content_get_buffer(mContent), linphone_content_get_size(mContent), b64Buffer, b64Size);
