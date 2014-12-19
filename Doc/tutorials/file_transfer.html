@@ -122,8 +122,6 @@
 
 			/* Callback that displays the file upload progress indication */
 			function onRecvFileTransferProgressIndication(chatMsg, content, offset, total) {
-				alert(offset);
-				alert(total);
 				document.getElementById('recvProgress').innerHTML = Math.round((offset * 100.0) / total) + "%";
 			}
 
