@@ -92,7 +92,7 @@ def crxmake(dirname, pem_name, pass_file, crx_name):
 
 if __name__ == '__main__':
   if len(sys.argv) != 5 and len(sys.argv) != 3:
-    print 'Usage: %s source_dir key_file pass_file output_file' % sys.argv[0]
+    print('Usage: %s source_dir key_file pass_file output_file' % sys.argv[0])
     sys.exit(2)
   if len(sys.argv) == 5:
     crxmake(sys.argv[1], sys.argv[3], sys.argv[4], sys.argv[2])

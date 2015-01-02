@@ -21,6 +21,9 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
+# Force use of python 2.7 as m2crypto is not available for python 3
+set(Python_ADDITIONAL_VERSIONS 2.7)
+
 Project(${PLUGIN_NAME})
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
