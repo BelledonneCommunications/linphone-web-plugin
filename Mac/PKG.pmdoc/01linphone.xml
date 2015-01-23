@@ -20,8 +20,8 @@
 		<mod>scripts.postinstall.path</mod>
 	</config>
 	<scripts>
-		<preinstall relative="false" mod="true">${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/scripts/remove-old-install.sh</preinstall>
-		<scripts-dir relative="false" mod="true">${CMAKE_CURRENT_BINARY_DIR}/PKG.pmdoc/scripts</scripts-dir>
+		<preinstall relative="false" mod="true">${OUTDIR}/PKG.pmdoc/scripts/remove-old-install.sh</preinstall>
+		<scripts-dir relative="false" mod="true">${OUTDIR}/PKG.pmdoc/scripts</scripts-dir>
 	</scripts>
 	<contents>
 		<file-list>01linphone-contents.xml</file-list>
