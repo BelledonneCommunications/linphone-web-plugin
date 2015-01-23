@@ -1,3 +1,3 @@
 #!/bin/sh
 
-rm -rf $2/nplinphoneweb*
+rm -rf $2/np@PROJNAME@-*.plugin
