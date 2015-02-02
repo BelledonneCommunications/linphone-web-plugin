@@ -36,6 +36,7 @@ FB_FORWARD_PTR(CallStatsAPI)
 FB_FORWARD_PTR(AddressAPI)
 FB_FORWARD_PTR(CoreAPI)
 FB_FORWARD_PTR(ErrorInfoAPI)
+FB_FORWARD_PTR(VideoAPI)
 
 FB_FORWARD_PTR(CallAPI)
 class CallAPI: public WrapperAPI {
@@ -82,6 +83,8 @@ public:
 	void enableEchoCancellation(bool enabled);
 	bool echoLimiterEnabled() const;
 	void enableEchoLimiter(bool enabled);
+	void setNativeVideoWindowId(WhiteBoard::IdType id);
+	WhiteBoard::IdType getNativeVideoWindowId() const;
 
 	bool askedToAutoanswer() const;
 	bool hasTransferPending() const;
@@ -95,6 +98,11 @@ public:
 	inline LinphoneCall *getRef() const {
 		return mCall;
 	}
+	
+private:
+	VideoAPIWeakPtr mVideoWindow;
+	static void videoWindowEventHandler(const CallAPIWeakPtr &callPtr, void *ptr);
+	void setVideoWindow(void *ptr);
 };
 	
 } // LinphoneWeb

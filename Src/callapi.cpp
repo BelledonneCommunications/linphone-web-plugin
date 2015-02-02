@@ -55,6 +55,7 @@ void CallAPI::initProxy() {
 	registerProperty("echoCancellationEnabled", FB::make_property(this, &CallAPI::echoCancellationEnabled, &CallAPI::enableEchoCancellation));
 	registerProperty("echoLimiterEnabled", FB::make_property(this, &CallAPI::echoLimiterEnabled, &CallAPI::enableEchoLimiter));
 	registerProperty("errorInfo", FB::make_property(this, &CallAPI::getErrorInfo));
+	registerProperty("nativeVideoWindowId", make_property(this, &CallAPI::getNativeVideoWindowId, &CallAPI::setNativeVideoWindowId));
 	registerProperty("playVolume", FB::make_property(this, &CallAPI::getPlayVolume));
 	registerProperty("reason", FB::make_property(this, &CallAPI::getReason));
 	registerProperty("recordVolume", FB::make_property(this, &CallAPI::getRecordVolume));
@@ -164,6 +165,50 @@ ErrorInfoAPIPtr CallAPI::getErrorInfo() const {
 
 	FBLOG_DEBUG("CallAPI::getErrorInfo", "this=" << this);
 	return getFactory()->getErrorInfo(linphone_call_get_error_info(mCall));
+}
+
+void CallAPI::videoWindowEventHandler(const CallAPIWeakPtr &callPtr, void *ptr) {
+	CallAPIPtr call = callPtr.lock();
+	if (call) {
+		call->setVideoWindow(ptr);
+	}
+}
+	
+void CallAPI::setVideoWindow(void *ptr) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CallAPI::setVideoWindow", "this=" << this << "\t" << "ptr=" << ptr);
+	if (ptr != NULL) {
+		linphone_call_set_native_video_window_id(mCall, (unsigned long)ptr);
+	} else {
+		linphone_call_set_native_video_window_id(mCall, (unsigned long)-1);
+	}
+}
+
+void CallAPI::setNativeVideoWindowId(WhiteBoard::IdType id) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CallAPI::setNativeVideoWindowId", "this=" << this << "\t" << "id=" << id);
+	
+	if(getFactory()->getWhiteBoard()->getId(mVideoWindow) == id) {
+		// Same do nothing
+		return;
+	}
+
+	mVideoWindow = getFactory()->getWhiteBoard()->getValue<VideoAPIWeakPtr>(id);
+	VideoAPIPtr video = mVideoWindow.lock();
+	if(video) {
+		video->setWindowEventHandler(boost::bind(&CallAPI::videoWindowEventHandler,
+			CallAPIWeakPtr(boost::static_pointer_cast<CallAPI>(this->shared_from_this())), _1));
+	}
+}
+
+WhiteBoard::IdType CallAPI::getNativeVideoWindowId() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CallAPI::getNativeVideoWindowId", "this=" << this);
+	
+	return getFactory()->getWhiteBoard()->getId(mVideoWindow);
 }
 
 float CallAPI::getPlayVolume() const {
