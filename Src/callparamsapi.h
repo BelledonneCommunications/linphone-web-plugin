@@ -50,6 +50,8 @@ public:
 
 	int getAudioBandwidthLimit() const;
 	void setAudioBandwidthLimit(int bw);
+	int getAudioDirection() const;
+	void setAudioDirection(int dir);
 	bool earlyMediaSendingEnabled() const;
 	void enableEarlyMediaSending(bool enable);
 	bool localConferenceMode() const;
@@ -63,6 +65,8 @@ public:
 	PayloadTypeAPIPtr getUsedVideoCodec() const;
 	StringPtr getRecordFile() const;
 	void setRecordFile(StringPtr const &file);
+	int getVideoDirection() const;
+	void setVideoDirection(int dir);
 	void enableVideo(bool enable);
 	bool videoEnabled() const;
 	CallParamsAPIPtr copy() const;

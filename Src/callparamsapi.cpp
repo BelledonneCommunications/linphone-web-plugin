@@ -55,18 +55,22 @@ void CallParamsAPI::initProxy() {
 	if (!isConst()) {
 		registerMethod("addCustomHeader", make_method(this, &CallParamsAPI::addCustomHeader));
 		registerProperty("audioBandwidthLimit", make_property(this, &CallParamsAPI::getAudioBandwidthLimit, &CallParamsAPI::setAudioBandwidthLimit));
+		registerProperty("audioDirection", make_property(this, &CallParamsAPI::getAudioDirection, &CallParamsAPI::setAudioDirection));
 		registerProperty("earlyMediaSendingEnabled", make_property(this, &CallParamsAPI::earlyMediaSendingEnabled, &CallParamsAPI::enableEarlyMediaSending));
 		registerProperty("lowBandwidthEnabled", make_property(this, &CallParamsAPI::lowBandwidthEnabled, &CallParamsAPI::enableLowBandwidth));
-		registerProperty("recordFile", make_property(this, &CallParamsAPI::getRecordFile, &CallParamsAPI::setRecordFile));
-		registerProperty("videoEnabled", make_property(this, &CallParamsAPI::videoEnabled, &CallParamsAPI::enableVideo));
 		registerProperty("mediaEncryption", make_property(this, &CallParamsAPI::getMediaEncryption, &CallParamsAPI::setMediaEncryption));
+		registerProperty("recordFile", make_property(this, &CallParamsAPI::getRecordFile, &CallParamsAPI::setRecordFile));
+		registerProperty("videoDirection", make_property(this, &CallParamsAPI::getVideoDirection, &CallParamsAPI::setVideoDirection));
+		registerProperty("videoEnabled", make_property(this, &CallParamsAPI::videoEnabled, &CallParamsAPI::enableVideo));
 	} else {
 		registerProperty("audioBandwidthLimit", make_property(this, &CallParamsAPI::getAudioBandwidthLimit));
+		registerProperty("audioDirection", make_property(this, &CallParamsAPI::getAudioDirection));
 		registerProperty("earlyMediaSendingEnabled", make_property(this, &CallParamsAPI::earlyMediaSendingEnabled));
 		registerProperty("lowBandwidthEnabled", make_property(this, &CallParamsAPI::lowBandwidthEnabled));
-		registerProperty("recordFile", make_property(this, &CallParamsAPI::getRecordFile));
-		registerProperty("videoEnabled", make_property(this, &CallParamsAPI::videoEnabled));
 		registerProperty("mediaEncryption", make_property(this, &CallParamsAPI::getMediaEncryption));
+		registerProperty("recordFile", make_property(this, &CallParamsAPI::getRecordFile));
+		registerProperty("videoDirection", make_property(this, &CallParamsAPI::getVideoDirection));
+		registerProperty("videoEnabled", make_property(this, &CallParamsAPI::videoEnabled));
 	}
 }
 
@@ -86,6 +90,20 @@ void CallParamsAPI::setAudioBandwidthLimit(int bw) {
 
 	FBLOG_DEBUG("CallParamsAPI::setAudioBandwidthLimit", "this=" << this << "\t" << "bw=" << bw);
 	linphone_call_params_set_audio_bandwidth_limit(mCallParams, bw);
+}
+
+int CallParamsAPI::getAudioDirection() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CallParamsAPI::getAudioDirection", "this=" << this);
+	return (int)linphone_call_params_get_audio_direction(mCallParams);
+}
+
+void CallParamsAPI::setAudioDirection(int dir) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CallParamsAPI::setAudioDirection", "this=" << this << "\t" << "dir=" << dir);
+	linphone_call_params_set_audio_direction(mCallParams, (LinphoneMediaDirection)dir);
 }
 
 bool CallParamsAPI::earlyMediaSendingEnabled() const {
@@ -177,6 +195,20 @@ void CallParamsAPI::setRecordFile(StringPtr const &file) {
 
 	FBLOG_DEBUG("CallParamsAPI::setRecordFile", "this=" << this << "\t" << "file=" << file);
 	linphone_call_params_set_record_file(mCallParams, STRING_TO_CHARPTR(file));
+}
+
+int CallParamsAPI::getVideoDirection() const {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CallParamsAPI::getVideoDirection", "this=" << this);
+	return (int)linphone_call_params_get_video_direction(mCallParams);
+}
+
+void CallParamsAPI::setVideoDirection(int dir) {
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CallParamsAPI::setVideoDirection", "this=" << this << "\t" << "dir=" << dir);
+	linphone_call_params_set_video_direction(mCallParams, (LinphoneMediaDirection)dir);
 }
 
 void CallParamsAPI::enableVideo(bool enable) {
