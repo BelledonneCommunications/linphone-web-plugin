@@ -792,7 +792,7 @@ bool CoreAPI::getRingDuringIncomingEarlyMedia() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRingDuringIncomingEarlyMedia", "this=" << this);
-	return linphone_core_get_ring_during_incoming_early_media(mCore);
+	return linphone_core_get_ring_during_incoming_early_media(mCore) == TRUE ? true : false;
 }
 
 void CoreAPI::setRingDuringIncomingEarlyMedia(bool enable) {
@@ -800,7 +800,7 @@ void CoreAPI::setRingDuringIncomingEarlyMedia(bool enable) {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::setRingDuringIncomingEarlyMedia", "this=" << this << "\t" << "enable=" << enable);
-	linphone_core_set_ring_during_incoming_early_media(mCore, enable);
+	linphone_core_set_ring_during_incoming_early_media(mCore, enable ? TRUE : FALSE);
 }
 
 /*
