@@ -143,6 +143,7 @@ void CoreAPI::initProxy() {
 	registerProperty("callsNb", make_property(this, &CoreAPI::getCallsNb));
 	registerProperty("missedCallsCount", make_property(this, &CoreAPI::getMissedCallsCount));
 	registerMethod("resetMissedCallsCount", make_method(this, &CoreAPI::resetMissedCallsCount));
+	registerProperty("ringDuringIncomingEarlyMedia", make_property(this, &CoreAPI::getRingDuringIncomingEarlyMedia, &CoreAPI::setRingDuringIncomingEarlyMedia));
 
 	// Conference bindings
 	registerMethod("addAllToConference", make_method(this, &CoreAPI::addAllToConference));
@@ -263,6 +264,7 @@ void CoreAPI::initProxy() {
 	registerMethod("clearAllAuthInfo", make_method(this, &CoreAPI::clearAllAuthInfo));
 
 	// File bindings
+	REGISTER_PROPERTY_FILE(CoreAPI, "remoteRingbackTone", getRemoteRingbackTone, setRemoteRingbackTone);
 	REGISTER_PROPERTY_FILE(CoreAPI, "ring", getRing, setRing);
 	REGISTER_PROPERTY_FILE(CoreAPI, "ringback", getRingback, setRingback);
 	REGISTER_PROPERTY_FILE(CoreAPI, "playFile", getPlayFile, setPlayFile);
@@ -783,6 +785,22 @@ void CoreAPI::resetMissedCallsCount() {
 
 	FBLOG_DEBUG("CoreAPI::resetMissedCallsCount", "this=" << this);
 	return linphone_core_reset_missed_calls_count(mCore);
+}
+
+bool CoreAPI::getRingDuringIncomingEarlyMedia() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getRingDuringIncomingEarlyMedia", "this=" << this);
+	return linphone_core_get_ring_during_incoming_early_media(mCore);
+}
+
+void CoreAPI::setRingDuringIncomingEarlyMedia(bool enable) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setRingDuringIncomingEarlyMedia", "this=" << this << "\t" << "enable=" << enable);
+	linphone_core_set_ring_during_incoming_early_media(mCore, enable);
 }
 
 /*
@@ -2643,6 +2661,24 @@ AddressAPIPtr CoreAPI::interpretUrl(StringPtr const &url) const {
  * File functions
  *
  */
+
+IMPLEMENT_PROPERTY_FILE(CoreAPI, getRemoteRingbackTone, setRemoteRingbackTone);
+
+StringPtr CoreAPI::getRemoteRingbackTone() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getRemoteRingbackTone", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_core_get_remote_ringback_tone(mCore));
+}
+
+void CoreAPI::setRemoteRingbackTone(StringPtr const &ringback) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setRemoteRingbackTone", "this=" << this << "\t" << "ringback=" << ringback);
+	linphone_core_set_remote_ringback_tone(mCore, STRING_TO_CHARPTR(ringback));
+}
 
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getRing, setRing);
 

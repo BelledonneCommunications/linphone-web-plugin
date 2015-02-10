@@ -116,6 +116,8 @@ public:
 	int getCallsNb() const;
 	int getMissedCallsCount() const;
 	void resetMissedCallsCount();
+	bool getRingDuringIncomingEarlyMedia() const;
+	void setRingDuringIncomingEarlyMedia(bool enable);
 
 	// Conference functions
 	int addAllToConference();
@@ -357,6 +359,7 @@ public:
 	AddressAPIPtr interpretUrl(StringPtr const &url) const;
 
 	// File
+	DECLARE_PROPERTY_FILE(CoreAPI, getRemoteRingbackTone, setRemoteRingbackTone);
 	DECLARE_PROPERTY_FILE(CoreAPI, getRing, setRing);
 	DECLARE_PROPERTY_FILE(CoreAPI, getRingback, setRingback);
 	DECLARE_PROPERTY_FILE(CoreAPI, getPlayFile, setPlayFile);
