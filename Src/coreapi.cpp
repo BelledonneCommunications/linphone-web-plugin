@@ -271,6 +271,7 @@ void CoreAPI::initProxy() {
 	REGISTER_PROPERTY_FILE(CoreAPI, "recordFile", getRecordFile, setRecordFile);
 	REGISTER_PROPERTY_FILE(CoreAPI, "rootCa", getRootCa, setRootCa);
 	REGISTER_PROPERTY_FILE(CoreAPI, "staticPicture", getStaticPicture, setStaticPicture);
+	REGISTER_PROPERTY_FILE(CoreAPI, "userCertificatesPath", getUserCertificatesPath, setUserCertificatesPath);
 	REGISTER_PROPERTY_FILE(CoreAPI, "zrtpSecretsFile", getZrtpSecretsFile, setZrtpSecretsFile);
 
 	// Initiator bindings
@@ -371,9 +372,39 @@ void CoreAPI::prepareInit() {
 }
 
 void CoreAPI::finishInit() {
+	FileManagerAPIPtr fm = getFileManager();
+
 	// Specific Linphone Web behaviour
 	linphone_core_set_native_preview_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
 	linphone_core_set_native_video_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
+
+	// Sound file paths
+	FB::URI staticPictureUri("internal:///share/images/nowebcamCIF.jpg");
+	std::string staticPictureFile = fm->uriToFile(staticPictureUri);
+	linphone_core_set_static_picture(mCore, staticPictureFile.c_str());
+	FB::URI ringUri("internal:///share/sounds/linphone/rings/oldphone.wav");
+	std::string ringFile = fm->uriToFile(ringUri);
+	linphone_core_set_ring(mCore, ringFile.c_str());
+	FB::URI ringbackUri("internal:///share/sounds/linphone/ringback.wav");
+	std::string ringbackFile = fm->uriToFile(ringbackUri);
+	linphone_core_set_ringback(mCore, ringbackFile.c_str());
+	FB::URI playFileUri("internal:///share/sounds/linphone/rings/toy-mono.wav");
+	std::string playFileFile = fm->uriToFile(playFileUri);
+	linphone_core_set_play_file(mCore, playFileFile.c_str());
+
+	// Other file paths
+	FB::URI rootCaUri("internal:///share/linphone/rootca.pem");
+	std::string rootCaFile = fm->uriToFile(rootCaUri);
+	linphone_core_set_root_ca(mCore, rootCaFile.c_str());
+	FB::URI chatDatabaseUri("local:///chat_db");
+	std::string chatDatabaseFile = fm->uriToFile(chatDatabaseUri);
+	linphone_core_set_chat_database_path(mCore, chatDatabaseFile.c_str());
+	FB::URI zrtpSecretsUri("local:///zrtp_secrets");
+	std::string zrtpSecretsFile = fm->uriToFile(zrtpSecretsUri);
+	linphone_core_set_zrtp_secrets_file(mCore, zrtpSecretsFile.c_str());
+	FB::URI userCertificatesUri("local:///user_certificates");
+	std::string userCertificatesPath = fm->uriToFile(userCertificatesUri);
+	linphone_core_set_user_certificates_path(mCore, userCertificatesPath.c_str());
 }
 
 int CoreAPI::init(StringPtr const &config, StringPtr const &factory) {
@@ -2723,9 +2754,7 @@ StringPtr CoreAPI::getPlayFile() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getPlayFile", "this=" << this);
-	FBLOG_ERROR("CoreAPI::getPlayFile", "NOT IMPLEMENTED");
-	//TODO STUB
-	return StringPtr();// CHARPTR_TO_STRING(linphone_core_get_ringback(mCore));
+	return CHARPTR_TO_STRING(linphone_core_get_play_file(mCore));
 }
 
 void CoreAPI::setPlayFile(StringPtr const &playFile) {
@@ -2743,9 +2772,7 @@ StringPtr CoreAPI::getRecordFile() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getRecordFile", "this=" << this);
-	FBLOG_ERROR("CoreAPI::getRecordFile", "NOT IMPLEMENTED");
-	//TODO STUB
-	return StringPtr();// CHARPTR_TO_STRING(linphone_core_get_ringback(mCore));
+	return CHARPTR_TO_STRING(linphone_core_get_record_file(mCore));
 }
 
 void CoreAPI::setRecordFile(StringPtr const &recordFile) {
@@ -2790,6 +2817,24 @@ void CoreAPI::setStaticPicture(StringPtr const &staticPicture) {
 
 	FBLOG_DEBUG("CoreAPI::setStaticPicture", "this=" << this << "\t" << "staticPicture=" << staticPicture);
 	linphone_core_set_static_picture(mCore, STRING_TO_CHARPTR(staticPicture));
+}
+
+IMPLEMENT_PROPERTY_FILE(CoreAPI, getUserCertificatesPath, setUserCertificatesPath);
+
+StringPtr CoreAPI::getUserCertificatesPath() const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getUserCertificatesPath", "this=" << this);
+	return CHARPTR_TO_STRING(linphone_core_get_user_certificates_path(mCore));
+}
+
+void CoreAPI::setUserCertificatesPath(StringPtr const &userCertificatesPath) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setUserCertificatesPath", "this=" << this << "\t" << "userCertificatesPath=" << userCertificatesPath);
+	linphone_core_set_user_certificates_path(mCore, STRING_TO_CHARPTR(userCertificatesPath));
 }
 
 IMPLEMENT_PROPERTY_FILE(CoreAPI, getZrtpSecretsFile, setZrtpSecretsFile);

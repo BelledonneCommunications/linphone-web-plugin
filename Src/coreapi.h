@@ -366,6 +366,7 @@ public:
 	DECLARE_PROPERTY_FILE(CoreAPI, getRecordFile, setRecordFile);
 	DECLARE_PROPERTY_FILE(CoreAPI, getRootCa, setRootCa);
 	DECLARE_PROPERTY_FILE(CoreAPI, getStaticPicture, setStaticPicture);
+	DECLARE_PROPERTY_FILE(CoreAPI, getUserCertificatesPath, setUserCertificatesPath);
 	DECLARE_PROPERTY_FILE(CoreAPI, getZrtpSecretsFile, setZrtpSecretsFile);
 
 	// Log
