@@ -134,12 +134,20 @@ void FileManagerAPI::initializePaths() {
 	 */
 	
 	// Internal
-	boost::filesystem::path internalPath = FB::BrowserPlugin::getFSPath();
+#if _WIN32
+	boost::filesystem::path internalPath(FB::utf8_to_wstring(FB::BrowserPlugin::getFSPath()));
+#else
+	boost::filesystem::path internalPath(FB::BrowserPlugin::getFSPath());
+#endif
 	internalPath = internalPath.parent_path();
 	internalPath /= std::string(PLUGIN_SHAREDIR);
 	
 	// Temp
-	boost::filesystem::path tempPath = boost::filesystem::path(FB::System::getTempPath());
+#if _WIN32
+	boost::filesystem::path tempPath(FB::utf8_to_wstring(FB::System::getTempPath()));
+#else
+	boost::filesystem::path tempPath(FB::System::getTempPath());
+#endif
 	tempPath /= FBSTRING_ProductDomain;
 	tempPath /= boost::filesystem::unique_path();
 	
@@ -148,7 +156,11 @@ void FileManagerAPI::initializePaths() {
 	FB::PluginCorePtr plugin = getFactory()->getPlugin();
 	FB::URI loc = FB::URI::fromString(plugin->getHost()->getDOMWindow()->getLocation());
 	if(!loc.domain.empty()) {
+#if _WIN32
+		std::wstring localPathString = FB::utf8_to_wstring(FB::System::getLocalAppDataPath(FBSTRING_ProductDomain));
+#else
 		std::string localPathString = FB::System::getLocalAppDataPath(FBSTRING_ProductDomain);
+#endif
 		if(!localPathString.empty()) {
 			localPath = boost::filesystem::path(localPathString);
 			localPath /= std::string(loc.domain);
