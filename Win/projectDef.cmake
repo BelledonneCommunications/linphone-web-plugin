@@ -121,17 +121,16 @@ SET(FB_ROOTFS_DIR ${FB_OUT_DIR}/Rootfs)
 SET(WIX_LINK_FLAGS -dConfiguration=${CMAKE_CFG_INTDIR})
 
 if(WITH_DYNAMIC_MSVC_RUNTIME)
-	if("${CMAKE_DEBUG_TYPE}" STREQUAL "Debug")
-		find_file(MSVCP_LIB msvcp100d.dll PATHS "C:/Windows/System32")
-		find_file(MSVCR_LIB msvcr100d.dll PATHS "C:/Windows/System32")
-	else("${CMAKE_DEBUG_TYPE}" STREQUAL "Debug")
-		find_file(MSVCP_LIB msvcp100.dll PATHS "C:/Windows/System32")
-		find_file(MSVCR_LIB msvcr100.dll PATHS "C:/Windows/System32")
-	endif("${CMAKE_DEBUG_TYPE}" STREQUAL "Debug")
+	string(REGEX REPLACE "Visual Studio ([0-9]+).*" "\\1" MSVC_VERSION "${CMAKE_GENERATOR}")
+	if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+		set(MSVC_DEBUG_SYSTEM_LIBRARIES "d")
+	endif()
+	find_file(MSVCP_LIB msvcp${MSVC_VERSION}0${MSVC_DEBUG_SYSTEM_LIBRARIES}.dll PATHS "C:/Windows/System32")
+	find_file(MSVCR_LIB msvcr${MSVC_VERSION}0${MSVC_DEBUG_SYSTEM_LIBRARIES}.dll PATHS "C:/Windows/System32")
 	if(NOT MSVCP_LIB OR NOT MSVCR_LIB)
-		message(FATAL_ERROR "You need to install the Visual Studio C++ 2010 Redistributable package!")
-	endif(NOT MSVCP_LIB OR NOT MSVCR_LIB)
-endif(WITH_DYNAMIC_MSVC_RUNTIME)
+		message(FATAL_ERROR "You need to install the Visual Studio C++ Redistributable libraries!")
+	endif()
+endif()
 
 ###############################################################################
 # Create Rootfs
@@ -172,17 +171,9 @@ function (create_rootfs PROJNAME OUTDIR)
 	set(REDISTRIBUTABLE_LIB_SOURCES )
 	set(ROOTFS_MS_PLUGINS_LIB_SOURCES )
 	if(WITH_DYNAMIC_MSVC_RUNTIME)
-		if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-			list(APPEND REDISTRIBUTABLE_LIB_SOURCES
-				msvcp100d.dll
-				msvcr100d.dll
-			)
-		else("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-			list(APPEND REDISTRIBUTABLE_LIB_SOURCES
-				msvcp100.dll
-				msvcr100.dll
-			)
-		endif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+		get_filename_component(MSVCP_LIBNAME ${MSVCP_LIB} NAME)
+		get_filename_component(MSVCR_LIBNAME ${MSVCR_LIB} NAME)
+		list(APPEND REDISTRIBUTABLE_LIB_SOURCES ${MSVCP_LIBNAME} ${MSVCR_LIBNAME})
 	endif()
 	set(ROOTFS_LIB_SOURCES
 		antlr3c.${DEPENDENCY_EXT}

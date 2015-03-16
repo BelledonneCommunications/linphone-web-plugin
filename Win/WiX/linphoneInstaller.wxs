@@ -115,11 +115,11 @@
 								${ENDIF}
 								${IF WITH_DYNAMIC_MSVC_RUNTIME}
 								<?if $(var.Configuration) = Debug ?>
-								  <File Id="msvcp100d" Source="$(var.BINSRC)/msvcp100d.dll" />
-								  <File Id="msvcr100d" Source="$(var.BINSRC)/msvcr100d.dll" />
+								  <File Id="msvcp${MSVC_VERSION}0d" Source="$(var.BINSRC)/msvcp${MSVC_VERSION}0d.dll" />
+								  <File Id="msvcr${MSVC_VERSION}0d" Source="$(var.BINSRC)/msvcr${MSVC_VERSION}0d.dll" />
 								<?else ?>
-								  <File Id="msvcp100" Source="$(var.BINSRC)/msvcp100.dll" />
-								  <File Id="msvcr100" Source="$(var.BINSRC)/msvcr100.dll" />
+								  <File Id="msvcp${MSVC_VERSION}0" Source="$(var.BINSRC)/msvcp${MSVC_VERSION}0.dll" />
+								  <File Id="msvcr${MSVC_VERSION}0" Source="$(var.BINSRC)/msvcr${MSVC_VERSION}0.dll" />
 								<?endif ?>
 								${ENDIF}
 								<RegistryValue
