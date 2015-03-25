@@ -3,6 +3,15 @@
 <html>
 <head>
     <style type="text/css">
+    	#logo {
+    		background-image: url(logo.png);
+    		z-index: 2;
+    		position: absolute;
+    		width: 300px;
+    		height: 300px;
+    		background-repeat: no-repeat;
+    		background-position: center;
+    	}
     </style>
     
     <script type="text/javascript" src="utils.js"></script>
@@ -97,6 +106,11 @@
 
 			call(document.form2.address.value);
 		}
+
+		function onCallEnd(form2){
+			var core = getCore();
+        	core.terminateCall(core.currentCall);
+		}
 		
     </script>
     
@@ -119,10 +133,15 @@
 		<p id="Call"> Call</p>
 		<div>Contact address : <input id="address" type="text" value="sip:" /></div>
 		<input type="button" OnClick="onCall(form2)" value="Call">
+		<input type="button" OnClick="onCallEnd(form2)" value="Terminate Call">
 		<div> Status : <span id="statusC">No call</span></div>
 	</form>
 	
-	<object id="video" type="application/x-linphone-web-video" width="300px" height="300px">
+	<div>
+		<div id="logo"></div>
+		<object id="video" type="application/x-linphone-web-video" width="300px" height="300px">
 	</object>
+	
+	</div>
 </body>
 </html>
