@@ -113,6 +113,11 @@
 								${IF ENABLE_TUNNEL}
 								<File Id="tunnel" Source="$(var.BINSRC)/tunnel.dll" />
 								${ENDIF}
+								<?if $(var.Configuration) = Debug ?>
+								  <File Id="zlibd" Source="$(var.BINSRC)/zlibd.dll" />
+								<?else ?>
+								  <File Id="zlib" Source="$(var.BINSRC)/zlib.dll" />
+								<?endif ?>
 								${IF WITH_DYNAMIC_MSVC_RUNTIME}
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="msvcp${MSVC_VERSION}0d" Source="$(var.BINSRC)/msvcp${MSVC_VERSION}0d.dll" />

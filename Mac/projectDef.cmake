@@ -163,6 +163,7 @@ function (create_rootfs PROJNAME OUTDIR)
 		libpolarssl.5.${DEPENDENCY_EXT}
 		libspeex.6.${DEPENDENCY_EXT}
 		libspeexdsp.6.${DEPENDENCY_EXT}
+		libz.1.${DEPENDENCY_EXT}
 	)
 	if(ENABLE_SRTP)
 		list(APPEND ROOTFS_LIB_SOURCES libsrtp.1.${DEPENDENCY_EXT})

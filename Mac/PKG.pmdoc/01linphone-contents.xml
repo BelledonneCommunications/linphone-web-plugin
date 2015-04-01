@@ -28,6 +28,7 @@
 					${IF ENABLE_TUNNEL}
 					<f n="libtunnel.0.dylib" p="33261"/>
 					${ENDIF}
+					<f n="libz.1.dylib" p="33261"/>
 					<f n="lib" p="16877">
 						<f n="mediastreamer" p="16877">
 							<f n="plugins" p="16877">

@@ -186,6 +186,11 @@ function (create_rootfs PROJNAME OUTDIR)
 		speex.${DEPENDENCY_EXT}
 		speexdsp.${DEPENDENCY_EXT}
 	)
+	if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+		list(APPEND ROOTFS_LIB_SOURCES zlibd.${DEPENDENCY_EXT})
+	else()
+		list(APPEND ROOTFS_LIB_SOURCES zlib.${DEPENDENCY_EXT})
+	endif()
 	if(ENABLE_SRTP)
 		list(APPEND ROOTFS_LIB_SOURCES srtp.${DEPENDENCY_EXT})
 	endif()
