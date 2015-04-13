@@ -109,7 +109,9 @@
 
 		function onCallEnd(form2){
 			var core = getCore();
-        	core.terminateCall(core.currentCall);
+			if (core.currentCall) {
+				core.terminateCall(core.currentCall);
+			}
 		}
 		
     </script>
