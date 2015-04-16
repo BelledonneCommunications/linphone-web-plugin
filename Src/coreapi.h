@@ -368,6 +368,7 @@ public:
 	DECLARE_PROPERTY_FILE(CoreAPI, getStaticPicture, setStaticPicture);
 	DECLARE_PROPERTY_FILE(CoreAPI, getUserCertificatesPath, setUserCertificatesPath);
 	DECLARE_PROPERTY_FILE(CoreAPI, getZrtpSecretsFile, setZrtpSecretsFile);
+	void playLocal(StringPtr const &audiofile);
 
 	// Log
 	void setLogHandler(FB::JSObjectPtr const &handler);

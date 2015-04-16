@@ -273,6 +273,7 @@ void CoreAPI::initProxy() {
 	REGISTER_PROPERTY_FILE(CoreAPI, "staticPicture", getStaticPicture, setStaticPicture);
 	REGISTER_PROPERTY_FILE(CoreAPI, "userCertificatesPath", getUserCertificatesPath, setUserCertificatesPath);
 	REGISTER_PROPERTY_FILE(CoreAPI, "zrtpSecretsFile", getZrtpSecretsFile, setZrtpSecretsFile);
+	registerMethod("playLocal", make_method(this, &CoreAPI::playLocal));
 
 	// Initiator bindings
 	registerProperty("fileManager", make_property(this, &CoreAPI::getFileManager));
@@ -2853,6 +2854,16 @@ void CoreAPI::setZrtpSecretsFile(StringPtr const &secretsFile) {
 
 	FBLOG_DEBUG("CoreAPI::setZrtpSecretsFile", "this=" << this << "\t" << "secretsFile=" << secretsFile);
 	linphone_core_set_zrtp_secrets_file(mCore, STRING_TO_CHARPTR(secretsFile));
+}
+
+void CoreAPI::playLocal(StringPtr const &audiofile) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::playLocal", "this=" << this << "\t" << "audiofile=" << audiofile);
+	StringPtr realAudiofile = audiofile;
+	GET_FILE("CoreAPI::playLocal", realAudiofile);
+	linphone_core_play_local(mCore, STRING_TO_CHARPTR(realAudiofile));
 }
 
 
