@@ -206,6 +206,8 @@ void CoreAPI::initProxy() {
 	registerMethod("payloadTypeEnabled", make_method(this, &CoreAPI::payloadTypeEnabled));
 	registerMethod("enablePayloadType", make_method(this, &CoreAPI::enablePayloadType));
 	registerMethod("findPayloadType", make_method(this, &CoreAPI::findPayloadType));
+	registerMethod("getPayloadTypeBitrate", make_method(this, &CoreAPI::getPayloadTypeBitrate));
+	registerMethod("setPayloadTypeBitrate", make_method(this, &CoreAPI::setPayloadTypeBitrate));
 
 	// ProxyConfig bindings
 	registerMethod("addProxyConfig", make_method(this, &CoreAPI::addProxyConfig));
@@ -1553,6 +1555,22 @@ PayloadTypeAPIPtr CoreAPI::findPayloadType(StringPtr const &type, int rate, int 
 
 	FBLOG_DEBUG("CoreAPI::findPayloadType", "this=" << this << "\t" << "type=" << type << "\t" << "rate=" << rate << "\t" << "channels=" << channels);
 	return getFactory()->getPayloadType(linphone_core_find_payload_type(mCore, STRING_TO_CHARPTR(type), rate, channels));
+}
+
+int CoreAPI::getPayloadTypeBitrate(PayloadTypeAPIPtr const &payloadType) const {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::getPayloadTypeBitrate", "this=" << this << "\t" << "payloadType=" << payloadType);
+	return linphone_core_get_payload_type_bitrate(mCore, payloadType->getRef());
+}
+
+void CoreAPI::setPayloadTypeBitrate(PayloadTypeAPIPtr const &payloadType, int bitrate) {
+	FB_ASSERT_CORE
+	CORE_MUTEX
+
+	FBLOG_DEBUG("CoreAPI::setPayloadTypeBitrate", "this=" << this << "\t" << "payloadType=" << payloadType << "\t" << "bitrate=" << bitrate);
+	linphone_core_set_payload_type_bitrate(mCore, payloadType->getRef(), bitrate);
 }
 
 /*

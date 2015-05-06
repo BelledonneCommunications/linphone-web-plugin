@@ -203,6 +203,8 @@ public:
 	bool payloadTypeEnabled(PayloadTypeAPIPtr const &payloadType) const;
 	void enablePayloadType(PayloadTypeAPIPtr const &payloadType, bool enable);
 	PayloadTypeAPIPtr findPayloadType(StringPtr const &type, int rate, int channels) const;
+	int getPayloadTypeBitrate(PayloadTypeAPIPtr const &payloadType) const;
+	void setPayloadTypeBitrate(PayloadTypeAPIPtr const &payloadType, int bitrate);
 
 
 	// ProxyConfig functions
