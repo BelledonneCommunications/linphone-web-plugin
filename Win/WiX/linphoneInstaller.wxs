@@ -80,9 +80,6 @@
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="mediastreamer_voip_pdb" Source="$(var.BINSRC)/mediastreamer_voip.pdb" />
 								<?endif ?>
-								${IF ENABLE_OPUS}
-								<File Id="libopus" Source="$(var.BINSRC)/libopus-0.dll" />
-								${ENDIF}
 								<File Id="ortp" Source="$(var.BINSRC)/ortp.dll" />
 								<?if $(var.Configuration) = Debug ?>
 								  <File Id="ortp_pdb" Source="$(var.BINSRC)/ortp.pdb" />
