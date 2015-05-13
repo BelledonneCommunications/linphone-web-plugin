@@ -1631,7 +1631,7 @@ void CoreAPI::setDefaultProxy(ProxyConfigAPIPtr const &config) {
 
 	FBLOG_DEBUG("CoreAPI::setDefaultProxy", "this=" << this << "\t" << "config=" << config);
 	config->disOwn();
-	linphone_core_set_default_proxy(mCore, config->getRef());
+	linphone_core_set_default_proxy_config(mCore, config->getRef());
 }
 
 ProxyConfigAPIPtr CoreAPI::getDefaultProxy() const {
@@ -1639,8 +1639,7 @@ ProxyConfigAPIPtr CoreAPI::getDefaultProxy() const {
 	CORE_MUTEX
 
 	FBLOG_DEBUG("CoreAPI::getDefaultProxy", "this=" << this);
-	LinphoneProxyConfig *ptr = NULL;
-	linphone_core_get_default_proxy(mCore, &ptr);
+	LinphoneProxyConfig *ptr = linphone_core_get_default_proxy_config(mCore);
 	if (ptr != NULL)
 		return getFactory()->getProxyConfig(ptr);
 	return ProxyConfigAPIPtr();
