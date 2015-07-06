@@ -59,8 +59,8 @@ SET(DEPENDENCY_EXT "dylib")
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 		${PLUGIN_INTERNAL_DEPS}
 		${CMAKE_INSTALL_PREFIX}/lib/liblinphone.7.${DEPENDENCY_EXT}
-		${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_base.3.${DEPENDENCY_EXT}
-		${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_voip.3.${DEPENDENCY_EXT}
+		${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_base.5.${DEPENDENCY_EXT}
+		${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_voip.5.${DEPENDENCY_EXT}
 		${CMAKE_INSTALL_PREFIX}/lib/libortp.9.${DEPENDENCY_EXT}
 		${OPENGL_FRAMEWORK}
 		${QUARTZ_CORE_FRAMEWORK}
@@ -157,8 +157,8 @@ function (create_rootfs PROJNAME OUTDIR)
 		libantlr3c.1.${DEPENDENCY_EXT}
 		libbellesip.0.${DEPENDENCY_EXT}
 		liblinphone.7.${DEPENDENCY_EXT}
-		libmediastreamer_base.3.${DEPENDENCY_EXT}
-		libmediastreamer_voip.3.${DEPENDENCY_EXT}
+		libmediastreamer_base.5.${DEPENDENCY_EXT}
+		libmediastreamer_voip.5.${DEPENDENCY_EXT}
 		libortp.9.${DEPENDENCY_EXT}
 		libpolarssl.5.${DEPENDENCY_EXT}
 		libspeex.6.${DEPENDENCY_EXT}

@@ -55,8 +55,8 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER ${FBSTRING_ProductName})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 	${PLUGIN_INTERNAL_DEPS}
 	"${CMAKE_INSTALL_PREFIX}/lib/liblinphone.so.7"
-	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_base.so.3"
-	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_voip.so.3"
+	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_base.so.5"
+	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_voip.so.5"
 	"${CMAKE_INSTALL_PREFIX}/lib/libortp.so.9"
 )
 add_dependencies(${PROJECT_NAME} TARGET_linphone_builder)
@@ -96,8 +96,8 @@ function (create_rootfs PROJNAME OUTDIR)
 		libantlr3c.${DEPENDENCY_EXT}.1
 		libbellesip.${DEPENDENCY_EXT}.0
 		liblinphone.${DEPENDENCY_EXT}.7
-		libmediastreamer_base.${DEPENDENCY_EXT}.3
-		libmediastreamer_voip.${DEPENDENCY_EXT}.3
+		libmediastreamer_base.${DEPENDENCY_EXT}.5
+		libmediastreamer_voip.${DEPENDENCY_EXT}.5
 		libortp.${DEPENDENCY_EXT}.9
 		libpolarssl.${DEPENDENCY_EXT}.5
 		libspeex.${DEPENDENCY_EXT}.6
