@@ -11,7 +11,7 @@
 					<f n="libmediastreamer-base.5.dylib" p="33261"/>
 					<f n="libmediastreamer-voip.5.dylib" p="33261"/>
 					<f n="libortp.9.dylib" p="33261"/>
-					<f n="libpolarssl.5.dylib" p="33261"/>
+					<f n="libpolarssl.8.dylib" p="33261"/>
 					<f n="libspeex.1.dylib" p="33261"/>
 					<f n="libspeexdsp.1.dylib" p="33261"/>
 					${IF ENABLE_SRTP}
