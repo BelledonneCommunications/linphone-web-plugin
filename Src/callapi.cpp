@@ -179,9 +179,9 @@ void CallAPI::setVideoWindow(void *ptr) {
 
 	FBLOG_DEBUG("CallAPI::setVideoWindow", "this=" << this << "\t" << "ptr=" << ptr);
 	if (ptr != NULL) {
-		linphone_call_set_native_video_window_id(mCall, (unsigned long)ptr);
+		linphone_call_set_native_video_window_id(mCall, ptr);
 	} else {
-		linphone_call_set_native_video_window_id(mCall, (unsigned long)-1);
+		linphone_call_set_native_video_window_id(mCall, (void *)(unsigned long)-1);
 	}
 }
 

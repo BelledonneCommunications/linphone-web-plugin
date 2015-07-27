@@ -378,8 +378,8 @@ void CoreAPI::finishInit() {
 	FileManagerAPIPtr fm = getFileManager();
 
 	// Specific Linphone Web behaviour
-	linphone_core_set_native_preview_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
-	linphone_core_set_native_video_window_id(mCore, (unsigned long) -1); // MUST be set to -1, we can't allow a detached window
+	linphone_core_set_native_preview_window_id(mCore, (void *)(unsigned long) -1); // MUST be set to -1, we can't allow a detached window
+	linphone_core_set_native_video_window_id(mCore, (void *)(unsigned long) -1); // MUST be set to -1, we can't allow a detached window
 
 	// Sound file paths
 	FB::URI staticPictureUri("internal:///share/images/nowebcamCIF.jpg");
@@ -1183,9 +1183,9 @@ void CoreAPI::setVideoWindow(void *ptr) {
 
 	FBLOG_DEBUG("CoreAPI::setVideoWindow", "this=" << this << "\t" << "ptr=" << ptr);
 	if(ptr != NULL) {
-		linphone_core_set_native_video_window_id(mCore, (unsigned long)ptr);
+		linphone_core_set_native_video_window_id(mCore, ptr);
 	} else {
-		linphone_core_set_native_video_window_id(mCore, (unsigned long)-1);
+		linphone_core_set_native_video_window_id(mCore, (void *)(unsigned long)-1);
 	}
 }
 
@@ -1231,9 +1231,9 @@ void CoreAPI::setPreviewWindow(void *ptr) {
 
 	FBLOG_DEBUG("CoreAPI::setPreviewWindow", "this=" << this << "\t" << "ptr=" << ptr);
 	if(ptr != NULL) {
-		linphone_core_set_native_preview_window_id(mCore, (unsigned long)ptr);
+		linphone_core_set_native_preview_window_id(mCore, ptr);
 	} else {
-		linphone_core_set_native_preview_window_id(mCore, (unsigned long)-1);
+		linphone_core_set_native_preview_window_id(mCore, (void *)(unsigned long)-1);
 	}
 }
 
