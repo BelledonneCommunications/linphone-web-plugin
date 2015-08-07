@@ -177,6 +177,9 @@
 												${IF ENABLE_OPENH264}
 												<File Id="libmsopenh264" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsopenh264.dll" />
 												${ENDIF}
+												${IF ENABLE_ILBC}
+												<File Id="libmsilbc" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsilbc.dll" />
+												${ENDIF}
 												<File Id="libmswasapi" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmswasapi.dll" />
 												${IF ENABLE_X264}
 												<File Id="libmsx264" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/lib/mediastreamer/plugins/libmsx264-0.dll" />

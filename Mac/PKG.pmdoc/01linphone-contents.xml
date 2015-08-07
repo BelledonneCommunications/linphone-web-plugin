@@ -38,6 +38,9 @@
 								${IF ENABLE_G729}
 								<f n="libmsbcg729.0.dylib" p="33261"/>
 								${ENDIF}
+								${IF ENABLE_ILBC}
+								<f n="libmsilbc.0.dylib" p="33261"/>
+								${ENDIF}
 								${IF ENABLE_OPENH264}
 								<f n="libmsopenh264.0.dylib" p="33261"/>
 								${ENDIF}
