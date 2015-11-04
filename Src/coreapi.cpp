@@ -134,7 +134,7 @@ void CoreAPI::initProxy() {
 	registerMethod("updateCall", make_method(this, &CoreAPI::updateCall));
 	registerMethod("deferCallUpdate", make_method(this, &CoreAPI::deferCallUpdate));
 	registerMethod("acceptCallUpdate", make_method(this, &CoreAPI::acceptCallUpdate));
-	registerMethod("createDefaultCallParameters", make_method(this, &CoreAPI::createDefaultCallParameters));
+	registerMethod("createCallParams", make_method(this, &CoreAPI::createCallParams));
 	registerProperty("incTimeout", make_property(this, &CoreAPI::getIncTimeout, &CoreAPI::setIncTimeout));
 	registerProperty("inCallTimeout", make_property(this, &CoreAPI::getInCallTimeout, &CoreAPI::setInCallTimeout));
 	registerProperty("maxCalls", make_property(this, &CoreAPI::getMaxCalls, &CoreAPI::setMaxCalls));
@@ -721,12 +721,12 @@ int CoreAPI::acceptCallUpdate(CallAPIPtr const &call, CallParamsAPIPtr const &pa
 	return linphone_core_accept_call_update(mCore, call->getRef(), params->getRef());
 }
 
-CallParamsAPIPtr CoreAPI::createDefaultCallParameters() {
+CallParamsAPIPtr CoreAPI::createCallParams(CallAPIPtr const &call) {
 	FB_ASSERT_CORE
 	CORE_MUTEX
 
-	FBLOG_DEBUG("CoreAPI::createDefaultCallParameters", "this=" << this);
-	return getFactory()->getCallParams(linphone_core_create_default_call_parameters(mCore));
+	FBLOG_DEBUG("CoreAPI::createCallParams", "this=" << this << "\t" << "call=" << call);
+	return getFactory()->getCallParams(linphone_core_create_call_params(mCore, call->getRef()));
 }
 
 void CoreAPI::setIncTimeout(int timeout) {

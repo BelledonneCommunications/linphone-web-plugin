@@ -54,10 +54,10 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES FOLDER ${FBSTRING_ProductName})
 # Add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 	${PLUGIN_INTERNAL_DEPS}
-	"${CMAKE_INSTALL_PREFIX}/lib/liblinphone.so.7"
-	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_base.so.5"
-	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_voip.so.5"
-	"${CMAKE_INSTALL_PREFIX}/lib/libortp.so.9"
+	"${CMAKE_INSTALL_PREFIX}/lib/liblinphone.so.8"
+	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_base.so.6"
+	"${CMAKE_INSTALL_PREFIX}/lib/libmediastreamer_voip.so.6"
+	"${CMAKE_INSTALL_PREFIX}/lib/libortp.so.10"
 )
 add_dependencies(${PROJECT_NAME} TARGET_linphone_builder)
 
@@ -95,10 +95,10 @@ function (create_rootfs PROJNAME OUTDIR)
 	set(ROOTFS_LIB_SOURCES
 		libantlr3c.${DEPENDENCY_EXT}.1
 		libbellesip.${DEPENDENCY_EXT}.0
-		liblinphone.${DEPENDENCY_EXT}.7
-		libmediastreamer_base.${DEPENDENCY_EXT}.5
-		libmediastreamer_voip.${DEPENDENCY_EXT}.5
-		libortp.${DEPENDENCY_EXT}.9
+		liblinphone.${DEPENDENCY_EXT}.8
+		libmediastreamer_base.${DEPENDENCY_EXT}.6
+		libmediastreamer_voip.${DEPENDENCY_EXT}.6
+		libortp.${DEPENDENCY_EXT}.10
 		libpolarssl.${DEPENDENCY_EXT}.8
 		libspeex.${DEPENDENCY_EXT}.6
 		libspeexdsp.${DEPENDENCY_EXT}.6

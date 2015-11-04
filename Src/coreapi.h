@@ -104,7 +104,7 @@ public:
 	int updateCall(CallAPIPtr const &call, CallParamsAPIPtr const &params);
 	int deferCallUpdate(CallAPIPtr const &call);
 	int acceptCallUpdate(CallAPIPtr const &call, CallParamsAPIPtr const &params);
-	CallParamsAPIPtr createDefaultCallParameters();
+	CallParamsAPIPtr createCallParams(CallAPIPtr const &call);
 	int getIncTimeout() const;
 	void setIncTimeout(int timeout);
 	int getInCallTimeout() const;
