@@ -68,10 +68,10 @@ endif()
 
 # Maximum warnings
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-	add_definitions("-Werror")
+	add_definitions("-Werror" "-Wno-error=deprecated-declarations")
 endif()
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-	add_definitions("-Werror")
+	add_definitions("-Werror" "-Wno-error=deprecated-declarations")
 	add_definitions("-Wno-unused-private-field")
 endif()
 
