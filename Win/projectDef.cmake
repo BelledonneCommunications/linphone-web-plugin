@@ -228,8 +228,8 @@ function (create_rootfs PROJNAME OUTDIR)
 		linphone/rootca.pem
 		images/nowebcamCIF.jpg
 		sounds/linphone/ringback.wav
-		sounds/linphone/rings/oldphone.wav
-		sounds/linphone/rings/toy-mono.wav
+		sounds/linphone/rings/oldphone-mono.wav
+		sounds/linphone/toy-mono.wav
 	)
 
 	# Install and sign libraries and files
