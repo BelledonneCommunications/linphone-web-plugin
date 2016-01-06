@@ -247,6 +247,7 @@
 											<Component Id="ShareSoundsLinphoneDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6b">
 												<RemoveFolder Id="RemoveShareSoundsLinphoneDir" On="uninstall" />
 												<File Id="ringback" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/sounds/linphone/ringback.wav" />
+												<File Id="toymono" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/sounds/linphone/toy-mono.wav" />
 												<RegistryValue
 													Root="${REGKEY_ROOT}"
 													Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsLinphoneDirComp"
@@ -258,8 +259,7 @@
 											<Directory Id="ShareSoundsLinphoneRingsDir" Name="rings">
 												<Component Id="ShareSoundsLinphoneRingsDirComp" Guid="d540fc92-55c6-4477-a481-c9dc7bb8dc6c">
 													<RemoveFolder Id="RemoveShareSoundsLinphoneRingsDir" On="uninstall" />
-													<File Id="oldphone" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/sounds/linphone/rings/oldphone.wav" />
-													<File Id="toymono" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/sounds/linphone/rings/toy-mono.wav" />
+													<File Id="oldphone" Source="$(var.BINSRC)/${PLUGIN_SHAREDIR}/share/sounds/linphone/rings/oldphone-mono.wav" />
 													<RegistryValue
 														Root="${REGKEY_ROOT}"
 														Key="SOFTWARE\${FBSTRING_CompanyDomain}\${FBSTRING_PluginDomain}\${FBSTRING_PLUGIN_VERSION}\ShareSoundsLinphoneRingsDirComp"
