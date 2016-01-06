@@ -39,8 +39,7 @@
 								<f n="libmsbcg729.0.dylib" p="33261"/>
 								${ENDIF}
 								${IF ENABLE_ILBC}
-								<f n="libmsilbc.0.dylib" p="33261"/>
-								${ENDIF}
+dold								${ENDIF}
 								${IF ENABLE_OPENH264}
 								<f n="libmsopenh264.0.dylib" p="33261"/>
 								${ENDIF}
@@ -60,9 +59,9 @@
 						<f n="sounds" p="16877">
 							<f n="linphone" p="16877">
 								<f n="ringback.wav" p="33188"/>
+								<f n="toy-mono.wav" p="33188"/>
 								<f n="rings" p="16877">
-									<f n="oldphone.wav" p="33188"/>
-									<f n="toy-mono.wav" p="33188"/>
+									<f n="oldphone-mono.wav" p="33188"/>
 								</f>
 							</f>
 						</f>
